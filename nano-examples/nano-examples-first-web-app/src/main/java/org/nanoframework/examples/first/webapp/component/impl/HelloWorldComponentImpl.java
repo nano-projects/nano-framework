@@ -43,6 +43,11 @@ public class HelloWorldComponentImpl implements HelloWordComponent {
 	}
 	
 	@Override
+	public Object byRestfulApiByPatch(String value, String name) {
+		return ResultMap.create(200, "Hello Nano Framework by Restful API and PATCH method, this value is " + value + " and name is " + name, "SUCCESS");
+	}
+	
+	@Override
 	public View forward(String value, Model model) {
 		model.addAttribute("value", "Hello Nano Framework by Redirect API, and value is " + value);
 		return new ForwardView("/pages/Page.jsp", true);

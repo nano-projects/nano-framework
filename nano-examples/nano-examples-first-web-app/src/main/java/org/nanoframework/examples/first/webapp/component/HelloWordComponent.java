@@ -43,6 +43,9 @@ public interface HelloWordComponent {
 	@RequestMapping(value = "/hello/{value}", method = RequestMethod.PUT)
 	Object byRestfulApiByPut(@PathVariable("value") String value, @RequestParam(name = "name") String name);
 	
+	@RequestMapping(value = "/hello/{value}", method = RequestMethod.PATCH)
+	Object byRestfulApiByPatch(@PathVariable("value") String value, @RequestParam(name = "name") String name);
+	
 	@RequestMapping("/hello/forward/{value}")
 	View forward(@PathVariable("value") String value, Model model);
 }

@@ -28,6 +28,20 @@
 		<url-pattern>/dispatcher/*</url-pattern>
 	</servlet-mapping>
 
+	<!-- <servlet>
+		<servlet-name>DefaultServlet</servlet-name>
+		<servlet-class>org.apache.catalina.servlets.DefaultServlet</servlet-class>
+		<init-param>
+			<param-name>readonly</param-name>
+			<param-value>false</param-value>
+		</init-param>
+	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>DefaultServlet</servlet-name>
+		<url-pattern>/default/*</url-pattern>
+	</servlet-mapping> -->
+
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>

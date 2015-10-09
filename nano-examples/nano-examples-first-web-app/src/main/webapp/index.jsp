@@ -4,7 +4,7 @@
 <script type="text/javascript">
 $.ajax({
 	url : '/first-web-app/hello/123' , 
-	type : "PUT" ,
+	type : "PATCH" ,
 	contentType: "application/x-www-form-urlencoded; charset=utf-8" , 
 	data : {
 		name: 'postName'
