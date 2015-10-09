@@ -111,6 +111,6 @@ $.ajax({
 </script>
 </head>
 <body>
-	
+	Hello Nano Framework
 </body>
 </html>
