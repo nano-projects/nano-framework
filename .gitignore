@@ -10,3 +10,4 @@ logs/
 assembly/
 conf/
 *.log
+webRoot/
