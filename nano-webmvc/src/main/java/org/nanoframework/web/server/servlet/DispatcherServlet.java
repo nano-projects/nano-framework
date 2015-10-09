@@ -463,7 +463,7 @@ public class DispatcherServlet extends HttpServlet {
 						}
 					}
 					
-					if(StringUtils.isNotBlank(jdbc.getProperty(JdbcConfig.JDBC_ENVIRONMENT_ID))) {
+					if(jdbc != null && StringUtils.isNotBlank(jdbc.getProperty(JdbcConfig.JDBC_ENVIRONMENT_ID))) {
 						String poolTypeAlias = jdbc.getProperty(Constants.JDBC_POOL_TYPE);
 						PoolTypes poolType = null;
 						if(StringUtils.isNotBlank(poolTypeAlias)) {
@@ -490,6 +490,8 @@ public class DispatcherServlet extends HttpServlet {
 							config = new DruidJdbcConfig(jdbc);
 						}
 						configs.put(config.getEnvironmentId(), config);
+					} else {
+						LOG.warn("数据源没有配置或配置错误: " + jdbcURI);
 					}
 				}
 			} else 

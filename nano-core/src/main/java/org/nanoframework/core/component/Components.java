@@ -253,13 +253,14 @@ public class Components {
 	public static final RequestMapper getMapper(String url, RequestMethod method) {
 		// 缓存无法匹配的地址
 		if(noneMapperCache.contains(url)) {
-			LOG.warn("Not found request mapper in MapperNode: " + url);
 			return null;
 		}
 		
 		RequestMapper mapper;
-		if((mapper = MapperNode.get(url, method)) == null)
+		if((mapper = MapperNode.get(url, method)) == null) {
+			LOG.warn("Not found request mapper in MapperNode: " + url);
 			noneMapperCache.add(url);
+		} 
 		
 		return mapper;
 	}
