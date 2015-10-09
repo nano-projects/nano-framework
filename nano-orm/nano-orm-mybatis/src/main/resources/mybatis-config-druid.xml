@@ -1,0 +1,56 @@
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 配置Mybatis的环境，事务及数据源等等 -->
+	<environments default="${mybatis.environment.id}">
+		<environment id="${mybatis.environment.id}">
+			<transactionManager type="JDBC" />
+			<dataSource type="org.nanoframework.orm.mybatis.plugin.DruidDataSourceFactory">
+				<property name="driverClassName" value="${JDBC.driver}" />
+				<property name="url" value="${JDBC.url}" />
+				<property name="username" value="${JDBC.username}" />
+				<property name="password" value="${JDBC.password}" />
+
+				<!-- 初始化连接数量 -->
+				<property name="initialSize" value="${druid.initialSize}" />
+				<!-- 最大并发连接数 -->
+				<property name="maxActive" value="${druid.maxActive}" />
+				<!-- 最大空闲连接数 -->
+				<property name="maxIdle" value="${druid.maxIdle}" />
+				<!-- 最小空闲连接数 -->
+				<property name="minIdle" value="${druid.minIdle}" />
+				<!-- 配置获取连接等待超时的时间 -->
+				<property name="maxWait" value="${druid.maxWait}" />
+				<!-- 超过时间限制是否回收 -->
+				<property name="removeAbandoned" value="${druid.removeAbandoned}" />
+				<!-- 超过时间限制多长； -->
+				<property name="removeAbandonedTimeout" value="${druid.removeAbandonedTimeout}" />
+				<!-- 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 -->
+				<property name="timeBetweenEvictionRunsMillis" value="${druid.timeBetweenEvictionRunsMillis}" />
+				<!-- 配置一个连接在池中最小生存的时间，单位是毫秒 -->
+				<property name="minEvictableIdleTimeMillis" value="${druid.minEvictableIdleTimeMillis}" />
+				<!-- 用来检测连接是否有效的sql，要求是一个查询语句 -->
+				<property name="validationQuery" value="${druid.validationQuery}" />
+				<!-- 申请连接的时候检测 -->
+				<property name="testWhileIdle" value="${druid.testWhileIdle}" />
+				<!-- 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能 -->
+				<property name="testOnBorrow" value="${druid.testOnBorrow}" />
+				<!-- 归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能 -->
+				<property name="testOnReturn" value="${druid.testOnReturn}" />
+				<!-- 打开PSCache，并且指定每个连接上PSCache的大小 -->
+				<property name="poolPreparedStatements" value="${druid.poolPreparedStatements}" />
+				<property name="maxPoolPreparedStatementPerConnectionSize" value="${druid.maxPoolPreparedStatementPerConnectionSize}" />
+				<!--属性类型是字符串，通过别名的方式配置扩展插件，常用的插件有： 监控统计用的filter:stat 日志用的filter:log4j 
+					防御SQL注入的filter:wall -->
+				<property name="filters" value="${druid.filters}" />
+			</dataSource>
+		</environment>
+	</environments>
+
+	<!-- 指定映射文件或者映射类 -->
+	<!-- 填写需要注入的Mapper包的路径 -->
+	<mappers>
+		<package name="${mapper.package.name}" />
+	</mappers>
+
+</configuration>

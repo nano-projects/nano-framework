@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.nanoframework</groupId>
+        <artifactId>nano</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+	
+	<artifactId>nano-orm</artifactId>
+	<packaging>pom</packaging>
+	<inceptionYear>2015</inceptionYear>
+
+	<name>Nano ORM</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<modules>
+		<module>nano-orm-jdbc</module>
+		<module>nano-orm-mybatis</module>
+        <module>nano-orm-jedis</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Nano ORM Modules -->
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-orm-jdbc</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-orm-mybatis</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-orm-jedis</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

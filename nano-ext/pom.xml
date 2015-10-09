@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.nanoframework</groupId>
+        <artifactId>nano</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
+	
+	<artifactId>nano-ext</artifactId>
+	<packaging>pom</packaging>
+	<inceptionYear>2015</inceptionYear>
+
+	<name>Nano Ext</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<modules>
+		<module>nano-ext-ssh</module>
+		<module>nano-ext-websocket</module>
+        <module>nano-ext-concurrent</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Ganymed SSH2 -->
+			<dependency>
+				<groupId>ch.ethz.ganymed</groupId>
+				<artifactId>ganymed-ssh2</artifactId>
+				<version>${ganymed-version}</version>
+			</dependency>
+
+			<!-- Nano Extension Modules -->
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-ssh</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-websocket</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-concurrent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

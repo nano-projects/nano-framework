@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.nanoframework</groupId>
+	<artifactId>nano</artifactId>
+	<version>1.2.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<inceptionYear>2015</inceptionYear>
+
+	<name>Nano</name>
+	<url>http://maven.apache.org</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
+		<maven-source-plugin-version>2.2.1</maven-source-plugin-version>
+		<maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
+
+		<junit-version>4.9</junit-version>
+		<slf4j-version>1.7.6</slf4j-version>
+		<log4j-version>1.2.17</log4j-version>
+		<google-guice-version>4.0</google-guice-version>
+		<google-guice-multibindings-version>4.0</google-guice-multibindings-version>
+		<commons-lang3-version>3.3</commons-lang3-version>
+		<commons-codec-version>1.10</commons-codec-version>
+		<fastjson-version>1.2.5</fastjson-version>
+		<mybatis-version>3.2.5</mybatis-version>
+		<mybatis-guice-version>3.6</mybatis-guice-version>
+		<mysql-connector-version>5.1.29</mysql-connector-version>
+		<c3p0-version>0.9.1.2</c3p0-version>
+		<druid-version>1.0.15</druid-version>
+		<httpclient-version>4.5</httpclient-version>
+		<netty-all-version>4.0.28.Final</netty-all-version>
+		<sso-version>2.0</sso-version>
+		<jedis-version>2.7.2</jedis-version>
+		<!-- <javassist-version>3.19.0-GA</javassist-version> -->
+		<servlet-api-version>3.0.1</servlet-api-version>
+		<servlet-jsp-api-version>2.2.1</servlet-jsp-api-version>
+		<servlet-jsp-jstl-api-version>1.2.1</servlet-jsp-jstl-api-version>
+		<jetty-version>8.1.17.v20150415</jetty-version>
+		<jsp-support-version>2.2.3</jsp-support-version>
+		<tomcat-version>2.2</tomcat-version>
+		<ganymed-version>262</ganymed-version>
+		<logging-version>1.1.1</logging-version>
+		<apache-log4j-version>2.3</apache-log4j-version>
+
+	</properties>
+
+	<distributionManagement>
+		<repository>
+			<id>nano-releases</id>
+			<name>Nano Releases</name>
+			<url>http://10.1.195.225:8081/nexus/content/repositories/nano-releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>nano-snapshots</id>
+			<name>Nano Snapshots</name>
+			<url>http://10.1.195.225:8081/nexus/content/repositories/nano-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<issueManagement>
+		<system>GitLib</system>
+		<url>http://gitlab.yto.net.cn/nano-projects/nano-framework/issues</url>
+	</issueManagement>
+
+	<modules>
+		<module>nano-commons</module>
+		<module>nano-core</module>
+		<module>nano-orm</module>
+		<module>nano-webmvc</module>
+		<module>nano-server</module>
+		<module>nano-jmx</module>
+		<module>nano-ext</module>
+	</modules>
+
+	<scm>
+		<connection>scm:git:git@gitlab.yto.net.cn:nano-projects/nano-framework.git</connection>
+		<developerConnection>scm:git:git@gitlab.yto.net.cn:nano-projects/nano-framework.git</developerConnection>
+		<url>http://gitlab.yto.net.cn/nano-projects/nano-framework</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<dependencyManagement>
+		<dependencies>
+			<!-- Test -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>${junit-version}</version>
+				<scope>test</scope>
+			</dependency>
+
+			<!-- Logger -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>${slf4j-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>${slf4j-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-log4j12</artifactId>
+				<version>${slf4j-version}</version>
+				<scope>runtime</scope>
+			</dependency>
+			<dependency>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j-version}</version>
+				<!-- <scope>runtime</scope> -->
+			</dependency>
+			<dependency>
+				<groupId>commons-logging</groupId>
+				<artifactId>commons-logging</artifactId>
+				<version>${logging-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-api</artifactId>
+				<version>${apache-log4j-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-core</artifactId>
+				<version>${apache-log4j-version}</version>
+			</dependency>
+
+			<!-- Commons -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec-version}</version>
+			</dependency>
+
+			<!-- Google Guice -->
+			<dependency>
+				<groupId>com.google.inject</groupId>
+				<artifactId>guice</artifactId>
+				<version>${google-guice-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.google.inject.extensions</groupId>
+				<artifactId>guice-multibindings</artifactId>
+				<version>${google-guice-multibindings-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis</artifactId>
+				<version>${mybatis-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.mybatis</groupId>
+				<artifactId>mybatis-guice</artifactId>
+				<version>${mybatis-guice-version}</version>
+			</dependency>
+
+			<!-- Commons -->
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-lang3</artifactId>
+				<version>${commons-lang3-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec-version}</version>
+			</dependency>
+
+			<!-- Servlet环境 -->
+			<dependency>
+				<groupId>javax.servlet</groupId>
+				<artifactId>javax.servlet-api</artifactId>
+				<version>${servlet-api-version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet.jsp</groupId>
+				<artifactId>javax.servlet.jsp-api</artifactId>
+				<version>${servlet-jsp-api-version}</version>
+				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>javax.servlet.jsp.jstl</groupId>
+				<artifactId>javax.servlet.jsp.jstl-api</artifactId>
+				<version>${servlet-jsp-jstl-api-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>fastjson</artifactId>
+				<version>${fastjson-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>mysql</groupId>
+				<artifactId>mysql-connector-java</artifactId>
+				<version>${mysql-connector-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>c3p0</groupId>
+				<artifactId>c3p0</artifactId>
+				<version>${c3p0-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>com.alibaba</groupId>
+				<artifactId>druid</artifactId>
+				<version>${druid-version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+				<version>${jedis-version}</version>
+			</dependency>
+
+			<!-- Netty -->
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-all</artifactId>
+				<version>${netty-all-version}</version>
+			</dependency>
+
+			<!-- Jetty -->
+			<dependency>
+				<groupId>org.eclipse.jetty.aggregate</groupId>
+				<artifactId>jetty-all</artifactId>
+				<version>${jetty-version}</version>
+			</dependency>
+
+			<!-- Jetty Webapp -->
+			<dependency>
+				<groupId>org.eclipse.jetty</groupId>
+				<artifactId>jetty-webapp</artifactId>
+				<version>${jetty-version}</version>
+			</dependency>
+
+			<!-- JSP Support -->
+			<dependency>
+				<groupId>org.glassfish.web</groupId>
+				<artifactId>javax.servlet.jsp</artifactId>
+				<version>${jsp-support-version}</version>
+			</dependency>
+
+			<!-- EL Support -->
+			<dependency>
+				<groupId>org.glassfish.web</groupId>
+				<artifactId>javax.el</artifactId>
+				<version>${jsp-support-version}</version>
+			</dependency>
+
+			<!-- Ganymed SSH2 -->
+			<dependency>
+				<groupId>ch.ethz.ganymed</groupId>
+				<artifactId>ganymed-ssh2</artifactId>
+				<version>${ganymed-version}</version>
+			</dependency>
+
+			<!-- Nano Modules -->
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-core</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-webmvc</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-server</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Nano Extension Modules -->
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-ssh</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-websocket</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-concurrent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Nano ORM Modules -->
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-orm-jdbc</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-orm-mybatis</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-orm-jedis</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+
+			<!-- Nano JMX Modules -->
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-jmx-client</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-jmx-agent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<sourceDirectory>src/main/java</sourceDirectory>
+		<testSourceDirectory>src/test/java</testSourceDirectory>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+			</resource>
+		</resources>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+		</testResources>
+
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.mortbay.jetty</groupId>
+					<artifactId>maven-jetty-plugin</artifactId>
+					<version>${jetty-version}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.tomcat.maven</groupId>
+					<artifactId>tomcat7-maven-plugin</artifactId>
+					<version>${tomcat-version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin-version}</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-source-plugin</artifactId>
+				<version>2.1</version>
+				<configuration>
+					<attach>true</attach>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>compile</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>deploy</id>
+			<build>
+				<defaultGoal>deploy</defaultGoal>
+				<plugins>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-source-plugin</artifactId>
+						<version>${maven-source-plugin-version}</version>
+						<executions>
+							<execution>
+								<id>attach-sources</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-javadoc-plugin</artifactId>
+						<version>${maven-javadoc-plugin-version}</version>
+						<executions>
+							<execution>
+								<id>attach-javadocs</id>
+								<goals>
+									<goal>jar</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
