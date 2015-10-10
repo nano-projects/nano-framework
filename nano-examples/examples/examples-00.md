@@ -51,6 +51,10 @@
 #####6、添加第一个组件服务
 ######6.1、在包org.nanoframework.examples.first.webapp.component下建立HelloWorldComponent接口
 ```java
+import org.nanoframework.core.component.stereotype.Component;
+import org.nanoframework.core.component.stereotype.bind.RequestMapping;
+import org.nanoframework.examples.first.webapp.component.impl.HelloWorldComponentImpl;
+
 @Component
 @ImplementedBy(HelloWorldComponentImpl.class)
 @RequestMapping("/first")
