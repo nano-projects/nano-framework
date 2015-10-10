@@ -30,7 +30,7 @@ public Object byRestfulApiByGet(String value) {
 import org.nanoframework.core.component.stereotype.bind.RequestParam;
 ...
 
-@RequestMapping(value = "/hello/{value}", method = RequestMethod.GET)
+@RequestMapping(value = "/hello/param/{value}", method = RequestMethod.GET)
 Object byRestfulApiByGetParam(@PathVariable("value") String value, @RequestParam(name = "name") String name);
 ```
 
@@ -42,7 +42,7 @@ public Object byRestfulApiByGetParam(String value, String name) {
 }
 ```
 ######2.3、验证Restful
-* 启动服务并访问http://ip:port/first-webapp/first/hello/test?name=hello
+* 启动服务并访问http://ip:port/first-webapp/first/hello/param/test?name=hello
 * 返回结果: Hello Nano Framework by Restful API and GET method, this value is test and name is hello
 
 [首页](https://github.com/nano-projects/nano-framework/blob/master/README.md)
