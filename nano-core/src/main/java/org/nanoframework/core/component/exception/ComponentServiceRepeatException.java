@@ -33,17 +33,15 @@ public class ComponentServiceRepeatException extends ExtensionRuntimeException {
 
 	public ComponentServiceRepeatException(String message) {
 		super(message);
-
 	}
 
 	public ComponentServiceRepeatException(String message, Throwable cause) {
 		super(message, cause);
-
 	}
 	
 	@Override
 	public String getMessage() {
-		return "重复组件服务异常: " + super.getMessage();
+		return "组件服务重复异常: " + super.getMessage();
 	}
 	
 }

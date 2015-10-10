@@ -129,7 +129,7 @@ public class ComponentScan {
 						}
 					});
 				} else
-					throw new ComponentServiceRepeatException("组件服务重复: " + uri);
+					throw new ComponentServiceRepeatException(uri);
 				
 			} else {
 				methodMap.forEach((_uri, _methodMapper) -> {
