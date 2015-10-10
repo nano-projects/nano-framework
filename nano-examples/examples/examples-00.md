@@ -77,6 +77,5 @@ public class HelloWorldComponentImpl implements HelloWorldComponent {
 
 #####8、至此最基础的服务已经搭建完成
 
-[首页](https://github.com/nano-projects/nano-framework/blob/master/README.md)
-
-[下一节](examples-01.md)
+- [首页](https://github.com/nano-projects/nano-framework/blob/master/README.md)
+- [下一节](examples-01.md)
