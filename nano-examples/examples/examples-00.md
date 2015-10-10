@@ -69,6 +69,6 @@ public class HelloWorldComponentImpl implements HelloWordComponent {
 }
 ```
 
-#####7、添加web容器，运行服务，并访问http://<ip>:<port>/first-webapp/first/hello
+#####7、添加web容器，运行服务，并访问http://ip:port/first-webapp/first/hello
 
 #####8、至此最基础的服务已经搭建完成
