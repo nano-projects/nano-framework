@@ -58,14 +58,14 @@ import org.nanoframework.examples.first.webapp.component.impl.HelloWorldComponen
 @Component
 @ImplementedBy(HelloWorldComponentImpl.class)
 @RequestMapping("/first")
-public interface HelloWordComponent {
+public interface HelloWorldComponent {
 	@RequestMapping("/hello")
 	Object hello();
 }
 ```
 ######6.2、在包org.nanoframework.examples.first.webapp.component.impl下建立HelloWorldComponentImpl实现类
 ```java
-public class HelloWorldComponentImpl implements HelloWordComponent {
+public class HelloWorldComponentImpl implements HelloWorldComponent {
 	@Override
 	public Object hello() {
 		return "Hello Nano Framework!";
