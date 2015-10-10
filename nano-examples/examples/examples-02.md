@@ -84,8 +84,9 @@ $.ajax({
 ```
 
 ######3.3、验证PUT请求
-* 启动服务并访问http://ip:port/first-webapp
-* 返回结果: {"info":"SUCCESS","message":"Hello Nano Framework by Restful API and PUT method, this value is 123 and name is postName","status":200}
+启动服务并访问http://ip:port/first-webapp
+
+返回结果: {"info":"SUCCESS","message":"Hello Nano Framework by Restful API and PUT method, this value is 123 and name is postName","status":200}
 
 
 - [首页](https://github.com/nano-projects/nano-framework/blob/master/README.md)
