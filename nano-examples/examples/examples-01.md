@@ -2,6 +2,7 @@
 ====
 
 #####1、pom.xml中添加nano-server依赖
+######1.1、依赖
 ```xml
 <dependency>
 	<groupId>org.nanoframework</groupId>
@@ -43,7 +44,21 @@
 	<scope>provided</scope>
 </dependency>
 ```
-
+######1.2、resources
+```xml
+<build>
+...
+<resources>
+...
+	<resource>
+		<directory>src/main/webapp</directory>
+		<targetPath>${project.basedir}/webRoot/</targetPath>
+	</resource>
+...
+</resources>
+...
+</build>
+```
 #####2、在WEB-INF下添加jetty.xml和webdefault.xml
 ######2.1、jetty.xml
 ```xml
