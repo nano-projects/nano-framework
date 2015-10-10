@@ -32,7 +32,7 @@ import com.google.inject.ImplementedBy;
  */
 @Component
 @ImplementedBy(HelloWorldComponentImpl.class)
-public interface HelloWordComponent {
+public interface HelloWorldComponent {
 	
 	@RequestMapping("/hello")
 	Object hello();

@@ -16,7 +16,7 @@
 package org.nanoframework.examples.first.webapp.component.impl;
 
 import org.nanoframework.core.status.ResultMap;
-import org.nanoframework.examples.first.webapp.component.HelloWordComponent;
+import org.nanoframework.examples.first.webapp.component.HelloWorldComponent;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 import org.nanoframework.web.server.mvc.support.ForwardView;
@@ -25,7 +25,7 @@ import org.nanoframework.web.server.mvc.support.ForwardView;
  * @author yanghe
  * @date 2015年10月9日 下午1:07:52
  */
-public class HelloWorldComponentImpl implements HelloWordComponent {
+public class HelloWorldComponentImpl implements HelloWorldComponent {
 
 	@Override
 	public Object hello() {
