@@ -46,6 +46,6 @@ public Object byRestfulApiByGetParam(String value, String name) {
 * 返回结果: Hello Nano Framework by Restful API and GET method, this value is test and name is hello
 
 
-[上一节](nano-examples/examples/examples-01.md)
+[上一节](examples-01.md)
 
-[下一节](nano-examples/examples/examples-03.md)
+[下一节](examples-03.md)
