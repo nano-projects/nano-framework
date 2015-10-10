@@ -88,8 +88,6 @@ $.ajax({
 * 返回结果: {"info":"SUCCESS","message":"Hello Nano Framework by Restful API and PUT method, this value is 123 and name is postName","status":200}
 
 
-[首页](https://github.com/nano-projects/nano-framework/blob/master/README.md)
-
-[上一节](examples-01.md)
-
-[下一节](examples-03.md)
+- [首页](https://github.com/nano-projects/nano-framework/blob/master/README.md)
+- [上一节](examples-01.md)
+- [下一节](examples-03.md)
