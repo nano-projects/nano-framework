@@ -20,6 +20,7 @@ import org.nanoframework.examples.first.webapp.component.HelloWorldComponent;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 import org.nanoframework.web.server.mvc.support.ForwardView;
+import org.nanoframework.web.server.mvc.support.RedirectView;
 
 /**
  * @author yanghe
@@ -36,6 +37,11 @@ public class HelloWorldComponentImpl implements HelloWorldComponent {
 	public Object byRestfulApiByGet(String value) {
 		return "Hello Nano Framework by Restful API and GET method, this value is " + value;
 	}
+
+	@Override
+	public Object byRestfulApiByGetParam(String value, String name) {
+		return "Hello Nano Framework by Restful API and GET method, this value is " + value + " and name is " + name;
+	}
 	
 	@Override
 	public Object byRestfulApiByPut(String value, String name) {
@@ -49,7 +55,13 @@ public class HelloWorldComponentImpl implements HelloWorldComponent {
 	
 	@Override
 	public View forward(String value, Model model) {
+		model.addAttribute("value", "Hello Nano Framework by Forward API, and value is " + value);
+		return new ForwardView("/pages/forword.jsp", true);
+	}
+	
+	@Override
+	public View redirect(String value, Model model) {
 		model.addAttribute("value", "Hello Nano Framework by Redirect API, and value is " + value);
-		return new ForwardView("/pages/Page.jsp", true);
+		return new RedirectView("/pages/redirect.jsp");
 	}
 }

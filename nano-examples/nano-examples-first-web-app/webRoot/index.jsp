@@ -3,8 +3,8 @@
 <script type="text/javascript" src="js/jquery.min.js"></script>
 <script type="text/javascript">
 $.ajax({
-	url : '/first-web-app/hello/123' , 
-	type : "PATCH" ,
+	url : '/first-webapp/first/hello/123' , 
+	type : "PUT" ,
 	contentType: "application/x-www-form-urlencoded; charset=utf-8" , 
 	data : {
 		name: 'postName'

@@ -6,6 +6,6 @@
 <title>Insert title here</title>
 </head>
 <body>
-  <div>Value: <%=request.getAttribute("value") %></div>
+  <div>Forword: <%=request.getAttribute("value") %></div>
 </body>
 </html>

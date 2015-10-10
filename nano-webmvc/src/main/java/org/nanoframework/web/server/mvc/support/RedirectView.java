@@ -25,6 +25,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.web.server.mvc.View;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 /**
  * 视图实现
  * @author yanghe
@@ -45,11 +48,13 @@ public class RedirectView implements View {
 		if(response == null || request == null)
 			return ;
 		
+		StringBuilder builder = new StringBuilder();
 		if(model != null && model.size() > 0) {
-			model.forEach((name, o) -> request.setAttribute(name, o));
+			builder.append("?");
+			model.forEach((name, o) -> builder.append(name).append("=").append(toJSONString(o)));
 		}
 		
-		String encodedRedirectURL = response.encodeRedirectURL(page);
+		String encodedRedirectURL = response.encodeRedirectURL(page + builder.toString());
 		String root;
 		if(!encodedRedirectURL.startsWith(root = System.getProperty(Constants.CONTEXT_ROOT)))
 			encodedRedirectURL = root + encodedRedirectURL;
@@ -62,5 +67,14 @@ public class RedirectView implements View {
 	public String getPage() {
 		return page;
 	}
-
+	
+	private String toJSONString(Object value) {
+		if(value == null)
+			return null;
+		
+		if(value instanceof String)
+			return (String) value;
+		
+		return JSON.toJSONString(value, SerializerFeature.WriteDateUseDateFormat);
+	}
 }

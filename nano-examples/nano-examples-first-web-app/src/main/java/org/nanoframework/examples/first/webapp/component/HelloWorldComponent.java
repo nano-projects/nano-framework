@@ -32,6 +32,7 @@ import com.google.inject.ImplementedBy;
  */
 @Component
 @ImplementedBy(HelloWorldComponentImpl.class)
+@RequestMapping("/first")
 public interface HelloWorldComponent {
 	
 	@RequestMapping("/hello")
@@ -39,6 +40,9 @@ public interface HelloWorldComponent {
 	
 	@RequestMapping(value = "/hello/{value}", method = RequestMethod.GET)
 	Object byRestfulApiByGet(@PathVariable("value") String value);
+	
+	@RequestMapping(value = "/hello/param/{value}", method = RequestMethod.GET)
+	Object byRestfulApiByGetParam(@PathVariable("value") String value, @RequestParam(name = "name") String name);
 	
 	@RequestMapping(value = "/hello/{value}", method = RequestMethod.PUT)
 	Object byRestfulApiByPut(@PathVariable("value") String value, @RequestParam(name = "name") String name);
@@ -48,4 +52,7 @@ public interface HelloWorldComponent {
 	
 	@RequestMapping("/hello/forward/{value}")
 	View forward(@PathVariable("value") String value, Model model);
+	
+	@RequestMapping("/hello/redirect/{value}")
+	View redirect(@PathVariable("value") String value, Model model);
 }

@@ -25,6 +25,7 @@ import static org.nanoframework.core.status.ComponentStatus.UNSUPPORT_REQUEST_ME
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -179,7 +180,7 @@ public class HttpRequestFilter implements Filter {
 			case TRACE:
 			case PATCH:
 				StringBuilder builder = new StringBuilder();
-				BufferedReader reader = request.getReader();
+				BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
 				String line;
 				while ((line = reader.readLine()) != null) 
 					builder.append(line);
