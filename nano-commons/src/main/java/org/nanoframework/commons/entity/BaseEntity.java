@@ -104,7 +104,7 @@ public abstract class BaseEntity implements Cloneable {
 	}
 	
 	/**
-	 * 设置属性值
+	 * 设置属性值, 默认不区分大小写
 	 * 
 	 * @param fieldName 属性名
 	 * @param value 属性值
@@ -115,6 +115,17 @@ public abstract class BaseEntity implements Cloneable {
 	 * @throws IllegalAccessException 
 	 */
 	public void _setAttributeValue(String fieldName, Object value) {
+		_setAttributeValue(fieldName, value, false);
+	}
+	
+	/**
+	 * 设置属性值
+	 * 
+	 * @param fieldName 属性名
+	 * @param value 属性值
+	 * @param isCase 区分大小写，true时区分大小写，默认false
+	 */
+	public void _setAttributeValue(String fieldName, Object value, boolean isCase) {
 		if(StringUtils.isEmpty(fieldName))
 			throw new IllegalArgumentException("属性名不能为空");
 			
@@ -124,7 +135,8 @@ public abstract class BaseEntity implements Cloneable {
 
 		try {
 			for (Field field : fields) {
-				if (fieldName.equals(field.getName())) {
+				/** 设置不区分大小写 */
+				if((!isCase && fieldName.toUpperCase().equals(field.getName().toUpperCase())) || (isCase && fieldName.equals(field.getName()))) {
 					String fieldSetName = parSetName(field.getName());
 					if (!checkSetMet(methods, fieldSetName)) 
 						continue;
@@ -133,7 +145,7 @@ public abstract class BaseEntity implements Cloneable {
 					String typeName = field.getType().getName();
 					fieldSetMet.invoke(this, ClassCast.cast(value, typeName));
 					break;
-				}
+				} 
 			}
 		} catch(NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 			throw new EntityException(e.getMessage(), e);
