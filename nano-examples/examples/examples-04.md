@@ -1,0 +1,168 @@
+示例5: 进阶四 - 启用多数据源支持并添加多数据源事务处理
+====
+
+####1、修改配置并添加新的数据源配置
+######1.1、修改context.properties
+```properties
+# 将属性mapper.package.jdbc=/examples-jdbc.properties修改为如下配置
+mapper.package.root=examples,examples2
+mapper.package.jdbc.examples=/examples-jdbc.properties
+mapper.package.jdbc.examples2=/examples2-jdbc.properties
+```
+######1.2、添加examples2-jdbc.properties
+```properties
+JDBC.environment.id=examples2
+
+JDBC.pool.type=DRUID
+JDBC.driver=org.h2.Driver
+JDBC.url=jdbc:h2:~/test2
+JDBC.username=test
+JDBC.password=test
+JDBC.autoCommit=false
+
+#######################################################################################
+####################        DRUID连接池配置        ######################################
+#######################################################################################
+# 初始化连接数量
+druid.initialSize=1
+
+# 最大并发连接数
+druid.maxActive=5
+
+# 最大空闲连接数
+druid.maxIdle=5
+
+# 最小空闲连接数
+druid.minIdle=1
+
+# 配置获取连接等待超时的时间
+druid.maxWait=30000
+
+# 超过时间限制是否回收 
+druid.removeAbandoned=true
+
+# 超过时间限制多长 
+druid.removeAbandonedTimeout=180
+
+# 配置间隔多久才进行一次检测，检测需要关闭的空闲连接，单位是毫秒 
+druid.timeBetweenEvictionRunsMillis=10000
+
+# 配置一个连接在池中最小生存的时间，单位是毫秒
+druid.minEvictableIdleTimeMillis=60000
+
+# 用来检测连接是否有效的sql，要求是一个查询语句
+druid.validationQuery=select 1
+
+# 申请连接的时候检测
+druid.testWhileIdle=true
+
+# 申请连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+druid.testOnBorrow=false
+
+# 归还连接时执行validationQuery检测连接是否有效，配置为true会降低性能
+druid.testOnReturn=false
+
+# 打开PSCache，并且指定每个连接上PSCache的大小
+druid.poolPreparedStatements=true
+
+druid.maxPoolPreparedStatementPerConnectionSize=20
+
+# 属性类型是字符串，通过别名的方式配置扩展插件，
+# 常用的插件有： 
+#	监控统计用的filter:stat 
+#	日志用的filter:log4j  
+# 	防御SQL注入的filter:wall
+druid.filters=stat
+```
+
+####2、新建数据库及表结构
+######2.1、启动服务并访问 http://ip:port/first-webapp/console，使用以下信息登录
+```properties
+JDBC.url=jdbc:h2:~/test2
+JDBC.username=test
+JDBC.password=test
+```
+######2.2、建表
+```sql
+create table t_nano_test (
+id int primary key,
+name varchar(255)
+)
+```
+
+####3、添加多数据源操作代码
+######3.1、修改JdbcExamplesDao及JdbcExamplesDaoImpl，添加delete方法
+```java
+long delete(int id) throws SQLException;
+```
+```java
+private final String deleteById = "DELETE FROM T_NANO_TEST WHERE ID = ? ";
+
+@Override
+public long delete(int id) throws SQLException {
+	return get(DataSource.EXAMPLES.value()).executeUpdate(deleteById, new ArrayList<Object>() {
+		private static final long serialVersionUID = 1L; { 
+		add(id); 
+	}});
+}
+```
+######3.2、增加JdbcExamplesMoveDao及JdbcExamplesMoveDaoImpl
+```java
+@ImplementedBy(JdbcExamplesMoveDaoImpl.class)
+public interface JdbcExamplesMoveDao { 
+	long insert(Test test) throws SQLException;
+}
+```
+```java
+public class JdbcExamplesMoveDaoImpl implements JdbcExamplesMoveDao {
+
+	private final String insert = "INSERT INTO T_NANO_TEST(ID, NAME) VALUES (?, ?) ";
+	
+	@Override
+	public long insert(Test test) throws SQLException {
+		List<Object> values = new ArrayList<>();
+		values.add(test.getId());
+		values.add(test.getName());
+		return get(DataSource.EXAMPLES2).executeUpdate(insert, values);
+	}
+}
+```
+######3.3、添加Component实现，修改JdbcExamplesComponent及JdbcExamplesComponentImpl
+```java
+@RequestMapping("/persist/move/{id}")
+Object move(@PathVariable("id") Integer id);
+```
+```java
+@Inject
+private JdbcExamplesMoveDao examplesMoveDao;
+
+@JdbcTransactional(envId = {DataSource.EXAMPLES, DataSource.EXAMPLES2})
+@Override
+public Object move(Integer id) {
+	try {
+		Test test = examplsDao.select(id);
+		if(test == null) {
+			return ResultMap.create(200, "Not Found Data", "WARNING");
+		} else {
+			if(examplesMoveDao.insert(test) > 0) {
+				examplsDao.delete(id);
+			}
+		}
+	} catch(Exception e) {
+		throw new ComponentInvokeException(e.getMessage(), e);
+	}
+	
+	return ResultMap.create(200, "OK", "SUCCESS");
+}
+```
+
+####4、启动服务后进行以下操作
+* http://ip:port/first-webapp/jdbc/persist/move/1
+* http://ip:port/first-webapp/console并登陆test2库查询迁移数据
+
+####4、至此，多数据源及多数据源事务的示例就开发完了
+
+- [首页](https://github.com/nano-projects/nano-framework/blob/master/README.md)
+- [上一节](examples-03.md)
+- [下一节](examples-05.md)
+

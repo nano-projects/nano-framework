@@ -20,10 +20,12 @@ import java.util.Map;
 
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.core.status.ResultMap;
 import org.nanoframework.examples.first.webapp.component.JdbcExamplesComponent;
 import org.nanoframework.examples.first.webapp.constant.DataSource;
 import org.nanoframework.examples.first.webapp.dao.JdbcExamplesDao;
+import org.nanoframework.examples.first.webapp.dao.JdbcExamplesMoveDao;
 import org.nanoframework.examples.first.webapp.domain.Test;
 import org.nanoframework.orm.jdbc.binding.JdbcTransactional;
 
@@ -39,7 +41,10 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 	@Inject
 	private JdbcExamplesDao examplsDao;
 	
-	@JdbcTransactional(envId = DataSource.EXAMPLES_STRING)
+	@Inject
+	private JdbcExamplesMoveDao examplesMoveDao;
+	
+	@JdbcTransactional(envId = DataSource.EXAMPLES)
 	@Override
 	public Object persist(Integer id, String name) {
 		Test test = new Test(id, name);
@@ -82,4 +87,22 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 		}
 	}
 
+	@JdbcTransactional(envId = {DataSource.EXAMPLES, DataSource.EXAMPLES2})
+	@Override
+	public Object move(Integer id) {
+		try {
+			Test test = examplsDao.select(id);
+			if(test == null) {
+				return ResultMap.create(200, "Not Found Data", "WARNING");
+			} else {
+				if(examplesMoveDao.insert(test) > 0) {
+					examplsDao.delete(id);
+				}
+			}
+		} catch(Exception e) {
+			throw new ComponentInvokeException(e.getMessage(), e);
+		}
+		
+		return ResultMap.create(200, "OK", "SUCCESS");
+	}
 }

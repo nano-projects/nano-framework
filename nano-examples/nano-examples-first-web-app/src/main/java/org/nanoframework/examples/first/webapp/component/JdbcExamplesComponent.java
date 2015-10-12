@@ -39,4 +39,7 @@ public interface JdbcExamplesComponent {
 	
 	@RequestMapping("/find/{id}")
 	Object findById(@PathVariable("id") Integer id);
+	
+	@RequestMapping("/persist/move/{id}")
+	Object move(@PathVariable("id") Integer id);
 }

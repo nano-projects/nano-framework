@@ -16,21 +16,17 @@
 package org.nanoframework.examples.first.webapp.dao;
 
 import java.sql.SQLException;
-import java.util.List;
 
-import org.nanoframework.examples.first.webapp.dao.impl.JdbcExamplesDaoImpl;
+import org.nanoframework.examples.first.webapp.dao.impl.JdbcExamplesMoveDaoImpl;
 import org.nanoframework.examples.first.webapp.domain.Test;
 
 import com.google.inject.ImplementedBy;
 
 /**
  * @author yanghe
- * @date 2015年10月12日 上午10:42:40
+ * @date 2015年10月12日 下午3:28:38
  */
-@ImplementedBy(JdbcExamplesDaoImpl.class)
-public interface JdbcExamplesDao {
+@ImplementedBy(JdbcExamplesMoveDaoImpl.class)
+public interface JdbcExamplesMoveDao { 
 	long insert(Test test) throws SQLException;
-	List<Test> select() throws SQLException;
-	Test select(int id) throws SQLException;
-	long delete(int id) throws SQLException;
 }

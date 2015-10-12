@@ -37,19 +37,20 @@ public class JdbcExamplesDaoImpl implements JdbcExamplesDao {
 	private final String insert = "INSERT INTO T_NANO_TEST(ID, NAME) VALUES (?, ?) ";
 	private final String select = "SELECT ID, NAME FROM T_NANO_TEST ";
 	private final String selectById = "SELECT ID, NAME FROM T_NANO_TEST WHERE ID = ? ";
+	private final String deleteById = "DELETE FROM T_NANO_TEST WHERE ID = ? ";
 	
 	@Override
 	public long insert(Test test) throws SQLException {
 		List<Object> values = new ArrayList<>();
 		values.add(test.getId());
 		values.add(test.getName());
-		return get(DataSource.EXAMPLES.value()).executeUpdate(insert, values);
+		return get(DataSource.EXAMPLES).executeUpdate(insert, values);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Test> select() throws SQLException {
-		Result result = get(DataSource.EXAMPLES.value()).executeQuery(select);
+		Result result = get(DataSource.EXAMPLES).executeQuery(select);
 		if(result.getRowCount() > 0) {
 			List<Test> tests = new ArrayList<>();
 			Arrays.asList(result.getRows()).forEach(row -> tests.add(Test._getMapToBean(row, Test.class)));
@@ -64,7 +65,7 @@ public class JdbcExamplesDaoImpl implements JdbcExamplesDao {
 	public Test select(int id) throws SQLException {
 		List<Object> values = new ArrayList<>();
 		values.add(id);
-		Result result = get(DataSource.EXAMPLES.value()).executeQuery(selectById, values);
+		Result result = get(DataSource.EXAMPLES).executeQuery(selectById, values);
 		if(result.getRowCount() > 0) {
 			return Test._getMapToBean(result.getRows()[0], Test.class);
 		}
@@ -72,4 +73,11 @@ public class JdbcExamplesDaoImpl implements JdbcExamplesDao {
 		return null;
 	}
 
+	@Override
+	public long delete(int id) throws SQLException {
+		return get(DataSource.EXAMPLES).executeUpdate(deleteById, new ArrayList<Object>() {
+			private static final long serialVersionUID = 1L; { 
+			add(id); 
+		}});
+	}
 }

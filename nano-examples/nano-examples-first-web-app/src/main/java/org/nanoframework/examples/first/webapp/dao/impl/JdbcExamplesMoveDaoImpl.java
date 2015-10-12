@@ -13,24 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.examples.first.webapp.dao;
+package org.nanoframework.examples.first.webapp.dao.impl;
+
+import static org.nanoframework.orm.jdbc.binding.GlobalJdbcManager.get;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.nanoframework.examples.first.webapp.dao.impl.JdbcExamplesDaoImpl;
+import org.nanoframework.examples.first.webapp.constant.DataSource;
+import org.nanoframework.examples.first.webapp.dao.JdbcExamplesMoveDao;
 import org.nanoframework.examples.first.webapp.domain.Test;
-
-import com.google.inject.ImplementedBy;
 
 /**
  * @author yanghe
- * @date 2015年10月12日 上午10:42:40
+ * @date 2015年10月12日 下午3:28:47
  */
-@ImplementedBy(JdbcExamplesDaoImpl.class)
-public interface JdbcExamplesDao {
-	long insert(Test test) throws SQLException;
-	List<Test> select() throws SQLException;
-	Test select(int id) throws SQLException;
-	long delete(int id) throws SQLException;
+public class JdbcExamplesMoveDaoImpl implements JdbcExamplesMoveDao {
+
+	private final String insert = "INSERT INTO T_NANO_TEST(ID, NAME) VALUES (?, ?) ";
+	
+	@Override
+	public long insert(Test test) throws SQLException {
+		List<Object> values = new ArrayList<>();
+		values.add(test.getId());
+		values.add(test.getName());
+		return get(DataSource.EXAMPLES2).executeUpdate(insert, values);
+	}
 }

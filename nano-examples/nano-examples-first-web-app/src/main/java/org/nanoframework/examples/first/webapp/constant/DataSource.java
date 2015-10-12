@@ -19,18 +19,8 @@ package org.nanoframework.examples.first.webapp.constant;
  * @author yanghe
  * @date 2015年10月12日 上午10:49:20
  */
-public enum DataSource {
-	EXAMPLES("examples");
+public class DataSource {
+	public static final String EXAMPLES = "examples";
+	public static final String EXAMPLES2 = "examples2";
 	
-	public static final String EXAMPLES_STRING = "examples";
-	
-	private String value;
-	
-	private DataSource(String value) {
-		this.value = value;
-	}
-	
-	public String value() {
-		return value;
-	}
 }

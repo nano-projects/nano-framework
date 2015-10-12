@@ -56,13 +56,13 @@ public class H2DBServerListener implements ServletContextListener {
 	<listener-class>org.nanoframework.examples.first.webapp.listener.H2DBServerListener</listener-class>
 </listener>
 ```
-######1.4、启动服务并访问 http://ip:port/first-webapp/console
-######1.5、添加数据库并新建测试表
+######1.4、启动服务并访问 http://ip:port/first-webapp/console，使用以下信息登录
 ```properties
 JDBC.url=jdbc:h2:~/test
 JDBC.username=test
 JDBC.password=test
 ```
+######1.5、新建测试表
 ```sql
 create table t_nano_test (
 id int primary key,
@@ -71,7 +71,11 @@ name varchar(255)
 ```
 
 ####2、开发基于JDBC的服务
-######2.1、添加数据源属性文件examples-jdbc.properties(参照nano-orm-jdbc/src/main/resources/jdbc-templet.properties模板)
+######2.1、context.properties中添加jdbc支持
+```properties
+mapper.package.jdbc=/examples-jdbc.properties
+```
+######2.2、在src/main/resources下添加数据源属性文件examples-jdbc.properties([模板](https://github.com/nano-projects/nano-framework/blob/master/nano-orm/nano-orm-jdbc/src/main/resources/jdbc-template.properties))
 ```properties
 JDBC.environment.id=examples
 
@@ -136,7 +140,7 @@ druid.maxPoolPreparedStatementPerConnectionSize=20
 # 	防御SQL注入的filter:wall
 druid.filters=stat
 ```
-######2.2、添加Domain
+######2.3、添加Domain
 ```java
 import org.nanoframework.commons.entity.BaseEntity;
 
@@ -168,7 +172,7 @@ public class Test extends BaseEntity {
 
 }
 ```
-######2.3、添加Dao接口与实现
+######2.4、添加Dao接口与实现
 ```java
 import org.nanoframework.examples.first.webapp.dao.impl.JdbcExamplesDaoImpl;
 import org.nanoframework.examples.first.webapp.domain.Test;
@@ -201,13 +205,13 @@ public class JdbcExamplesDaoImpl implements JdbcExamplesDao {
 		List<Object> values = new ArrayList<>();
 		values.add(test.getId());
 		values.add(test.getName());
-		return get(DataSource.EXAMPLES.value()).executeUpdate(insert);
+		return get(DataSource.EXAMPLES).executeUpdate(insert);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Test> select() throws SQLException {
-		Result result = get(DataSource.EXAMPLES.value()).executeQuery(select);
+		Result result = get(DataSource.EXAMPLES).executeQuery(select);
 		if(result.getRowCount() > 0) {
 			List<Test> tests = new ArrayList<>();
 			Arrays.asList(result.getRows()).forEach(row -> tests.add(Test._getMapToBean(row, Test.class)));
@@ -221,7 +225,7 @@ public class JdbcExamplesDaoImpl implements JdbcExamplesDao {
 	public Test select(int id) throws SQLException {
 		List<Object> values = new ArrayList<>();
 		values.add(id);
-		Result result = get(DataSource.EXAMPLES.value()).executeQuery(selectById, values);
+		Result result = get(DataSource.EXAMPLES).executeQuery(selectById, values);
 		if(result.getRowCount() > 0) {
 			return Test._getMapToBean(result.getRows()[0], Test.class);
 		}
@@ -231,7 +235,7 @@ public class JdbcExamplesDaoImpl implements JdbcExamplesDao {
 
 }
 ```
-######2.4、添加Component接口与实现
+######2.5、添加Component接口与实现
 ```java
 @Component
 @ImplementedBy(JdbcExamplesComponentImpl.class)
@@ -254,7 +258,7 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 	@Inject
 	private JdbcExamplesDao examplsDao;
 	
-	@JdbcTransactional(envId = DataSource.EXAMPLES_STRING)
+	@JdbcTransactional(envId = DataSource.EXAMPLES)
 	@Override
 	public Object persist(Integer id, String name) {
 		Test test = new Test(id, name);
