@@ -18,6 +18,8 @@ package org.nanoframework.examples.first.webapp.component.impl;
 import java.util.List;
 import java.util.Map;
 
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.core.status.ResultMap;
 import org.nanoframework.examples.first.webapp.component.JdbcExamplesComponent;
 import org.nanoframework.examples.first.webapp.constant.DataSource;
@@ -32,7 +34,8 @@ import com.google.inject.Inject;
  * @date 2015年10月12日 上午11:03:47
  */
 public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
-
+	private Logger LOG = LoggerFactory.getLogger(JdbcExamplesComponentImpl.class);
+	
 	@Inject
 	private JdbcExamplesDao examplsDao;
 	
@@ -47,7 +50,7 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 			else 
 				return ResultMap.create(200, "写入数据库失败", "ERROR");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOG.error("写入数据库异常: " + e.getMessage(), e);
 			return ResultMap.create(500, "写入数据库异常: " + e.getMessage(), e.getClass().getName());
 		}
 	}
@@ -61,6 +64,7 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 			map.put("rows", testList);
 			return map;
 		} catch(Exception e) {
+			LOG.error("查询数据异常: " + e.getMessage(), e);
 			return ResultMap.create(500, "查询数据异常: " + e.getMessage() , e.getClass().getName());
 		}
 	}
@@ -73,6 +77,7 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 			map.put("data", test);
 			return map;
 		} catch(Exception e) {
+			LOG.error("查询数据异常: " + e.getMessage(), e);
 			return ResultMap.create(500, "查询数据异常: " + e.getMessage() , e.getClass().getName());
 		}
 	}

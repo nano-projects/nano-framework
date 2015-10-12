@@ -249,7 +249,8 @@ public interface JdbcExamplesComponent {
 ```
 ```java
 public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
-
+	private Logger LOG = LoggerFactory.getLogger(JdbcExamplesComponentImpl.class);
+	
 	@Inject
 	private JdbcExamplesDao examplsDao;
 	
@@ -264,7 +265,7 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 			else 
 				return ResultMap.create(200, "写入数据库失败", "ERROR");
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOG.error("写入数据库异常: " + e.getMessage(), e);
 			return ResultMap.create(500, "写入数据库异常: " + e.getMessage(), e.getClass().getName());
 		}
 	}
@@ -278,6 +279,7 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 			map.put("rows", testList);
 			return map;
 		} catch(Exception e) {
+			LOG.error("查询数据异常: " + e.getMessage(), e);
 			return ResultMap.create(500, "查询数据异常: " + e.getMessage() , e.getClass().getName());
 		}
 	}
@@ -290,6 +292,7 @@ public class JdbcExamplesComponentImpl implements JdbcExamplesComponent {
 			map.put("data", test);
 			return map;
 		} catch(Exception e) {
+			LOG.error("查询数据异常: " + e.getMessage(), e);
 			return ResultMap.create(500, "查询数据异常: " + e.getMessage() , e.getClass().getName());
 		}
 	}
