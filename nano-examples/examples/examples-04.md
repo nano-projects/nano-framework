@@ -160,7 +160,7 @@ public Object move(Integer id) {
 * http://ip:port/first-webapp/jdbc/persist/move/1
 * http://ip:port/first-webapp/console并登陆test2库查询迁移数据
 
-####4、至此，多数据源及多数据源事务的示例就开发完了
+####5、至此，多数据源及多数据源事务的示例就开发完了
 
 - [首页](https://github.com/nano-projects/nano-framework/blob/master/README.md)
 - [上一节](examples-03.md)
