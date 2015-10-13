@@ -10,9 +10,9 @@
 	<version>${nano-version}</version>
 </dependency>
 ```
-######1.2、添加MyBatis数据源
+######1.2、在src/main/resources下添加MyBatis数据源 examples-mybatis.properties
 ```properties
-mybatis.environment.id=examples
+mybatis.environment.id=mybatis-examples
 mapper.package.name=org.nanoframework.examples.first.webapp.mapper
 
 JDBC.pool.type=DRUID
