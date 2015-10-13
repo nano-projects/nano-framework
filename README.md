@@ -12,3 +12,4 @@ Java MVC + ORM框架 Nano Framework
 - [示例3: 进阶二 - Restful API与带参服务](nano-examples/examples/examples-02.md)
 - [示例4: 进阶三 - 添加H2数据库并使用JDBC进行持久层开发](nano-examples/examples/examples-03.md)
 - [示例5: 进阶四 - 启用多数据源支持并添加多数据源事务处理](nano-examples/examples/examples-04.md)
+- [示例6: 进阶五 - 使用Mybatis进行持久层开发](nano-examples/examples/examples-05.md)
