@@ -33,7 +33,7 @@ public class BeforeAndAfterInterceptor implements MethodInterceptor {
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		BeforeAndAfter beforeAndAfter = invocation.getMethod().getAnnotation(BeforeAndAfter.class);
 		Before before = beforeAndAfter.before();
-		Method method = before.classType().getMethod(before.methodName());
+		Method beforeMethod = before.classType().getMethod(before.methodName());
 		Object beforeInstance;
 		if(before.singleton()) {
 			if((beforeInstance = Globals.get(before.classType())) == null) {
@@ -44,7 +44,7 @@ public class BeforeAndAfterInterceptor implements MethodInterceptor {
 			beforeInstance = before.classType().newInstance();
 		
 		After after = beforeAndAfter.after();
-		method = after.classType().getMethod(after.methodName());
+		Method afterMethod = after.classType().getMethod(after.methodName());
 		Object afterInstance;
 		if(after.singleton()) {
 			if((afterInstance = Globals.get(after.classType())) == null) {
@@ -55,10 +55,10 @@ public class BeforeAndAfterInterceptor implements MethodInterceptor {
 			afterInstance = after.classType().newInstance();
 		
 		try { 
-			method.invoke(beforeInstance);
+			beforeMethod.invoke(beforeInstance);
 			return invocation.proceed();
 		} finally {
-			method.invoke(afterInstance);
+			afterMethod.invoke(afterInstance);
 		}
 	}
 
