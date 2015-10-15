@@ -9,7 +9,7 @@ Java MVC + ORM框架 Nano Framework
 ```shell
 git clone git@github.com:nano-projects/nano-framework.git
 cd nano-framework
-mvn clean install
+mvn clean install -Dmaven.test.skip=true
 ```
 
 使用
