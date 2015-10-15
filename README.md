@@ -4,6 +4,57 @@ Java MVC + ORM框架 Nano Framework
 	Nano Framework基于Google Guice框架进行开发，使用Guice的IoC和AOP特性可以快速的定义和开发组件及服务。
 	设计初衷是减少代码量，让开发人员专注于业务层代码的开发。
 	
+安装
+----
+```shell
+git clone git@github.com:nano-projects/nano-framework.git
+cd nano-framework
+mvn clean install
+```
+
+使用
+----
+####1、添加mvc依赖
+```xml
+<dependency>
+	<groupId>org.nanoframework</groupId>
+	<artifactId>nano-webmvc</artifactId>
+	<version>1.2.0-RC1</version>
+</dependency>
+```
+####2、配置web.xml
+```xml
+<filter>
+	<filter-name>httpRequestFilter</filter-name>
+	<filter-class>org.nanoframework.web.server.filter.HttpRequestFilter</filter-class>
+</filter>
+
+<filter-mapping>
+	<filter-name>httpRequestFilter</filter-name>
+	<url-pattern>/*</url-pattern>
+</filter-mapping>
+
+<servlet>
+	<servlet-name>Dispatcher-Servlet</servlet-name>
+	<servlet-class>org.nanoframework.web.server.servlet.DispatcherServlet</servlet-class>
+	<init-param>
+		<param-name>context</param-name>
+		<param-value>/context.properties</param-value>
+	</init-param>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>Dispatcher-Servlet</servlet-name>
+	<url-pattern>/dispatcher/*</url-pattern>
+</servlet-mapping>
+```
+####3、添加属性文件context.properties
+```properties
+# web根路径
+context.root=/first-webapp
+```
+	
 示例代码逐步更新中
 ----
 
