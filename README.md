@@ -4,6 +4,11 @@ Java MVC + ORM框架 Nano Framework
 	Nano Framework基于Google Guice框架进行开发，使用Guice的IoC和AOP特性可以快速的定义和开发组件及服务。
 	设计初衷是减少代码量，让开发人员专注于业务层代码的开发。
 	
+	
+环境要求
+----
+Nano Framework基于JDK8进行开发，内部使用了JDK8的新特性，使用时必须使用JDK8进行开发和编译
+
 安装
 ----
 ```shell
