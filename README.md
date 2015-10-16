@@ -7,7 +7,7 @@ Java MVC + ORM框架 Nano Framework
 	
 环境要求
 ----
-Nano Framework基于JDK8进行开发，内部使用了JDK8的新特性，使用时必须使用JDK8进行开发和编译
+	Nano Framework基于JDK8进行开发，内部使用了JDK8的新特性，使用时必须使用JDK8进行开发和编译
 
 安装
 ----
