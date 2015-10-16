@@ -50,11 +50,46 @@ public class H2DBServerListener implements ServletContextListener {
 
 }
 ```
-######1.3、修改web.xml，添加listener
+######1.3、修改web.xml，添加listener和servlet
 ```xml
 <listener>
 	<listener-class>org.nanoframework.examples.first.webapp.listener.H2DBServerListener</listener-class>
 </listener>
+
+...
+<servlet>
+	<servlet-name>H2Console</servlet-name>
+	<servlet-class>org.h2.server.web.WebServlet</servlet-class>
+	<init-param>
+		<param-name>webAllowOthers</param-name>
+		<param-value></param-value>
+	</init-param>
+	<init-param>
+		<param-name>trace</param-name>
+		<param-value></param-value>
+	</init-param>
+	<load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+	<servlet-name>H2Console</servlet-name>
+	<url-pattern>/console/*</url-pattern>
+</servlet-mapping>
+
+<!-- 修改Dispatcher-Servlet的启动参数load-on-startup为2，优先启动数据库 -->
+<servlet>
+	<servlet-name>Dispatcher-Servlet</servlet-name>
+	<servlet-class>org.nanoframework.web.server.servlet.DispatcherServlet</servlet-class>
+	<init-param>
+		<param-name>context</param-name>
+		<param-value>/context.properties</param-value>
+	</init-param>
+	<load-on-startup>2</load-on-startup>
+</servlet>
+
+<servlet-mapping>
+	<servlet-name>Dispatcher-Servlet</servlet-name>
+	<url-pattern>/dispatcher/*</url-pattern>
+</servlet-mapping>
 ```
 ######1.4、启动服务并访问 http://ip:port/first-webapp/console，使用以下信息登录
 ```properties
