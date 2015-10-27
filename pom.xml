@@ -430,6 +430,15 @@
 							</execution>
 						</executions>
 					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-release-plugin</artifactId>
+						<version>2.5.2</version>
+						<configuration>
+							<tagBase>https://github.com/nano-projects/nano-framework/tags</tagBase>
+							<useReleaseProfile>false</useReleaseProfile>
+						</configuration>
+					</plugin>
 				</plugins>
 			</build>
 		</profile>
