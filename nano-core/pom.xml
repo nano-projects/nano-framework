@@ -23,8 +23,18 @@
 			<artifactId>guice</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-commons</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.nanoframework</groupId>
+			<artifactId>nano-orm-jdbc</artifactId>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
