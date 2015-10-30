@@ -26,17 +26,17 @@ import org.nanoframework.core.plugins.PluginLoader;
 public class DefaultPluginLoader extends PluginLoader {
 
 	@Override
-	public void configProperties() {
+	protected void configProperties() {
 		addProperties(Constants.MAIN_CONTEXT);
 	}
-	
+
 	@Override
-	public void configModules() {
+	protected void configModules() {
 		addModule(new AOPModule());
 	}
 
 	@Override
-	public void configPlugin() {
+	protected void configPlugin() {
 		addPlugin(new JedisPlugin());
 		addPlugin(new QuartzPlugin());
 		addPlugin(new WebSocketPlugin());

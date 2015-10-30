@@ -111,9 +111,9 @@ public abstract class PluginLoader {
 		LOG.info("加载插件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
 	}
 	
-	public abstract void configProperties();
-	public abstract void configModules();
-	public abstract void configPlugin();
+	protected abstract void configProperties();
+	protected abstract void configModules();
+	protected abstract void configPlugin();
 	
 	protected void addProperties(String path) {
 		Assert.hasLength(path);
