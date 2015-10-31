@@ -42,6 +42,9 @@ public class DispatcherServlet extends HttpServlet {
 			} else {
 				Class<?> cls = Class.forName(pluginLoader);
 				if(PluginLoader.class.isAssignableFrom(cls)) {
+					if(LOG.isDebugEnabled())
+						LOG.debug("使用插件加载器: " + pluginLoader);
+					
 					((PluginLoader) cls.newInstance()).init(this.getServletConfig());
 					
 				} else 
