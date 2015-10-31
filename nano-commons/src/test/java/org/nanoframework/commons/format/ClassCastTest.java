@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.junit.Test;
 import org.nanoframework.commons.entity.UseEntity;
 
@@ -78,8 +79,8 @@ public class ClassCastTest {
 		assertEquals(1F, val);
 		
 		Date now = new Timestamp(System.currentTimeMillis());
-		val = ClassCast.cast(String.valueOf(now), Timestamp.class.getName());
-		assertEquals(now, val);
+		val = ClassCast.cast(DateFormatUtils.format(now, Pattern.TIMESTAMP.get()), Timestamp.class.getName());
+		assertEquals(now.getTime(), ((Timestamp) val).getTime());
 	}
 	
 }

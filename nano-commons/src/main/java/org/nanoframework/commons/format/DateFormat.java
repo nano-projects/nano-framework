@@ -34,24 +34,6 @@ public class DateFormat {
 
 	private static final ConcurrentMap<Pattern, ThreadLocal<SimpleDateFormat>> FORMAT_MAP = new ConcurrentHashMap<>();
 	
-	public static enum Pattern {
-		DATE("yyyy-MM-dd"),
-		TIME("HH:mm:ss"),
-		DATETIME("yyyy-MM-dd HH:mm:ss"),
-		TIMESTAMP("yyyy-MM-dd HH:mm:ss.SSS");
-		
-		private String pattern;
-		
-		private Pattern(String pattern) {
-			this.pattern = pattern;
-		}
-		
-		public String get() {
-			return pattern;
-		}
-		
-	}
-	
 	public static final SimpleDateFormat getAndSetDateFormat(Pattern pattern) {
 		SimpleDateFormat format;
 		ThreadLocal<SimpleDateFormat> formatLocal;

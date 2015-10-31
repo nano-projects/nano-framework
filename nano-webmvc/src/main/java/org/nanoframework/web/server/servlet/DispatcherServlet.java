@@ -23,6 +23,7 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.core.plugins.PluginLoader;
+import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
 
 public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 2341783013239890497L;
@@ -33,15 +34,19 @@ public class DispatcherServlet extends HttpServlet {
 		super.init();
 		try {
 			String pluginLoader = this.getInitParameter(Constants.PLUGIN_LOADER);
-			if(StringUtils.isBlank(pluginLoader))
-				throw new IllegalArgumentException("请在DispacherServlet中添加PluginLoader设置");
-			
-			Class<?> cls = Class.forName(pluginLoader);
-			if(PluginLoader.class.isAssignableFrom(cls)) {
-				((PluginLoader) cls.newInstance()).init(this.getServletConfig());
+			if(StringUtils.isBlank(pluginLoader)) {
+				if(LOG.isDebugEnabled())
+					LOG.debug("使用默认的插件加载器: " + DefaultPluginLoader.class.getName());
 				
-			} else 
-				throw new IllegalArgumentException("pluginLoader配置的类必须继承PluginLoader类");
+				new DefaultPluginLoader().init(this.getServletConfig());
+			} else {
+				Class<?> cls = Class.forName(pluginLoader);
+				if(PluginLoader.class.isAssignableFrom(cls)) {
+					((PluginLoader) cls.newInstance()).init(this.getServletConfig());
+					
+				} else 
+					throw new IllegalArgumentException("插件加载器必须继承PluginLoader类");
+			}
 			
 		} catch(Throwable e) {
 			LOG.error(e.getMessage(), e);
