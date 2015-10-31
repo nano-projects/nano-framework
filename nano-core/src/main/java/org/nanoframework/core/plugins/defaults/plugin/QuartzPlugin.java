@@ -13,16 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins.defaults;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+package org.nanoframework.core.plugins.defaults.plugin;
 
 import javax.servlet.ServletConfig;
 
-import org.apache.commons.lang3.StringUtils;
-import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.core.plugins.Plugin;
@@ -30,23 +24,22 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
  * @author yanghe
- * @date 2015年10月30日 下午11:23:52
+ * @date 2015年10月30日 下午11:41:09
  */
-public class JedisPlugin implements Plugin {
+public class QuartzPlugin implements Plugin {
 
-	private Logger LOG = LoggerFactory.getLogger(JedisPlugin.class);
-	private List<Properties> properties;
+	private Logger LOG = LoggerFactory.getLogger(QuartzPlugin.class);
 	
 	@Override
 	public void load() throws Throwable {
 		try {
-			Class<?> redisClientPool = Class.forName("org.nanoframework.orm.jedis.RedisClientPool");
+			Class<?> quartzFactory = Class.forName("org.nanoframework.extension.concurrent.quartz.QuartzFactory");
 			long time = System.currentTimeMillis();
-			Object pool = redisClientPool.getField("POOL").get(redisClientPool);
-			pool.getClass().getMethod("initRedisConfig", List.class).invoke(pool, properties);
-			pool.getClass().getMethod("createJedis").invoke(pool);
-			LOG.info("加载Redis配置, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-		} catch(Throwable e) {
+			LOG.info("开始加载任务调度");
+			quartzFactory.getMethod("load").invoke(quartzFactory);
+			quartzFactory.getMethod("startAll").invoke(quartzFactory);
+			LOG.info("加载任务调度结束, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+		} catch(Exception e) {
 			if(!(e instanceof ClassNotFoundException))
 				throw new PluginLoaderException(e.getMessage(), e);
 		}
@@ -54,13 +47,7 @@ public class JedisPlugin implements Plugin {
 
 	@Override
 	public void config(ServletConfig config) throws Throwable {
-		String redis = config.getInitParameter("redis");
-		if(StringUtils.isNotBlank(redis)) {
-			properties = new ArrayList<>();
-			String[] paths = redis.split(";");
-			for(String path : paths) {
-				properties.add(PropertiesLoader.load(JedisPlugin.class.getResourceAsStream(path)));
-			}
-		}
+
 	}
+
 }

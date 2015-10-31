@@ -17,10 +17,8 @@ package org.nanoframework.core.plugins;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.ServletConfig;
 
@@ -32,11 +30,9 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.globals.Globals;
-import org.nanoframework.orm.DataSourceLoader;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 
 /**
  * @author yanghe
@@ -44,10 +40,10 @@ import com.google.inject.Module;
  */
 public abstract class PluginLoader {
 	private Logger LOG = LoggerFactory.getLogger(PluginLoader.class);
+	private Configure<String> properties = new Configure<>();
+	private Configure<Plugin> plugins = new Configure<>();
+	private Configure<Module> modules = new Configure<>();
 	
-	private List<Module> modules = new LinkedList<>();
-	private Set<String> properties = new LinkedHashSet<>();
-	private List<Plugin> plugins = new LinkedList<>();
 	private ServletConfig config;
 	
 	public void init(ServletConfig config) {
@@ -66,30 +62,34 @@ public abstract class PluginLoader {
 	}
 	
 	private void initProperties() {
-		if(!properties.contains(Constants.MAIN_CONTEXT))
+		if(!properties.get().contains(Constants.MAIN_CONTEXT))
 			properties.add(Constants.MAIN_CONTEXT);
 		
 		long time = System.currentTimeMillis();
-		for(String path : properties) {
-			InputStream input = this.getClass().getResourceAsStream(path);
-		 	try { 
-		 		PropertiesLoader.load(path, input, true); 
-		 	} catch(Exception e) {
-		 		throw new PluginLoaderException(e.getMessage(), e);
-		 	}
-		};
+		try { 
+			configProperties(properties);
+			for(String path : properties.get()) {
+				InputStream input = this.getClass().getResourceAsStream(path);
+			 	PropertiesLoader.load(path, input, true); 
+			}
+		} catch(Exception e) {
+	 		throw new PluginLoaderException(e.getMessage(), e);
+	 	}
 		
 		LOG.info("加载属性文件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
 	}
 	
-	private void initModules() {
+	private void initModules() throws Throwable {
 		long time = System.currentTimeMillis();
-		configModules();
-		DataSourceLoader loader = new DataSourceLoader();
-		PropertiesLoader.PROPERTIES.putAll(loader.getLoadProperties());
-		modules.addAll(loader.getModules());
+		configModules(modules);
+		List<Module> _modules = new ArrayList<>();
+		for(Module module : modules.get()) {
+			module.config(config);
+			_modules.addAll(module.load());
+		}
+		
 		LOG.info("开始进行依赖注入");
-		Globals.set(Injector.class, Guice.createInjector(modules));
+		Globals.set(Injector.class, Guice.createInjector(_modules));
 		LOG.info("依赖注入完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
 	}
 	
@@ -102,8 +102,8 @@ public abstract class PluginLoader {
 	
 	private void initPlugins() throws Throwable {
 		long time = System.currentTimeMillis();
-		configPlugin();
-		for(Plugin plugin : plugins) {
+		configPlugin(plugins);
+		for(Plugin plugin : plugins.get()) {
 			plugin.config(config);
 			plugin.load();
 		}
@@ -111,22 +111,8 @@ public abstract class PluginLoader {
 		LOG.info("加载插件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
 	}
 	
-	protected abstract void configProperties();
-	protected abstract void configModules();
-	protected abstract void configPlugin();
+	protected abstract void configProperties(Configure<String> properties);
+	protected abstract void configModules(Configure<Module> modules);
+	protected abstract void configPlugin(Configure<Plugin> plugins);
 	
-	protected void addProperties(String path) {
-		Assert.hasLength(path);
-		properties.add(path);
-	}
-	
-	protected void addModule(Module module) {
-		Assert.notNull(module);
-		modules.add(module);
-	}
-	
-	protected void addPlugin(Plugin plugin) {
-		Assert.notNull(plugin);
-		plugins.add(plugin);
-	}
 }

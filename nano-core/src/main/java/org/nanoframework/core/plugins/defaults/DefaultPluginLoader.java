@@ -16,8 +16,15 @@
 package org.nanoframework.core.plugins.defaults;
 
 import org.nanoframework.commons.util.Constants;
-import org.nanoframework.core.component.aop.AOPModule;
+import org.nanoframework.core.plugins.Configure;
+import org.nanoframework.core.plugins.Module;
+import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoader;
+import org.nanoframework.core.plugins.defaults.module.AOPModule;
+import org.nanoframework.core.plugins.defaults.module.DataSourceModule;
+import org.nanoframework.core.plugins.defaults.plugin.JedisPlugin;
+import org.nanoframework.core.plugins.defaults.plugin.QuartzPlugin;
+import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
 
 /**
  * @author yanghe
@@ -26,20 +33,21 @@ import org.nanoframework.core.plugins.PluginLoader;
 public class DefaultPluginLoader extends PluginLoader {
 
 	@Override
-	protected void configProperties() {
-		addProperties(Constants.MAIN_CONTEXT);
+	protected void configProperties(Configure<String> properties) {
+		properties.add(Constants.MAIN_CONTEXT);
 	}
 
 	@Override
-	protected void configModules() {
-		addModule(new AOPModule());
+	protected void configModules(Configure<Module> modules) {
+		modules.add(new AOPModule());
+		modules.add(new DataSourceModule());
 	}
 
 	@Override
-	protected void configPlugin() {
-		addPlugin(new JedisPlugin());
-		addPlugin(new QuartzPlugin());
-		addPlugin(new WebSocketPlugin());
+	protected void configPlugin(Configure<Plugin> plugins) {
+		plugins.add(new JedisPlugin());
+		plugins.add(new QuartzPlugin());
+		plugins.add(new WebSocketPlugin());
 	}
 
 }

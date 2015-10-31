@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins.defaults;
+package org.nanoframework.core.plugins.defaults.plugin;
 
 import java.lang.reflect.InvocationTargetException;
 

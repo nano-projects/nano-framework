@@ -13,21 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.component.aop;
+package org.nanoframework.core.plugins;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.matcher.Matchers;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import org.nanoframework.commons.util.Assert;
 
 /**
  * @author yanghe
- * @date 2015年10月8日 下午5:21:03
+ * @date 2015年10月31日 上午11:36:51
  */
-public class AOPModule extends AbstractModule {
-
-	@Override
-	protected void configure() {
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new BeforeInterceptor());
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(After.class), new AfterInterceptor());
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfter.class), new BeforeAndAfterInterceptor());
+public class Configure<T> {
+	protected Set<T> configs = new LinkedHashSet<>();
+	
+	public void add(T config) {
+		Assert.notNull(config);
+		configs.add(config);
+	}
+	
+	public Set<T> get() {
+		return configs;
 	}
 }
