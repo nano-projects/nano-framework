@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.util.Assert;
+import org.nanoframework.commons.util.CollectionUtils;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
@@ -42,6 +43,7 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPipeline;
+import redis.clients.jedis.Tuple;
 
 /**
  * RedisClient的实现类，主要实现对Jedis的操作实现封装
@@ -100,9 +102,13 @@ public class RedisClientImpl implements RedisClient {
 	 * @see com.alibaba.fastjson.TypeReference
 	 * @see com.alibaba.fastjson.JSON#parseObject(String, TypeReference, com.alibaba.fastjson.parser.Feature...)
 	 */
+	@SuppressWarnings("unchecked")
 	private <T> T parseObject(String value, TypeReference<T> type) {
 		if(StringUtils.isEmpty(value))
 			return null;
+		
+		if(type.getType() == String.class)
+			return (T) value;
 		
 		return JSON.parseObject(value, type);
 	}
@@ -251,7 +257,7 @@ public class RedisClientImpl implements RedisClient {
 		ShardedJedis jedis = null;
 		try{
 			jedis = POOL.getJedis(config.getRedisType());
-			Set<String> keys = new HashSet<>();
+			Set<String> keys = new LinkedHashSet<>();
 			Collection<Jedis> allShards = jedis.getAllShards();
 			for(Jedis _jedis : allShards) {
 				keys.addAll(_jedis.keys(pattern));
@@ -1910,8 +1916,8 @@ public class RedisClientImpl implements RedisClient {
 			if((allShards = jedis.getAllShards()).size() == 1) {
 				return allShards.iterator().next().sdiff(keys);
 			} else if(allShards.size() > 1) {
-				Set<String> unionSet = new HashSet<>();
-				Set<String> diffSet = new HashSet<>();
+				Set<String> unionSet = new LinkedHashSet<>();
+				Set<String> diffSet = new LinkedHashSet<>();
 				allShards.forEach(shard -> { 
 					Set<String> diff = shard.sdiff(keys);
 					if(!unionSet.isEmpty()) {
@@ -1941,7 +1947,7 @@ public class RedisClientImpl implements RedisClient {
 		Assert.notNull(type);
 		Set<String> values = sdiff(keys);
 		if(!values.isEmpty()) {
-			Set<T> newValues = new HashSet<>();
+			Set<T> newValues = new LinkedHashSet<>();
 			for(String value : values) {
 				newValues.add(parseObject(value, type));
 			}
@@ -2003,8 +2009,8 @@ public class RedisClientImpl implements RedisClient {
 			if((allShards = jedis.getAllShards()).size() == 1) {
 				return allShards.iterator().next().sinter(keys);
 			} else if(allShards.size() > 1) {
-				Set<String> diffSet = new HashSet<>();
-				Set<String> interSet = new HashSet<>();
+				Set<String> diffSet = new LinkedHashSet<>();
+				Set<String> interSet = new LinkedHashSet<>();
 				for(String key : keys) {
 					Set<String> now;
 					diffSet.addAll(now = jedis.smembers(key));
@@ -2030,7 +2036,7 @@ public class RedisClientImpl implements RedisClient {
 		
 		Set<String> interSet = sinter(keys);
 		if(!interSet.isEmpty()) {
-			Set<T> newInterSet = new HashSet<>();
+			Set<T> newInterSet = new LinkedHashSet<>();
 			for(String value : interSet) {
 				newInterSet.add(parseObject(value, type));
 			}
@@ -2130,7 +2136,7 @@ public class RedisClientImpl implements RedisClient {
 		Assert.notNull(type);
 		Set<String> members = smembers(key);
 		if(!members.isEmpty()) {
-			Set<T> newMembers = new HashSet<>();
+			Set<T> newMembers = new LinkedHashSet<>();
 			for(String member : members) {
 				newMembers.add(parseObject(member, type));
 			}
@@ -2254,7 +2260,7 @@ public class RedisClientImpl implements RedisClient {
 		Assert.notNull(type);
 		Set<String> values = spop(key, count);
 		if(!values.isEmpty()) {
-			Set<T> newValues = new HashSet<>();
+			Set<T> newValues = new LinkedHashSet<>();
 			for(String value : values) {
 				newValues.add(parseObject(value, type));
 			}
@@ -2350,7 +2356,7 @@ public class RedisClientImpl implements RedisClient {
 		if(members.length == 0)
 			return 0;
 		
-		Set<String> newMembers = new HashSet<>();
+		Set<String> newMembers = new LinkedHashSet<>();
 		for(Object member : members) {
 			newMembers.add(toJSONString(member));
 		}
@@ -2369,7 +2375,7 @@ public class RedisClientImpl implements RedisClient {
 			if((allShards = jedis.getAllShards()).size() == 1) {
 				return allShards.iterator().next().sdiff(keys);
 			} else if(allShards.size() > 1) {
-				Set<String> unionSet = new HashSet<>();
+				Set<String> unionSet = new LinkedHashSet<>();
 				allShards.forEach(shard -> unionSet.addAll(shard.sunion(keys)));
 				return unionSet;
 			} 
@@ -2389,7 +2395,7 @@ public class RedisClientImpl implements RedisClient {
 		Assert.notNull(type);
 		Set<String> values = sunion(keys);
 		if(!values.isEmpty()) {
-			Set<T> newValues = new HashSet<>();
+			Set<T> newValues = new LinkedHashSet<>();
 			for(String value : values) {
 				newValues.add(parseObject(value, type));
 			}
@@ -2434,4 +2440,757 @@ public class RedisClientImpl implements RedisClient {
 			
 		}
 	}
+	
+	@Override
+	public long zadd(String key, double score, String member) {
+		Assert.hasLength(key);
+		Assert.notNull(member);
+		
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zadd(key, score, member);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> long zadd(String key, double score, T member) {
+		Assert.notNull(member);
+		return zadd(key, score, toJSONString(member));
+	}
+	
+	@Override
+	public <T> long zadd(String key, Map<T, Double> values) {
+		Assert.hasLength(key);
+		Assert.notEmpty(values);
+		
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			long changed = 0;
+			for(Entry<T, Double> value : values.entrySet()) {
+				changed += zadd(key, value.getValue(), value.getKey());
+			}
+			
+			return changed;
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public long zcard(String key) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zcard(key);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public long zcount(String key, double min, double max) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zcount(key, min, max);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public long zcount(String key) {
+		return zcount(key, INF0, INF1);
+	}
+	
+	@Override
+	public long zcount(String key, String min, String max) {
+		Assert.hasLength(key);
+		Assert.hasLength(min);
+		Assert.hasLength(max);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zcount(key, min, max);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public long zlexcount(String key, String min, String max) {
+		Assert.hasLength(key);
+		Assert.hasLength(min);
+		Assert.hasLength(max);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zlexcount(key, min, max);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public double zincrby(String key, double increment, String member) {
+		Assert.hasLength(key);
+		Assert.hasLength(member);
+		
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zincrby(key, increment, member);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> double zincrby(String key, double increment, T member) {
+		Assert.notNull(member);
+		return zincrby(key, increment, toJSONString(member));
+	}
+	
+	@Override
+	public Set<String> zrange(String key, long start, long end) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrange(key, start, end);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public Set<String> zrange(String key, long end) {
+		return zrange(key, 0, end);
+	}
+	
+	@Override
+	public Set<String> zrange(String key) {
+		return zrange(key, 0, -1);
+	}
+	
+	@Override
+	public <T> Set<T> zrange(String key, long start, long end, TypeReference<T> type) {
+		Assert.notNull(type);
+		Set<String> values = zrange(key, start, end);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>(values.size());
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public <T> Set<T> zrange(String key, long end, TypeReference<T> type) {
+		return zrange(key, 0, end, type);
+	}
+	
+	@Override
+	public <T> Set<T> zrange(String key, TypeReference<T> type) {
+		return zrange(key, 0, -1, type);
+	}
+	
+	@Override
+	public Set<String> zrangeByLex(String key, String min, String max, int offset, int count) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrangeByLex(key, min, max, offset, count);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Set<T> zrangeByLex(String key, String min, String max, int offset, int count, TypeReference<T> type) {
+		Set<String> values = zrangeByLex(key, min, max, offset, count);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>(values.size());
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrangeWithScores(String key, long start, long end, TypeReference<T> type) {
+		Assert.hasLength(key);
+		Assert.notNull(type);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			Set<Tuple> values = jedis.zrangeWithScores(key, start, end);
+			if(!CollectionUtils.isEmpty(values)) {
+				Map<T, Double> newValues = new HashMap<>();
+				for(Tuple value : values) {
+					newValues.put(parseObject(value.getElement(), type), value.getScore());
+				}
+				
+				return newValues;
+			}
+			
+			return Collections.emptyMap();
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrangeWithScores(String key, long end, TypeReference<T> type) {
+		return zrangeWithScores(key, 0, end, type);
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrangeWithScores(String key, TypeReference<T> type) {
+		return zrangeWithScores(key, 0, -1, type);
+	}
+	
+	@Override
+	public Set<String> zrangeByScore(String key, double min, double max) {
+		return zrangeByScore(key, String.valueOf(min), String.valueOf(max));
+	}
+	
+	@Override
+	public Set<String> zrangeByScore(String key, double min, double max, int offset, int count) {
+		return zrangeByScore(key, String.valueOf(min), String.valueOf(max), offset, count);
+	}
+	
+	@Override
+	public Set<String> zrangeByScore(String key, String min, String max) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrangeByScore(key, min, max);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public Set<String> zrangeByScore(String key, String min, String max, int offset, int count) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrangeByScore(key, min, max, offset, count);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Set<T> zrangeByScore(String key, double min, double max, TypeReference<T> type) {
+		return zrangeByScore(key, String.valueOf(min), String.valueOf(max), type);
+	}
+	
+	@Override
+	public <T> Set<T> zrangeByScore(String key, double min, double max, int offset, int count, TypeReference<T> type) {
+		return zrangeByScore(key, String.valueOf(min), String.valueOf(max), offset, count, type);
+	}
+	
+	@Override
+	public <T> Set<T> zrangeByScore(String key, String min, String max, TypeReference<T> type) {
+		Set<String> values = zrangeByScore(key, min, max);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>(values.size());
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public <T> Set<T> zrangeByScore(String key, String min, String max, int offset, int count, TypeReference<T> type) {
+		Set<String> values = zrangeByScore(key, min, max, offset, count);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>(values.size());
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrangeByScoreWithScores(String key, double min, double max, TypeReference<T> type) {
+		return zrangeByScoreWithScores(key, String.valueOf(min), String.valueOf(max), type);
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrangeByScoreWithScores(String key, String min, String max, TypeReference<T> type) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			Set<Tuple> values = jedis.zrangeByScoreWithScores(key, min, max);
+			if(!CollectionUtils.isEmpty(values)) {
+				Map<T, Double> newValues = new HashMap<>();
+				for(Tuple value : values) {
+					newValues.put(parseObject(value.getElement(), type), value.getScore());
+				}
+				
+				return newValues;
+			}
+			
+			return Collections.emptyMap();
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrangeByScoreWithScores(String key, double min, double max, int offset, int count, TypeReference<T> type) {
+		return zrangeByScoreWithScores(key, String.valueOf(min), String.valueOf(max), offset, count, type);
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrangeByScoreWithScores(String key, String min, String max, int offset, int count, TypeReference<T> type) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			Set<Tuple> values = jedis.zrangeByScoreWithScores(key, min, max, offset, count);
+			if(!CollectionUtils.isEmpty(values)) {
+				Map<T, Double> newValues = new HashMap<>();
+				for(Tuple value : values) {
+					newValues.put(parseObject(value.getElement(), type), value.getScore());
+				}
+				
+				return newValues;
+			}
+			
+			return Collections.emptyMap();
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public long zrank(String key, String member) {
+		Assert.hasLength(key);
+		Assert.hasLength(member);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrank(key, member);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> long zrank(String key, T member) {
+		return zrank(key, toJSONString(member));
+	}
+	
+	@Override
+	public long zrem(String key, String... members) {
+		Assert.hasLength(key);
+		Assert.notEmpty(members);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrem(key, members);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> long zrem(String key, @SuppressWarnings("unchecked") T... members) {
+		return zrem(key, toJSONString(members));
+	}
+	
+	@Override
+	public long zremrangeByLex(String key, String min, String max) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zremrangeByLex(key, min, max);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public long zremrangeByRank(String key, long start, long end) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zremrangeByRank(key, start, end);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public long zremrangeByScore(String key, double min, double max) {
+		return zremrangeByScore(key, String.valueOf(min), String.valueOf(max));
+	}
+	
+	@Override
+	public long zremrangeByScore(String key, String min, String max) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zremrangeByScore(key, min, max);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public Set<String> zrevrange(String key, long start, long end) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrevrange(key, start, end);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public Set<String> zrevrange(String key, long end) {
+		return zrevrange(key, 0, end);
+	}
+	
+	@Override
+	public Set<String> zrevrange(String key) {
+		return zrevrange(key, 0, -1);
+	}
+	
+	@Override
+	public <T> Set<T> zrevrange(String key, long start, long end, TypeReference<T> type) {
+		Set<String> values = zrevrange(key, start, end);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>();
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public <T> Set<T> zrevrange(String key, long end, TypeReference<T> type) {
+		return zrevrange(key, 0, end, type);
+	}
+	
+	@Override
+	public <T> Set<T> zrevrange(String key, TypeReference<T> type) {
+		return zrevrange(key, 0, -1, type);
+	}
+	
+	@Override
+	public Set<String> zrevrangeByLex(String key, String max, String min) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrevrangeByLex(key, max, min);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Set<T> zrevrangeByLex(String key, String max, String min, TypeReference<T> type) {
+		Set<String> values = zrevrangeByLex(key, max, min);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>();
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public Set<String> zrevrangeByLex(String key, String max, String min, int offset, int count) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrevrangeByLex(key, max, min, offset, count);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Set<T> zrevrangeByLex(String key, String max, String min, int offset, int count, TypeReference<T> type) {
+		Set<String> values = zrevrangeByLex(key, max, min, offset, count);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>();
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrevrangeWithScores(String key, long start, long end, TypeReference<T> type) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			Set<Tuple> values = jedis.zrevrangeWithScores(key, start, end);
+			if(!CollectionUtils.isEmpty(values)) {
+				Map<T, Double> newValues = new HashMap<>();
+				for(Tuple value : values) {
+					newValues.put(parseObject(value.getElement(), type), value.getScore());
+				}
+				
+				return newValues;
+			}
+			
+			return Collections.emptyMap();
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrevrangeWithScores(String key, long end, TypeReference<T> type) {
+		return zrevrangeWithScores(key, 0, end, type);
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrevrangeWithScores(String key, TypeReference<T> type) {
+		return zrevrangeWithScores(key, 0, -1, type);
+	}
+	
+	@Override
+	public Set<String> zrevrangeByScore(String key, double max, double min) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrevrangeByScore(key, max, min);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public Set<String> zrevrangeByScore(String key, double max, double min, int offset, int count) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrevrangeByScore(key, max, min, offset, count);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Set<T> zrevrangeByScore(String key, double max, double min, TypeReference<T> type) {
+		Set<String> values = zrevrangeByScore(key, max, min);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>(values.size());
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public <T> Set<T> zrevrangeByScore(String key, double max, double min, int offset, int count, TypeReference<T> type) {
+		Set<String> values = zrevrangeByScore(key, max, min, offset, count);
+		if(!CollectionUtils.isEmpty(values)) {
+			Set<T> newValues = new LinkedHashSet<>(values.size());
+			for(String value : values) {
+				newValues.add(parseObject(value, type));
+			}
+			
+			return newValues;
+		}
+		
+		return Collections.emptySet();
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrevrangeByScoreWithScores(String key, double max, double min, TypeReference<T> type) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			Set<Tuple> values = jedis.zrevrangeByScoreWithScores(key, max, min);
+			if(!CollectionUtils.isEmpty(values)) {
+				Map<T, Double> newValues = new HashMap<>();
+				for(Tuple value : values) {
+					newValues.put(parseObject(value.getElement(), type), value.getScore());
+				}
+				
+				return newValues;
+			}
+			
+			return Collections.emptyMap();
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> Map<T, Double> zrevrangeByScoreWithScores(String key, double max, double min, int offset, int count, TypeReference<T> type) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			Set<Tuple> values = jedis.zrevrangeByScoreWithScores(key, max, min, offset, count);
+			if(!CollectionUtils.isEmpty(values)) {
+				Map<T, Double> newValues = new HashMap<>();
+				for(Tuple value : values) {
+					newValues.put(parseObject(value.getElement(), type), value.getScore());
+				}
+				
+				return newValues;
+			}
+			
+			return Collections.emptyMap();
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public long zrevrank(String key, String member) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zrevrank(key, member);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> long zrevrank(String key, T member) {
+		return zrevrank(key, toJSONString(member));
+	}
+	
+	@Override
+	public double zscore(String key, String member) {
+		Assert.hasLength(key);
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			return jedis.zscore(key, member);
+		} catch(Exception e) {
+			throw new RedisClientException(e.getMessage());
+		} finally {
+			POOL.close(jedis);
+		}
+	}
+	
+	@Override
+	public <T> double zscore(String key, T member) {
+		return zscore(key, toJSONString(member));
+	}
+	
 }

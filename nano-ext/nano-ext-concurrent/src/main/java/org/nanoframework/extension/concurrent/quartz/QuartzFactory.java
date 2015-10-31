@@ -114,35 +114,11 @@ public class QuartzFactory {
 	}
 	
 	/**
-	 * 获取现在正在执行的任务数 <br>
-	 * 此方法将在下一个版本移除 <br>
-	 * @since 1.0.0
-	 * @return 任务数
-	 */
-	@Deprecated
-	public int getTaskSize() {
-		return quartzSize.get();
-		
-	}
-	
-	/**
 	 * 获取现在正在执行的任务数
 	 * @return 任务数
 	 */
 	public int getQuartzSize() {
 		return quartzSize.get();
-		
-	}
-	
-	/**
-	 * 返回所有任务 <br>
-	 * 此方法将在下一个版本移除 <br>
-	 * @since 1.0.0
-	 * @return 任务集合
-	 */
-	@Deprecated
-	public Collection<BaseQuartz> getTasks() {
-		return quartzs.values();
 		
 	}
 	
@@ -306,7 +282,7 @@ public class QuartzFactory {
 		_tmpQuartz.clear();
 		getInstance().closeAll();
 		service.execute(() -> {
-			try { while(QuartzFactory.getInstance().getTaskSize() > 0) Thread.sleep(100L); } catch(InterruptedException e) { }
+			try { while(QuartzFactory.getInstance().getQuartzSize() > 0) Thread.sleep(100L); } catch(InterruptedException e) { }
 			LOG.info("所有任务已经全部关闭");
 			
 			try {

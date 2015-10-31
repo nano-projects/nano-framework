@@ -34,7 +34,7 @@ public class DispatcherServlet extends HttpServlet {
 		try {
 			String pluginLoader = this.getInitParameter(Constants.PLUGIN_LOADER);
 			if(StringUtils.isBlank(pluginLoader))
-				throw new IllegalArgumentException("请在DispacherServlet中添加init-param设置");
+				throw new IllegalArgumentException("请在DispacherServlet中添加PluginLoader设置");
 			
 			Class<?> cls = Class.forName(pluginLoader);
 			if(PluginLoader.class.isAssignableFrom(cls)) {
