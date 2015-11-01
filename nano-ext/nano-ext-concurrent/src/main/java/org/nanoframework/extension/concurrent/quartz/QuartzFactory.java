@@ -206,11 +206,6 @@ public class QuartzFactory {
 						parallel = 0;
 					
 					for(int p = 0; p < parallel; p ++) {
-						/** 需要在Quartz子类中添加构造器
-						Constructor<BaseQuartz> constructor = BaseQuartz.class.getConstructor(String.class, ThreadPoolExecutor.class, boolean.class, int.class, int.class);
-						BaseQuartz baseQuartz = constructor.newInstance(quartz.name(), service, quartz.beforeAfterOnly(), quartz.runNumberOfTimes(), quartz.interval());
-						*/
-						
 						Object obj = Globals.get(Injector.class).getInstance(clz);
 						Field[] fields = BaseQuartz.class.getDeclaredFields();
 						if(fields != null && fields.length > 0) {
@@ -220,34 +215,38 @@ public class QuartzFactory {
 									field.setAccessible(true) ;  
 									
 									switch(property.name()) {
-										case BaseQuartz.ID : 
+										case BaseQuartz.ID: 
 											field.set(obj, quartz.name() + "-" + p);
 											break;
 											
-										case BaseQuartz.SERVICE : 
+										case BaseQuartz.SERVICE: 
 											field.set(obj, service);
 											break;
 											
-										case BaseQuartz.BEFORE_AFTER_ONLY : 
+										case BaseQuartz.BEFORE_AFTER_ONLY: 
 											field.set(obj, quartz.beforeAfterOnly());
 											break;
 											
-										case BaseQuartz.RUN_NUMBER_OF_TIMES : 
+										case BaseQuartz.RUN_NUMBER_OF_TIMES: 
 											field.set(obj, quartz.runNumberOfTimes());
 											break;
 											
-										case BaseQuartz.INTERVAL : 
+										case BaseQuartz.INTERVAL: 
 											field.set(obj, quartz.interval());
 											break;
 											
-										case BaseQuartz.NUM :
+										case BaseQuartz.NUM:
 											field.set(obj, p);
 											break;
 											
-										case BaseQuartz.TOTAL : 
+										case BaseQuartz.TOTAL: 
 											field.set(obj, parallel);
 											break;
 											
+										case BaseQuartz.CRONTAB: 
+											crontabValid(quartz);
+											field.set(obj, quartz.crontab());
+
 										default :
 											break;
 											
@@ -272,6 +271,79 @@ public class QuartzFactory {
 		}
 		
 		isLoaded = true;
+	}
+	
+	private static final void crontabValid(Quartz quartz) {
+		if(quartz.crontab().split(" ").length != 6)
+			throw new QuartzException("任务调度crontab参数设置错误，格式必须为: [* * * * * *]");
+		
+		String[] times = quartz.crontab().split(" ");
+		String week = times[0];
+		String month = times[1];
+		String day = times[2];
+		String hour = times[3];
+		String minute = times[4];
+		String second = times[5];
+		
+		if(!BaseQuartz.OTHER_TIME.equals(week)) {
+			try {
+				int _week = Integer.valueOf(week);
+				if(_week < 1 || _week > 7)
+					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，周的设置范围为: 1~7, 这里设置为: " + week);
+			} catch(NumberFormatException e) {
+				throw new QuartzException("时间策略设置错误: 周必须为1~7之间的整形");
+			}
+		}
+		
+		if(!BaseQuartz.OTHER_TIME.equals(month)) {
+			try { 
+				int _month = Integer.valueOf(month);
+				if(_month < 1 || _month > 12)
+					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，月的设置范围为: 1~12, 这里设置为: " + month);
+			} catch(NumberFormatException e) {
+				throw new QuartzException("时间策略设置错误: 月必须为1~12之间的整形");
+			}
+		}
+		
+		if(!BaseQuartz.OTHER_TIME.equals(day)) {
+			try { 
+				int _day = Integer.valueOf(day);
+				if(_day < 1 || _day > 31)
+					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，日的设置范围为: 1~31, 这里设置为: " + day);
+			} catch(NumberFormatException e) {
+				throw new QuartzException("时间策略设置错误: 日必须为1~31之间的整形");
+			}
+		}
+		
+		if(!BaseQuartz.OTHER_TIME.equals(hour)) {
+			try { 
+				int _hour = Integer.valueOf(hour);
+				if(_hour < 0 || _hour > 23)
+					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，时的设置范围为: 0~23, 这里设置为: " + hour);
+			} catch(NumberFormatException e) {
+				throw new QuartzException("时间策略设置错误: 时必须为0~23之间的整形");
+			}
+		}
+		
+		if(!BaseQuartz.OTHER_TIME.equals(minute)) {
+			try { 
+				int _minute = Integer.valueOf(minute);
+				if(_minute < 0 || _minute > 59)
+					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，分的设置范围为: 0~59, 这里设置为: " + minute);
+			} catch(NumberFormatException e) {
+				throw new QuartzException("时间策略设置错误: 分必须为0~59之间的整形");
+			}
+		}
+		
+		if(!BaseQuartz.OTHER_TIME.equals(second)) {
+			try { 
+				int _second = Integer.valueOf(second);
+				if(_second < 0 || _second > 59)
+					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，秒的设置范围为: 0~59, 这里设置为: " + second);
+			} catch(NumberFormatException e) {
+				throw new QuartzException("时间策略设置错误: 秒必须为0~59之间的整形");
+			}
+		}
 	}
 	
 	/**

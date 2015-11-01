@@ -15,24 +15,16 @@
  */
 package org.nanoframework.core.component.scan;
 
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.support.logging.Logger;
@@ -55,8 +47,6 @@ public class ComponentScan {
 	private static final Logger LOG = LoggerFactory.getLogger(ComponentScan.class);
 	
 	private static Set<Class<?>> classes;
-	
-	private static final FileFilter fileFilter = (file) -> file.isDirectory() || file.getName().endsWith(".class");
 	
 	/**
 	 * 返回所有带有参数中的注解的类
@@ -175,98 +165,8 @@ public class ComponentScan {
 			classes = new HashSet<>();
 		
 		classes.addAll(getClasses(packageName));
-		
-		/** 现在采用Mybatis的包扫描实现
-
-		String packageDirName = packageName.replace('.', '/');
-		Enumeration<URL> dirs;
-		try {
-			dirs = Thread.currentThread().getContextClassLoader().getResources(packageDirName);
-			while (dirs.hasMoreElements()) {
-				URL url = dirs.nextElement();
-				String protocol = url.getProtocol();
-				
-				if ("file".equals(protocol)) {
-					String filePath = URLDecoder.decode(url.getFile(), "UTF-8");
-					findAndAddClassesInPackageByFile(packageName, filePath);
-					
-				} else if ("jar".equals(protocol)) {
-					findAndClassesInPackageByJar(url, packageDirName, packageName);
-					
-				}
-			}
-		} catch (IOException | ClassNotFoundException e) {
-			throw new ComponentScanException(e.getMessage(), e);
-			
-		}
-		*/
 	}
 
-	/**
-	 * 以文件的形式来获取包下的所有Class
-	 * 
-	 * @param packageName 包名
-	 * @param packagePath 包路径
-	 * @param recursive ?
-	 * @param classes 类集合
-	 * @throws ClassNotFoundException 
-	 */
-	@Deprecated
-	static void findAndAddClassesInPackageByFile(String packageName, String packagePath) throws ClassNotFoundException {
-		File dir = new File(packagePath);
-		if (!dir.exists() || !dir.isDirectory()) {
-			return;
-		}
-		
-		File[] dirfiles = dir.listFiles(fileFilter);
-		
-		for (File file : dirfiles) {
-			if (file.isDirectory()) {
-				findAndAddClassesInPackageByFile(packageName + "." + file.getName(), file.getAbsolutePath());
-				
-			} else {
-				String className = file.getName().substring(0, file.getName().length() - 6);
-				classes.add(Thread.currentThread().getContextClassLoader().loadClass(packageName + '.' + className));
-				
-			}
-		}
-	}
-	
-	/**
-	 * 以jar包的形式来获取包下的所有Class
-	 * 
-	 * @param url jar包所在URL
-	 * @param packageDirName 包目录名
-	 * @param packageName 包名
-	 * @throws IOException IO异常
-	 * @throws ClassNotFoundException 未找到类异常
-	 */
-	@Deprecated
-	static void findAndClassesInPackageByJar(URL url, String packageDirName, String packageName) throws IOException, ClassNotFoundException {
-		JarFile jar = ((JarURLConnection) url.openConnection()).getJarFile();
-		Enumeration<JarEntry> entries = jar.entries();
-
-		while (entries.hasMoreElements()) {
-			JarEntry entry = entries.nextElement();
-			String name = entry.getName();
-			if (name.charAt(0) == '/') {
-				name = name.substring(1);
-			}
-			
-			if (name.startsWith(packageDirName)) {
-				int idx = name.lastIndexOf('/');
-				if (idx != -1) {
-					packageName = name.substring(0, idx).replace('/', '.');
-				}
-				
-				if (name.endsWith(".class") && !entry.isDirectory()) {
-					String className = name.substring(packageName.length() + 1, name.length() - 6);
-					classes.add(Class.forName(packageName + '.' + className));
-				}
-			}
-		}
-	}
-	
 	/**
      * Return a set of all classes contained in the given package.
      *

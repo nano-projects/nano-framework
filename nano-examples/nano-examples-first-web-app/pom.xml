@@ -93,6 +93,10 @@
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-orm-mybatis</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.nanoframework</groupId>
+			<artifactId>nano-ext-concurrent</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<finalName>nano-examples-first-web-app</finalName>

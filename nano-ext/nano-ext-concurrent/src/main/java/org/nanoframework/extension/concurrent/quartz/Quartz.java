@@ -74,4 +74,16 @@ public @interface Quartz {
 	 * @return boolean
 	 */
 	boolean coreParallel() default false;
+	
+	/**
+	 * 周(1~7: 7=周日) <br>
+	 * 月(1~12) <br>
+	 * 日(1~31: 每月不足31日的自动使用当月的最后一天) <br>
+	 * 时(0~23) <br>
+	 * 分(0~59) <br>
+	 * 秒(0~59) <br>
+	 * 
+	 * @return String
+	 */
+	String crontab() default "* * * * * *";
 }
