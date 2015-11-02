@@ -27,10 +27,10 @@ import org.nanoframework.extension.concurrent.quartz.Quartz;
  * @author yanghe
  * @date 2015年11月1日 下午6:01:35
  */
-@Quartz(name = "CrontabQuartz", beforeAfterOnly = true, crontab = "* * * * * 0", parallel = 1)
-public class CrontabQuartz extends BaseQuartz {
+@Quartz(name = "CrontabMinuteQuartz", beforeAfterOnly = true, crontab = "* * * * 0 0", parallel = 1)
+public class CrontabMinuteQuartz extends BaseQuartz {
 
-	private Logger LOG = LoggerFactory.getLogger(CrontabQuartz.class);
+	private Logger LOG = LoggerFactory.getLogger(CrontabMinuteQuartz.class);
 	
 	@Override
 	public void before() throws QuartzException {
@@ -39,7 +39,7 @@ public class CrontabQuartz extends BaseQuartz {
 
 	@Override
 	public void execute() throws QuartzException {
-		LOG.debug("当前时间(秒级控制): " + DateFormatUtils.format(System.currentTimeMillis(), Pattern.TIMESTAMP.get()));
+		LOG.debug("当前时间(分秒级控制): " + DateFormatUtils.format(System.currentTimeMillis(), Pattern.TIMESTAMP.get()));
 	}
 
 	@Override

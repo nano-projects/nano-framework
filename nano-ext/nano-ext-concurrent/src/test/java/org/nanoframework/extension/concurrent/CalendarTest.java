@@ -19,7 +19,6 @@ import static org.nanoframework.extension.concurrent.quartz.BaseQuartz.OTHER_TIM
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.Random;
 
 import org.junit.Test;
@@ -37,7 +36,7 @@ public class CalendarTest {
 	private Logger LOG = LoggerFactory.getLogger(CalendarTest.class);
 	
 	public void maxDayOfMonthTest() {
-		Calendar calendar = Calendar.getInstance(Locale.CHINA);
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis() - 0 * 24 * 60 * 60 * 1000);
 		LOG.debug("max day: " + calendar.getActualMaximum(Calendar.DATE));
 		LOG.debug("week: " + (calendar.get(Calendar.DAY_OF_WEEK) - 1));
@@ -45,7 +44,7 @@ public class CalendarTest {
 	
 	public void cronTest() {
 		int count = 1000000;
-		Calendar calendar = Calendar.getInstance(Locale.CHINA);
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis());
 		Random random = new Random();
 		int base = 0;
@@ -67,19 +66,18 @@ public class CalendarTest {
 	
 	@Test
 	public void cronTest1() {
-//		cronTest("* * * * * 30");
-//		cronTest("* * * * 30 30");
-//		cronTest("* * * 12 * 30");
-//		cronTest("* * 15 * * 30");
-//		cronTest("* 6 * * * 30");
-//		cronTest("* * * * 30 30");
-//		cronTest("* * * 12 30 30");
-//		cronTest("* * 15 * 30 30");
-//		cronTest("* 6 * * 30 30");
-//		cronTest("* * 15 12 30 30");
-//		cronTest("* 6 15 12 30 30");
+		cronTest("* * * * * 59");
+		cronTest("* * * * 59 59");
+		cronTest("* * * 23 * 59");
+		cronTest("* * 15 * * 59");
+		cronTest("* 12 * * * 59");
+		cronTest("* * * * 59 59");
+		cronTest("* * * 23 59 59");
+		cronTest("* * 15 * 59 59");
+		cronTest("* 12 * * 59 59");
+		cronTest("* * 15 23 59 59");
+		cronTest("* 12 15 23 59 59");
 		
-		cronTest("* * * 0 * 0");
 	}
 	
 	public void cronTest(String crontab) {
@@ -91,7 +89,7 @@ public class CalendarTest {
 		String minute = times[4];
 		String second = times[5];
 		
-		Calendar calendar = Calendar.getInstance(Locale.CHINA);
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis());
 		int nowWeek = calendar.get(Calendar.DAY_OF_WEEK); // 1 ~ 7, 7 = 周日
 		if (calendar.getFirstDayOfWeek() == Calendar.SUNDAY && (nowWeek -= 1) == 0) 

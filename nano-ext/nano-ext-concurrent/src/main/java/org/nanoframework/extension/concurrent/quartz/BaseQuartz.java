@@ -17,7 +17,6 @@ package org.nanoframework.extension.concurrent.quartz;
 
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -249,7 +248,7 @@ public abstract class BaseQuartz extends Thread implements Runnable {
 		String minute = times[4];
 		String second = times[5];
 		
-		Calendar calendar = Calendar.getInstance(Locale.CHINA);
+		Calendar calendar = Calendar.getInstance();
 		calendar.setTimeInMillis(System.currentTimeMillis());
 		int nowWeek = calendar.get(Calendar.DAY_OF_WEEK); // 1 ~ 7, 7 = 周日
 		if (calendar.getFirstDayOfWeek() == Calendar.SUNDAY && (nowWeek -= 1) == 0) 
@@ -371,7 +370,12 @@ public abstract class BaseQuartz extends Thread implements Runnable {
 		calendar.set(Calendar.MILLISECOND, 0);
 		
 		Timestamp time = new Timestamp(calendar.getTimeInMillis());
-		Timestamp now = new Timestamp(System.currentTimeMillis());
+		long nowMillis = System.currentTimeMillis();
+		String millis = String.valueOf(nowMillis);
+		if("000".equals(millis.substring(millis.length() - 3, millis.length())))
+			nowMillis += 1;
+		Timestamp now = new Timestamp(nowMillis);
+		
 		long interval = time.getTime() - now.getTime();
 		if(interval < 0) {
 			if(!OTHER_TIME.equals(week) && Integer.valueOf(week) > 0) {
