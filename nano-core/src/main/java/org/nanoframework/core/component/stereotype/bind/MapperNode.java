@@ -152,13 +152,9 @@ public class MapperNode extends BaseEntity {
 					Map<RequestMethod, RequestMapper> map = _node.getMapper();
 					RequestMapper mapper;
 					if((mapper = map.get(requestMethod)) != null) {
-						try {
-							mapper = (RequestMapper) mapper.clone();
-							mapper.setParam(param);
-							return mapper;
-						} catch(CloneNotSupportedException e) {
-							throw new RuntimeException(e.getMessage(), e);
-						}
+						mapper = (RequestMapper) mapper.clone();
+						mapper.setParam(param);
+						return mapper;
 					}
 				}
 			}

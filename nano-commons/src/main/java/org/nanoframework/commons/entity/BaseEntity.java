@@ -316,12 +316,49 @@ public abstract class BaseEntity implements Cloneable {
 	}
 	
 	@Override
-	public BaseEntity clone() throws CloneNotSupportedException {
-		return (BaseEntity) super.clone();
+	public BaseEntity clone() {
+		try {
+			return (BaseEntity) super.clone();
+		} catch(CloneNotSupportedException e) {
+			throw new EntityException("Clone Not Supported Exception: " + e.getMessage());
+		}
 	}
 
+	@Override
 	public String toString() {
 		return JSON.toJSONString(this);
 	}
 	
+	/**
+	 * 合并2个对象，如果当前对象的属性值非空，且传入对象的属性也非空时，则替换当前对象属性的值为传入对象属性对应的值
+	 * @param entity 传入的对象
+	 * @return 返回克隆合并后的新对象
+	 * @since 1.2.2
+	 */
+	public <T extends BaseEntity> T _merge(T entity) {
+		return _merge(entity, true);
+	}
+	
+	/**
+	 * 合并2个对象
+	 * 
+	 * @param entity 传入的对象
+	 * @param replace false时不替换当前对象非空的属性值
+	 * @return 返回克隆合并后的新对象
+	 * @since 1.2.2
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends BaseEntity> T _merge(T entity, boolean replace) {
+		BaseEntity thiz = this.clone();
+		String[] names = thiz._getAttributeNames();
+		for(String name : names) {
+			Object entityObj, obj;
+			if((entityObj = entity._getAttributeValue(name)) != null) {
+				if(((obj = thiz._getAttributeValue(name)) != null && replace) || obj == null)
+					thiz._setAttributeValue(name, entityObj);
+			} 
+		}
+		
+		return (T) thiz;
+	}
 }
