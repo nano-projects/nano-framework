@@ -23,6 +23,7 @@ import org.nanoframework.core.plugins.PluginLoader;
 import org.nanoframework.core.plugins.defaults.module.AOPModule;
 import org.nanoframework.core.plugins.defaults.module.DataSourceModule;
 import org.nanoframework.core.plugins.defaults.plugin.JedisPlugin;
+import org.nanoframework.core.plugins.defaults.plugin.Log4jPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.QuartzPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
 
@@ -45,6 +46,7 @@ public class DefaultPluginLoader extends PluginLoader {
 
 	@Override
 	protected void configPlugin(Configure<Plugin> plugins) {
+		plugins.add(new Log4jPlugin());
 		plugins.add(new JedisPlugin());
 		plugins.add(new QuartzPlugin());
 		plugins.add(new WebSocketPlugin());

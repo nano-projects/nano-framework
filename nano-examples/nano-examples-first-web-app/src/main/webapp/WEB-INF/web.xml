@@ -46,6 +46,10 @@
 			<param-name>context</param-name>
 			<param-value>/context.properties</param-value>
 		</init-param>
+		<init-param>
+			<param-name>log4j</param-name>
+			<param-value>/examples-log4j.xml</param-value>
+		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
 

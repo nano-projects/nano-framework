@@ -15,8 +15,8 @@
  */
 package org.nanoframework.core.plugins;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.nanoframework.commons.util.Assert;
 
@@ -25,14 +25,14 @@ import org.nanoframework.commons.util.Assert;
  * @date 2015年10月31日 上午11:36:51
  */
 public class Configure<T> {
-	protected Set<T> configs = new LinkedHashSet<>();
+	protected List<T> configs = new LinkedList<>();
 	
 	public void add(T config) {
 		Assert.notNull(config);
 		configs.add(config);
 	}
 	
-	public Set<T> get() {
+	public List<T> get() {
 		return configs;
 	}
 }
