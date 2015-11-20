@@ -28,6 +28,7 @@ import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.server.exception.JettyServerException;
@@ -44,16 +45,14 @@ public class JettyCustomServer extends Server {
 
 	private static Logger LOG = LoggerFactory.getLogger(JettyCustomServer.class);
 	
-	private static final Properties CONTEXT;
+	private static Properties CONTEXT;
 	public static String DEFAULT_RESOURCE_BASE = "./webRoot";
 	
 	static {
 		try {
 			CONTEXT = PropertiesLoader.load(JettyCustomServer.class.getResourceAsStream(Constants.MAIN_CONTEXT));
 			LOG.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
-		} catch(LoaderException | IOException e) {
-			throw new JettyServerException(e.getMessage(), e);
-		}
+		} catch(LoaderException | IOException e) { }
 	}
 	
 	public static String DEFAULT_WEB_XML_PATH = DEFAULT_RESOURCE_BASE + "/WEB-INF/web.xml";
@@ -62,10 +61,27 @@ public class JettyCustomServer extends Server {
 	
 	public static String DEFAULT_JETTY_CONFIG = DEFAULT_RESOURCE_BASE + "/WEB-INF/jetty.xml";
 	
-	public static final JettyCustomServer DEFAULT = new JettyCustomServer();
-
+	public static JettyCustomServer DEFAULT;
+	static {
+		try {
+			DEFAULT = new JettyCustomServer();
+		} catch(Exception e) { }
+	}
 	public JettyCustomServer() {
-		this(CONTEXT.getProperty(Constants.CONTEXT_ROOT));
+		this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(Constants.CONTEXT_ROOT), null, null, null);
+	}
+	
+	public JettyCustomServer(String mainContext) {
+		Assert.hasLength(mainContext, "未设置CONTEXT属性文件路径");
+		try {
+			CONTEXT = PropertiesLoader.load(JettyCustomServer.class.getResourceAsStream(mainContext));
+			LOG.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
+		} catch(LoaderException | IOException e) { 
+			throw new JettyServerException(e.getMessage(), e);
+		}
+		
+		readXmlConfig(DEFAULT_JETTY_CONFIG);
+		applyHandle(CONTEXT.getProperty(Constants.CONTEXT_ROOT), null);
 	}
 	
 	public JettyCustomServer(String xmlConfigPath, String contextPath, String resourceBase, String webXmlPath) {
@@ -74,10 +90,6 @@ public class JettyCustomServer extends Server {
 
 	public JettyCustomServer(String xmlConfigPath, String contextPath) {
 		this(xmlConfigPath, contextPath, null, null, null);
-	}
-	
-	public JettyCustomServer(String contextPath) {
-		this(DEFAULT_JETTY_CONFIG, contextPath, null, null, null);
 	}
 	
 	public JettyCustomServer(String xmlConfigPath, String contextPath, String warPath) {
@@ -93,7 +105,6 @@ public class JettyCustomServer extends Server {
 
 		if (StringUtils.isNotEmpty(warPath) && StringUtils.isNotEmpty(contextPath)) {
 			applyHandle(contextPath, warPath);
-			
 		} else {
 			if (StringUtils.isNotEmpty(resourceBase))
 				DEFAULT_RESOURCE_BASE = resourceBase;
@@ -103,11 +114,9 @@ public class JettyCustomServer extends Server {
 			
 			if (StringUtils.isNotBlank(contextPath)) 
 				applyHandle(contextPath, warPath);
-			
 		}
-
 	}
-
+	
 	private void readXmlConfig(String configPath) {
 		try {
 			XmlConfiguration configuration = new XmlConfiguration(new FileInputStream(configPath));
@@ -118,23 +127,17 @@ public class JettyCustomServer extends Server {
 	}
 
 	public void applyHandle(String contextPath, String warPath) {
-
 		ContextHandlerCollection handler = new ContextHandlerCollection();
-
 		WebAppContext webapp = new WebAppContext();
 		webapp.setContextPath(contextPath);
 		webapp.setDefaultsDescriptor(WEB_DEFAULT);
-
 		if (StringUtils.isEmpty(warPath)) {
 			webapp.setResourceBase(DEFAULT_RESOURCE_BASE);
 			webapp.setDescriptor(DEFAULT_WEB_XML_PATH);
-			
-		} else {
+		} else 
 			webapp.setWar(warPath);
-		}
 
 		handler.addHandler(webapp);
-
 		super.setHandler(handler);
 	}
 
@@ -145,9 +148,7 @@ public class JettyCustomServer extends Server {
 			super.join();
 		} catch (Exception e) {
 			throw new JettyServerException(e.getMessage(), e);
-			
 		}
-
 	}
 
 }

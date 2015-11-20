@@ -15,15 +15,17 @@
  */
 package org.nanoframework.examples.first.webapp;
 
-import org.nanoframework.server.JettyCustomServer;
+import org.nanoframework.core.plugins.Configure;
+import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
 
 /**
  * @author yanghe
- * @date 2015年10月9日 上午10:03:59
+ * @date 2015年11月20日 上午10:16:26
  */
-public class Startup {
-	public static void main(String[] args) {
-		JettyCustomServer server = new JettyCustomServer("/examples-context.properties");
-		new Thread(() -> { server.startServer(); }).start();
+public class ExamplePluginLoader extends DefaultPluginLoader {
+
+	@Override
+	protected void configProperties(Configure<String> properties) {
+		properties.add("/examples-context.properties");
 	}
 }

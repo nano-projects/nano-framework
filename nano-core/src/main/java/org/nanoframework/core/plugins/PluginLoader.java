@@ -27,7 +27,6 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.globals.Globals;
 
@@ -62,8 +61,8 @@ public abstract class PluginLoader {
 	}
 	
 	private void initProperties() {
-		if(!properties.get().contains(Constants.MAIN_CONTEXT))
-			properties.add(Constants.MAIN_CONTEXT);
+//		if(!properties.get().contains(Constants.MAIN_CONTEXT))
+//			properties.add(Constants.MAIN_CONTEXT);
 		
 		long time = System.currentTimeMillis();
 		try { 

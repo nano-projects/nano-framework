@@ -39,10 +39,11 @@ public class ShutdownHook implements Runnable {
 			LOG.info("队列中的所有元素已被执行完成");
 			
 			Class<?> quartzFactory = Class.forName("org.nanoframework.extension.concurrent.quartz.QuartzFactory");
+			Object obj = quartzFactory.getMethod("getInstance").invoke(quartzFactory);
 			long time = System.currentTimeMillis();
 			LOG.info("开始停止任务调度");
-			quartzFactory.getMethod("closeAll").invoke(quartzFactory);
-			Collection<?> quartzs = (Collection<?>) quartzFactory.getMethod("getQuartzs").invoke(quartzFactory);
+			quartzFactory.getMethod("closeAll").invoke(obj);
+			Collection<?> quartzs = (Collection<?>) quartzFactory.getMethod("getQuartzs").invoke(obj);
 			for(Object item : quartzs) {
 				item.getClass().getMethod("thisNotify").invoke(item);
 			}

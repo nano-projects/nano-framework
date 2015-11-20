@@ -40,11 +40,11 @@
 		<servlet-class>org.nanoframework.web.server.servlet.DispatcherServlet</servlet-class>
 		<init-param>
 			<param-name>pluginLoader</param-name>
-			<param-value>org.nanoframework.core.plugins.defaults.DefaultPluginLoader</param-value>
+			<param-value>org.nanoframework.examples.first.webapp.ExamplePluginLoader</param-value>
 		</init-param>
 		<init-param>
 			<param-name>context</param-name>
-			<param-value>/context.properties</param-value>
+			<param-value>/examples-context.properties</param-value>
 		</init-param>
 		<init-param>
 			<param-name>log4j</param-name>
