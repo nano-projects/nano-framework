@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -64,8 +63,6 @@ public class Components {
 //	private static ConcurrentMap<String, RequestMapper> mapping = new ConcurrentHashMap<>();
 	
 	private static boolean isLoaded = false;
-	
-	private static Set<String> noneMapperCache = Collections.synchronizedSet(new HashSet<>());
 	
 	/**
 	 * 加载组件服务，并且装载至组件服务映射表中
@@ -251,15 +248,9 @@ public class Components {
 	 * @return 返回映射
 	 */
 	public static final RequestMapper getMapper(String url, RequestMethod method) {
-		// 缓存无法匹配的地址
-		if(noneMapperCache.contains(url)) {
-			return null;
-		}
-		
 		RequestMapper mapper;
 		if((mapper = MapperNode.get(url, method)) == null) {
 			LOG.warn("Not found request mapper in MapperNode: " + url);
-			noneMapperCache.add(url);
 		} 
 		
 		return mapper;
