@@ -248,12 +248,7 @@ public class Components {
 	 * @return 返回映射
 	 */
 	public static final RequestMapper getMapper(String url, RequestMethod method) {
-		RequestMapper mapper;
-		if((mapper = MapperNode.get(url, method)) == null) {
-			LOG.warn("Not found request mapper in MapperNode: " + url);
-		} 
-		
-		return mapper;
+		return MapperNode.get(url, method);
 	}
 	
 }
