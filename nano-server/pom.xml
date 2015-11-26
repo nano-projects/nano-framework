@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.nanoframework</groupId>
 		<artifactId>nano</artifactId>
-		<version>1.2.5-SNAPSHOT</version>
+		<version>1.2.5</version>
 	</parent>
 
 	<artifactId>nano-server</artifactId>
