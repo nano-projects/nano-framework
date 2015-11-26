@@ -32,27 +32,25 @@ public class BeforeAndAfterInterceptor implements MethodInterceptor {
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		BeforeAndAfter beforeAndAfter = invocation.getMethod().getAnnotation(BeforeAndAfter.class);
-		Before before = beforeAndAfter.before();
-		Method beforeMethod = before.classType().getMethod(before.methodName(), MethodInvocation.class);
+		Method beforeMethod = beforeAndAfter.classType().getMethod(beforeAndAfter.beforeMethodName(), MethodInvocation.class);
 		Object beforeInstance;
-		if(before.singleton()) {
-			if((beforeInstance = Globals.get(before.classType())) == null) {
-				beforeInstance = Globals.get(Injector.class).getInstance(before.classType());
-				Globals.set(before.classType(), beforeInstance);
+		if(beforeAndAfter.singleton()) {
+			if((beforeInstance = Globals.get(beforeAndAfter.classType())) == null) {
+				beforeInstance = Globals.get(Injector.class).getInstance(beforeAndAfter.classType());
+				Globals.set(beforeAndAfter.classType(), beforeInstance);
 			}
 		} else 
-			beforeInstance = before.classType().newInstance();
+			beforeInstance = beforeAndAfter.classType().newInstance();
 		
-		After after = beforeAndAfter.after();
-		Method afterMethod = after.classType().getMethod(after.methodName(), MethodInvocation.class, Object.class);
+		Method afterMethod = beforeAndAfter.classType().getMethod(beforeAndAfter.afterMethodName(), MethodInvocation.class, Object.class);
 		Object afterInstance;
-		if(after.singleton()) {
-			if((afterInstance = Globals.get(after.classType())) == null) {
-				afterInstance = Globals.get(Injector.class).getInstance(after.classType());
-				Globals.set(after.classType(), afterInstance);
+		if(beforeAndAfter.singleton()) {
+			if((afterInstance = Globals.get(beforeAndAfter.classType())) == null) {
+				afterInstance = Globals.get(Injector.class).getInstance(beforeAndAfter.classType());
+				Globals.set(beforeAndAfter.classType(), afterInstance);
 			}
 		} else 
-			afterInstance = after.classType().newInstance();
+			afterInstance = beforeAndAfter.classType().newInstance();
 		
 		Object obj = null;
 		try { 

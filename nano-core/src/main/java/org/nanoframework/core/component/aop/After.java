@@ -30,6 +30,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface After {
 	Class<?> classType();
-	String methodName();
+	String methodName() default "after";
 	boolean singleton() default true;
 }

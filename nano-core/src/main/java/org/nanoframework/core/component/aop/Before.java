@@ -30,6 +30,6 @@ import java.lang.annotation.Target;
 @Documented
 public @interface Before {
 	Class<?> classType();
-	String methodName();
+	String methodName() default "before";
 	boolean singleton() default true;
 }
