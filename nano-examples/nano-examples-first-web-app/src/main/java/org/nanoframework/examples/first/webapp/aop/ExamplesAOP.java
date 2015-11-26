@@ -19,14 +19,16 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.core.component.aop.IBefore;
 
 /**
  * @author yanghe
  * @date 2015年10月14日 上午10:35:57
  */
-public class ExamplesAOP {
+public class ExamplesAOP implements IBefore {
 	private Logger LOG = LoggerFactory.getLogger(ExamplesAOP.class);
 	
+	@Override
 	public void before(MethodInvocation invocation) {
 		if(LOG.isDebugEnabled()) {
 			String params = StringUtils.join(invocation.getMethod().getParameters(), ", ");
