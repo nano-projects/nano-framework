@@ -17,13 +17,13 @@ package org.nanoframework.jmx.client.management.impl;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
-import java.lang.management.ThreadMXBean;
 
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
 
 import org.nanoframework.jmx.client.JmxClient;
 import org.nanoframework.jmx.client.management.AbstractMXBean;
+import org.nanoframework.jmx.client.management.ThreadMXBean;
 
 /**
  * 

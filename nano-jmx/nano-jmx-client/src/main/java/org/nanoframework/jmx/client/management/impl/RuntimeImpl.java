@@ -16,7 +16,6 @@
 package org.nanoframework.jmx.client.management.impl;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.RuntimeMXBean;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +24,7 @@ import javax.management.ObjectName;
 
 import org.nanoframework.jmx.client.JmxClient;
 import org.nanoframework.jmx.client.management.AbstractMXBean;
+import org.nanoframework.jmx.client.management.RuntimeMXBean;
 
 /**
  * 远程系统运行时信息监控

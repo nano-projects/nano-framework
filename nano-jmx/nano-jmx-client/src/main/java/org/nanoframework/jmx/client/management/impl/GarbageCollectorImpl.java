@@ -15,13 +15,13 @@
  */
 package org.nanoframework.jmx.client.management.impl;
 
-import java.lang.management.GarbageCollectorMXBean;
 import java.lang.management.ManagementFactory;
 
 import javax.management.ObjectName;
 
 import org.nanoframework.jmx.client.JmxClient;
 import org.nanoframework.jmx.client.management.AbstractMXBean;
+import org.nanoframework.jmx.client.management.GarbageCollectorMXBean;
 import org.nanoframework.jmx.client.management.ObjectNames;
 
 /**
@@ -44,7 +44,7 @@ public class GarbageCollectorImpl extends AbstractMXBean implements GarbageColle
 	}
 	
 	public GarbageCollectorImpl(JmxClient client, ObjectNames name) {
-		init(client, objectName);
+		init(client, OBJECT_NAME + "," + name);
 	}
 	
 	public GarbageCollectorImpl(JmxClient client, ObjectName objectName) {

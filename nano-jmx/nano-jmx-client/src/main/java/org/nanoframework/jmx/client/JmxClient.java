@@ -16,6 +16,7 @@
 package org.nanoframework.jmx.client;
 
 import java.io.IOException;
+import java.rmi.ConnectException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -24,6 +25,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnector;
@@ -42,9 +44,11 @@ import org.nanoframework.jmx.client.exception.MXBeanException;
 public class JmxClient {
 	public static final String DEFAULT_CONTENT = "jmxrmi";
 	private static final ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactory() {
+		private AtomicLong id = new AtomicLong(0);
 		@Override
 		public Thread newThread(Runnable r) {
 			Thread thread = new Thread(r);
+			thread.setName("JMX-CONNECT-POOL-" + id.getAndIncrement());
 			thread.setDaemon(true);
 			return thread;
 		}
@@ -62,7 +66,33 @@ public class JmxClient {
 		this(host, port, DEFAULT_CONTENT);
 	}
 	
+	public JmxClient(String host, Integer port, long timeout) {
+		this(host, port, DEFAULT_CONTENT, timeout);
+	}
+	
 	public JmxClient(String host, Integer port, String content) {
+		this(host, port, content, true);
+	}
+	
+	public JmxClient(String host, Integer port, String content, boolean autoConnect) {
+		init(host, port, content);
+		
+		if(autoConnect)
+			connect();
+	}
+	
+	public JmxClient(String host, Integer port, String content, long timeout) {
+		this(host, port, content, true, timeout);
+	}
+	
+	public JmxClient(String host, Integer port, String content, boolean autoConnect, long timeout) {
+		init(host, port, content);
+		
+		if(autoConnect)
+			connect(timeout);
+	}
+	
+	private void init(String host, Integer port, String content) {
 		Assert.hasLength(host);
 		Assert.notNull(port);
 		Assert.hasLength(content);
@@ -75,20 +105,44 @@ public class JmxClient {
 		} catch(IOException e) {
 			throw new MXBeanException(e.getMessage(), e);
 		}
-		
-		connect();
 	}
 	
 	public JmxClient connect() {
 		try {
+			connector = JMXConnectorFactory.connect(jmxServiceUrl);
+			closed.set(false);
+		} catch(IOException e) {
+			throw new MXBeanException(e.getMessage(), e);
+		}
+		
+		return this;
+	}
+	
+	public JmxClient connect(long timeout) {
+		try {
 			Future<JMXConnector> future = service.submit(() -> JMXConnectorFactory.connect(jmxServiceUrl));
-			connector = future.get(3000, TimeUnit.MILLISECONDS);
+			connector = future.get(timeout, TimeUnit.MILLISECONDS);
 			closed.set(false);
 		} catch(InterruptedException | ExecutionException | TimeoutException e) {
 			throw new MXBeanException(e.getMessage(), e);
 		}
 		
 		return this;
+	}
+	
+	public synchronized void reconnect() throws ConnectException {
+		if(isClosed())
+			return ;
+		
+		try {
+			close();
+			connect();
+		} catch(MXBeanException e) {
+			if(e.getCause() != null && e.getCause() instanceof IOException)
+				throw new ConnectException(e.getMessage(), e);
+
+			throw e;
+		}
 	}
 	
 	public MBeanServerConnection getConnection() {

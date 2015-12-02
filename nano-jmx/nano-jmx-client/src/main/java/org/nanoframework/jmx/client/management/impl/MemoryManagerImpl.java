@@ -16,12 +16,12 @@
 package org.nanoframework.jmx.client.management.impl;
 
 import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryManagerMXBean;
 
 import javax.management.ObjectName;
 
 import org.nanoframework.jmx.client.JmxClient;
 import org.nanoframework.jmx.client.management.AbstractMXBean;
+import org.nanoframework.jmx.client.management.MemoryManagerMXBean;
 import org.nanoframework.jmx.client.management.ObjectNames;
 
 /**
@@ -42,7 +42,7 @@ public class MemoryManagerImpl extends AbstractMXBean implements MemoryManagerMX
 	}
 	
 	public MemoryManagerImpl(JmxClient client, ObjectNames name) {
-		init(client, objectName);
+		init(client, OBJECT_NAME + "," + name.value());
 	}
 	
 	public MemoryManagerImpl(JmxClient client, ObjectName objectName) {

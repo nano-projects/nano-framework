@@ -16,11 +16,14 @@
 package org.nanoframework.jmx.client.management.impl;
 
 import java.lang.management.ManagementFactory;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import javax.management.ObjectName;
 
 import org.nanoframework.jmx.client.JmxClient;
 import org.nanoframework.jmx.client.management.AbstractMXBean;
+import org.nanoframework.jmx.client.management.OperatingSystemMXBean;
 
 /**
  * 
@@ -28,8 +31,7 @@ import org.nanoframework.jmx.client.management.AbstractMXBean;
  * @date 2015年8月18日 下午5:50:58 
  * @since 1.1
  */
-@SuppressWarnings("restriction")
-public class OperatingSystemImpl extends AbstractMXBean implements com.sun.management.OperatingSystemMXBean {
+public class OperatingSystemImpl extends AbstractMXBean implements OperatingSystemMXBean {
 	public static final String OBJECT_NAME = ManagementFactory.OPERATING_SYSTEM_MXBEAN_NAME;
 	public static final String NAME = "Name";
 	public static final String ARCH = "Arch";
@@ -122,5 +124,27 @@ public class OperatingSystemImpl extends AbstractMXBean implements com.sun.manag
 	public long getTotalSwapSpaceSize() {
 		return getAttribute(TOTAL_SWAP_SPACE_SIZE);
 	}
+	
+	public double cpuRatio() {
+		return cpuRatio(1000, true);
+	}
+	
+	public double cpuRatio(long time) {
+		return cpuRatio(time, true);
+	}
 
+	public double cpuRatio(long time, boolean ifAvaProc) {
+		Long start = System.currentTimeMillis();  
+        long startT = getProcessCpuTime();  
+        try { Thread.sleep(time); } catch (InterruptedException e) { }
+        Long end = System.currentTimeMillis();  
+        long endT = getProcessCpuTime();  
+        double ratio = (endT - startT) / 1000000.0 / (end - start);
+        if(ifAvaProc)
+        	ratio /= getAvailableProcessors();
+        
+        BigDecimal decimal = new BigDecimal(ratio * 100);
+        return decimal.setScale(2, RoundingMode.HALF_UP).doubleValue();
+        
+	}
 }

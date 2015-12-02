@@ -16,13 +16,6 @@
 package org.nanoframework.jmx.client;
 
 import java.io.IOException;
-import java.lang.management.ClassLoadingMXBean;
-import java.lang.management.CompilationMXBean;
-import java.lang.management.GarbageCollectorMXBean;
-import java.lang.management.MemoryMXBean;
-import java.lang.management.MemoryManagerMXBean;
-import java.lang.management.OperatingSystemMXBean;
-import java.lang.management.RuntimeMXBean;
 import java.util.Map;
 
 import org.junit.Before;
@@ -30,7 +23,14 @@ import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.jmx.client.management.AbstractMXBean;
+import org.nanoframework.jmx.client.management.ClassLoadingMXBean;
+import org.nanoframework.jmx.client.management.CompilationMXBean;
+import org.nanoframework.jmx.client.management.GarbageCollectorMXBean;
+import org.nanoframework.jmx.client.management.MemoryMXBean;
+import org.nanoframework.jmx.client.management.MemoryManagerMXBean;
 import org.nanoframework.jmx.client.management.ObjectNames;
+import org.nanoframework.jmx.client.management.OperatingSystemMXBean;
+import org.nanoframework.jmx.client.management.RuntimeMXBean;
 import org.nanoframework.jmx.client.management.impl.ClassLoadingImpl;
 import org.nanoframework.jmx.client.management.impl.CompilationImpl;
 import org.nanoframework.jmx.client.management.impl.GarbageCollectorImpl;

@@ -35,6 +35,10 @@ public class JmxClientManager {
 		return get(address, DEFAULT_CONTENT);
 	}
 	
+	public static final JmxClient get(String address, long timeout) {
+		return get(address, DEFAULT_CONTENT, timeout);
+	}
+	
 	public static final JmxClient get(String address, String content) {
 		Assert.hasLength(address);
 		Assert.hasLength(content);
@@ -49,6 +53,25 @@ public class JmxClientManager {
 			}
 		} else if(client.isClosed()) {
 			client.connect();
+		}
+		
+		return client;
+	}
+	
+	public static final JmxClient get(String address, String content, long timeout) {
+		Assert.hasLength(address);
+		Assert.hasLength(content);
+		JmxClient client = jmxClientMap.get(address + "/" + content);
+		if(client == null) {
+			String[] addr = address.split(":");
+			if(addr.length != 2) throw new MXBeanException("无效的Key");
+			try {
+				put(address, content, client = new JmxClient(addr[0], Integer.parseInt(addr[1]), content, timeout));
+			} catch(NumberFormatException e) {
+				throw new MXBeanException("无效的Key");
+			}
+		} else if(client.isClosed()) {
+			client.connect(timeout);
 		}
 		
 		return client;
