@@ -30,6 +30,7 @@ import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.core.component.scan.ComponentScan;
 import org.nanoframework.core.globals.Globals;
@@ -83,14 +84,14 @@ public class QuartzFactory {
 	 */
 	public BaseQuartz bind(BaseQuartz quartz) {
 		try {
-			quartzs.put(quartz._getId(), quartz);
+			quartzs.put(quartz.getConfig().getId(), quartz);
 			quartzSize.incrementAndGet();
 			
 			return quartz;
 			
 		} finally {
 			if(LOG.isInfoEnabled())
-				LOG.info("绑定任务: 任务号[ " + quartz._getId() + " ]");
+				LOG.info("绑定任务: 任务号[ " + quartz.getConfig().getId() + " ]");
 			
 		}
 	}
@@ -103,14 +104,14 @@ public class QuartzFactory {
 	 */
 	public BaseQuartz unbind(BaseQuartz quartz) {
 		try {
-			quartzs.remove(quartz._getId());
+			quartzs.remove(quartz.getConfig().getId());
 			quartzSize.decrementAndGet();
 			
 			return quartz;
 			
 		} finally {
 			if(LOG.isDebugEnabled())
-				LOG.debug("解绑任务 : 任务号[ " + quartz._getId() + " ], 现存任务数: " + quartzSize.get());
+				LOG.debug("解绑任务 : 任务号[ " + quartz.getConfig().getId() + " ], 现存任务数: " + quartzSize.get());
 			
 		}
 	}
@@ -148,6 +149,20 @@ public class QuartzFactory {
 				LOG.debug("关闭任务: 任务号[ " + id + " ]");
 			
 		}
+	}
+	
+	/**
+	 * 关闭整组任务
+	 * @param groupName
+	 */
+	public void closeGroup(String groupName) {
+		Assert.hasLength(groupName, "groupName can not be null");
+		quartzs.forEach((id, quartz) -> {
+			if(groupName.equals(quartz.getConfig().getGroup())) {
+				if(!quartz.isClose()) 
+					quartz.setClose(true);
+			}
+		});
 	}
 	
 	/**
@@ -220,18 +235,21 @@ public class QuartzFactory {
 					
 					for(int p = 0; p < parallel; p ++) {
 						BaseQuartz baseQuartz = (BaseQuartz) Globals.get(Injector.class).getInstance(clz);
-						baseQuartz.setId(quartz.name() + "-" + p);
-						baseQuartz.setName("Quartz-Thread-Pool: " + quartz.name() + "-" + p);
-						baseQuartz.setService(service);
-						baseQuartz.setBeforeAfterOnly(quartz.beforeAfterOnly());
-						baseQuartz.setRunNumberOfTimes(quartz.runNumberOfTimes());
-						baseQuartz.setInterval(quartz.interval());
-						baseQuartz.setNum(p);
-						baseQuartz.setTotal(parallel);
+						QuartzConfig config = new QuartzConfig();
+						config.setId(quartz.name() + "-" + p);
+						config.setName("Quartz-Thread-Pool: " + quartz.name() + "-" + p);
+						config.setGroup(quartz.name());
+						config.setService(service);
+						config.setBeforeAfterOnly(quartz.beforeAfterOnly());
+						config.setRunNumberOfTimes(quartz.runNumberOfTimes());
+						config.setInterval(quartz.interval());
+						config.setNum(p);
+						config.setTotal(parallel);
 						if(StringUtils.isNotBlank(cron))
-							try { baseQuartz.setCron(new CronExpression(cron)); } catch(ParseException e) { throw new QuartzException(e.getMessage(), e); }
+							try { config.setCron(new CronExpression(cron)); } catch(ParseException e) { throw new QuartzException(e.getMessage(), e); }
 					
 						baseQuartz.setDaemon(quartz.daemon());
+						baseQuartz.setConfig(config);
 						
 						if(_tmpQuartz.containsKey(quartz.name() + "-" + p)) {
 							throw new QuartzException("\n\t任务调度重复: " + quartz.name() + "-" + p + ", 组件类: {'" + clz.getName() + "', '" + _tmpQuartz.get(quartz.name() + "-" + p).getClass().getName() +"'}");

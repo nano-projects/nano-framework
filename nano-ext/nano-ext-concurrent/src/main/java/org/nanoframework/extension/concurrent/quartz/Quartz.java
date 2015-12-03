@@ -55,7 +55,7 @@ public @interface Quartz {
 	 * 执行间隔时间, 单位: 毫秒, 默认时间: 0
 	 * @return int
 	 */
-	int interval() default 0;
+	long interval() default 0;
 	
 	/**
 	 * 并行度，调度任务线程数, 并行度必须大于等于0 , 默认并行度: 0
