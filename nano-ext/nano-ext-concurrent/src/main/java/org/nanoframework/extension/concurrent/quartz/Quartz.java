@@ -64,7 +64,7 @@ public @interface Quartz {
 	int parallel() default 0;
 	
 	/**
-	 * 通过属性文件设置并行度, 如果设置了此属性并且可以整合获取到属性值，则使用此属性设置，并无视parallel的设置, 默认值: ""
+	 * 通过属性文件设置并行度, 如果设置了此属性并且可以获取到属性值，则使用此属性设置，并无视parallel的设置, 默认值: ""
 	 * @return String
 	 */
 	String parallelProperty() default "";
@@ -76,14 +76,21 @@ public @interface Quartz {
 	boolean coreParallel() default false;
 	
 	/**
-	 * 周(1~7: 7=周日) <br>
-	 * 月(1~12) <br>
-	 * 日(1~31: 每月不足31日的自动使用当月的最后一天) <br>
-	 * 时(0~23) <br>
-	 * 分(0~59) <br>
-	 * 秒(0~59) <br>
-	 * 
-	 * @return String
+	 * Quartz cron表达式
+	 * @return
+	 * @see org.nanoframework.extension.concurrent.quartz.CronExpression
 	 */
-	String crontab() default "* * * * * *";
+	String cron() default "";
+	
+	/**
+	 * 通过属性文件设置cron表达式
+	 * @return
+	 */
+	String cronProperty() default "";
+	
+	/**
+	 * 是否守护线程，默认为用户线程
+	 * @return
+	 */
+	boolean daemon() default false;
 }

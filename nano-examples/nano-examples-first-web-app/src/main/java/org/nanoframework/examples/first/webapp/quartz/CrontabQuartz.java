@@ -27,7 +27,7 @@ import org.nanoframework.extension.concurrent.quartz.Quartz;
  * @author yanghe
  * @date 2015年11月1日 下午6:01:35
  */
-@Quartz(name = "CrontabQuartz", beforeAfterOnly = true, crontab = "* * * * * 0", parallel = 1)
+@Quartz(name = "CrontabQuartz", beforeAfterOnly = true, cron = "*/5 * * * * ?", parallel = 1, daemon = true)
 public class CrontabQuartz extends BaseQuartz {
 
 	private Logger LOG = LoggerFactory.getLogger(CrontabQuartz.class);

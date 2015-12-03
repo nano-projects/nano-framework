@@ -15,7 +15,7 @@
  */
 package org.nanoframework.extension.concurrent.quartz;
 
-import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.Properties;
 import java.util.Set;
@@ -26,7 +26,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nanoframework.commons.annatations.Property;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
@@ -52,7 +51,8 @@ public class QuartzFactory {
 	private AtomicInteger quartzSize = new AtomicInteger(0);
 	private static ConcurrentMap<String , BaseQuartz> quartzs = new ConcurrentHashMap<>();
 	private static ConcurrentMap<String , BaseQuartz> _tmpQuartz = new ConcurrentHashMap<>();
-	private static ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool();
+	private static final QuartzThreadFactory threadFactory = new QuartzThreadFactory();
+	private static ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool(threadFactory);
 	
 	private static boolean isLoaded = false;
 	
@@ -78,18 +78,19 @@ public class QuartzFactory {
 	/**
 	 * 绑定任务
 	 * 
-	 * @param task 任务
+	 * @param quartz 任务
 	 * @return 返回当前任务
 	 */
-	public BaseQuartz bind(BaseQuartz task) {
+	public BaseQuartz bind(BaseQuartz quartz) {
 		try {
-			quartzs.put(task._getId(), task);
+			quartzs.put(quartz._getId(), quartz);
 			quartzSize.incrementAndGet();
 			
-			return task;
+			return quartz;
 			
 		} finally {
-			LOG.info("绑定任务: 任务号[ " + task._getId() + " ]");
+			if(LOG.isInfoEnabled())
+				LOG.info("绑定任务: 任务号[ " + quartz._getId() + " ]");
 			
 		}
 	}
@@ -97,18 +98,19 @@ public class QuartzFactory {
 	/**
 	 * 解绑任务
 	 * 
-	 * @param task 任务
+	 * @param quartz 任务
 	 * @return 返回当前任务
 	 */
-	public BaseQuartz unbind(BaseQuartz task) {
+	public BaseQuartz unbind(BaseQuartz quartz) {
 		try {
-			quartzs.remove(task._getId());
+			quartzs.remove(quartz._getId());
 			quartzSize.decrementAndGet();
 			
-			return task;
+			return quartz;
 			
 		} finally {
-			LOG.debug("解绑任务 : 任务号[ " + task._getId() + " ], 现存任务数: " + quartzSize.get());
+			if(LOG.isDebugEnabled())
+				LOG.debug("解绑任务 : 任务号[ " + quartz._getId() + " ], 现存任务数: " + quartzSize.get());
 			
 		}
 	}
@@ -133,16 +135,17 @@ public class QuartzFactory {
 	
 	/**
 	 * 关闭任务
-	 * @param taskId 任务号
+	 * @param id 任务号
 	 */
-	public void close(String taskId) {
+	public void close(String id) {
 		try {
-			BaseQuartz task = quartzs.get(taskId);
-			if(task != null && !task.isClose())
-				task.setClose(true);
+			BaseQuartz quartz = quartzs.get(id);
+			if(quartz != null && !quartz.isClose())
+				quartz.setClose(true);
 			
 		} finally {
-			LOG.debug("关闭任务: 任务号[ " + taskId + " ]");
+			if(LOG.isDebugEnabled())
+				LOG.debug("关闭任务: 任务号[ " + id + " ]");
 			
 		}
 	}
@@ -177,90 +180,65 @@ public class QuartzFactory {
 		});
 		
 		Set<Class<?>> componentClasses = ComponentScan.filter(Quartz.class);
-		LOG.info("Quartz size: " + componentClasses.size());
+		if(LOG.isInfoEnabled())
+			LOG.info("Quartz size: " + componentClasses.size());
 		
 		if(componentClasses.size() > 0) {
 			for(Class<?> clz : componentClasses) {
 				if(BaseQuartz.class.isAssignableFrom(clz)) {
-					LOG.info("Inject Quartz Class: " + clz.getName());
+					if(LOG.isInfoEnabled())
+						LOG.info("Inject Quartz Class: " + clz.getName());
+					
 					Quartz quartz = clz.getAnnotation(Quartz.class);
 					if(StringUtils.isEmpty(quartz.name())) 
 						throw new QuartzException("任务名不能为空, 类名 [ " + clz.getName()+ " ]");
 					
 					String parallelProperty = quartz.parallelProperty();
 					int parallel = 0;
+					String cron = "";
 					for(Properties properties : PropertiesLoader.PROPERTIES.values()) {
-						if(StringUtils.isNotEmpty(properties.getProperty(parallelProperty))) {
+						String value;
+						if(StringUtils.isNotBlank(value = properties.getProperty(parallelProperty))) {
 							/** 采用最后设置的属性作为最终结果 */
-							String value = properties.getProperty(parallelProperty);
 							try {
 								parallel = Integer.parseInt(value);
 							} catch(NumberFormatException e) { 
 								throw new QuartzException("并行度属性设置错误, 属性名: [ " + parallelProperty + " ], 属性值: [ " + value + " ]");
 							}
 						}
+						
+						if(StringUtils.isNotBlank(value = properties.getProperty(quartz.cronProperty())))
+							cron = value;
 					}
 					
 					parallel = quartz.coreParallel() ? RuntimeUtil.AVAILABLE_PROCESSORS : parallel > 0 ? parallel : quartz.parallel();
 					if(parallel < 0)
 						parallel = 0;
 					
-					for(int p = 0; p < parallel; p ++) {
-						Object obj = Globals.get(Injector.class).getInstance(clz);
-						Field[] fields = BaseQuartz.class.getDeclaredFields();
-						if(fields != null && fields.length > 0) {
-							for(Field field : fields) {
-								Property property;
-								if((property = field.getAnnotation(Property.class)) != null) {
-									field.setAccessible(true) ;  
-									
-									switch(property.name()) {
-										case BaseQuartz.ID: 
-											field.set(obj, quartz.name() + "-" + p);
-											break;
-											
-										case BaseQuartz.SERVICE: 
-											field.set(obj, service);
-											break;
-											
-										case BaseQuartz.BEFORE_AFTER_ONLY: 
-											field.set(obj, quartz.beforeAfterOnly());
-											break;
-											
-										case BaseQuartz.RUN_NUMBER_OF_TIMES: 
-											field.set(obj, quartz.runNumberOfTimes());
-											break;
-											
-										case BaseQuartz.INTERVAL: 
-											field.set(obj, quartz.interval());
-											break;
-											
-										case BaseQuartz.NUM:
-											field.set(obj, p);
-											break;
-											
-										case BaseQuartz.TOTAL: 
-											field.set(obj, parallel);
-											break;
-											
-										case BaseQuartz.CRONTAB: 
-											crontabValid(quartz);
-											field.set(obj, quartz.crontab());
-
-										default :
-											break;
-											
-									}
-								}
-							}
-						}
+					if(StringUtils.isBlank(cron))
+						cron = quartz.cron();
 					
+					for(int p = 0; p < parallel; p ++) {
+						BaseQuartz baseQuartz = (BaseQuartz) Globals.get(Injector.class).getInstance(clz);
+						baseQuartz.setId(quartz.name() + "-" + p);
+						baseQuartz.setName("Quartz-Thread-Pool: " + quartz.name() + "-" + p);
+						baseQuartz.setService(service);
+						baseQuartz.setBeforeAfterOnly(quartz.beforeAfterOnly());
+						baseQuartz.setRunNumberOfTimes(quartz.runNumberOfTimes());
+						baseQuartz.setInterval(quartz.interval());
+						baseQuartz.setNum(p);
+						baseQuartz.setTotal(parallel);
+						if(StringUtils.isNotBlank(cron))
+							try { baseQuartz.setCron(new CronExpression(cron)); } catch(ParseException e) { throw new QuartzException(e.getMessage(), e); }
+					
+						baseQuartz.setDaemon(quartz.daemon());
+						
 						if(_tmpQuartz.containsKey(quartz.name() + "-" + p)) {
 							throw new QuartzException("\n\t任务调度重复: " + quartz.name() + "-" + p + ", 组件类: {'" + clz.getName() + "', '" + _tmpQuartz.get(quartz.name() + "-" + p).getClass().getName() +"'}");
 							
 						}
 						
-						_tmpQuartz.put(quartz.name() + "-" + p, (BaseQuartz) obj);
+						_tmpQuartz.put(quartz.name() + "-" + p, baseQuartz);
 						
 					}
 				} else 
@@ -273,79 +251,6 @@ public class QuartzFactory {
 		isLoaded = true;
 	}
 	
-	private static final void crontabValid(Quartz quartz) {
-		if(quartz.crontab().split(" ").length != 6)
-			throw new QuartzException("任务调度crontab参数设置错误，格式必须为: [* * * * * *]");
-		
-		String[] times = quartz.crontab().split(" ");
-		String week = times[0];
-		String month = times[1];
-		String day = times[2];
-		String hour = times[3];
-		String minute = times[4];
-		String second = times[5];
-		
-		if(!BaseQuartz.OTHER_TIME.equals(week)) {
-			try {
-				int _week = Integer.valueOf(week);
-				if(_week < 1 || _week > 7)
-					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，周的设置范围为: 1~7, 这里设置为: " + week);
-			} catch(NumberFormatException e) {
-				throw new QuartzException("时间策略设置错误: 周必须为1~7之间的整形");
-			}
-		}
-		
-		if(!BaseQuartz.OTHER_TIME.equals(month)) {
-			try { 
-				int _month = Integer.valueOf(month);
-				if(_month < 1 || _month > 12)
-					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，月的设置范围为: 1~12, 这里设置为: " + month);
-			} catch(NumberFormatException e) {
-				throw new QuartzException("时间策略设置错误: 月必须为1~12之间的整形");
-			}
-		}
-		
-		if(!BaseQuartz.OTHER_TIME.equals(day)) {
-			try { 
-				int _day = Integer.valueOf(day);
-				if(_day < 1 || _day > 31)
-					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，日的设置范围为: 1~31, 这里设置为: " + day);
-			} catch(NumberFormatException e) {
-				throw new QuartzException("时间策略设置错误: 日必须为1~31之间的整形");
-			}
-		}
-		
-		if(!BaseQuartz.OTHER_TIME.equals(hour)) {
-			try { 
-				int _hour = Integer.valueOf(hour);
-				if(_hour < 0 || _hour > 23)
-					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，时的设置范围为: 0~23, 这里设置为: " + hour);
-			} catch(NumberFormatException e) {
-				throw new QuartzException("时间策略设置错误: 时必须为0~23之间的整形");
-			}
-		}
-		
-		if(!BaseQuartz.OTHER_TIME.equals(minute)) {
-			try { 
-				int _minute = Integer.valueOf(minute);
-				if(_minute < 0 || _minute > 59)
-					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，分的设置范围为: 0~59, 这里设置为: " + minute);
-			} catch(NumberFormatException e) {
-				throw new QuartzException("时间策略设置错误: 分必须为0~59之间的整形");
-			}
-		}
-		
-		if(!BaseQuartz.OTHER_TIME.equals(second)) {
-			try { 
-				int _second = Integer.valueOf(second);
-				if(_second < 0 || _second > 59)
-					throw new QuartzException("时间策略设置错误, 调度任务: " + quartz.name() + "，秒的设置范围为: 0~59, 这里设置为: " + second);
-			} catch(NumberFormatException e) {
-				throw new QuartzException("时间策略设置错误: 秒必须为0~59之间的整形");
-			}
-		}
-	}
-	
 	/**
 	 * 重新加载调度任务
 	 * @param injector Guice Injector
@@ -355,7 +260,8 @@ public class QuartzFactory {
 		getInstance().closeAll();
 		service.execute(() -> {
 			try { while(QuartzFactory.getInstance().getQuartzSize() > 0) Thread.sleep(100L); } catch(InterruptedException e) { }
-			LOG.info("所有任务已经全部关闭");
+			if(LOG.isInfoEnabled())
+				LOG.info("所有任务已经全部关闭");
 			
 			try {
 				load();
@@ -373,15 +279,18 @@ public class QuartzFactory {
 	public static final void startAll() {
 		if(_tmpQuartz.size() > 0) {
 			_tmpQuartz.forEach((name, quartz) -> {
-				LOG.info("Start quartz [ " + name + " ], class with [ " + quartz.getClass().getName() + " ]");
-				getInstance().bind(quartz);
-				service.execute(quartz);
+				if(LOG.isInfoEnabled())
+					LOG.info("Start quartz [ " + name + " ], class with [ " + quartz.getClass().getName() + " ]");
 				
+				getInstance().bind(quartz);
+				threadFactory.setBaseQuartz(quartz);
+				service.execute(quartz);
 			});
 			
 			_tmpQuartz.clear();
 			
 		}
 	}
+	
 	
 }
