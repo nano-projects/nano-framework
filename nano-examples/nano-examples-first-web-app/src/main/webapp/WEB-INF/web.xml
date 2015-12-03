@@ -6,6 +6,10 @@
 	<listener>
 		<listener-class>org.nanoframework.examples.first.webapp.listener.H2DBServerListener</listener-class>
 	</listener>
+	
+	<listener>
+		<listener-class>org.nanoframework.web.server.listener.ContextLoaderListener</listener-class>
+	</listener>
  
 	<filter>
 		<filter-name>httpRequestFilter</filter-name>

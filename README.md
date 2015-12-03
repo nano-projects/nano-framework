@@ -24,7 +24,7 @@ mvn clean install -Dmaven.test.skip=true
 <dependency>
 	<groupId>org.nanoframework</groupId>
 	<artifactId>nano-webmvc</artifactId>
-	<version>1.2.0-RC1</version>
+	<version>1.2.7</version>
 </dependency>
 ```
 ####2、配置web.xml
@@ -62,6 +62,18 @@ context.root=/first-webapp
 
 更新描述
 ----
+#####版本号: 1.2.7
+- 1、重构AOP实现，现在可以以最简洁的方式实现AOP的处理
+
+#####版本号: 1.2.4
+- 1、移除Components.getMapper时对URI的缓存
+
+#####版本号: 1.2.3
+- 1、调整Server对context属性文件的加载处理，现在可以不使用context.properties作为主属性的名称，但是必须重写DefaultPluginLoader的configProperties方法，并设置新的context属性文件的路径，同时需要在web.xml中配置pluginLoader属性及其对应的PluginLoader类
+
+#####版本号: 1.2.2
+- 1、新增Log4j插件，使用时需要添加log4的xml格式配置文件及在web.xml中的DispatcherServlet中添加log4j参数和log4j配置文件路径
+
 #####版本号: 1.2.1
 - 1、ext-concurrent中调整Quartz的时间策略，增加了类似crontab的时间策略，使其可以定时执行任务
 - 2、修改核心包中对服务启动的模式，现在采用插件的模式，用户可以自定义开发插件，方便进行功能扩展

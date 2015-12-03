@@ -38,17 +38,17 @@ public class ShutdownHook implements Runnable {
 			while((int) blockingQueueFactory.getMethod("howManyElementInQueues").invoke(blockingQueueFactory) > 0) Thread.sleep(10L); 
 			LOG.info("队列中的所有元素已被执行完成");
 			
-			Class<?> quartzFactory = Class.forName("org.nanoframework.extension.concurrent.quartz.QuartzFactory");
-			Object obj = quartzFactory.getMethod("getInstance").invoke(quartzFactory);
+			Class<?> QuartzFactory = Class.forName("org.nanoframework.extension.concurrent.quartz.QuartzFactory");
+			Object quartzFactory = QuartzFactory.getMethod("getInstance").invoke(QuartzFactory);
 			long time = System.currentTimeMillis();
 			LOG.info("开始停止任务调度");
-			quartzFactory.getMethod("closeAll").invoke(obj);
-			Collection<?> quartzs = (Collection<?>) quartzFactory.getMethod("getQuartzs").invoke(obj);
+			QuartzFactory.getMethod("closeAll").invoke(quartzFactory);
+			Collection<?> quartzs = (Collection<?>) QuartzFactory.getMethod("getQuartzs").invoke(quartzFactory);
 			for(Object item : quartzs) {
 				item.getClass().getMethod("thisNotify").invoke(item);
 			}
 			
-			while((int) quartzFactory.getMethod("getQuartzSize").invoke(quartzFactory) > 0 && System.currentTimeMillis() - time < 300000L) Thread.sleep(10L);
+			while((int) QuartzFactory.getMethod("getQuartzSize").invoke(quartzFactory) > 0 && System.currentTimeMillis() - time < 300000L) Thread.sleep(10L);
 			LOG.info("停止任务调度完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
 		} catch(InterruptedException | ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 			LOG.error("没有加载Concurrent扩展或调用异常: " + e.getMessage());
