@@ -33,4 +33,5 @@ public class ChainTest {
 		chain0.setChain(chain1.setChain(chain2.setChain(chain3)));
 		System.out.println(chain0.execute(1L));
 	}
+	
 }
