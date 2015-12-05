@@ -30,7 +30,7 @@ import org.nanoframework.extension.concurrent.exception.QuartzException;
  * @date 2015年6月8日 下午5:10:18 
  *
  */
-public abstract class BaseQuartz extends Thread implements Runnable {
+public abstract class BaseQuartz implements Runnable {
 	protected static Logger LOG = LoggerFactory.getLogger(BaseQuartz.class);
 	
 	private QuartzConfig config;
@@ -40,15 +40,10 @@ public abstract class BaseQuartz extends Thread implements Runnable {
 	private Object LOCK = new Object();
 	private AtomicBoolean isLock = new AtomicBoolean(false);
 	
-	public BaseQuartz() {
-		
-	}
+	public BaseQuartz() { }
 			
 	public BaseQuartz(QuartzConfig config) {
-		Assert.notNull(config, "QuartzConfig can not be null");
-		if(config.getRunNumberOfTimes() != null && config.getRunNumberOfTimes() < 0)
-			throw new QuartzException("运行次数不能小于0.");
-		
+		Assert.notNull(config, "QuartzConfig must not be null");
 		this.config = config;
 	}
 	

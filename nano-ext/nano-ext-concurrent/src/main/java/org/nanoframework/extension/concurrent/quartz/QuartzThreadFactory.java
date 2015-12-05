@@ -29,7 +29,10 @@ public class QuartzThreadFactory implements ThreadFactory {
 		if(baseQuartz == null)
 			return new Thread(runnable);
 		
-		return baseQuartz;
+		Thread thread = new Thread(baseQuartz);
+		thread.setName(baseQuartz.getConfig().getName());
+		thread.setDaemon(baseQuartz.getConfig().getDaemon());
+		return thread;
 	}
 
 	public void setBaseQuartz(BaseQuartz baseQuartz) {

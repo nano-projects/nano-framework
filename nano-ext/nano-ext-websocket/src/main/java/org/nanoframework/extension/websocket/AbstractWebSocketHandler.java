@@ -21,7 +21,6 @@ import static io.netty.handler.codec.http.HttpResponseStatus.FORBIDDEN;
 import static io.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
-import org.nanoframework.commons.annatations.Property;
 import org.nanoframework.web.server.http.status.HttpStatusCode;
 
 import io.netty.buffer.ByteBuf;
@@ -49,10 +48,7 @@ import io.netty.util.CharsetUtil;
 public abstract class AbstractWebSocketHandler extends SimpleChannelInboundHandler<Object> implements Cloneable {
 
     protected WebSocketServerHandshaker handshaker;
-    public static final String LOCATION = "location";
-    
-    @Property(name = "location", required = true)
-    protected String location;
+    private String location;
     
     @Override
     public void channelRead0(ChannelHandlerContext ctx, Object msg) {
@@ -140,6 +136,10 @@ public abstract class AbstractWebSocketHandler extends SimpleChannelInboundHandl
 
     public String getLocation() {
 		return location;
+	}
+    
+	public void setLocation(String location) {
+		this.location = location;
 	}
     
     @Override

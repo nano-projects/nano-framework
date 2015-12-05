@@ -18,6 +18,7 @@ package org.nanoframework.extension.concurrent.quartz;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.nanoframework.commons.entity.BaseEntity;
+import org.nanoframework.extension.concurrent.exception.QuartzException;
 
 /**
  * @author yanghe
@@ -34,6 +35,7 @@ public class QuartzConfig extends BaseEntity {
 	private Integer num = 0;
 	private Integer total = 0;
 	private CronExpression cron;
+	private Boolean daemon = false;
 	
 	public String getId() {
 		return id;
@@ -80,6 +82,9 @@ public class QuartzConfig extends BaseEntity {
 	}
 
 	public void setRunNumberOfTimes(Integer runNumberOfTimes) {
+		if(runNumberOfTimes == null || runNumberOfTimes < 0)
+			throw new QuartzException("运行次数不能小于0.");
+		
 		this.runNumberOfTimes = runNumberOfTimes;
 	}
 
@@ -113,6 +118,14 @@ public class QuartzConfig extends BaseEntity {
 
 	public void setCron(CronExpression cron) {
 		this.cron = cron;
+	}
+
+	public Boolean getDaemon() {
+		return daemon;
+	}
+
+	public void setDaemon(Boolean daemon) {
+		this.daemon = daemon;
 	}
 
 }

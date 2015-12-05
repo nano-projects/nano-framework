@@ -15,7 +15,6 @@
  */
 package org.nanoframework.extension.websocket;
 
-import java.lang.reflect.Field;
 import java.security.cert.CertificateException;
 import java.util.Properties;
 import java.util.Set;
@@ -105,9 +104,7 @@ public class WebSocketFactory {
 					location = System.getProperty(Constants.CONTEXT_ROOT) + location;
 					
 					AbstractWebSocketHandler handler = (AbstractWebSocketHandler) Globals.get(Injector.class).getInstance(clz);
-					Field field = AbstractWebSocketHandler.class.getDeclaredField(AbstractWebSocketHandler.LOCATION);
-					field.setAccessible(true);
-					field.set(handler, location);
+					handler.setLocation(location);
 					handlerMap.put(websocket.value(), WebSocketServer.create(port, ssl, location, handler));
 					
 				} else 
