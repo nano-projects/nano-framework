@@ -15,6 +15,8 @@
  */
 package org.nanoframework.extension.concurrent.queue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -196,6 +198,16 @@ public class BlockingQueueFactory {
 	public <T> T poll(String key , Long time , TimeUnit unit) throws InterruptedException {
 		return (T) getQueue(key).poll(time, unit);
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	public <T> List<T> poll(String key, int size, long time, TimeUnit unit) {
+		List<T> batch = new ArrayList<>();
+		try {
+			while(batch.size() < size) batch.add((T) getQueue(key).poll(time, unit));
+		} catch(InterruptedException e) { }
+		
+		return batch;
 	}
 	
 	public static final int howManyElementInQueues() {

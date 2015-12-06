@@ -40,8 +40,8 @@ public abstract class BaseQuartz implements Runnable {
 	private Object LOCK = new Object();
 	private AtomicBoolean isLock = new AtomicBoolean(false);
 	
-	public BaseQuartz() { }
-			
+	protected BaseQuartz() { }
+	
 	public BaseQuartz(QuartzConfig config) {
 		Assert.notNull(config, "QuartzConfig must not be null");
 		this.config = config;
