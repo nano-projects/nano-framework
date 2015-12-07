@@ -43,20 +43,4 @@ public class CronExpressionTest {
 		System.out.println("Valid time after: " + date.toString());
 	}
 	
-	@Test
-	public void test1() throws ParseException {
-		CronExpression cron = new CronExpression("* * * * * ?");
-		Date date = cron.getNextInvalidTimeAfter(new Date(System.currentTimeMillis()));
-		System.out.println("Invalid time after: " + date.toString());
-		
-		date = cron.getNextInvalidTimeAfter(date);
-		System.out.println("Invalid time after: " + date.toString());
-		
-		date = cron.getNextInvalidTimeAfter(date);
-		System.out.println("Invalid time after: " + date.toString());
-		
-		date = cron.getNextInvalidTimeAfter(date);
-		System.out.println("Invalid time after: " + date.toString());
-	}
-	
 }
