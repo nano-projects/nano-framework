@@ -128,6 +128,10 @@ public class JdbcManager implements SqlExecutor {
 		return sqlExecutorProxy.executeBatchUpdate(sql, batchValues, this.localConnection.get());
 	}
 	
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+	
 	private class SqlExecutorInterceptor implements InvocationHandler {
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			final Connection conn = JdbcManager.this.localConnection.get();

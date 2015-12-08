@@ -44,7 +44,7 @@
 		<ganymed-version>262</ganymed-version>
 		<logging-version>1.1.1</logging-version>
 		<apache-log4j-version>2.3</apache-log4j-version>
-
+		<shiro-version>1.2.4</shiro-version>
 	</properties>
 
 	<distributionManagement>
@@ -270,6 +270,13 @@
 				<artifactId>ganymed-ssh2</artifactId>
 				<version>${ganymed-version}</version>
 			</dependency>
+			
+			<!-- Shiro Security Framework -->
+			<dependency>
+				<groupId>org.apache.shiro</groupId>
+				<artifactId>shiro-core</artifactId>
+				<version>${shiro-version}</version>
+			</dependency>
 
 			<!-- Nano Modules -->
 			<dependency>
@@ -307,6 +314,11 @@
 			<dependency>
 				<groupId>org.nanoframework</groupId>
 				<artifactId>nano-ext-concurrent</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-shiro</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 
