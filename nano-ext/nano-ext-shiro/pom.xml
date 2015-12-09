@@ -40,11 +40,18 @@
 			<artifactId>log4j</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.apache.shiro</groupId>
 			<artifactId>shiro-core</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.shiro</groupId>
+			<artifactId>shiro-web</artifactId>
+			<scope>provided</scope>
+		</dependency>
+
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
@@ -55,7 +62,7 @@
 			<artifactId>druid</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-orm-jdbc</artifactId>
@@ -66,10 +73,10 @@
 			<artifactId>nano-orm-mybatis</artifactId>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.nanoframework</groupId>
-			<artifactId>nano-core</artifactId>
+			<artifactId>nano-server</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -78,4 +85,15 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<build>
+		<testResources>
+			<testResource>
+				<directory>src/test/resources</directory>
+			</testResource>
+			<testResource>
+				<directory>src/test/resources/webapp/</directory>
+				<targetPath>${project.basedir}/webRoot/</targetPath>
+			</testResource>
+		</testResources>
+	</build>
 </project>

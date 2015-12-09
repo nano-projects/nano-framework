@@ -83,6 +83,9 @@ public abstract class PluginLoader {
 		configModules(modules);
 		List<Module> _modules = new ArrayList<>();
 		for(Module module : modules.get()) {
+			if(LOG.isInfoEnabled())
+				LOG.info("加载Module: " + module.getClass().getName());
+			
 			module.config(config);
 			_modules.addAll(module.load());
 		}
@@ -103,8 +106,12 @@ public abstract class PluginLoader {
 		long time = System.currentTimeMillis();
 		configPlugin(plugins);
 		for(Plugin plugin : plugins.get()) {
+			if(LOG.isInfoEnabled())
+				LOG.info("加载插件: " + plugin.getClass().getName());
+			
 			plugin.config(config);
 			plugin.load();
+			
 		}
 		
 		LOG.info("加载插件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");

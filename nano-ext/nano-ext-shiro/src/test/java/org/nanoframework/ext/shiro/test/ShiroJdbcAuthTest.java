@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.ext.shiro;
+package org.nanoframework.ext.shiro.test;
 
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -25,18 +25,17 @@ import javax.servlet.ServletContext;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.config.IniSecurityManagerFactory;
-import org.apache.shiro.mgt.SecurityManager;
+import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
-import org.apache.shiro.util.Factory;
 import org.junit.Before;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.commons.util.MD5Utils;
-import org.nanoframework.commons.util.ZipUtils;
+import org.nanoframework.core.plugins.Configure;
+import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoader;
 import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
+import org.nanoframework.core.plugins.defaults.plugin.ShiroPlugin;
 
 import junit.framework.Assert;
 
@@ -49,11 +48,19 @@ public class ShiroJdbcAuthTest {
 	
 	@Before
 	public void before() {
-		PluginLoader loader = new DefaultPluginLoader();
+		PluginLoader loader = new DefaultPluginLoader() {
+			@Override
+			protected void configPlugin(Configure<Plugin> plugins) {
+				super.configPlugin(plugins);
+				plugins.add(new ShiroPlugin());
+			}
+		};
+		
 		ServletConfig config = new ServletConfig() {
 			private Map<String, String> map = new HashMap<String, String>() {
 				private static final long serialVersionUID = -1228713388845687367L; {
 				put("context", "/context.properties");
+				put("shiro-ini", "classpath:shiro-jdbc.ini");
 			}};
 			
 			@Override
@@ -83,19 +90,35 @@ public class ShiroJdbcAuthTest {
 	
 	@Test
 	public void test0() {
-		Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro-jdbc.ini");
-		SecurityManager manager = factory.getInstance();
-		SecurityUtils.setSecurityManager(manager);
 		Subject subject = SecurityUtils.getSubject();
-		UsernamePasswordToken token = new UsernamePasswordToken("admin", MD5Utils.getMD5String(MD5Utils.getMD5String(ZipUtils.gzip("123456"))));
+		UsernamePasswordToken token = new UsernamePasswordToken("yanghe", "123456");
 		
 		try {
 			subject.login(token);
+			LOG.debug("Session id: " + subject.getSession().getId());
 		} catch(AuthenticationException e) {
 			LOG.error("Authentication Invalid: " + e.getMessage());
 		}
 		
 		Assert.assertEquals(true, subject.isAuthenticated());
+		Assert.assertEquals(true, subject.hasRole("SYS_ADMIN"));
+
+		try {
+			/** 验证permission，不存在时抛出AuthorizationException异常 */
+			subject.checkPermission("302");
+		} catch(AuthorizationException e) {
+			LOG.error("Check permission error: " + e.getMessage());
+		}
+		
+		try {
+			/** 验证Role, 有一个不存在时抛出AuthorizationException异常 */
+			subject.checkRoles("SYS_ADMIN", "STAFF");
+		} catch(AuthorizationException e) {
+			LOG.error("Check roles error: " + e.getMessage());
+		}
+		
+		/** 验证permission，返回bool结果 */
+		Assert.assertEquals(true, subject.isPermitted("302"));
 		
 		subject.logout();
 	}

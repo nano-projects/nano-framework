@@ -19,8 +19,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.ibatis.session.SqlSession;
@@ -47,21 +45,21 @@ import org.nanoframework.orm.mybatis.GlobalSqlSession;
  * @author yanghe
  * @date 2015年12月8日 下午10:39:29
  */
-public class MyBatisRealm extends org.apache.shiro.realm.jdbc.JdbcRealm {
+public class MyBatisRealm extends JdbcRealm {
 	private Logger LOG = LoggerFactory.getLogger(MyBatisRealm.class);
 	
-    protected String dataSourceName;
     protected SqlSessionManager sqlSessionManager;
     
+    @Override
 	public void setDataSourceName(String dataSourceName) {
 		this.dataSourceName = dataSourceName;
 		this.sqlSessionManager = GlobalSqlSession.get(dataSourceName);
 	}
-
+	
 	 /*--------------------------------------------
     |               M E T H O D S               |
     ============================================*/
-
+	@Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         UsernamePasswordToken upToken = (UsernamePasswordToken) token;
         String username = upToken.getUsername();
@@ -75,6 +73,9 @@ public class MyBatisRealm extends org.apache.shiro.realm.jdbc.JdbcRealm {
         Connection conn = null;
         SimpleAuthenticationInfo info = null;
         try {
+        	if(sqlSessionManager == null)
+        		sqlSessionManager = GlobalSqlSession.get(dataSourceName);
+        	
             conn = (sqlSession = sqlSessionManager.openSession()).getConnection();
             String password = null;
             String salt = null;
@@ -120,7 +121,6 @@ public class MyBatisRealm extends org.apache.shiro.realm.jdbc.JdbcRealm {
     }
 
     private String[] getPasswordForUser(Connection conn, String username) throws SQLException {
-
         String[] result;
         boolean returningSeparatedSalt = false;
         switch (saltStyle) {
@@ -188,6 +188,9 @@ public class MyBatisRealm extends org.apache.shiro.realm.jdbc.JdbcRealm {
         Set<String> roleNames = null;
         Set<String> permissions = null;
         try {
+        	if(sqlSessionManager == null)
+        		sqlSessionManager = GlobalSqlSession.get(dataSourceName);
+        	
             conn = (sqlSession = sqlSessionManager.openSession()).getConnection();
 
             // Retrieve roles and permissions from database
@@ -210,73 +213,6 @@ public class MyBatisRealm extends org.apache.shiro.realm.jdbc.JdbcRealm {
         info.setStringPermissions(permissions);
         return info;
 
-    }
-
-    protected Set<String> getRoleNamesForUser(Connection conn, String username) throws SQLException {
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-        Set<String> roleNames = new LinkedHashSet<String>();
-        try {
-            ps = conn.prepareStatement(userRolesQuery);
-            ps.setString(1, username);
-
-            // Execute query
-            rs = ps.executeQuery();
-
-            // Loop over results and add each returned role to a set
-            while (rs.next()) {
-
-                String roleName = rs.getString(1);
-
-                // Add the role to the list of names if it isn't null
-                if (roleName != null) {
-                    roleNames.add(roleName);
-                } else {
-                    if (LOG.isWarnEnabled()) {
-                    	LOG.warn("Null role name found while retrieving role names for user [" + username + "]");
-                    }
-                }
-            }
-        } finally {
-            JdbcUtils.closeResultSet(rs);
-            JdbcUtils.closeStatement(ps);
-        }
-        return roleNames;
-    }
-
-    protected Set<String> getPermissions(Connection conn, String username, Collection<String> roleNames) throws SQLException {
-        PreparedStatement ps = null;
-        Set<String> permissions = new LinkedHashSet<String>();
-        try {
-            ps = conn.prepareStatement(permissionsQuery);
-            for (String roleName : roleNames) {
-
-                ps.setString(1, roleName);
-
-                ResultSet rs = null;
-
-                try {
-                    // Execute query
-                    rs = ps.executeQuery();
-
-                    // Loop over results and add each returned role to a set
-                    while (rs.next()) {
-
-                        String permissionString = rs.getString(1);
-
-                        // Add the permission to the set of permissions
-                        permissions.add(permissionString);
-                    }
-                } finally {
-                    JdbcUtils.closeResultSet(rs);
-                }
-
-            }
-        } finally {
-            JdbcUtils.closeStatement(ps);
-        }
-
-        return permissions;
     }
 	
 }
