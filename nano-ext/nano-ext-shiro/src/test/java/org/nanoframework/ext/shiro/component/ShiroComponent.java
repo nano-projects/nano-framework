@@ -15,6 +15,8 @@
  */
 package org.nanoframework.ext.shiro.component;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.nanoframework.core.component.stereotype.Component;
 import org.nanoframework.core.component.stereotype.bind.RequestMapping;
 import org.nanoframework.core.component.stereotype.bind.RequestParam;
@@ -32,8 +34,8 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(ShiroComponentImpl.class)
 public interface ShiroComponent {
 	
-	@RequestMapping("/login")
-	View login(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password, Model model);
+	@RequestMapping(value = "/login")
+	View login(HttpServletRequest request, Model model);
 	
 	@RequestMapping("/hello")
 	Object hello(@RequestParam(name = "name") String name);

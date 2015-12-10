@@ -73,6 +73,11 @@
 			<artifactId>nano-orm-mybatis</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.nanoframework</groupId>
+			<artifactId>nano-orm-jedis</artifactId>
+			<scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>org.nanoframework</groupId>

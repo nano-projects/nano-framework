@@ -15,17 +15,18 @@
  */
 package org.nanoframework.ext.shiro.component.impl;
 
+import java.sql.Timestamp;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.subject.Subject;
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.ext.shiro.component.ShiroComponent;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 import org.nanoframework.web.server.mvc.support.ForwardView;
-import org.nanoframework.web.server.mvc.support.RedirectView;
 
 /**
  * @author yanghe
@@ -33,36 +34,28 @@ import org.nanoframework.web.server.mvc.support.RedirectView;
  */
 public class ShiroComponentImpl implements ShiroComponent {
 
-	private Logger LOG = LoggerFactory.getLogger(ShiroComponentImpl.class);
-	
 	@Override
-	public View login(String username, String password, Model model) {
-		Subject subject = SecurityUtils.getSubject();
-		UsernamePasswordToken token = new UsernamePasswordToken(username, password);
+	public View login(HttpServletRequest request, Model model) {
+		String errorClassName = (String) request.getAttribute("shiroLoginFailure");
+
+        if(UnknownAccountException.class.getName().equals(errorClassName)) {
+            model.addAttribute("error", "用户名/密码错误");
+        } else if(IncorrectCredentialsException.class.getName().equals(errorClassName)) {
+        	model.addAttribute("error", "用户名/密码错误");
+        } else if(errorClassName != null) {
+        	model.addAttribute("error", "未知错误：" + errorClassName);
+        }
 		
-		try {
-			subject.login(token);
-		} catch(Exception e) {
-			LOG.error(e.getMessage(), e);
-			throw new ComponentInvokeException("登陆失败");
-		}
-		
-		if(!subject.isAuthenticated()) {
-			model.addAttribute("status", 400);
-			model.addAttribute("message", "登陆验证失败");
-			model.addAttribute("info", "ERROR");
-			return new ForwardView("/pages/login.jsp");
-		}
-		
-		subject.getSession().setAttribute("username", username);
-		
-		return new RedirectView("/index.jsp");
+		return new ForwardView("/pages/login.jsp", true);
 	}
 	
 	@Override
 	public Object hello(String name) {
 		Subject subject = SecurityUtils.getSubject();
-		return "Hello world, Shiro " + name + ", " + subject.getSession().getAttribute("username");
+		
+		return "Hello world, Shiro " + name + ", " + subject.getPrincipal() + ", Timeout at: " + subject.getSession().getTimeout() 
+				+ "ms, Start Time: " + (new Timestamp(subject.getSession().getStartTimestamp().getTime())) 
+				+ ", Last Access Time: " + (new Timestamp(subject.getSession().getLastAccessTime().getTime()));
 	}
 
 }

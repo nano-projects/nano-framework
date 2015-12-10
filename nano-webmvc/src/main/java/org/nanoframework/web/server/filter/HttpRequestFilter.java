@@ -97,7 +97,7 @@ public class HttpRequestFilter implements Filter {
 					return ;
 				
 				Model model = new RedirectModel();
-				Object ret = Components.invoke(mapper, urlContext.getParameter(), request, response, model);
+				Object ret = Components.invoke(mapper, urlContext.getParameter(), request, response, model, urlContext);
 				process(request, response, out, urlContext, ret, model);
 			} catch(ComponentInvokeException | BindRequestParamException | IOException | ServletException e) {
 				LOG.error(e.getMessage(), e);
@@ -199,6 +199,14 @@ public class HttpRequestFilter implements Filter {
 			urlContext.getParameter().putAll(parameter);
 		} else 
 			urlContext = URLContext.create().setContext(uri).setParameter(parameter);
+		
+		String[] uris = uri.split(";");
+		if(uris.length > 1) {
+			urlContext.setContext(uris[0]);
+			String[] specials = new String[uris.length - 1];
+			System.arraycopy(uris, 1, specials, 0, specials.length);
+			urlContext.setSpecial(specials);
+		}
 		
 		return urlContext;
 	}

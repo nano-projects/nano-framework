@@ -31,6 +31,9 @@ public class URLContext {
 	/** URI串 */
 	private String context;
 	
+	/** 带有';'的URI拆分内容 */
+	private String[] special;
+	
 	/** 参数列表 */
 	private Map<String, Object> parameter;
 	
@@ -58,7 +61,18 @@ public class URLContext {
 	public URLContext setContext(String context) {
 		this.context = context;
 		return this;
-		
+	}
+	
+	/**
+	 * @return the special
+	 */
+	public String[] getSpecial() {
+		return special;
+	}
+	
+	public URLContext setSpecial(String[] special) {
+		this.special = special;
+		return this;
 	}
 
 	/** 获取参数列表 */
@@ -70,7 +84,6 @@ public class URLContext {
 	public URLContext setParameter(Map<String, Object> parameter) {
 		this.parameter = parameter;
 		return this;
-		
 	}
 	
 	/** 过滤URI */

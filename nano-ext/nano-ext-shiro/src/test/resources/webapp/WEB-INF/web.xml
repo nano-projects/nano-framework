@@ -43,6 +43,10 @@
 	<servlet>
 		<servlet-name>Dispatcher-Servlet</servlet-name>
 		<servlet-class>org.nanoframework.web.server.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>redis</param-name>
+			<param-value>/shiro-redis.properties</param-value>
+		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
