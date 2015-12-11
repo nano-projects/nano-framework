@@ -13,39 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.ext.shiro.util;
+package org.nanoframework.commons.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import org.apache.shiro.codec.Base64;
-import org.apache.shiro.session.Session;
+import org.nanoframework.commons.exception.SerializationException;
 
 /**
  * @author yanghe
  * @date 2015年12月10日 上午10:31:54
  */
 public class SerializableUtils {
-	public static String serialize(Session session) {
+	public static <T> String encode(T object) {
 		try {
+			if(object == null)
+				return null;
+			
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
-			oos.writeObject(session);
-			return Base64.encodeToString(bos.toByteArray());
+			oos.writeObject(object);
+			return ZipUtils.gzip(bos.toByteArray());
 		} catch (Exception e) {
-			throw new RuntimeException("serialize session error", e);
+			throw new SerializationException("序列化对象异常: " + e.getMessage(), e);
 		}
 	}
 
-	public static Session deserialize(String sessionStr) {
+	@SuppressWarnings("unchecked")
+	public static <T> T decode(String objectString) {
 		try {
-			ByteArrayInputStream bis = new ByteArrayInputStream(Base64.decode(sessionStr));
+			if(StringUtils.isEmpty(objectString))
+				return null;
+			
+			ByteArrayInputStream bis = new ByteArrayInputStream(ZipUtils.gunzipToByte(objectString));
 			ObjectInputStream ois = new ObjectInputStream(bis);
-			return (Session) ois.readObject();
+			return (T) ois.readObject();
 		} catch (Exception e) {
-			throw new RuntimeException("deserialize session error", e);
+			throw new SerializationException("反序列化对象异常: " + e.getMessage(), e);
 		}
 	}
 }

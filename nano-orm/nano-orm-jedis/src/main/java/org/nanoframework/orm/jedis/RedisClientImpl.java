@@ -36,6 +36,8 @@ import org.nanoframework.commons.util.CollectionUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
@@ -768,6 +770,18 @@ public class RedisClientImpl implements RedisClient {
 			
 		}
 	}
+	
+	@Override
+	public <T> Set<T> hkeys(String key, TypeReference<T> type) {
+		Set<String> keys = hkeys(key);
+		if(!CollectionUtils.isEmpty(keys)) {
+			Set<T> sets = Sets.newLinkedHashSet();
+			keys.forEach(item -> sets.add(parseObject(item, type)));
+			return sets;
+		}
+		
+		return Collections.emptySet();
+	}
 
 	@Override
 	public long hlen(String key) {
@@ -908,6 +922,18 @@ public class RedisClientImpl implements RedisClient {
 			POOL.close(jedis);
 			
 		}
+	}
+	
+	@Override
+	public <T> List<T> hvals(String key, TypeReference<T> type) {
+		List<String> vals = hvals(key);
+		if(!CollectionUtils.isEmpty(vals)) {
+			List<T> lists = Lists.newArrayList();
+			vals.forEach(item -> lists.add(parseObject(item, type)));
+			return lists;
+		}
+		
+		return Collections.emptyList();
 	}
 
 	@Override

@@ -30,10 +30,9 @@ public class RedisCacheManager implements CacheManager {
 	protected String redisSourceNames = DEFAULT_REDIS_SOURCE_NAME;
 	protected String cacheName = DEFAULT_CACHE_NAME;
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public Cache getCache(String name) throws CacheException {
-		return new RedisCache(redisSourceNames, cacheName);
+	public Cache<Object, Object> getCache(String name) throws CacheException {
+		return new RedisCache<>(redisSourceNames, cacheName);
 	}
 	
 	public void setRedisSourceNames(String redisSourceNames) {

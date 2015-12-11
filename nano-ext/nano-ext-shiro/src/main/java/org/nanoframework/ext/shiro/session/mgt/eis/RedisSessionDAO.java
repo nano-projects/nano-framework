@@ -26,8 +26,8 @@ import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.commons.util.SerializableUtils;
 import org.nanoframework.commons.util.StringUtils;
-import org.nanoframework.ext.shiro.util.SerializableUtils;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 
@@ -44,7 +44,7 @@ public class RedisSessionDAO extends CachingSessionDAO {
 	protected static final String DEFAULT_REDIS_SOURCE_NAME = "shiro";
 	protected static final String DEFAULT_SESSION_NAME = "SHIRO_SESSION_";
 	protected static final PersistType DEFAULT_PERSIST_TYPE = PersistType.SET;
-	protected static final int DEFAULT_SESSION_EXPIRE = 7200;
+	protected static final int DEFAULT_SESSION_EXPIRE = 1800;
 	
 	/** 支持主备读取，持久化操作只对主节点进行，读取操作时，如果主节点宕机，可以自动对备用节点进行操作 */
 	protected String redisSourceNames = DEFAULT_REDIS_SOURCE_NAME;
@@ -69,12 +69,12 @@ public class RedisSessionDAO extends CachingSessionDAO {
 		switch(persistType) {
 			case SET: 
 				String id;
-				client.set((id = sessionName + sessionId), SerializableUtils.serialize(session));
+				client.set((id = sessionName + sessionId), SerializableUtils.encode(session));
 				client.expire(id, sessionExpire);
 				break;
 				
 			case HSET: 
-				client.hset(sessionName, (String) sessionId, SerializableUtils.serialize(session));
+				client.hset(sessionName, (String) sessionId, SerializableUtils.encode(session));
 				break;
 		}
 		
@@ -92,12 +92,12 @@ public class RedisSessionDAO extends CachingSessionDAO {
 		switch(persistType) {
 			case SET: 
 				String id;
-				client.set((id = sessionName + session.getId()), SerializableUtils.serialize(session));
+				client.set((id = sessionName + session.getId()), SerializableUtils.encode(session));
 				client.expire(id, sessionExpire);
 				break;
 				
 			case HSET: 
-				client.hset(sessionName, (String) session.getId(), SerializableUtils.serialize(session));
+				client.hset(sessionName, (String) session.getId(), SerializableUtils.encode(session));
 				break;
 		}
 	}
@@ -131,7 +131,7 @@ public class RedisSessionDAO extends CachingSessionDAO {
 		}
 		
 		if(StringUtils.isNotBlank(value)) 
-			return SerializableUtils.deserialize(value);
+			return SerializableUtils.decode(value);
 		
 		return null;
 	}

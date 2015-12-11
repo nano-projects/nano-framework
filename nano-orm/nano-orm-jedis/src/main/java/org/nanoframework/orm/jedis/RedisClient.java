@@ -436,6 +436,8 @@ public interface RedisClient {
 	 */
 	public Set<String> hkeys(String key);
 	
+	public <T> Set<T> hkeys(String key, TypeReference<T> type);
+	
 	/**
 	 * 返回哈希表 key 中域的数量。
 	 * 
@@ -522,6 +524,8 @@ public interface RedisClient {
 	 * @return 一个包含哈希表中所有值的表。当 key 不存在时，返回一个空表。
 	 */
 	public List<String> hvals(String key);
+	
+	public <T> List<T> hvals(String key, TypeReference<T> type);
 	
 	/**
 	 * BLPOP/BRPOP 是列表的阻塞式(blocking)弹出原语。<br>
