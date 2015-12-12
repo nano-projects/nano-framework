@@ -33,6 +33,7 @@ import org.nanoframework.core.component.exception.ComponentServiceRepeatExceptio
  * @since 1.2
  */
 public class MapperNode extends BaseEntity {
+	private static final long serialVersionUID = -7473965211805892195L;
 	private String token;
 	private String uri;
 	private Map<RequestMethod, RequestMapper> mapper = new LinkedHashMap<>();
@@ -41,7 +42,8 @@ public class MapperNode extends BaseEntity {
 	private Map<String, MapperNode> leafNodes = new LinkedHashMap<>();
 	
 	public static final String SLASH = "/";
-	public static final MapperNode ROOT = new MapperNode() {{
+	public static final MapperNode ROOT = new MapperNode() {
+		private static final long serialVersionUID = 5928454777545648552L; {
 		String context = System.getProperty(Constants.CONTEXT_ROOT);
 		if(StringUtils.isBlank(context))
 			throw new IllegalArgumentException("无效的/无法获取context.root属性");

@@ -28,6 +28,7 @@ import org.nanoframework.commons.util.Assert;
  *
  */
 public class C3P0JdbcConfig extends JdbcConfig {
+	private static final long serialVersionUID = 8176998886713632074L;
 
 	/** 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。Default: 3 */
 	@Property(name = "c3p0.acquireIncrement")

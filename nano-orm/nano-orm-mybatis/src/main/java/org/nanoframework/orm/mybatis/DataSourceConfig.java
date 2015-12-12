@@ -28,7 +28,8 @@ import org.nanoframework.orm.PoolTypes;
  * @date 2015年8月19日 上午9:12:26
  */
 public class DataSourceConfig extends BaseEntity {
-
+	private static final long serialVersionUID = -3733512377087727530L;
+	
 	public static final String MYBATIS_ENVIRONMENT_ID = "mybatis.environment.id";
 	public static final String MYBATIS_ENVIRONMENT_PATH = "mybatis.environment.path";
 	public static final String MYBATIS_ENVIRONMENT_TYPE = "mybatis.environment.type";
@@ -51,9 +52,6 @@ public class DataSourceConfig extends BaseEntity {
 		this.jdbc = jdbc;
 		this.poolType = poolType;
 
-//		if(StringUtils.isBlank(this.mybatisConfigPath = jdbc.getProperty(MYBATIS_ENVIRONMENT_PATH))) {
-//			this.mybatisConfigPath = DEFAULT_MYBATIS_CONFIG_PATH;
-//		}
 		/** 现在使用poolType进行匹配MyBatis-config配置文件，而非MYBATIS_ENVIRONMENT_PATH属性 */
 		this.mybatisConfigPath = DEFAULT_MYBATIS_CONFIG_PATH + poolType.name().toLowerCase() + XML_SUFFIX;
 	}

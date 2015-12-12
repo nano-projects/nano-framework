@@ -23,6 +23,8 @@ import org.nanoframework.commons.entity.BaseEntity;
  * @date 2015年8月19日 上午9:23:30
  */
 public class EntityTest extends BaseEntity {
+	private static final long serialVersionUID = 7181309318632934241L;
+	
 	private String id;
 	private String name;
 	

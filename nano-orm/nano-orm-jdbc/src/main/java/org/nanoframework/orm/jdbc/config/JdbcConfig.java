@@ -32,6 +32,8 @@ import org.nanoframework.orm.jdbc.DataSourceException;
  * @date 2015年9月30日 下午3:10:13
  */
 public abstract class JdbcConfig extends BaseEntity {
+	private static final long serialVersionUID = -5652080352809590470L;
+
 	public static final String JDBC_ENVIRONMENT_ID = "JDBC.environment.id";
 	
 	/** 数据源名称 */

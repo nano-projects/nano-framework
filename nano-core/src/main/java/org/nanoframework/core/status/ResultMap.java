@@ -24,7 +24,8 @@ import org.nanoframework.commons.entity.BaseEntity;
  *
  */
 public class ResultMap extends BaseEntity {
-
+	private static final long serialVersionUID = -4525859189036534494L;
+	
 	/** 描述 */
 	private String info;
 	/** 状态码 */

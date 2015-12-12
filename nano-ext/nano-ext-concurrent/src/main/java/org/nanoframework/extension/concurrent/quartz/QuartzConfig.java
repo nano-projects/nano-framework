@@ -25,6 +25,8 @@ import org.nanoframework.extension.concurrent.exception.QuartzException;
  * @date 2015年12月3日 下午10:15:05
  */
 public class QuartzConfig extends BaseEntity {
+	private static final long serialVersionUID = 5426844475306359870L;
+	
 	private String id;
 	private String name;
 	private String group;

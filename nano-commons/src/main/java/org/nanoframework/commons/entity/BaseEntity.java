@@ -15,6 +15,7 @@
  */
 package org.nanoframework.commons.entity;
 
+import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,7 +38,9 @@ import com.alibaba.fastjson.JSON;
  * @date 2015年6月9日 上午8:46:12 
  *
  */
-public abstract class BaseEntity implements Cloneable {
+public abstract class BaseEntity implements Cloneable, Serializable {
+	private static final long serialVersionUID = 3188627488044889912L;
+	
 	private String[] names = null;
 
 	/**

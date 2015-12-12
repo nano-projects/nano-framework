@@ -29,7 +29,8 @@ import org.nanoframework.commons.entity.BaseEntity;
  *
  */
 public class RequestMapper extends BaseEntity {
-
+	private static final long serialVersionUID = 6571078157462085564L;
+	
 	private Object object;
 	private Class<?> clz;
 	private Method method;

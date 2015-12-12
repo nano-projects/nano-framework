@@ -22,6 +22,8 @@ import org.nanoframework.commons.entity.BaseEntity;
  * @date 2015年12月9日 上午8:42:08
  */
 public class RealmQuery extends BaseEntity {
+	private static final long serialVersionUID = 7418773011557990196L;
+	
 	protected String authenticationQuery;
 	protected String userRolesQuery;
 	protected String permissionsQuery;

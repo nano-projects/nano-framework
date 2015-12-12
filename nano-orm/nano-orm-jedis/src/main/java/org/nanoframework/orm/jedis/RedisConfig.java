@@ -25,6 +25,8 @@ import org.nanoframework.commons.entity.BaseEntity;
  *
  */
 public class RedisConfig extends BaseEntity {
+	private static final long serialVersionUID = -6765559689700998419L;
+	
 	private String redisType;
 	private String hostNames;
 	private Integer maxTotal;
@@ -43,8 +45,7 @@ public class RedisConfig extends BaseEntity {
 	public static final String TEST_ON_BORROW = "testOnBorrow";
 	public static final String EXPIRE_TIME = "expireTime";
 
-	private RedisConfig() {
-	}
+	private RedisConfig() { }
 
 	public static final RedisConfig newInstance() {
 		return new RedisConfig();
