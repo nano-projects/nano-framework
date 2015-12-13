@@ -59,7 +59,7 @@ public class MapperNode extends BaseEntity {
 	
 	private MapperNode() { }
 
-	public static void addLeaf(String uri, Map<RequestMethod, RequestMapper> mapper) {
+	public static synchronized void addLeaf(String uri, Map<RequestMethod, RequestMapper> mapper) {
 		Assert.hasLength(uri);
 		Assert.notNull(mapper);
 		MapperNode _node = ROOT;
