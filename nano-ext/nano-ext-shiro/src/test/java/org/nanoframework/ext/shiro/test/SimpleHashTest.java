@@ -33,7 +33,7 @@ public class SimpleHashTest {
 	@Test
 	public void test0() throws UnsupportedEncodingException {
 		/** 加密类型(不区分大小写)、密码、私匙、加密次数 */
-		Hash hash = new SimpleHash("MD5", "123456", "Nano Framework Extension Shiro Salt for user: [yanghe]", 2);
+		Hash hash = new SimpleHash("MD5", "123456", "Nano Framework Extension Shiro Salt for user: [admin]", 2);
 		LOG.debug(hash.toString());
 	}
 }

@@ -27,8 +27,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
-import org.junit.Before;
-import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.core.plugins.Configure;
@@ -46,7 +44,6 @@ import junit.framework.Assert;
 public class ShiroJdbcAuthTest {
 	private Logger LOG = LoggerFactory.getLogger(ShiroJdbcAuthTest.class);
 	
-	@Before
 	public void before() {
 		PluginLoader loader = new DefaultPluginLoader() {
 			@Override
@@ -88,7 +85,6 @@ public class ShiroJdbcAuthTest {
 		loader.init(config);
 	}
 	
-	@Test
 	public void test0() {
 		Subject subject = SecurityUtils.getSubject();
 		UsernamePasswordToken token = new UsernamePasswordToken("yanghe", "123456");
