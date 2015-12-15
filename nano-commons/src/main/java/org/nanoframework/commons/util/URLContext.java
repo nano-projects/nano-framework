@@ -53,8 +53,7 @@ public class URLContext {
 	/** 获取URI串, 去除context root */
 	public String getNoRootContext() {
 		String root = System.getProperty(Constants.CONTEXT_ROOT);
-		return context == null ? "" : StringUtils.isEmpty(root) ? context : context.replace(root, "");
-		
+		return context == null ? "" : StringUtils.isEmpty(root) ? context : context.replaceFirst(root, "");
 	}
 
 	/** 设置URI串 */
