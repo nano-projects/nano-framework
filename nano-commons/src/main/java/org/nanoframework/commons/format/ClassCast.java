@@ -23,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nanoframework.commons.entity.BaseEntity;
 
 import com.alibaba.fastjson.JSON;
 
@@ -116,6 +117,13 @@ public class ClassCast {
 		
 		if(value == null)
 			return null;
+		
+		try {
+			Class<?> cls;
+			if(value instanceof String && BaseEntity.class.isAssignableFrom(cls = Class.forName(typeName))) {
+				return JSON.parseObject((String) value, cls);
+			}
+		} catch(ClassNotFoundException e) { }
 		
 		try {
 			switch(typeName) {
