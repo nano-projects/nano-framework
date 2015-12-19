@@ -17,15 +17,12 @@ package org.nanoframework.extension.websocket;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.HOST;
 
-import java.lang.reflect.InvocationTargetException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.SSLException;
 
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 
 import io.netty.bootstrap.ServerBootstrap;
