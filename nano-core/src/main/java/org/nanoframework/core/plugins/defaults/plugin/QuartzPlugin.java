@@ -33,11 +33,12 @@ public class QuartzPlugin implements Plugin {
 	@Override
 	public void load() throws Throwable {
 		try {
-			Class<?> quartzFactory = Class.forName("org.nanoframework.extension.concurrent.quartz.QuartzFactory");
+			Class<?> QuartzFactory = Class.forName("org.nanoframework.extension.concurrent.quartz.QuartzFactory");
+			Object quartzFactory = QuartzFactory.getMethod("getInstance").invoke(QuartzFactory);
 			long time = System.currentTimeMillis();
 			LOG.info("开始加载任务调度");
-			quartzFactory.getMethod("load").invoke(quartzFactory);
-			quartzFactory.getMethod("startAll").invoke(quartzFactory);
+			QuartzFactory.getMethod("load").invoke(QuartzFactory);
+			QuartzFactory.getMethod("startAll").invoke(quartzFactory);
 			LOG.info("加载任务调度结束, 耗时: " + (System.currentTimeMillis() - time) + "ms");
 		} catch(Exception e) {
 			if(!(e instanceof ClassNotFoundException))

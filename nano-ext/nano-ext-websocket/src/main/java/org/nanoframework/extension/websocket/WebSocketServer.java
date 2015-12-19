@@ -17,12 +17,15 @@ package org.nanoframework.extension.websocket;
 
 import static io.netty.handler.codec.http.HttpHeaders.Names.HOST;
 
+import java.lang.reflect.InvocationTargetException;
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.SSLException;
 
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -43,7 +46,6 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
  * @date 2015年8月19日 上午9:22:52
  */
 public final class WebSocketServer {
-
 	private static List<WebSocketServer> servers = new ArrayList<>();
     private Throwable throwable = null;
     private boolean isOK = false;
@@ -51,6 +53,10 @@ public final class WebSocketServer {
     private String location;
     private int port;
     private boolean ssl;
+    
+    static {
+    	Runtime.getRuntime().addShutdownHook(new Thread(() -> closeAll() ));
+    }
     
 	private WebSocketServer(int port, boolean ssl, String location) {
 		this.port = port;
