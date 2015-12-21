@@ -24,6 +24,7 @@ import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.entity.BaseEntity;
+import org.nanoframework.commons.util.ObjectUtils;
 
 import com.alibaba.fastjson.JSON;
 
@@ -37,20 +38,30 @@ import com.alibaba.fastjson.JSON;
 public class ClassCast {
 
 	public static final String _Integer = "java.lang.Integer";
+	public static final String _LInteger = "[Ljava.lang.Integer;";
 	public static final String _int = "int";
 	public static final String _Long = "java.lang.Long";
+	public static final String _LLong = "[Ljava.lang.Long;";
 	public static final String _long = "long";
 	public static final String _Double = "java.lang.Double";
+	public static final String _LDouble = "[Ljava.lang.Double;";
 	public static final String _double = "double";
 	public static final String _Float = "java.lang.Float";
+	public static final String _LFloat = "[Ljava.lang.Float;";
 	public static final String _float = "float";
 	public static final String _String = "java.lang.String";
+	public static final String _LString = "[Ljava.lang.String;";
 	public static final String _Date_util = "java.util.Date";
+	public static final String _LDate_util = "[Ljava.util.Date;";
 	public static final String _Date_sql = "java.sql.Date";
+	public static final String _LDate_sql = "[Ljava.sql.Date;";
 	public static final String _Timestamp = "java.sql.Timestamp";
+	public static final String _LTimestamp = "[Ljava.sql.Timestamp;";
 	public static final String _Boolean = "java.lang.Boolean";
+	public static final String _LBoolean = "[Ljava.lang.Boolean;";
 	public static final String _boolean = "boolean";
 	public static final String _BigDecimal = "java.math.BigDecimal";
+	public static final String _LBigDecimal = "[Ljava.math.BigDecimal;";
 	
 	/**
 	 * 根据Class进行转换，转换简单数据类型
@@ -127,7 +138,7 @@ public class ClassCast {
 		
 		try {
 			switch(typeName) {
-				case _Integer :
+				case _Integer: 
 					if(value instanceof String) {
 						if(StringUtils.isEmpty((String) value))
 							return null;
@@ -140,6 +151,17 @@ public class ClassCast {
 					else 
 						return new Integer(String.valueOf(value));
 						
+				case _LInteger: 
+					Object[] values = ObjectUtils.toObjectArray(value);
+					Integer[] ints = new Integer[values.length];
+					for(int idx = 0; idx < ints.length; idx ++) {
+						if(values[idx] == null || "".equals(values[idx]))
+							ints[idx] = null;
+						else
+							ints[idx] = new Integer(String.valueOf(values[idx]));
+					}
+					
+					return ints;
 				case _Long : 
 					if(value instanceof String) {
 						if(StringUtils.isEmpty((String) value))
@@ -153,6 +175,17 @@ public class ClassCast {
 					else 
 						return new Long(String.valueOf(value));
 					
+				case _LLong: 
+					values = ObjectUtils.toObjectArray(value);
+					Long[] longs = new Long[values.length];
+					for(int idx = 0; idx < longs.length; idx ++) {
+						if(values[idx] == null || "".equals(values[idx]))
+							longs[idx] = null;
+						else
+							longs[idx] = new Long(String.valueOf(values[idx]));
+					}
+					
+					return longs;
 				case _Double :
 					if(value instanceof String) {
 						if(StringUtils.isEmpty((String) value))
@@ -165,7 +198,18 @@ public class ClassCast {
 						return ((BigDecimal) value).doubleValue();
 					else 
 						return new Double(String.valueOf(value));
+				
+				case _LDouble: 
+					values = ObjectUtils.toObjectArray(value);
+					Double[] doubles = new Double[values.length];
+					for(int idx = 0; idx < doubles.length; idx ++) {
+						if(values[idx] == null || "".equals(values[idx]))
+							doubles[idx] = null;
+						else
+							doubles[idx] = new Double(String.valueOf(values[idx]));
+					}
 					
+					return doubles;
 				case _Float : 
 					if(value instanceof String) {
 						if(StringUtils.isEmpty((String) value))
@@ -179,6 +223,17 @@ public class ClassCast {
 					else 
 						return new Float(String.valueOf(value));
 						
+				case _LFloat: 
+					values = ObjectUtils.toObjectArray(value);
+					Float[] floats = new Float[values.length];
+					for(int idx = 0; idx < floats.length; idx ++) {
+						if(values[idx] == null || "".equals(values[idx]))
+							floats[idx] = null;
+						else
+							floats[idx] = new Float(String.valueOf(values[idx]));
+					}
+					
+					return floats;
 				case _Boolean : 
 					if(value instanceof String) {
 						if(StringUtils.isEmpty((String) value))
@@ -190,6 +245,17 @@ public class ClassCast {
 					else 
 						return new Boolean(String.valueOf(value));
 					
+				case _LBoolean: 
+					values = ObjectUtils.toObjectArray(value);
+					Boolean[] booleans = new Boolean[values.length];
+					for(int idx = 0; idx < booleans.length; idx ++) {
+						if(values[idx] == null || "".equals(values[idx]))
+							booleans[idx] = null;
+						else
+							booleans[idx] = new Boolean(String.valueOf(values[idx]));
+					}
+					
+					return booleans;
 				case _String : 
 					return String.valueOf(value);
 					
