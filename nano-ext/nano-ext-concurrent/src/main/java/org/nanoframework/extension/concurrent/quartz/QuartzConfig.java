@@ -38,6 +38,7 @@ public class QuartzConfig extends BaseEntity {
 	private Integer total = 0;
 	private CronExpression cron;
 	private Boolean daemon = false;
+	private Boolean lazy = false;
 	
 	public String getId() {
 		return id;
@@ -130,4 +131,12 @@ public class QuartzConfig extends BaseEntity {
 		this.daemon = daemon;
 	}
 
+	public Boolean getLazy() {
+		return lazy;
+	}
+
+	public void setLazy(Boolean lazy) {
+		this.lazy = lazy;
+	}
+	
 }

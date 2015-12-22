@@ -93,4 +93,10 @@ public @interface Quartz {
 	 * @return
 	 */
 	boolean daemon() default false;
+	
+	/**
+	 * 启动时进行延迟
+	 * @return
+	 */
+	boolean lazy() default false;
 }

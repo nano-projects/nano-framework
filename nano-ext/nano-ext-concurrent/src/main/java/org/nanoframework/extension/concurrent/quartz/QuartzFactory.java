@@ -431,6 +431,7 @@ public class QuartzFactory {
 							try { config.setCron(new CronExpression(cron)); } catch(ParseException e) { throw new QuartzException(e.getMessage(), e); }
 					
 						config.setDaemon(quartz.daemon());
+						config.setLazy(quartz.lazy());
 						baseQuartz.setConfig(config);
 						
 						if(getInstance().stoppedQuartz.containsKey(quartz.name() + "-" + p)) {
