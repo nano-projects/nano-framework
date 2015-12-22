@@ -66,8 +66,6 @@ public class RedisClientPool {
 	}
 
 	public RedisClientPool initRedisConfig(Properties... redis) throws LoaderException, IOException {
-		redisConfigs.clear();
-		
 		List<Properties> redises = new ArrayList<>();
 		if(redis == null || redis.length == 0) 
 			redises.add(PropertiesLoader.load(this.getClass().getResourceAsStream(MAIN_REDIS)));
@@ -102,7 +100,6 @@ public class RedisClientPool {
 	
 	// 初始化连接池
 	public Map<String, ShardedJedisPool> createJedis() {
-		jedisPool.clear();
 		redisConfigs.values().forEach(config -> jedisPool.put(config.getRedisType(), createJedisPool(config)));
 		
 		/** 增加全局RedisClient的绑定 */

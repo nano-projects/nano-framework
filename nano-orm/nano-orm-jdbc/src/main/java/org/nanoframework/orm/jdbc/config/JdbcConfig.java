@@ -23,7 +23,6 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.annatations.Property;
 import org.nanoframework.commons.entity.BaseEntity;
-import org.nanoframework.commons.format.ClassCast;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.orm.jdbc.DataSourceException;
 
@@ -34,8 +33,6 @@ import org.nanoframework.orm.jdbc.DataSourceException;
 public abstract class JdbcConfig extends BaseEntity {
 	private static final long serialVersionUID = -5652080352809590470L;
 
-	public static final String JDBC_ENVIRONMENT_ID = "JDBC.environment.id";
-	
 	/** 数据源名称 */
 	@Property(name = "JDBC.environment.id", required = true)
 	private String environmentId;
@@ -64,16 +61,15 @@ public abstract class JdbcConfig extends BaseEntity {
 	@Property(name = "JDBC.defaultStatementTimeout")
 	private Integer defaultStatementTimeout = 30;
 	
-	protected void setProperties(Properties properties, Class<?> config) throws IllegalArgumentException, IllegalAccessException {
-		List<Field> fields = this._getAllFields(new ArrayList<>(), config);
+	protected void setProperties(Properties properties) {
+		List<Field> fields = _getAllFields(new ArrayList<>(), getClass());
 		if(!CollectionUtils.isEmpty(fields)) {
 			for(Field field : fields) {
 				Property property;
 				if((property = field.getAnnotation(Property.class)) != null) {
 					String value = properties.getProperty(property.name());
 					if(StringUtils.isNotBlank(value)) {
-						field.setAccessible(true);
-						field.set(this, ClassCast.cast(value, field.getType().getName()));
+						_setAttributeValue(field.getName(), value);
 					} else if(property.required()) 
 						throw new DataSourceException("属性 [" + property.name() + "] 设置为必选项，这里却获取了无效的属性值");
 					

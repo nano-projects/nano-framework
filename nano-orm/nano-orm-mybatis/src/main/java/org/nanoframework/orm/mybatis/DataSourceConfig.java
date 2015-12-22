@@ -20,7 +20,8 @@ import java.util.Properties;
 import org.mybatis.guice.datasource.helper.JdbcHelper;
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.orm.PoolTypes;
+import org.nanoframework.orm.DataSourceLoader;
+import org.nanoframework.orm.PoolType;
 
 /**
  * 
@@ -30,10 +31,6 @@ import org.nanoframework.orm.PoolTypes;
 public class DataSourceConfig extends BaseEntity {
 	private static final long serialVersionUID = -3733512377087727530L;
 	
-	public static final String MYBATIS_ENVIRONMENT_ID = "mybatis.environment.id";
-	public static final String MYBATIS_ENVIRONMENT_PATH = "mybatis.environment.path";
-	public static final String MYBATIS_ENVIRONMENT_TYPE = "mybatis.environment.type";
-	
 	public static final String DEFAULT_MYBATIS_CONFIG_PATH = "/mybatis-config-";
 	public static final String XML_SUFFIX = ".xml";
 
@@ -42,11 +39,11 @@ public class DataSourceConfig extends BaseEntity {
 	private JdbcHelper helper;
 	private String envId;
 	private String mybatisConfigPath;
-	private PoolTypes poolType;
+	private PoolType poolType;
 
-	public DataSourceConfig(String mapperPackageName, Properties jdbc, PoolTypes poolType) {
+	public DataSourceConfig(String mapperPackageName, Properties jdbc, PoolType poolType) {
 		Assert.notNull(jdbc);
-		Assert.hasLength(this.envId = jdbc.getProperty(MYBATIS_ENVIRONMENT_ID));
+		Assert.hasLength(this.envId = jdbc.getProperty(DataSourceLoader.MYBATIS_ENVIRONMENT_ID));
 		Assert.notNull(poolType);
 		this.mapperPackageName = mapperPackageName;
 		this.jdbc = jdbc;
@@ -96,11 +93,11 @@ public class DataSourceConfig extends BaseEntity {
 		this.mybatisConfigPath = mybatisConfigPath;
 	}
 
-	public PoolTypes getPoolType() {
+	public PoolType getPoolType() {
 		return poolType;
 	}
 
-	public void setPoolType(PoolTypes poolType) {
+	public void setPoolType(PoolType poolType) {
 		this.poolType = poolType;
 	}
 

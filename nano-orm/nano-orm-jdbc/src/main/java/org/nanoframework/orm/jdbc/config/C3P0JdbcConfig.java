@@ -135,9 +135,9 @@ public class C3P0JdbcConfig extends JdbcConfig {
 		
 	}
 	
-	public C3P0JdbcConfig(Properties properties) throws IllegalArgumentException, IllegalAccessException {
+	public C3P0JdbcConfig(Properties properties) {
 		Assert.notNull(properties);
-		this.setProperties(properties, this.getClass());
+		this.setProperties(properties);
 	}
 	
 	public Integer getAcquireIncrement() {

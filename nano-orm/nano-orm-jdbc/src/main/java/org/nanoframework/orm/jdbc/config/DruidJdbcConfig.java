@@ -79,9 +79,9 @@ public class DruidJdbcConfig extends JdbcConfig {
 
 	}
 
-	public DruidJdbcConfig(Properties properties) throws IllegalArgumentException, IllegalAccessException {
+	public DruidJdbcConfig(Properties properties) {
 		Assert.notNull(properties);
-		this.setProperties(properties, this.getClass());
+		this.setProperties(properties);
 	}
 
 	public Integer getInitialSize() {

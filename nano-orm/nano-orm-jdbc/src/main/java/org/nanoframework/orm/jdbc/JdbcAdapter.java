@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.orm.PoolTypes;
+import org.nanoframework.orm.PoolType;
 import org.nanoframework.orm.jdbc.config.JdbcConfig;
 import org.nanoframework.orm.jdbc.jstl.Result;
 import org.nanoframework.orm.jdbc.jstl.ResultSupport;
@@ -60,11 +60,12 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 	
 	public static JdbcAdapter ADAPTER;
 	
-	private JdbcAdapter(Collection<JdbcConfig> configs, PoolTypes poolType) throws PropertyVetoException, SQLException {
+	private JdbcAdapter(Collection<JdbcConfig> configs, PoolType poolType) throws PropertyVetoException, SQLException {
 		Assert.notNull(poolType);
 		if(init.get())
 			throw new SQLException("数据源已经加载");
 		
+		// TODO 根据PoolType初始化连接池
 		switch(poolType) {
 			case C3P0:
 				pool = new C3P0Pool(configs);
@@ -77,7 +78,7 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		init.set(true);
 	}
 	
-	public static final JdbcAdapter newInstance(Collection<JdbcConfig> configs, PoolTypes poolType, Object obj) {
+	public static final JdbcAdapter newInstance(Collection<JdbcConfig> configs, PoolType poolType, Object obj) {
 		try {
 			Assert.notNull(obj);
 			if(obj instanceof Class<?>) {

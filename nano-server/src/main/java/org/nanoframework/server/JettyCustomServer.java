@@ -16,7 +16,6 @@
 package org.nanoframework.server;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
@@ -50,9 +49,9 @@ public class JettyCustomServer extends Server {
 	
 	static {
 		try {
-			CONTEXT = PropertiesLoader.load(JettyCustomServer.class.getResourceAsStream(Constants.MAIN_CONTEXT));
+			CONTEXT = PropertiesLoader.load(Constants.MAIN_CONTEXT);
 			LOG.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
-		} catch(LoaderException | IOException e) { }
+		} catch(LoaderException e) { }
 	}
 	
 	public static String DEFAULT_WEB_XML_PATH = DEFAULT_RESOURCE_BASE + "/WEB-INF/web.xml";
@@ -74,9 +73,9 @@ public class JettyCustomServer extends Server {
 	public JettyCustomServer(String mainContext) {
 		Assert.hasLength(mainContext, "未设置CONTEXT属性文件路径");
 		try {
-			CONTEXT = PropertiesLoader.load(JettyCustomServer.class.getResourceAsStream(mainContext));
+			CONTEXT = PropertiesLoader.load(mainContext);
 			LOG.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
-		} catch(LoaderException | IOException e) { 
+		} catch(LoaderException e) { 
 			throw new JettyServerException(e.getMessage(), e);
 		}
 		

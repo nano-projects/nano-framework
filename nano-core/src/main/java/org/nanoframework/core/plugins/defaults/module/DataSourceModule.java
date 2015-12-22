@@ -35,11 +35,20 @@ public class DataSourceModule extends Module {
 	@Override
 	public List<Module> load() throws Throwable {
 		try {
-			Class<?> DataSourceLoader = Class.forName("org.nanoframework.orm.DataSourceLoader");
+			Class<?> DataSourceLoader = Class.forName("org.nanoframework.orm.jdbc.JdbcDataSourceLoader");
 			Object dsl = DataSourceLoader.newInstance();
 			PropertiesLoader.PROPERTIES.putAll((Map<String, Properties>) DataSourceLoader.getMethod("getLoadProperties").invoke(dsl));
 			modules.addAll((List<Module>) DataSourceLoader.getMethod("getModules").invoke(dsl));
-			
+		} catch(Exception e) {
+			if(!(e instanceof ClassNotFoundException))
+				throw new PluginLoaderException(e.getMessage(), e);
+		}
+		
+		try {
+			Class<?> DataSourceLoader = Class.forName("org.nanoframework.orm.mybatis.MybatisDataSourceLoader");
+			Object dsl = DataSourceLoader.newInstance();
+			PropertiesLoader.PROPERTIES.putAll((Map<String, Properties>) DataSourceLoader.getMethod("getLoadProperties").invoke(dsl));
+			modules.addAll((List<Module>) DataSourceLoader.getMethod("getModules").invoke(dsl));
 		} catch(Exception e) {
 			if(!(e instanceof ClassNotFoundException))
 				throw new PluginLoaderException(e.getMessage(), e);

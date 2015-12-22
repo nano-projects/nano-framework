@@ -15,235 +15,118 @@
  */
 package org.nanoframework.orm;
 
-import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.commons.util.Constants;
+import org.nanoframework.commons.util.Assert;
 import org.nanoframework.orm.jdbc.DataSourceException;
-import org.nanoframework.orm.jdbc.binding.JdbcModule;
-import org.nanoframework.orm.jdbc.config.C3P0JdbcConfig;
-import org.nanoframework.orm.jdbc.config.DruidJdbcConfig;
-import org.nanoframework.orm.jdbc.config.JdbcConfig;
 
-import com.alibaba.fastjson.JSON;
 import com.google.inject.Module;
 
 /**
  * @author yanghe
- * @date 2015年10月13日 下午2:06:58
+ * @date 2015年12月22日 上午9:16:30
  */
-@SuppressWarnings("unchecked")
-public class DataSourceLoader {
+public abstract class DataSourceLoader {
 	private Logger LOG = LoggerFactory.getLogger(DataSourceLoader.class);
 	
-	private List<Module> modules = new ArrayList<>();
-	private long time;
-	private Map<String, Properties> newLoadProperties = new HashMap<>();
-	private Map<String, JdbcConfig> configs = new HashMap<>();
-	private List<Object> dsConf = new ArrayList<>();
-	private Set<PoolTypes> poolTypes = new HashSet<>();
+	public static final String JDBC_ENVIRONMENT_ID = "JDBC.environment.id";
+	public static final String MYBATIS_ENVIRONMENT_ID = "mybatis.environment.id";
 	
-	private static Class<?> DATASOURCE_CONFIG;
-	private static Class<?> MULTI_DATASOURCE_MODULE;
-	private static Class<? extends Module> MULTI_TRANSACTIONAL_MODULE;
-	private static boolean hasMybatisPlugin = false;
-	private final String MYBATIS_ENVIRONMENT_ID = "MYBATIS_ENVIRONMENT_ID";
+	public static final String MAPPER_PACKAGE_ROOT = "mapper.package.root";
+	public static final String MAPPER_PACKAGE_NAME = "mapper.package.name";
+	public static final String MAPPER_PACKAGE_JDBC = "mapper.package.jdbc";
+	public static final String MAPPER_PACKAGE_HELPER = "mapper.package.helper";
+	public static final String JDBC_POOL_TYPE = "JDBC.pool.type";
 	
-	static {
-		try {
-			DATASOURCE_CONFIG = Class.forName("org.nanoframework.orm.mybatis.DataSourceConfig");
-			MULTI_DATASOURCE_MODULE = Class.forName("org.nanoframework.orm.mybatis.MultiDataSourceModule");
-			MULTI_TRANSACTIONAL_MODULE = (Class<? extends Module>) Class.forName("org.nanoframework.orm.mybatis.MultiTransactionalModule");
-			hasMybatisPlugin = true;
-		} catch(Exception e) { }
-	}
+	protected List<Module> modules = new ArrayList<>();
+	protected Map<String, Properties> newLoadProperties = new HashMap<>();;
 	
-	public DataSourceLoader() {
-		this.time = System.currentTimeMillis();
-		
-		try {
-			if(hasMybatisPlugin) {
-				String envId = (String) DATASOURCE_CONFIG.getField(MYBATIS_ENVIRONMENT_ID).get(DATASOURCE_CONFIG);
-				for(Properties prop : PropertiesLoader.PROPERTIES.values()) {
-					String mapperPackageName;
-					String mapperPackageRoot;
-					if(StringUtils.isNotBlank(mapperPackageName = prop.getProperty(Constants.MAPPER_PACKAGE_NAME)) || StringUtils.isNotBlank(prop.getProperty(Constants.MAPPER_PACKAGE_JDBC))) {
-						readJdbcPlan1(prop, envId, mapperPackageName);
-					} else if(StringUtils.isNotBlank(mapperPackageRoot = prop.getProperty(Constants.MAPPER_PACKAGE_ROOT))) {
-						readJdbcPlan2(prop, envId, mapperPackageRoot);
+	public abstract void load();
+	public abstract void toConfig(Properties properties);
+	public abstract void toModule();
+	
+	protected void load0(ORMType ormType) {
+		for(Properties properties : PropertiesLoader.PROPERTIES.values()) {
+			Properties source = getProperties(properties.getProperty(MAPPER_PACKAGE_JDBC), ormType);
+			if(source != null) {
+				toConfig(source);
+			}
+			
+			String mapperPackageRoot;
+			if(StringUtils.isNotBlank(mapperPackageRoot = properties.getProperty(MAPPER_PACKAGE_ROOT))) {
+				String[] roots = mapperPackageRoot.split(",");
+				for(String root : roots) {
+					Properties _source = getProperties(properties.getProperty(MAPPER_PACKAGE_JDBC + "." + root), ormType);
+					if(_source != null) {
+						toConfig(_source);
 					}
 				}
-				
-				if(poolTypes.size() > 1) {
-					throw new IllegalArgumentException("不支持多个连接池配置: " + JSON.toJSONString(poolTypes));
-				}
-				
-				addMybatisModules(envId);
-			} else {
-				loadJdbcConfig();
 			}
-			
-			/** 读取方式三 */
-			if(!configs.isEmpty()) {
-				/** 默认的连接池采用DRUID */
-				if(poolTypes.size() > 0)
-					this.modules.add(new JdbcModule(configs, poolTypes.iterator().next()));
-				else 
-					this.modules.add(new JdbcModule(configs, PoolTypes.DRUID));
-			}
-		} catch(Throwable e) {
-			throw new DataSourceLoaderException(e.getMessage(), e);
 		}
 	}
 	
-	private void readJdbcPlan1(Properties prop, String envId, String mapperPackageName) throws Throwable {
-		/** 读取方式一 */
-		Properties jdbc = findJdbcProperties(prop.getProperty(Constants.MAPPER_PACKAGE_JDBC));
-		if(StringUtils.isNotBlank(jdbc.getProperty(envId))) {
-			PoolTypes poolType = setPoolTypes(jdbc.getProperty(Constants.JDBC_POOL_TYPE));
-			addDataSourceConfig(mapperPackageName, jdbc, poolType);
-		} else {
-			addJdbcConfig(jdbc);
-		}
+	protected ORMType ormType(Properties properties) {
+		Assert.notNull(properties, "数据源属性文件不能为空");
+		
+		ORMType type = null;
+		if(StringUtils.isNotBlank(properties.getProperty(JDBC_ENVIRONMENT_ID))) 
+			type = ORMType.JDBC;
+		
+		if(StringUtils.isNotBlank(properties.getProperty(MYBATIS_ENVIRONMENT_ID))) 
+			type = ORMType.MYBATIS;
+		
+		return type;
 	}
 	
-	private void readJdbcPlan2(Properties prop, String envId, String mapperPackageRoot) throws Throwable {
-		/** 读取方式二 */
-		String[] roots = mapperPackageRoot.split(",");
-		for(String root : roots) {
-			String mapperPackageNameByRoot;
-			if(StringUtils.isNotBlank(mapperPackageNameByRoot = prop.getProperty(Constants.MAPPER_PACKAGE_NAME + "." + root)) || 
-					StringUtils.isNotBlank(prop.getProperty(Constants.MAPPER_PACKAGE_JDBC + "." + root))) {
-				
-				Properties jdbc = findJdbcProperties(prop.getProperty(Constants.MAPPER_PACKAGE_JDBC + "." + root));
-				if(StringUtils.isNotBlank(jdbc.getProperty(envId))) {
-					PoolTypes poolType = setPoolTypes(jdbc.getProperty(Constants.JDBC_POOL_TYPE));
-					addDataSourceConfig(mapperPackageNameByRoot, jdbc, poolType);
-				} else{
-					addJdbcConfig(jdbc);
-				}
-			} 
-		}
-	}
-
-	private PoolTypes setPoolTypes(String poolTypeAlias) throws Throwable {
-		PoolTypes poolType = null;
-		if(StringUtils.isNotBlank(poolTypeAlias)) {
-			poolType = (PoolTypes) PoolTypes.class.getField(poolTypeAlias).get(PoolTypes.class);
-			if(poolType == null)
-				throw new IllegalArgumentException("无效的Pool类型名称: " + poolTypeAlias);
-			
-			poolTypes.add(poolType);
+	protected PoolType poolType(Properties properties) {
+		PoolType poolType;
+		try {
+			poolType = PoolType.valueOf(properties.getProperty(JDBC_POOL_TYPE));
+		} catch(Exception e) {
+			LOG.warn("未设置有效的JDBC.pool.type, 现在使用默认的连接池: DRUID");
+			poolType = PoolType.DRUID;
 		}
 		
 		return poolType;
 	}
 	
-	private void addDataSourceConfig(String mapperPackageName, Properties jdbc, PoolTypes poolType) throws Throwable {
-		Constructor<?> constructor = DATASOURCE_CONFIG.getConstructor(String.class, Properties.class, PoolTypes.class);
-		if(StringUtils.isNotBlank(mapperPackageName)) {
-			dsConf.add(constructor.newInstance(mapperPackageName, jdbc, poolType));
-		} else if(StringUtils.isNotBlank((mapperPackageName = jdbc.getProperty(Constants.MAPPER_PACKAGE_NAME)))) {
-			dsConf.add(constructor.newInstance(mapperPackageName, jdbc, poolType));
-		} else 
-			throw new DataSourceException("没有配置Mapper包路径");
-		
-		LOG.info("创建数据源依赖注入模块, Mapper包路径: " + mapperPackageName + ", 耗时: " + (System.currentTimeMillis() - time) + "ms");
-	}
-	
-	private void addMybatisModules(String envId) throws Throwable {
-		if(!dsConf.isEmpty()) {
-			for(Object conf : dsConf) {
-				Constructor<? extends Module> pdsmConstructor = (Constructor<? extends Module>) MULTI_DATASOURCE_MODULE.getConstructor(conf.getClass());
-				modules.add(pdsmConstructor.newInstance(conf));
-			}
-			
-			modules.add(MULTI_TRANSACTIONAL_MODULE.newInstance());
-		}
-	}
-	
-	private void loadJdbcConfig() throws Throwable {
-		for(Properties prop : PropertiesLoader.PROPERTIES.values()) {
-			String jdbcURI = prop.getProperty(Constants.MAPPER_PACKAGE_JDBC);
-			String mapperPackageRoot;
-			if(StringUtils.isNotBlank(jdbcURI)) {
-				addJdbcConfig(findJdbcProperties(jdbcURI));
-			} else if(StringUtils.isNotBlank(mapperPackageRoot = prop.getProperty(Constants.MAPPER_PACKAGE_ROOT))) {
-				String[] roots = mapperPackageRoot.split(",");
-				for(String root : roots) {
-					addJdbcConfig(findJdbcProperties(prop.getProperty(Constants.MAPPER_PACKAGE_JDBC + "." + root)));
-				}
-			}
-			
-		}
-	}
-	
-	private Properties findJdbcProperties(String jdbcURI) throws LoaderException, IOException {
-		if(StringUtils.isNotBlank(jdbcURI)) {
-			Properties jdbc = PropertiesLoader.PROPERTIES.get(jdbcURI);
-			if(jdbc == null) {
-				jdbc = PropertiesLoader.load(DataSourceLoader.class.getResourceAsStream(jdbcURI));
-				if(jdbc != null)
-					newLoadProperties.put(jdbcURI, jdbc);
+	protected Properties getProperties(String path, ORMType ormType) {
+		if(StringUtils.isNotBlank(path)) {
+			Properties properties = PropertiesLoader.PROPERTIES.get(path);
+			if(properties == null) {
+				properties = PropertiesLoader.load(path);
+				if(properties != null) 
+					newLoadProperties.put(path, properties);
 				else 
-					throw new DataSourceException("数据源没有配置或配置错误: " + jdbcURI);
+					throw new DataSourceException("数据源没有配置或配置错误: " + path);
+				
 			}
 			
-			return jdbc;
+			ORMType type = ormType(properties);
+			if(type == null)
+				throw new DataSourceException("未知的数据源类型配置: " + path);
+			
+			if(type == ormType) 
+				return properties;
+			
 		}
 		
 		return null;
 	}
 	
-	private void addJdbcConfig(Properties jdbc) throws Throwable {
-		if(StringUtils.isNotBlank(jdbc.getProperty(JdbcConfig.JDBC_ENVIRONMENT_ID))) {
-			String poolTypeAlias = jdbc.getProperty(Constants.JDBC_POOL_TYPE);
-			PoolTypes poolType = null;
-			if(StringUtils.isNotBlank(poolTypeAlias)) {
-				poolType = (PoolTypes) PoolTypes.class.getField(poolTypeAlias).get(PoolTypes.class);
-				if(poolType == null)
-					throw new IllegalArgumentException("无效的Pool类型名称: " + poolTypeAlias);
-				
-				poolTypes.add(poolType);
-			}
-			
-			JdbcConfig config;
-			if(poolType != null) {
-				switch(poolType) {
-				case C3P0: 
-					config = new C3P0JdbcConfig(jdbc);
-					break;
-				case DRUID: 
-					config = new DruidJdbcConfig(jdbc);
-					break;
-					default: 
-						throw new IllegalArgumentException("Can not support this poolType: " + poolType);
-				}
-			} else {
-				config = new DruidJdbcConfig(jdbc);
-			}
-			
-			configs.put(config.getEnvironmentId(), config);
-		}
+	public Map<String, Properties> getLoadProperties() {
+		return newLoadProperties;
 	}
 	
 	public List<Module> getModules() {
 		return modules;
-	}
-	
-	public Map<String, Properties> getLoadProperties() {
-		return newLoadProperties;
 	}
 }

@@ -22,7 +22,7 @@ import static com.google.inject.matcher.Matchers.not;
 import java.util.Collections;
 import java.util.Map;
 
-import org.nanoframework.orm.PoolTypes;
+import org.nanoframework.orm.PoolType;
 import org.nanoframework.orm.jdbc.JdbcAdapter;
 import org.nanoframework.orm.jdbc.JdbcCreater;
 import org.nanoframework.orm.jdbc.config.JdbcConfig;
@@ -38,11 +38,11 @@ import com.google.inject.AbstractModule;
 public class JdbcModule extends AbstractModule {
 
 	private Map<String, JdbcConfig> configs;
-	private PoolTypes poolType;
+	private PoolType poolType;
 	
-	public JdbcModule(Map<String, JdbcConfig> configs, PoolTypes poolType) {
+	public JdbcModule(Map<String, JdbcConfig> configs, PoolType poolType) {
 		this.configs = configs == null ? Collections.emptyMap() : configs;
-		this.poolType = poolType == null ? PoolTypes.DRUID : poolType;
+		this.poolType = poolType == null ? PoolType.DRUID : poolType;
 	}
 	
 	@Override

@@ -28,7 +28,7 @@ import java.util.Properties;
 import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
-import org.nanoframework.orm.PoolTypes;
+import org.nanoframework.orm.PoolType;
 import org.nanoframework.orm.jdbc.config.C3P0JdbcConfig;
 import org.nanoframework.orm.jdbc.config.DruidJdbcConfig;
 import org.nanoframework.orm.jdbc.config.JdbcConfig;
@@ -52,7 +52,7 @@ public class JdbcTest {
 			configs.add(config);
 		}
 		
-		JdbcAdapter.newInstance(configs, PoolTypes.C3P0, this.getClass());
+		JdbcAdapter.newInstance(configs, PoolType.C3P0, this.getClass());
 		Connection conn = ADAPTER.getConnection("test");
 		Result result = ADAPTER.executeQuery("select 1", conn);
 		System.out.println(result.getRowCount());
@@ -72,7 +72,7 @@ public class JdbcTest {
 			configs.add(config);
 		}
 		
-		JdbcAdapter.newInstance(configs, PoolTypes.DRUID, this.getClass());
+		JdbcAdapter.newInstance(configs, PoolType.DRUID, this.getClass());
 		Connection conn = ADAPTER.getConnection("test");
 		Result result = ADAPTER.executeQuery("select 1", conn);
 		System.out.println(result.getRowCount());

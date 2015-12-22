@@ -24,8 +24,11 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nanoframework.commons.io.ClassPathResource;
+import org.nanoframework.commons.io.Resource;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.ResourceUtils;
 
 /**
  * 
@@ -42,6 +45,23 @@ public class PropertiesLoader {
 	public static Map<String, Properties> PROPERTIES = new HashMap<>();
 	public static final String CONTEXT = "context";
 	
+	public static final Properties load(String path) {
+		try {
+			Resource resource = new ClassPathResource(path);
+			InputStream input = resource.getInputStream();
+			
+			Properties properties;
+			if(input != null) 
+				properties = PropertiesLoader.load(input);
+			else 
+				properties = PropertiesLoader.load(ResourceUtils.getFile(path));
+			
+			return properties;
+		} catch(IOException e) {
+			throw new LoaderException("加载属性文件异常: " + e.getMessage());
+		}
+	}
+	
 	/**
 	 * 通过输入流加载属性文件
 	 * 
@@ -50,16 +70,18 @@ public class PropertiesLoader {
 	 * @throws LoaderException Loader异常
 	 * @throws IOException IO异常
 	 */
-	public static final Properties load(InputStream input) throws LoaderException, IOException {
+	public static final Properties load(InputStream input) {
 
 		if(input == null)
 			throw new LoaderException("输入流为空");
 		
-		Properties prop = new Properties();
-		prop.load(input);
-		
-		return prop;
-		
+		try {
+			Properties prop = new Properties();
+			prop.load(input);
+			return prop;
+		} catch(IOException e) {
+			throw new LoaderException("加载属性文件异常: " + e.getMessage());
+		}
 	}
 	
 	/**

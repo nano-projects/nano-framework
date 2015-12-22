@@ -41,12 +41,6 @@ public class Constants {
 	public static final String WEBSOCKET_PORT = "websocket.port";
 	public static final String WEBSOCKET_HANDLER_CLASS_NAME="websocket.handler.class.name";
 	
-	public static final String MAPPER_PACKAGE_ROOT = "mapper.package.root";
-	public static final String MAPPER_PACKAGE_NAME = "mapper.package.name";
-	public static final String MAPPER_PACKAGE_JDBC = "mapper.package.jdbc";
-	public static final String MAPPER_PACKAGE_HELPER = "mapper.package.helper";
-	public static final String JDBC_POOL_TYPE = "JDBC.pool.type";
-	
 	public static final String CALLBACK = "callback";
 	
 	public static final String SSO_TOKEN = "sso.token";
