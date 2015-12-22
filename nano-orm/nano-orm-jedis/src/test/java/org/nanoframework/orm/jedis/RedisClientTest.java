@@ -43,7 +43,7 @@ public class RedisClientTest {
 	@Before
 	public void before() throws LoaderException, IOException {
 		if(redisClient == null) {
-			Properties prop = PropertiesLoader.load(RedisClientTest.class.getResourceAsStream("/redis-test.properties"));
+			Properties prop = PropertiesLoader.load("/redis-test.properties");
 			RedisClientPool.POOL.initRedisConfig(prop).createJedis();
 			redisClient = GlobalRedisClient.get("test");
 		}	

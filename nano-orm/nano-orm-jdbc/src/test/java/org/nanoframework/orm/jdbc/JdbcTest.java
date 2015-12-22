@@ -45,7 +45,7 @@ public class JdbcTest {
 	@Test
 	public void test0() throws LoaderException, IOException, IllegalArgumentException, IllegalAccessException, PropertyVetoException, SQLException {
 		List<JdbcConfig> configs = null;
-		Properties prop = PropertiesLoader.load(DBConfigInitTest.class.getResourceAsStream("/jdbc-test.properties"));
+		Properties prop = PropertiesLoader.load("/jdbc-test.properties");
 		if(prop != null) {
 			configs = new ArrayList<>();
 			C3P0JdbcConfig config = new C3P0JdbcConfig(prop);
@@ -65,7 +65,7 @@ public class JdbcTest {
 	@Test
 	public void test1() throws LoaderException, IOException, IllegalArgumentException, IllegalAccessException, PropertyVetoException, SQLException {
 		List<JdbcConfig> configs = null;
-		Properties prop = PropertiesLoader.load(DBConfigInitTest.class.getResourceAsStream("/jdbc-test.properties"));
+		Properties prop = PropertiesLoader.load("/jdbc-test.properties");
 		if(prop != null) {
 			configs = new ArrayList<>();
 			DruidJdbcConfig config = new DruidJdbcConfig(prop);

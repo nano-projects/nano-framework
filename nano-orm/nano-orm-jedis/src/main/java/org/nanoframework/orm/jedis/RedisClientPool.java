@@ -56,7 +56,7 @@ public class RedisClientPool {
 	
 	private Map<String, RedisConfig> redisConfigs = new LinkedHashMap<>();
 	
-	public static final String MAIN_REDIS = "/redis.properties";
+	public static final String MAIN_REDIS = "classpath:redis.properties";
 	
 	public RedisClientPool initRedisConfig(List<Properties> redis) throws LoaderException, IOException {
 		if(redis == null || redis.isEmpty())
@@ -68,7 +68,7 @@ public class RedisClientPool {
 	public RedisClientPool initRedisConfig(Properties... redis) throws LoaderException, IOException {
 		List<Properties> redises = new ArrayList<>();
 		if(redis == null || redis.length == 0) 
-			redises.add(PropertiesLoader.load(this.getClass().getResourceAsStream(MAIN_REDIS)));
+			redises.add(PropertiesLoader.load(MAIN_REDIS));
 		else 
 			redises.addAll(Arrays.asList(redis));
 

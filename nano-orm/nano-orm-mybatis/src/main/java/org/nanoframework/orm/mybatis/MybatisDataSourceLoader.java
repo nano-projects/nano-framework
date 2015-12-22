@@ -48,7 +48,7 @@ public class MybatisDataSourceLoader extends DataSourceLoader {
 	@Override
 	public void toConfig(Properties properties) {
 		Assert.notNull(properties, "数据源属性文件不能为空");
-		String mapperPackageName = properties.getProperty(MAPPER_PACKAGE_NAME);
+		String[] mapperPackageName = properties.getProperty(MAPPER_PACKAGE_NAME, "NULL").split(",");
 		DataSourceConfig config = new DataSourceConfig(mapperPackageName, properties, poolType(properties));
 		dsc.add(config);
 		LOG.info("创建数据源依赖注入模块, Mapper包路径: " + mapperPackageName + ", 耗时: " + (System.currentTimeMillis() - time) + "ms");

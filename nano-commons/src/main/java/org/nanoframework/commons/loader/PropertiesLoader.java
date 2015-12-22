@@ -46,9 +46,12 @@ public class PropertiesLoader {
 	public static final String CONTEXT = "context";
 	
 	public static final Properties load(String path) {
+		InputStream input = null;
 		try {
-			Resource resource = new ClassPathResource(path);
-			InputStream input = resource.getInputStream();
+			try {
+				Resource resource = new ClassPathResource(path);
+				input = resource.getInputStream();
+			} catch(IOException e) { }
 			
 			Properties properties;
 			if(input != null) 
@@ -70,8 +73,7 @@ public class PropertiesLoader {
 	 * @throws LoaderException Loader异常
 	 * @throws IOException IO异常
 	 */
-	public static final Properties load(InputStream input) {
-
+	private static final Properties load(InputStream input) {
 		if(input == null)
 			throw new LoaderException("输入流为空");
 		
@@ -91,8 +93,7 @@ public class PropertiesLoader {
 	 * @throws LoaderException Loader异常
 	 * @throws IOException IO异常
 	 */
-	public static final Properties load(File file) throws LoaderException, IOException {
-
+	private static final Properties load(File file) throws LoaderException, IOException {
 		if(file == null)
 			throw new LoaderException("文件对象为空");
 		
@@ -112,6 +113,7 @@ public class PropertiesLoader {
 	 * @throws LoaderException 加载异常
 	 * @throws IOException IO异常
 	 */
+	@Deprecated
 	public static final void load(String contextPath, InputStream stream, boolean loadContext) throws LoaderException, IOException {
 		Properties prop = load(stream);
 		prop.forEach((key, value) -> System.setProperty((String) key, (String) value));
@@ -123,17 +125,35 @@ public class PropertiesLoader {
 				String[] ctxs = _ctx.split(";");
 				if(ctxs.length > 0) {
 					for (String ctx : ctxs) {
-						InputStream input = PropertiesLoader.class.getResourceAsStream(ctx);
-						if(input != null) {
-							Properties tmp = load(input);
-							if (tmp == null) {
-								LOG.error(ctx + ": 无法加载此属性文件!");
-							} else {
-								PROPERTIES.put(ctx, tmp);
-							}
+						Properties properties = load(ctx);
+						if(properties != null) {
+							PROPERTIES.put(ctx, properties);
 						} else {
 							LOG.error(ctx + ": 无法加载此属性文件!");
-							
+						}
+					}
+					
+				}
+			}
+		}
+	}
+	
+	public static final void load(String contextPath, boolean loadContext) throws LoaderException, IOException {
+		Properties prop = load(contextPath);
+		prop.forEach((key, value) -> System.setProperty((String) key, (String) value));
+		PROPERTIES.put(contextPath, prop);
+		
+		if(loadContext) {
+			String _ctx = prop.getProperty(CONTEXT);
+			if(StringUtils.isNotEmpty(_ctx)) {
+				String[] ctxs = _ctx.split(";");
+				if(ctxs.length > 0) {
+					for (String ctx : ctxs) {
+						Properties properties = load(ctx);
+						if(properties != null) {
+							PROPERTIES.put(ctx, properties);
+						} else {
+							LOG.error(ctx + ": 无法加载此属性文件!");
 						}
 					}
 					

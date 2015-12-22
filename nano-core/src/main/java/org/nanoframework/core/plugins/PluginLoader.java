@@ -16,7 +16,6 @@
 package org.nanoframework.core.plugins;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,8 +67,7 @@ public abstract class PluginLoader {
 		try { 
 			configProperties(properties);
 			for(String path : properties.get()) {
-				InputStream input = this.getClass().getResourceAsStream(path);
-			 	PropertiesLoader.load(path, input, true); 
+			 	PropertiesLoader.load(path, true); 
 			}
 		} catch(Exception e) {
 	 		throw new PluginLoaderException(e.getMessage(), e);

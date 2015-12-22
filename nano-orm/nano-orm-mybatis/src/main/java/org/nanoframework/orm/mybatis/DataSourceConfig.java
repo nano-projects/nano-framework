@@ -34,14 +34,14 @@ public class DataSourceConfig extends BaseEntity {
 	public static final String DEFAULT_MYBATIS_CONFIG_PATH = "/mybatis-config-";
 	public static final String XML_SUFFIX = ".xml";
 
-	private String mapperPackageName;
+	private String[] mapperPackageName;
 	private Properties jdbc;
 	private JdbcHelper helper;
 	private String envId;
 	private String mybatisConfigPath;
 	private PoolType poolType;
 
-	public DataSourceConfig(String mapperPackageName, Properties jdbc, PoolType poolType) {
+	public DataSourceConfig(String[] mapperPackageName, Properties jdbc, PoolType poolType) {
 		Assert.notNull(jdbc);
 		Assert.hasLength(this.envId = jdbc.getProperty(DataSourceLoader.MYBATIS_ENVIRONMENT_ID));
 		Assert.notNull(poolType);
@@ -53,11 +53,11 @@ public class DataSourceConfig extends BaseEntity {
 		this.mybatisConfigPath = DEFAULT_MYBATIS_CONFIG_PATH + poolType.name().toLowerCase() + XML_SUFFIX;
 	}
 
-	public String getMapperPackageName() {
+	public String[] getMapperPackageName() {
 		return mapperPackageName;
 	}
 
-	public void setMapperPackageName(String mapperPackageName) {
+	public void setMapperPackageName(String[] mapperPackageName) {
 		this.mapperPackageName = mapperPackageName;
 	}
 

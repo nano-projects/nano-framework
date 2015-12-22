@@ -43,8 +43,9 @@
 	
 	<!-- 指定映射文件或者映射类 -->
 	<!-- 填写需要注入的Mapper包的路径 -->
+	<!-- 现在使用MultiDataSourceModule进行Mapper加载，这样可以同时对多个包进行扫描，并且方便控制
 	<mappers>
 		<package name="${mapper.package.name}"/>
 	</mappers>
-	
+	 -->
 </configuration>

@@ -32,7 +32,7 @@ public class DBConfigInitTest {
 
 	@Test
 	public void test() throws LoaderException, IOException, IllegalArgumentException, IllegalAccessException {
-		Properties prop = PropertiesLoader.load(DBConfigInitTest.class.getResourceAsStream("/jdbc-test.properties"));
+		Properties prop = PropertiesLoader.load("classpath:jdbc-test.properties");
 		if(prop != null) {
 			C3P0JdbcConfig config = new C3P0JdbcConfig(prop);
 			System.out.println(config._getBeanToMap());

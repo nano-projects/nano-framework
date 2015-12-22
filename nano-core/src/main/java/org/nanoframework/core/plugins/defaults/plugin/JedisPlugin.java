@@ -59,7 +59,7 @@ public class JedisPlugin implements Plugin {
 			properties = new ArrayList<>();
 			String[] paths = redis.split(";");
 			for(String path : paths) {
-				properties.add(PropertiesLoader.load(JedisPlugin.class.getResourceAsStream(path)));
+				properties.add(PropertiesLoader.load(path));
 			}
 		}
 	}

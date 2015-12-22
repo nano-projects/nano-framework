@@ -35,7 +35,7 @@ public class PropertiesLoaderTest extends TestCase {
 	private static final Logger LOG = LoggerFactory.getLogger(PropertiesLoaderTest.class);
 
 	public void test() throws LoaderException, IOException {
-		Properties prop = PropertiesLoader.load(this.getClass().getResourceAsStream("/test-loader.properties"));
+		Properties prop = PropertiesLoader.load("/test-loader.properties");
 		
 		assertNotNull("Prop is null.", prop);
 		
