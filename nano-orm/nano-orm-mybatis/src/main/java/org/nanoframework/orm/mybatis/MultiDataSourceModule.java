@@ -17,7 +17,9 @@ package org.nanoframework.orm.mybatis;
 
 import static com.google.inject.util.Providers.guicify;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
@@ -30,7 +32,11 @@ import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.session.SqlSessionManager;
+import org.nanoframework.commons.io.ClassPathResource;
+import org.nanoframework.commons.io.Resource;
+import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.util.Assert;
+import org.nanoframework.commons.util.ResourceUtils;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -60,7 +66,18 @@ public class MultiDataSourceModule extends AbstractModule {
 	protected void configure() {
 		Reader reader = null;
 		try {
-			reader = new InputStreamReader(MultiDataSourceModule.class.getResourceAsStream(mybatisConfigPath));
+			InputStream input;
+			try {
+				Resource resource = new ClassPathResource(mybatisConfigPath);
+				input = resource.getInputStream();
+				if(input == null) 
+					input = new FileInputStream(ResourceUtils.getFile(mybatisConfigPath));
+				
+			} catch(IOException e) {
+				throw new LoaderException("加载文件异常: " + e.getMessage());
+			}
+
+			reader = new InputStreamReader(input);
 			SqlSessionFactory sessionFactory;
 	        SqlSessionManager sessionManager = SqlSessionManager.newInstance(sessionFactory = new SqlSessionFactoryBuilder().build(reader, envId, jdbc));
 	        GlobalSqlSession.set(envId, sessionManager);
