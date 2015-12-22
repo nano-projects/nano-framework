@@ -24,7 +24,7 @@ mvn clean install -Dmaven.test.skip=true
 <dependency>
 	<groupId>org.nanoframework</groupId>
 	<artifactId>nano-webmvc</artifactId>
-	<version>1.2.7</version>
+	<version>1.2.9</version>
 </dependency>
 ```
 ####2、配置web.xml
@@ -62,6 +62,9 @@ context.root=/first-webapp
 
 更新描述
 ----
+#####版本号: 1.2.9
+- 1、重构数据源加载的实现
+
 #####版本号: 1.2.7
 - 1、重构AOP实现，现在可以以最简洁的方式实现AOP的处理
 
