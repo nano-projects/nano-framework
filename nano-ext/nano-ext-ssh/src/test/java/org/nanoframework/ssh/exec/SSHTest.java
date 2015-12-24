@@ -29,11 +29,11 @@ import javax.management.ReflectionException;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.extension.ssh.FindProcessExecutor;
+import org.nanoframework.extension.ssh.GanymedSSH;
+import org.nanoframework.extension.ssh.ShellExecutor;
 import org.nanoframework.jmx.client.JmxClientManager;
 import org.nanoframework.jmx.client.management.impl.RuntimeImpl;
-import org.nanoframework.ssh.FindProcessExecutor;
-import org.nanoframework.ssh.GanymedSSH;
-import org.nanoframework.ssh.ShellExecutor;
 
 /**
  * 
