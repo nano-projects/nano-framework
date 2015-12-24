@@ -76,16 +76,20 @@ public class WebSocketFactory {
 					for(Properties properties : PropertiesLoader.PROPERTIES.values()) {
 						if(StringUtils.isNotBlank(websocket.portProperty())) {
 							String _port = properties.getProperty(websocket.portProperty());
-							if(StringUtils.isNotBlank(_port)) {
+							if(StringUtils.isNotBlank(_port)) 
 								port = Integer.parseInt(_port);
-							}
-							
+						}
+						
+						if(StringUtils.isNotBlank(websocket.sslProperty())) {
 							String _ssl = properties.getProperty(websocket.sslProperty());
-							if(StringUtils.isNotBlank(_ssl)) {
+							if(StringUtils.isNotBlank(_ssl)) 
 								ssl = Boolean.parseBoolean(_ssl);
-							}
-							
-							location = properties.getProperty(websocket.locationProperty());
+						}
+						
+						if(StringUtils.isNotBlank(websocket.locationProperty())) {
+							String _location = properties.getProperty(websocket.locationProperty());
+							if(StringUtils.isNotBlank(_location))
+								location = _location;
 						}
 					}
 					

@@ -25,22 +25,15 @@ import org.apache.shiro.cache.CacheManager;
  */
 public class RedisCacheManager implements CacheManager {
 	protected static final String DEFAULT_REDIS_SOURCE_NAME = "shiro";
-	protected static final String DEFAULT_CACHE_NAME = "SHIRO_CACHE";
-	
 	protected String redisSourceNames = DEFAULT_REDIS_SOURCE_NAME;
-	protected String cacheName = DEFAULT_CACHE_NAME;
 	
 	@Override
 	public Cache<Object, Object> getCache(String name) throws CacheException {
-		return new RedisCache<>(redisSourceNames, cacheName);
+		return new RedisCache<>(redisSourceNames, name);
 	}
 	
 	public void setRedisSourceNames(String redisSourceNames) {
 		this.redisSourceNames = redisSourceNames;
 	}
 
-	public void setCacheName(String cacheName) {
-		this.cacheName = cacheName;
-	}
-	
 }

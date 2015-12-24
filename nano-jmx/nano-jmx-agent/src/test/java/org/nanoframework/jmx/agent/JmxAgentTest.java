@@ -15,22 +15,11 @@
  */
 package org.nanoframework.jmx.agent;
 
-import java.io.IOException;
-import java.rmi.registry.LocateRegistry;
-
-import javax.management.InstanceAlreadyExistsException;
-import javax.management.MBeanRegistrationException;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
-import javax.management.NotCompliantMBeanException;
-import javax.management.ObjectName;
-import javax.management.remote.JMXConnectorServer;
-import javax.management.remote.JMXConnectorServerFactory;
-import javax.management.remote.JMXServiceURL;
+import javax.management.ObjectInstance;
 
 import org.nanoframework.jmx.agent.mbean.HelloWorld;
-import org.nanoframework.jmx.agent.mbean.HelloWorld2;
+
+import com.alibaba.fastjson.JSON;
 
 /**
  * 
@@ -38,22 +27,9 @@ import org.nanoframework.jmx.agent.mbean.HelloWorld2;
  * @date 2015年8月19日 上午9:05:43
  */
 public class JmxAgentTest {
-
-	public static void main(String... args) throws IOException, InstanceAlreadyExistsException, MBeanRegistrationException, NotCompliantMBeanException, MalformedObjectNameException, InterruptedException {
-		LocateRegistry.createRegistry(10180);
-		
-		final JMXServiceURL url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:10180/jmxrmi");
-		MBeanServer mbeanServer = MBeanServerFactory.createMBeanServer(JmxAgentTest.class.getName());
-		JMXConnectorServer jmxConnectorServer = JMXConnectorServerFactory.newJMXConnectorServer(url, null, mbeanServer);
-		mbeanServer.registerMBean(new HelloWorld(), new ObjectName("org.nanoframework:type=HelloWorld"));
-		jmxConnectorServer.start();
-		
-		final JMXServiceURL url2 = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:10180/jmxrmi2");
-		MBeanServer mbeanServer2 = MBeanServerFactory.createMBeanServer(JmxAgentTest.class.getName());
-		JMXConnectorServer jmxConnectorServer2 = JMXConnectorServerFactory.newJMXConnectorServer(url2, null, mbeanServer2);
-		mbeanServer2.registerMBean(new HelloWorld2(), new ObjectName("org.nanoframework:type=HelloWorld2"));
-		jmxConnectorServer2.start();
-		
-		Thread.sleep(120000L);
+	
+	public static void main(String... args) {
+		ObjectInstance instance = JmxAgentFactory.register(new HelloWorld(), "org.nanoframework:type=HelloWorld");
+		System.out.println(("Object Instance: " + JSON.toJSONString(instance)));
 	}
 }
