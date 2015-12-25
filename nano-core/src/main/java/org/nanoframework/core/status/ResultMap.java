@@ -33,6 +33,10 @@ public class ResultMap extends BaseEntity {
 	/** 消息内容 */
 	private String message;
 	
+	public static final String INFO = "info";
+	public static final String STATUS = "status";
+	public static final String MESSAGE = "message";
+	
 	private ResultMap(int status, String message, String info) {
 		this.status = status;
 		this.message = message;

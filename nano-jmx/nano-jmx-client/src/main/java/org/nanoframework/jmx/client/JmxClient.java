@@ -16,10 +16,11 @@
 package org.nanoframework.jmx.client;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.rmi.ConnectException;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -33,6 +34,7 @@ import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.nanoframework.commons.util.Assert;
+import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.jmx.client.exception.MXBeanException;
 
 /**
@@ -43,16 +45,19 @@ import org.nanoframework.jmx.client.exception.MXBeanException;
  */
 public class JmxClient {
 	public static final String DEFAULT_CONTENT = "jmxrmi";
-	private static final ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool(new ThreadFactory() {
-		private AtomicLong id = new AtomicLong(0);
-		@Override
-		public Thread newThread(Runnable r) {
-			Thread thread = new Thread(r);
-			thread.setName("JMX-CONNECT-POOL-" + id.getAndIncrement());
-			thread.setDaemon(true);
-			return thread;
-		}
-	});
+	private static final ThreadPoolExecutor service = new ThreadPoolExecutor(0, RuntimeUtil.AVAILABLE_PROCESSORS, 10L, TimeUnit.SECONDS, 
+		new SynchronousQueue<Runnable>(),
+        new ThreadFactory() {
+    		private AtomicLong id = new AtomicLong(0);
+    		@Override
+    		public Thread newThread(Runnable r) {
+    			Thread thread = new Thread(r);
+    			thread.setName("JMX-CONNECT-POOL-" + id.getAndIncrement());
+    			thread.setDaemon(true);
+    			return thread;
+    		}
+    	}
+	);
 	
 	private String host;
 	private Integer port;
@@ -61,6 +66,7 @@ public class JmxClient {
 	private JMXConnector connector;
 	private MBeanServerConnection connection;
 	private AtomicBoolean closed = new AtomicBoolean(true);
+	private Socket socket;
 	
 	public JmxClient(String host, Integer port) {
 		this(host, port, DEFAULT_CONTENT);
@@ -109,10 +115,17 @@ public class JmxClient {
 	
 	public JmxClient connect() {
 		try {
-			connector = JMXConnectorFactory.connect(jmxServiceUrl);
-			closed.set(false);
+			socket = new Socket(host, port);
+			if(socket.isConnected()) {
+				socket.close();
+				
+				connector = JMXConnectorFactory.connect(jmxServiceUrl);
+				closed.set(false);
+			}
 		} catch(IOException e) {
 			throw new MXBeanException(e.getMessage(), e);
+		} finally {
+			socket = null;
 		}
 		
 		return this;
@@ -120,23 +133,37 @@ public class JmxClient {
 	
 	public JmxClient connect(long timeout) {
 		try {
-			Future<JMXConnector> future = service.submit(() -> JMXConnectorFactory.connect(jmxServiceUrl));
-			connector = future.get(timeout, TimeUnit.MILLISECONDS);
-			closed.set(false);
-		} catch(InterruptedException | ExecutionException | TimeoutException e) {
+			socket = new Socket(host, port);
+			if(socket.isConnected()) {
+				socket.close();
+				
+				Future<JMXConnector> future = service.submit(() -> JMXConnectorFactory.connect(jmxServiceUrl));
+				connector = future.get(timeout, TimeUnit.MILLISECONDS);
+				closed.set(false);
+			}
+		} catch(InterruptedException | ExecutionException | TimeoutException | IOException e) {
 			throw new MXBeanException(e.getMessage(), e);
+		} finally {
+			socket = null;
 		}
 		
 		return this;
 	}
 	
 	public synchronized void reconnect() throws ConnectException {
+		reconnect(0);
+	}
+	
+	public synchronized void reconnect(long timeout) throws ConnectException {
 		if(isClosed())
 			return ;
 		
 		try {
 			close();
-			connect();
+			if(timeout <= 0)
+				connect();
+			else
+				connect(timeout);
 		} catch(MXBeanException e) {
 			if(e.getCause() != null && e.getCause() instanceof IOException)
 				throw new ConnectException(e.getMessage(), e);
