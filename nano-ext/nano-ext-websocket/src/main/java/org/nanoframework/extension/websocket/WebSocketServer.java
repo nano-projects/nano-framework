@@ -23,6 +23,8 @@ import java.util.List;
 
 import javax.net.ssl.SSLException;
 
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 
 import io.netty.bootstrap.ServerBootstrap;
@@ -43,27 +45,48 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
  * @date 2015年8月19日 上午9:22:52
  */
 public final class WebSocketServer {
+	private Logger LOG = LoggerFactory.getLogger(WebSocketServer.class);
+	
 	private static List<WebSocketServer> servers = new ArrayList<>();
     private Throwable throwable = null;
     private boolean isOK = false;
     private Channel ch;
+    private String host;
     private String location;
     private int port;
+    private int proxyPort;
     private boolean ssl;
     
     static {
     	Runtime.getRuntime().addShutdownHook(new Thread(() -> closeAll() ));
     }
     
-	private WebSocketServer(int port, boolean ssl, String location) {
+	private WebSocketServer(String host, int port, boolean ssl, String location) {
+		this.host = host;
 		this.port = port;
 		this.ssl = ssl;
 		this.location = location;
 	}
+	
+	private WebSocketServer(String host, int port, int proxyPort, boolean ssl, String location) {
+		this.host = host;
+		this.port = port;
+		this.proxyPort = proxyPort;
+		this.ssl = ssl;
+		this.location = location;
+	}
     
-    public static WebSocketServer create(int port, boolean ssl, String websocketPath, AbstractWebSocketHandler handler) throws CertificateException, SSLException, InterruptedException {
+    public static WebSocketServer create(String host, int port, boolean ssl, String websocketPath, AbstractWebSocketHandler handler) throws CertificateException, SSLException, InterruptedException {
     	Assert.notNull(handler);
-    	WebSocketServer server = new WebSocketServer(port, ssl, websocketPath);
+    	WebSocketServer server = new WebSocketServer(host, port, ssl, websocketPath);
+    	server.create(handler);
+    	servers.add(server);
+    	return server;
+    }
+    
+    public static WebSocketServer create(String host, int port, int proxyPort, boolean ssl, String websocketPath, AbstractWebSocketHandler handler) throws CertificateException, SSLException, InterruptedException {
+    	Assert.notNull(handler);
+    	WebSocketServer server = new WebSocketServer(host, port, proxyPort, ssl, websocketPath);
     	server.create(handler);
     	servers.add(server);
     	return server;
@@ -93,7 +116,7 @@ public final class WebSocketServer {
 	
 	                isOK = true;
 	                
-	                System.out.println("Open your web browser and navigate to " + (ssl? "https" : "http") + "://127.0.0.1:" + port + '/');
+	                LOG.info("Open your web browser and navigate to " + (ssl? "https" : "http") + "://127.0.0.1:" + port + '/');
 	                ch.closeFuture().sync();
 	                
 	            } finally {
@@ -145,6 +168,10 @@ public final class WebSocketServer {
     	servers.clear();
     }
     
+	public String getHost() {
+		return host;
+	}
+    
 	public int getPort() {
 		return port;
 	}
@@ -156,4 +183,9 @@ public final class WebSocketServer {
 	public boolean isSsl() {
 		return ssl;
 	}
+
+	public int getProxyPort() {
+		return proxyPort;
+	}
+	
 }

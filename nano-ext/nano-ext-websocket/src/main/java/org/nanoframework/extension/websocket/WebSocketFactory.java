@@ -70,14 +70,28 @@ public class WebSocketFactory {
 					if(StringUtils.isEmpty(websocket.value())) 
 						throw new WebSocketException("WebSocket名不能为空, 类名 [ " + clz.getName()+ " ]");
 					
+					String host = null;
 					Integer port = null;
+					Integer proxyPort = null;
 					Boolean ssl = null;
 					String location = null;
 					for(Properties properties : PropertiesLoader.PROPERTIES.values()) {
+						if(StringUtils.isNotBlank(websocket.hostProperty())) {
+							String _host = properties.getProperty(websocket.hostProperty());
+							if(StringUtils.isNotBlank(_host))
+								host = _host;
+							
+						}
 						if(StringUtils.isNotBlank(websocket.portProperty())) {
 							String _port = properties.getProperty(websocket.portProperty());
 							if(StringUtils.isNotBlank(_port)) 
 								port = Integer.parseInt(_port);
+						}
+						
+						if(StringUtils.isNotBlank(websocket.proxyPortProperty())) {
+							String _proxyPort = properties.getProperty(websocket.proxyPortProperty());
+							if(StringUtils.isNotBlank(_proxyPort))
+								proxyPort = Integer.parseInt(_proxyPort);
 						}
 						
 						if(StringUtils.isNotBlank(websocket.sslProperty())) {
@@ -93,9 +107,17 @@ public class WebSocketFactory {
 						}
 					}
 					
+					
+					if(StringUtils.isBlank(host)) {
+						host = websocket.host();
+					}
+					
 					if(port == null) {
 						port = websocket.port();
 					}
+					
+					if(proxyPort == null)
+						proxyPort = websocket.proxyPort();
 					
 					if(ssl == null) {
 						ssl = websocket.ssl();
@@ -109,7 +131,7 @@ public class WebSocketFactory {
 					
 					AbstractWebSocketHandler handler = (AbstractWebSocketHandler) Globals.get(Injector.class).getInstance(clz);
 					handler.setLocation(location);
-					handlerMap.put(websocket.value(), WebSocketServer.create(port, ssl, location, handler));
+					handlerMap.put(websocket.value(), WebSocketServer.create(host, port, proxyPort, ssl, location, handler));
 					
 				} else 
 					throw new WebSocketException("必须继承: [ "+AbstractWebSocketHandler.class.getName()+" ]");

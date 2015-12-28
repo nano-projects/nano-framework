@@ -30,11 +30,15 @@ import java.lang.annotation.Target;
 @Documented
 public @interface WebSocket {
 	String value() default "";
+	String host() default "";
 	int port() default 0;
+	int proxyPort() default 0;
 	boolean ssl() default false;
 	String location() default "";
 	
+	String hostProperty() default "";
 	String portProperty() default "";
+	String proxyPortProperty() default "";
 	String sslProperty() default "";
 	String locationProperty() default "";
 	
