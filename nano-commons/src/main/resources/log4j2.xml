@@ -22,6 +22,11 @@
   </appenders>  
 
   <loggers>  
+  	<logger name="org.eclipse.jetty" level="error" additivity="false">
+  		<appender-ref ref="OUT"/>
+  		<appender-ref ref="ERROR"/>
+  	</logger>
+  	
     <root level="debug">  
       	<appender-ref ref="OUT"/>
         <appender-ref ref="INFO"/>
