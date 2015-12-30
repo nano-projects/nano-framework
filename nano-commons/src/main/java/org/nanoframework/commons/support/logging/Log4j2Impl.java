@@ -1,9 +1,3 @@
-package org.nanoframework.commons.support.logging;
-
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /*
  * Copyright 1999-2101 Alibaba Group Holding Ltd.
  *
@@ -19,25 +13,33 @@ import org.apache.logging.log4j.Logger;
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package org.nanoframework.commons.support.logging;
+
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.spi.ExtendedLogger;
+
 public class Log4j2Impl implements org.nanoframework.commons.support.logging.Logger {
 
-    private Logger log;
+    private ExtendedLogger log;
 
-    private int    errorCount;
-    private int    warnCount;
-    private int    infoCount;
-    private int    debugCount;
+    private static final String FQCN = Log4j2Impl.class.getName();
+    private int errorCount;
+    private int warnCount;
+    private int infoCount;
+    private int debugCount;
 
     /**
      * @since 0.2.21
      * @param log
      */
     public Log4j2Impl(Logger log){
-        this.log = log;
+        this.log = (ExtendedLogger) log;
     }
 
     public Log4j2Impl(String loggerName){
-        log = LogManager.getLogger(loggerName);
+        log = (ExtendedLogger) LogManager.getLogger(loggerName);
     }
 
     public Logger getLog() {
@@ -50,32 +52,32 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
 
     public void error(String s, Throwable e) {
         errorCount++;
-        log.error(s, e);
+        log.logIfEnabled(FQCN, Level.ERROR, null, s, e);
     }
 
     public void error(String s) {
         errorCount++;
-        log.error(s);
+        log.logIfEnabled(FQCN, Level.ERROR, null, s);
     }
 
     public void debug(String s) {
         debugCount++;
-        log.debug(s);
+        log.logIfEnabled(FQCN, Level.DEBUG, null, s);
     }
 
     public void debug(String s, Throwable e) {
         debugCount++;
-        log.debug(s, e);
+        log.logIfEnabled(FQCN, Level.DEBUG, null, s, e);
     }
 
     public void warn(String s) {
-        log.warn(s);
         warnCount++;
+        log.logIfEnabled(FQCN, Level.WARN, null, s);
     }
 
     public void warn(String s, Throwable e) {
-        log.warn(s, e);
         warnCount++;
+        log.logIfEnabled(FQCN, Level.WARN, null, s, e);
     }
 
     public int getWarnCount() {
@@ -103,7 +105,7 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
 
     public void info(String msg) {
         infoCount++;
-        log.info(msg);
+        log.logIfEnabled(FQCN, Level.INFO, null, msg);
     }
 
     public boolean isWarnEnabled() {

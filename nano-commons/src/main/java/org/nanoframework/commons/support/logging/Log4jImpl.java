@@ -20,102 +20,102 @@ import org.apache.log4j.Logger;
 
 public class Log4jImpl implements org.nanoframework.commons.support.logging.Logger {
 
-    private static final String callerFQCN = Log4jImpl.class.getName();
+	private static final String FQCN = Log4jImpl.class.getName();
 
-    private Logger              log;
+	private Logger log;
 
-    private int                 errorCount;
-    private int                 warnCount;
-    private int                 infoCount;
-    private int                 debugCount;
+	private int errorCount;
+	private int warnCount;
+	private int infoCount;
+	private int debugCount;
 
-    /**
-     * @since 0.2.21
-     * @param log
-     */
-    public Log4jImpl(Logger log){
-        this.log = log;
-    }
+	/**
+	 * @since 0.2.21
+	 * @param log
+	 */
+	public Log4jImpl(Logger log) {
+		this.log = log;
+	}
 
-    public Log4jImpl(String loggerName){
-        log = Logger.getLogger(loggerName);
-    }
-    
-    public Logger getLog() {
-        return log;
-    }
+	public Log4jImpl(String loggerName) {
+		log = Logger.getLogger(loggerName);
+	}
 
-    public boolean isDebugEnabled() {
-        return log.isDebugEnabled();
-    }
+	public Logger getLog() {
+		return log;
+	}
 
-    public void error(String s, Throwable e) {
-        errorCount++;
-        log.log(callerFQCN, Level.ERROR, s, e);
-    }
+	public boolean isDebugEnabled() {
+		return log.isDebugEnabled();
+	}
 
-    public void error(String s) {
-        errorCount++;
-        log.log(callerFQCN, Level.ERROR, s, null);
-    }
+	public void error(String s, Throwable e) {
+		errorCount++;
+		log.log(FQCN, Level.ERROR, s, e);
+	}
 
-    public void debug(String s) {
-        debugCount++;
-        log.log(callerFQCN, Level.DEBUG, s, null);
-    }
+	public void error(String s) {
+		errorCount++;
+		log.log(FQCN, Level.ERROR, s, null);
+	}
 
-    public void debug(String s, Throwable e) {
-        debugCount++;
-        log.log(callerFQCN, Level.DEBUG, s, e);
-    }
+	public void debug(String s) {
+		debugCount++;
+		log.log(FQCN, Level.DEBUG, s, null);
+	}
 
-    public void warn(String s) {
-        log.log(callerFQCN, Level.WARN, s, null);
-        warnCount++;
-    }
+	public void debug(String s, Throwable e) {
+		debugCount++;
+		log.log(FQCN, Level.DEBUG, s, e);
+	}
 
-    public void warn(String s, Throwable e) {
-        log.log(callerFQCN, Level.WARN, s, e);
-        warnCount++;
-    }
+	public void warn(String s) {
+		log.log(FQCN, Level.WARN, s, null);
+		warnCount++;
+	}
 
-    public int getWarnCount() {
-        return warnCount;
-    }
+	public void warn(String s, Throwable e) {
+		log.log(FQCN, Level.WARN, s, e);
+		warnCount++;
+	}
 
-    public int getErrorCount() {
-        return errorCount;
-    }
+	public int getWarnCount() {
+		return warnCount;
+	}
 
-    public void resetStat() {
-        errorCount = 0;
-        warnCount = 0;
-        infoCount = 0;
-        debugCount = 0;
-    }
+	public int getErrorCount() {
+		return errorCount;
+	}
 
-    public int getDebugCount() {
-        return debugCount;
-    }
+	public void resetStat() {
+		errorCount = 0;
+		warnCount = 0;
+		infoCount = 0;
+		debugCount = 0;
+	}
 
-    public boolean isInfoEnabled() {
-        return log.isInfoEnabled();
-    }
+	public int getDebugCount() {
+		return debugCount;
+	}
 
-    public void info(String msg) {
-        infoCount++;
-        log.log(callerFQCN, Level.INFO, msg, null);
-    }
+	public boolean isInfoEnabled() {
+		return log.isInfoEnabled();
+	}
 
-    public boolean isWarnEnabled() {
-        return log.isEnabledFor(Level.WARN);
-    }
+	public void info(String msg) {
+		infoCount++;
+		log.log(FQCN, Level.INFO, msg, null);
+	}
 
-    public int getInfoCount() {
-        return infoCount;
-    }
+	public boolean isWarnEnabled() {
+		return log.isEnabledFor(Level.WARN);
+	}
 
-    public String toString() {
-        return log.toString();
-    }
+	public int getInfoCount() {
+		return infoCount;
+	}
+
+	public String toString() {
+		return log.toString();
+	}
 }

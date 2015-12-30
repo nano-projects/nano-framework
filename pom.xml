@@ -19,8 +19,9 @@
 		<maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
 
 		<junit-version>4.9</junit-version>
-		<slf4j-version>1.7.6</slf4j-version>
+		<slf4j-version>1.7.7</slf4j-version>
 		<log4j-version>1.2.17</log4j-version>
+		<log4j2-version>2.5</log4j2-version>
 		<google-guice-version>4.0</google-guice-version>
 		<google-guice-multibindings-version>4.0</google-guice-multibindings-version>
 		<commons-lang3-version>3.3</commons-lang3-version>
@@ -42,8 +43,6 @@
 		<jsp-support-version>2.2.3</jsp-support-version>
 		<tomcat-version>2.2</tomcat-version>
 		<ganymed-version>262</ganymed-version>
-		<logging-version>1.1.1</logging-version>
-		<apache-log4j-version>2.3</apache-log4j-version>
 		<shiro-version>1.2.4</shiro-version>
 		<beetl-version>2.2.8</beetl-version>
 	</properties>
@@ -94,12 +93,14 @@
 				<scope>test</scope>
 			</dependency>
 
-			<!-- Logger -->
+			<!-- Log4j -->
 			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>jcl-over-slf4j</artifactId>
-				<version>${slf4j-version}</version>
+				<groupId>log4j</groupId>
+				<artifactId>log4j</artifactId>
+				<version>${log4j-version}</version>
 			</dependency>
+			
+			<!-- Log4j 2 -->
 			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
@@ -107,30 +108,23 @@
 			</dependency>
 			<dependency>
 				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-log4j12</artifactId>
+				<artifactId>slf4j-jcl</artifactId>
 				<version>${slf4j-version}</version>
-				<scope>runtime</scope>
-			</dependency>
-			<dependency>
-				<groupId>log4j</groupId>
-				<artifactId>log4j</artifactId>
-				<version>${log4j-version}</version>
-				<!-- <scope>runtime</scope> -->
-			</dependency>
-			<dependency>
-				<groupId>commons-logging</groupId>
-				<artifactId>commons-logging</artifactId>
-				<version>${logging-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-api</artifactId>
-				<version>${apache-log4j-version}</version>
+				<version>${log4j2-version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.logging.log4j</groupId>
 				<artifactId>log4j-core</artifactId>
-				<version>${apache-log4j-version}</version>
+				<version>${log4j2-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.logging.log4j</groupId>
+				<artifactId>log4j-slf4j-impl</artifactId>
+				<version>${log4j2-version}</version>
 			</dependency>
 
 			<!-- Commons -->

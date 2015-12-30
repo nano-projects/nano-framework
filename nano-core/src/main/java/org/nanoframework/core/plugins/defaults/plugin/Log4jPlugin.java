@@ -15,12 +15,14 @@
  */
 package org.nanoframework.core.plugins.defaults.plugin;
 
-import java.lang.reflect.Method;
+import java.io.File;
+import java.net.URI;
 import java.net.URL;
 
 import javax.servlet.ServletConfig;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nanoframework.commons.util.ResourceUtils;
 import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoaderException;
 
@@ -38,9 +40,13 @@ public class Log4jPlugin implements Plugin {
 			URL url = this.getClass().getResource(log4j);
 			if (url != null) {
 				try {
-					Class<?> cls = Class.forName("org.apache.log4j.xml.DOMConfigurator");
-					Method method = cls.getMethod("configure", URL.class);
-					method.invoke(cls, url);
+					File file = ResourceUtils.getFile(url);
+					Class<?> LogManager = Class.forName("org.apache.logging.log4j.LogManager");
+					Object context = LogManager.getMethod("getContext", boolean.class).invoke(LogManager, false);
+					Class<?> LoggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
+					LoggerContext.getMethod("setConfigLocation", URI.class).invoke(context, file.toURI());
+					LoggerContext.getMethod("reconfigure").invoke(context);
+					
 				} catch(Exception e) {
 					if(!(e instanceof ClassNotFoundException))
 						throw new PluginLoaderException(e.getMessage(), e);

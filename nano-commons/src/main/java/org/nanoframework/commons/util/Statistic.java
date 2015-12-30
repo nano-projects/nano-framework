@@ -28,11 +28,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.log4j.Logger;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 
 public class Statistic {
-
-	private static Logger logger = Logger.getLogger(Statistic.class);
+	private static Logger logger = LoggerFactory.getLogger(Statistic.class);
 	private static ConcurrentMap<String , AtomicLong> statisticMap = new ConcurrentHashMap<String , AtomicLong>();
 	private static AtomicInteger timePoint = new AtomicInteger(0);
 	private static int MAX_POINTER = -1;
