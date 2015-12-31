@@ -47,7 +47,7 @@
 			<param-value>/examples-context.properties</param-value>
 		</init-param>
 		<init-param>
-			<param-name>log4j</param-name>
+			<param-name>log4j2</param-name>
 			<param-value>/examples-log4j2.xml</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>

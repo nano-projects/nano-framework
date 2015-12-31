@@ -33,8 +33,8 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  * @date 2015年10月30日 下午11:23:52
  */
 public class JedisPlugin implements Plugin {
-
 	private Logger LOG = LoggerFactory.getLogger(JedisPlugin.class);
+	public static final String DEFAULT_REDIS_PARAMETER_NAME = "redis";
 	private List<Properties> properties;
 	
 	@Override
@@ -54,7 +54,7 @@ public class JedisPlugin implements Plugin {
 
 	@Override
 	public void config(ServletConfig config) throws Throwable {
-		String redis = config.getInitParameter("redis");
+		String redis = config.getInitParameter(DEFAULT_REDIS_PARAMETER_NAME);
 		if(StringUtils.isNotBlank(redis)) {
 			properties = new ArrayList<>();
 			String[] paths = redis.split(";");

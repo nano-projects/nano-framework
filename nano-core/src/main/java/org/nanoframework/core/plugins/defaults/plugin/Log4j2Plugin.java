@@ -15,12 +15,14 @@
  */
 package org.nanoframework.core.plugins.defaults.plugin;
 
-import java.lang.reflect.Method;
+import java.io.File;
+import java.net.URI;
 import java.net.URL;
 
 import javax.servlet.ServletConfig;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nanoframework.commons.util.ResourceUtils;
 import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoaderException;
 
@@ -28,19 +30,23 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  * @author yanghe
  * @date 2015年11月17日 上午9:06:59
  */
-public class Log4jPlugin implements Plugin {
-	public static final String DEFAULT_LOG4J_PARAMETER_NAME = "log4j";
-	private String log4j;
+public class Log4j2Plugin implements Plugin {
+	public static final String DEFAULT_LOG4J2_PARAMETER_NAME = "log4j2";
+	private String log4j2;
 	
 	@Override
 	public void load() throws Throwable {
-		if(StringUtils.isNotBlank(log4j)) {
-			URL url = this.getClass().getResource(log4j);
+		if(StringUtils.isNotBlank(log4j2)) {
+			URL url = this.getClass().getResource(log4j2);
 			if (url != null) {
 				try {
-					Class<?> cls = Class.forName("org.apache.log4j.xml.DOMConfigurator");
-					Method method = cls.getMethod("configure", URL.class);
-					method.invoke(cls, url);
+					File file = ResourceUtils.getFile(url);
+					Class<?> LogManager = Class.forName("org.apache.logging.log4j.LogManager");
+					Object context = LogManager.getMethod("getContext", boolean.class).invoke(LogManager, false);
+					Class<?> LoggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
+					LoggerContext.getMethod("setConfigLocation", URI.class).invoke(context, file.toURI());
+					LoggerContext.getMethod("reconfigure").invoke(context);
+					
 				} catch(Exception e) {
 					if(!(e instanceof ClassNotFoundException))
 						throw new PluginLoaderException(e.getMessage(), e);
@@ -51,7 +57,7 @@ public class Log4jPlugin implements Plugin {
 
 	@Override
 	public void config(ServletConfig config) throws Throwable {
-		log4j = config.getInitParameter(DEFAULT_LOG4J_PARAMETER_NAME);
+		log4j2 = config.getInitParameter(DEFAULT_LOG4J2_PARAMETER_NAME);
 	}
 
 }
