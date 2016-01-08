@@ -9,12 +9,12 @@
     	<SizeBasedTriggeringPolicy size="100 MB" />
     	<LevelRangeFilter minLevel="info" maxLevel="info" onMatch="ACCEPT" />
     </RollingFile>
-    <RollingFile name="DEBUG" fileName="logs/debug.log" filePattern="logs/debug/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+    <RollingFile name="DEBUG" fileName="logs/debug.log" filePattern="logs/debug/$${date:yyyy-MM}/debug-%d{yyyy-MM-dd}-%i.log">
     	<PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %l >>> %m %n"/> 
     	<SizeBasedTriggeringPolicy size="100 MB" />
     	<LevelRangeFilter minLevel="debug" maxLevel="debug" onMatch="ACCEPT" />
     </RollingFile>
-    <RollingFile name="ERROR" fileName="logs/error.log" filePattern="logs/error/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
+    <RollingFile name="ERROR" fileName="logs/error.log" filePattern="logs/error/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">
     	<PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %l >>> %m %n"/> 
     	<SizeBasedTriggeringPolicy size="100 MB" />
     	<LevelRangeFilter minLevel="error" maxLevel="error" onMatch="ACCEPT" />
