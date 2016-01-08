@@ -36,6 +36,7 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 	private QuartzConfig config;
 	private boolean close = true;
 	private boolean closed = false;
+	private boolean remove = false;
 	private boolean isRunning = false;
 	private int nowTimes = 0;
 	private Object LOCK = new Object();
@@ -249,6 +250,14 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 
 	public void setClose(boolean close) {
 		this.close = close;
+	}
+	
+	public void setRemove(boolean remove) {
+		this.remove = remove;
+	}
+	
+	public boolean isRemove() {
+		return remove;
 	}
 
 	public QuartzConfig getConfig() {

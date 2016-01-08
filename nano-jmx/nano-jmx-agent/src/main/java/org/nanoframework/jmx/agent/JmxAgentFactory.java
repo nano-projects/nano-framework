@@ -34,6 +34,7 @@ import org.nanoframework.jmx.agent.exception.MBeanRegisterException;
  */
 public class JmxAgentFactory {
 	private static MBeanServer mBeanServer = null;
+	private static final Object LOCK = new Object();
 	
 	public static final synchronized ObjectInstance register(Object object, ObjectName name) {
 		findMBeanServer();
@@ -53,14 +54,20 @@ public class JmxAgentFactory {
 		}
 	}
 	
-	private static final void findMBeanServer() {
+	public static final MBeanServer findMBeanServer() {
 		if(mBeanServer == null) {
-			List<MBeanServer> mbeanServers;
-			if ((mbeanServers = MBeanServerFactory.findMBeanServer(null)).size() > 0) {
-				mBeanServer = mbeanServers.get(0);
-			} else {
-				mBeanServer = ManagementFactory.getPlatformMBeanServer();
+			synchronized (LOCK) {
+				if(mBeanServer == null) {
+					List<MBeanServer> mbeanServers;
+					if ((mbeanServers = MBeanServerFactory.findMBeanServer(null)).size() > 0) {
+						mBeanServer = mbeanServers.get(0);
+					} else {
+						mBeanServer = ManagementFactory.getPlatformMBeanServer();
+					}
+				}
 			}
 		}
+		
+		return mBeanServer;
 	}
 }
