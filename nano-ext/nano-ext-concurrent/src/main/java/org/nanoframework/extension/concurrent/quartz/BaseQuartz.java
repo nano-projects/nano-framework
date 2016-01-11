@@ -42,7 +42,7 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 	private Object LOCK = new Object();
 	private AtomicBoolean isLock = new AtomicBoolean(false);
 	
-	protected BaseQuartz() { }
+	public BaseQuartz() { }
 	
 	public BaseQuartz(QuartzConfig config) {
 		Assert.notNull(config, "QuartzConfig must not be null");
@@ -66,76 +66,50 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 			while(!close && !config.getService().isShutdown()) {
 				if(config.getBeforeAfterOnly()) {
 					try {
-						StringBuilder builder = null;
 						if(!isRunning) 
-							try { before(); } catch(Throwable befErr) {
-								if(builder == null)
-									builder = new StringBuilder();
-								
-								builder.append(befErr.getMessage()).append("\n");
+							try { before(); } catch(Throwable e) {
+								LOG.error("任务运行异常(before): " + e.getMessage(), e);
 							}
 						
-						try { execute(); } catch(Throwable execErr) { 
-							if(builder == null)
-								builder = new StringBuilder();
-
-							builder.append(execErr.getMessage()).append("\n");
+						try { execute(); } catch(Throwable e) { 
+							LOG.error("任务运行异常(execute): " + e.getMessage(), e);
 						}
 						
 						if(!isRunning) 
-							try { after(); } catch(Throwable aftErr) { 
-								if(builder == null)
-									builder = new StringBuilder();
-
-								builder.append(aftErr.getMessage()).append("\n");
+							try { after(); } catch(Throwable e) { 
+								LOG.error("任务运行异常(after): " + e.getMessage(), e);
 							}
 						
 						if(!isRunning)
 							isRunning = true;
 						
-						if(builder != null)
-							throw new QuartzException(builder.toString());
-						
 					} catch(Throwable e) {
-						errorProcess(e);
+						LOG.error("任务运行异常: " + e.getMessage(), e);
+						thisWait(100);
 						
 					} finally {
 						finallyProcess();
-						
 					}
 					
 				} else {
 					try {
-						StringBuilder builder = null;
-						try { before(); } catch(Throwable befErr) { 
-							if(builder == null)
-								builder = new StringBuilder();
-
-							builder.append(befErr.getMessage()).append("\n");
+						try { before(); } catch(Throwable e) { 
+							LOG.error("任务运行异常(before): " + e.getMessage(), e);
 						}
 						
-						try { execute(); } catch(Throwable execErr) { 
-							if(builder == null)
-								builder = new StringBuilder();
-
-							builder.append(execErr.getMessage()).append("\n");
+						try { execute(); } catch(Throwable e) { 
+							LOG.error("任务运行异常(execute): " + e.getMessage(), e);
 						}
-						try { after(); } catch(Throwable aftErr) { 
-							if(builder == null)
-								builder = new StringBuilder();
-
-							builder.append(aftErr.getMessage()).append("\n");
+						try { after(); } catch(Throwable e) { 
+							LOG.error("任务运行异常(after): " + e.getMessage(), e);
 						}
-						
-						if(builder != null)
-							throw new QuartzException(builder.toString());
 						
 					} catch(Throwable e) {
-						errorProcess(e);
+						LOG.error("任务运行异常: " + e.getMessage(), e);
+						thisWait(100);
 						
 					} finally {
 						finallyProcess();
-						
 					}
 				}
 			}
@@ -146,15 +120,6 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 			destroy();
 			
 		}
-	}
-	
-	/**
-	 * 异常处理
-	 * @param e 异常
-	 */
-	private void errorProcess(Throwable e) {
-		LOG.error("任务运行异常: " + e.getMessage() + ", 任务开始进入等待状态: 100ms", e);
-		thisWait(100);
 	}
 	
 	/**
