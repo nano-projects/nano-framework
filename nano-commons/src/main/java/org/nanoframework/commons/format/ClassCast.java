@@ -288,13 +288,20 @@ public class ClassCast {
 					};
 					
 					if(value instanceof String) {
+						if(String.class == cls)
+							return value;
+						
 						return JSON.parseObject((String) value, type);
 					} else if(value instanceof String[]) {
 						String[] array = (String[]) value;
 						Object[] objs = (Object[]) Array.newInstance(cls, array.length);
 						int idx = 0;
 						for(String val : array) {
-							objs[idx] = JSON.parseObject(val, type);
+							if(String.class == cls)
+								objs[idx] = (String) val;
+							else
+								objs[idx] = JSON.parseObject(val, type);
+							
 							idx ++;
 						}
 						

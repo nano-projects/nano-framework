@@ -342,6 +342,20 @@ public class QuartzFactory {
 		return group.get(groupName);
 	}
 	
+	public final BaseQuartz find(String id) {
+		Assert.hasLength(id, "id must be not empty.");
+		String groupName = id.substring(0, id.lastIndexOf("-"));
+		Set<BaseQuartz> groupQuartz = group.get(groupName);
+		if(!CollectionUtils.isEmpty(groupQuartz)) {
+			for(BaseQuartz quartz : groupQuartz) {
+				if(quartz.getConfig().getId().equals(id))
+					return quartz;
+			}
+		}
+		
+		return null;
+	}
+	
 	public BaseQuartz findLast(String groupName) {
 		Assert.hasLength(groupName);
 		Set<BaseQuartz> groupQuartz = group.get(groupName);
