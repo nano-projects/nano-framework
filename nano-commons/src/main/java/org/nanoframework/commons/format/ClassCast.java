@@ -15,6 +15,8 @@
  */
 package org.nanoframework.commons.format;
 
+import java.lang.reflect.Array;
+import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -23,10 +25,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.ObjectUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 
 
 /**
@@ -128,13 +130,6 @@ public class ClassCast {
 		
 		if(value == null)
 			return null;
-		
-		try {
-			Class<?> cls;
-			if(value instanceof String && BaseEntity.class.isAssignableFrom(cls = Class.forName(typeName))) {
-				return JSON.parseObject((String) value, cls);
-			}
-		} catch(ClassNotFoundException e) { }
 		
 		try {
 			switch(typeName) {
@@ -279,6 +274,33 @@ public class ClassCast {
 					throw new ClassCastException("只支持对对象数据类型的转换，不支持基本数据类型的转换");
 					
 				default :
+					String newType;
+					if(typeName.startsWith("[L") && typeName.endsWith(";"))
+						newType = typeName.substring(2, typeName.length() - 1);
+					else 
+						newType = typeName;
+					
+					Class<?> cls = Class.forName(newType);
+					TypeReference<Object> type = new TypeReference<Object>() {
+						public Type getType() {
+							return cls;
+						};
+					};
+					
+					if(value instanceof String) {
+						return JSON.parseObject((String) value, type);
+					} else if(value instanceof String[]) {
+						String[] array = (String[]) value;
+						Object[] objs = (Object[]) Array.newInstance(cls, array.length);
+						int idx = 0;
+						for(String val : array) {
+							objs[idx] = JSON.parseObject(val, type);
+							idx ++;
+						}
+						
+						return objs;
+					}
+					
 					return value;
 			}
 		} catch(Throwable e) {
