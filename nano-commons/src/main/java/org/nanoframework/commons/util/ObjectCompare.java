@@ -76,7 +76,7 @@ public class ObjectCompare {
 	}
 	
 	/**
-	 * 正则法比较target是否在regExs内
+	 * 正则表达式比较target是否在regExs内
 	 * 
 	 * @param target 源
 	 * @param regExs 正则列表
@@ -88,6 +88,9 @@ public class ObjectCompare {
 		
 		if(regExs != null && regExs.length > 0) {
 			for(String regEx : regExs) {
+				if(StringUtils.isBlank(regEx))
+					continue ;
+				
 				if(Pattern.compile(regEx).matcher(target).find())
 					return true;
 			}

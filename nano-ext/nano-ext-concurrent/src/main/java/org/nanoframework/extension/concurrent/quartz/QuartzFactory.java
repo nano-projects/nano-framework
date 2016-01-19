@@ -33,6 +33,7 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.commons.util.ObjectCompare;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.core.component.scan.ComponentScan;
 import org.nanoframework.core.globals.Globals;
@@ -62,6 +63,8 @@ public class QuartzFactory {
 	private static boolean isLoaded = false;
 	
 	public static final String BASE_PACKAGE = "context.quartz-scan.base-package";
+	public static final String INCLUDES = "context.quartz.group.includes";
+	public static final String EXCLUSIONS = "context.quartz.group.exclusions";
 	
 	private QuartzFactory() {
 		
@@ -401,8 +404,23 @@ public class QuartzFactory {
 			throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
 		}
 		
+		Set<String> includes = Sets.newLinkedHashSet();
+		Set<String> exclusions = Sets.newLinkedHashSet();
 		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(BASE_PACKAGE) != null).forEach(item -> {
 			ComponentScan.scan(item.getProperty(BASE_PACKAGE));
+			if(item.containsKey(INCLUDES)) {
+				String[] include = item.getProperty(INCLUDES, ".").split(",");
+				for(String inc : include) {
+					includes.add(inc);
+				}
+			}
+			
+			if(item.containsKey(EXCLUSIONS)) {
+				String[] exclusion = item.getProperty(EXCLUSIONS, "").split(",");
+				for(String exc : exclusion) {
+					exclusions.add(exc);
+				}
+			}
 		});
 		
 		Set<Class<?>> componentClasses = ComponentScan.filter(Quartz.class);
@@ -418,6 +436,11 @@ public class QuartzFactory {
 					Quartz quartz = clz.getAnnotation(Quartz.class);
 					if(StringUtils.isEmpty(quartz.name())) 
 						throw new QuartzException("任务名不能为空, 类名 [ " + clz.getName()+ " ]");
+					
+					if(!ObjectCompare.isInListByRegEx(quartz.name(), includes) || ObjectCompare.isInListByRegEx(quartz.name(), exclusions)) {
+						LOG.warn("过滤任务组: " + quartz.name() + ", 类名 [ " + clz.getName()+ " ]");
+						continue ;
+					}
 					
 					String parallelProperty = quartz.parallelProperty();
 					int parallel = 0;
