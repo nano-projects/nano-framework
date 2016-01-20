@@ -408,6 +408,9 @@ public class QuartzFactory {
 		Set<String> exclusions = Sets.newLinkedHashSet();
 		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(BASE_PACKAGE) != null).forEach(item -> {
 			ComponentScan.scan(item.getProperty(BASE_PACKAGE));
+		});
+		
+		PropertiesLoader.PROPERTIES.values().stream().forEach(item -> {
 			if(item.containsKey(INCLUDES)) {
 				String[] include = item.getProperty(INCLUDES, ".").split(",");
 				for(String inc : include) {
@@ -428,6 +431,9 @@ public class QuartzFactory {
 			LOG.info("Quartz size: " + componentClasses.size());
 		
 		if(componentClasses.size() > 0) {
+			if(includes.isEmpty()) 
+				includes.add(".");
+			
 			for(Class<?> clz : componentClasses) {
 				if(BaseQuartz.class.isAssignableFrom(clz)) {
 					if(LOG.isInfoEnabled())

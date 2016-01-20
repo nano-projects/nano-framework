@@ -42,8 +42,9 @@ import org.nanoframework.extension.shiro.util.ByteSource;
  * @since 1.1
  */
 public class SimpleHash extends AbstractHash {
+	private static final long serialVersionUID = 3591322259721265080L;
 
-    private static final int DEFAULT_ITERATIONS = 1;
+	private static final int DEFAULT_ITERATIONS = 1;
 
     /**
      * The {@link java.security.MessageDigest MessageDigest} algorithm name to use when performing the hash.

@@ -45,8 +45,9 @@ import org.apache.shiro.crypto.UnknownAlgorithmException;
  */
 @Deprecated
 public abstract class AbstractHash extends CodecSupport implements Hash, Serializable {
+	private static final long serialVersionUID = -5291853383486311715L;
 
-    /**
+	/**
      * The hashed data
      */
     private byte[] bytes = null;
