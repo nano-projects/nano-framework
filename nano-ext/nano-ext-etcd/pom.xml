@@ -73,11 +73,6 @@
 			<groupId>com.fasterxml.jackson.module</groupId>
 			<artifactId>jackson-module-afterburner</artifactId>
 		</dependency>
-		
-		<dependency>
-			<groupId>org.nanoframework</groupId>
-			<artifactId>nano-commons</artifactId>
-		</dependency>
 	</dependencies>
 	
 	<build>
