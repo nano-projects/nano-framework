@@ -9,7 +9,7 @@
 		<version>1.2.11-SNAPSHOT</version>
 	</parent>
 	<artifactId>nano-ext-etcd</artifactId>
-	<name>nano-ext-etcd</name>
+	<name>Nano Ext Etcd4j</name>
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
