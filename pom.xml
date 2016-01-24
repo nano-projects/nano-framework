@@ -33,7 +33,7 @@
 		<c3p0-version>0.9.1.2</c3p0-version>
 		<druid-version>1.0.15</druid-version>
 		<httpclient-version>4.5</httpclient-version>
-		<netty-all-version>4.0.28.Final</netty-all-version>
+		<netty-version>4.1.0.Beta8</netty-version>
 		<sso-version>2.0</sso-version>
 		<jedis-version>2.7.2</jedis-version>
 		<servlet-api-version>3.0.1</servlet-api-version>
@@ -232,8 +232,13 @@
 			<!-- Netty -->
 			<dependency>
 				<groupId>io.netty</groupId>
-				<artifactId>netty-all</artifactId>
-				<version>${netty-all-version}</version>
+				<artifactId>netty-handler</artifactId>
+				<version>${netty-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.netty</groupId>
+				<artifactId>netty-codec-http</artifactId>
+				<version>${netty-version}</version>
 			</dependency>
 
 			<!-- Jetty -->
