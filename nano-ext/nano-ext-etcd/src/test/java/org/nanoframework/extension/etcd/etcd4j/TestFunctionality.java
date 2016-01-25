@@ -240,7 +240,7 @@ public class TestFunctionality {
     new Timer().schedule(new TimerTask() {
       @Override
       public void run() {
-          try {
+        try {
 			etcd.put("etcd4j_test/test", "changed").send().get();
 		} catch (IOException e) {
 			fail();
@@ -252,7 +252,7 @@ public class TestFunctionality {
 			fail();
 		}
       }
-    }, 20);
+    }, 5000);
 
     EtcdKeysResponse r = p.get();
     assertEquals("changed", r.node.value);

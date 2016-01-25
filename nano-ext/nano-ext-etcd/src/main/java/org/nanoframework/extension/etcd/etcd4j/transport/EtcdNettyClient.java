@@ -292,7 +292,10 @@ public class EtcdNettyClient implements EtcdClientImpl {
           logger.debug("Connected to " + channel.remoteAddress().toString());
         }
 
-        lastWorkingUriIndex = connectionState.uriIndex;
+        /** 轮训集群节点 */
+        lastWorkingUriIndex = connectionState.uriIndex + 1;
+        if(lastWorkingUriIndex == connectionState.uris.length)
+        	lastWorkingUriIndex = 0;
 
         modifyPipeLine(etcdRequest, f.channel().pipeline());
 

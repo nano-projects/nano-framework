@@ -13,6 +13,7 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<log4j2-version>2.2</log4j2-version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -80,7 +81,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>${maven-compiler-plugin-version}</version>
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
