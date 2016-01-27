@@ -17,14 +17,14 @@ package org.nanoframework.commons.crypt;
 
 import java.nio.charset.Charset;
 import java.security.SecureRandom;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang3.StringUtils;
+import org.nanoframework.commons.util.StringUtils;
 
 /**
  * 
@@ -54,40 +54,43 @@ public class CryptUtil {
 			byte[] byteContent = (content).getBytes("UTF-8");
 			cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化
 			byte[] result = cipher.doFinal(byteContent);//加密
-			Base64 encoder = new Base64();
-			return new String(encoder.encode(parseByte2HexStr(result).getBytes())).replace("=", "");
+
+			String encodeStr = new String(Base64.getEncoder().encode(parseByte2HexStr(result).getBytes()));
+			int idx;
+			if((idx = encodeStr.indexOf("=")) > -1) {
+				String tmp = encodeStr.substring(0, idx);
+				int len = encodeStr.substring(idx).length();
+				encodeStr = tmp + len;
+			} else 
+				encodeStr += "0";
 			
+			return encodeStr;
 		} catch (Exception e) {
 			throw new EncryptException(e.getMessage(), e);
 		} 
 
 	}
 	
-	public static String decrypt(String date) {
-		return decrypt(date, DEFAULT_PASSWORD);
+	public static String decrypt(String data) {
+		return decrypt(data, DEFAULT_PASSWORD);
 	}
 
-	public static String decrypt(String date, String password) {
+	public static String decrypt(String data, String password) {
 		if(StringUtils.isEmpty(password))
 			password = DEFAULT_PASSWORD;
 		
-		switch(date.length() % 4) { 
-	        case 3: 
-	        	date += "==="; 
-	        	break; // 注：其实只需要补充一个或者两个等号，不存在补充三个等号的情况  
-	        case 2: 
-	        	date += "=="; 
-	        	break; 
-	        case 1: 
-	        	date += "="; 
-	        	break; 
-	        default: 
-	        	break;
-	    }
+		String tmp = data.substring(0, data.length() - 1);
+		int len = Integer.parseInt(data.substring(data.length() - 1));
+		if(len > 0) {
+			for(int idx = 0; idx < len; idx ++) 
+				tmp += "=";
+			
+			data = tmp;
+		} else 
+			data = tmp;
 		
 		try {
-			Base64 decoder = new Base64();
-			byte[] content = parseHexStr2Byte(new String(decoder.decode(date.getBytes())));
+			byte[] content = parseHexStr2Byte(new String(Base64.getDecoder().decode(data.getBytes())));
 			KeyGenerator kgen = KeyGenerator.getInstance("AES");
 			SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
 			random.setSeed(password.getBytes(Charset.forName("UTF-8")));

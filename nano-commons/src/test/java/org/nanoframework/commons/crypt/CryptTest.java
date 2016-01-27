@@ -18,18 +18,22 @@ package org.nanoframework.commons.crypt;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 
 /**
  * @author yanghe
  * @date 2015年10月8日 下午1:58:16
  */
 public class CryptTest {
+	private Logger LOG = LoggerFactory.getLogger(CryptTest.class);
 	
 	@Test
 	public void cryptByDefaultTest() {
 		String testString = "test crypt encrypt";
 		String encode = CryptUtil.encrypt(testString);
 		String decode = CryptUtil.decrypt(encode);
+		LOG.debug("encode: " + encode);
 		assertEquals(testString, decode);
 	}
 	
@@ -38,6 +42,7 @@ public class CryptTest {
 		String testString = "test crypt encrypt by use passwd";
 		String encode = CryptUtil.encrypt(testString, "use passwd");
 		String decode = CryptUtil.decrypt(encode, "use passwd");
+		LOG.debug("encode: " + encode);
 		assertEquals(testString, decode);
 	}
 }
