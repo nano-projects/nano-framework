@@ -37,7 +37,6 @@ public class ObjectCompare {
 	 * @return 返回是否存在结果 true=存在，false=不存在
 	 */
 	public static final boolean isInList(Object target , Object... source) {
-		
 		if(target == null)
 			return false;
 		
@@ -49,7 +48,6 @@ public class ObjectCompare {
 		}
 		
 		return false;
-		
 	}
 	
 	/**
@@ -60,19 +58,20 @@ public class ObjectCompare {
 	 * @return 返回是否存在结果 true=存在，false=不存在
 	 */
 	public static final boolean isInList(Object target , String... source) {
-		
 		if(target == null)
 			return false;
 		
 		if(source != null && source.length > 0) {
 			for(String src : source) {
-				if(target.equals(src))
+				if(StringUtils.isEmpty(src))
+					return false;
+				
+				if(target.equals(src.trim()))
 					return true;
 			}
 		}
 		
 		return false;
-		
 	}
 	
 	/**

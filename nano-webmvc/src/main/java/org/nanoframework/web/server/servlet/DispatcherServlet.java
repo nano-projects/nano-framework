@@ -51,6 +51,8 @@ public class DispatcherServlet extends HttpServlet {
 					throw new IllegalArgumentException("插件加载器必须继承PluginLoader类");
 			}
 			
+			/** Instantiation `ResponseAllow` and setting allow attributes */
+			Cors.get();
 		} catch(Throwable e) {
 			LOG.error(e.getMessage(), e);
 			System.exit(1);
