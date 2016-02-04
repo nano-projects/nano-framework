@@ -120,4 +120,57 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
         return log.toString();
     }
 
+	@Override
+	public void warn(String paramString, Object[] paramArrayOfObject) {
+		warnCount++;
+		log.logIfEnabled(FQCN, Level.WARN, null, paramString, paramArrayOfObject);
+	}
+
+	@Override
+	public void warn(Throwable paramThrowable) {
+		warnCount++;
+		log.logIfEnabled(FQCN, Level.WARN, null, "", paramThrowable);
+	}
+
+	@Override
+	public void info(String paramString, Object[] paramArrayOfObject) {
+		infoCount++;
+		log.logIfEnabled(FQCN, Level.INFO, null, paramString, paramArrayOfObject);
+	}
+
+	@Override
+	public void info(Throwable paramThrowable) {
+		infoCount++;
+		log.logIfEnabled(FQCN, Level.INFO, null, "", paramThrowable);		
+	}
+
+	@Override
+	public void info(String paramString, Throwable paramThrowable) {
+		infoCount++;
+		log.logIfEnabled(FQCN, Level.INFO, null, paramString, paramThrowable);
+	}
+
+	@Override
+	public void debug(String paramString, Object[] paramArrayOfObject) {
+		debugCount++;
+		log.logIfEnabled(FQCN, Level.DEBUG, null, paramString, paramArrayOfObject);
+	}
+
+	@Override
+	public void debug(Throwable paramThrowable) {
+		debugCount++;
+		log.logIfEnabled(FQCN, Level.DEBUG, null, "", paramThrowable);
+	}
+
+	@Override
+	public void error(String paramString, Object[] paramArrayOfObject) {
+		errorCount++;
+		log.logIfEnabled(FQCN, Level.ERROR, null, paramString, paramArrayOfObject);
+	}
+	
+	@Override
+	public void error(Throwable paramThrowable) {
+		errorCount++;
+		log.logIfEnabled(FQCN, Level.ERROR, null, "", paramThrowable);
+	}
 }

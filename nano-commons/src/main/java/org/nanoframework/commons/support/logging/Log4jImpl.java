@@ -15,10 +15,12 @@
  */
 package org.nanoframework.commons.support.logging;
 
+import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
 
-public class Log4jImpl implements org.nanoframework.commons.support.logging.Logger {
+public class Log4jImpl extends Category implements org.nanoframework.commons.support.logging.Logger {
 
 	private static final String FQCN = Log4jImpl.class.getName();
 
@@ -34,10 +36,12 @@ public class Log4jImpl implements org.nanoframework.commons.support.logging.Logg
 	 * @param log
 	 */
 	public Log4jImpl(Logger log) {
+		super(log.getName());
 		this.log = log;
 	}
 
 	public Log4jImpl(String loggerName) {
+		super(loggerName);
 		log = Logger.getLogger(loggerName);
 	}
 
@@ -117,5 +121,68 @@ public class Log4jImpl implements org.nanoframework.commons.support.logging.Logg
 
 	public String toString() {
 		return log.toString();
+	}
+
+	@Override
+	public void warn(String paramString, Object[] paramArrayOfObject) {
+		l7dlog(Level.WARN, paramString, paramArrayOfObject, null);
+	}
+
+	@Override
+	public void warn(Throwable paramThrowable) {
+		l7dlog(Level.WARN, null, null, paramThrowable);
+	}
+
+	@Override
+	public void info(String paramString, Object[] paramArrayOfObject) {
+		l7dlog(Level.INFO, paramString, paramArrayOfObject, null);
+	}
+
+	@Override
+	public void info(Throwable paramThrowable) {
+		l7dlog(Level.INFO, null, null, paramThrowable);
+	}
+
+	@Override
+	public void info(String paramString, Throwable paramThrowable) {
+		l7dlog(Level.INFO, paramString, null, paramThrowable);		
+	}
+
+	@Override
+	public void debug(String paramString, Object[] paramArrayOfObject) {
+		l7dlog(Level.DEBUG, paramString, paramArrayOfObject, null);
+	}
+
+	@Override
+	public void debug(Throwable paramThrowable) {
+		l7dlog(Level.DEBUG, null, null, paramThrowable);
+	}
+	
+	@Override
+	public void error(String paramString, Object[] paramArrayOfObject) {
+		l7dlog(Level.ERROR, paramString, paramArrayOfObject, null);
+	}
+
+	@Override
+	public void error(Throwable paramThrowable) {
+		l7dlog(Level.ERROR, null, null, paramThrowable);
+	}
+	
+	public void l7dlog(Priority priority, String key, Object[] params, Throwable t) {
+	    if(log.getLoggerRepository().isDisabled(priority.toInt())) {
+	    	return;
+	    }
+	    
+	    if(priority.isGreaterOrEqual(this.getEffectiveLevel())) {
+	      String pattern = getResourceBundleString(key);
+	      String msg;
+	      
+	      if(pattern == null)
+	    	  msg = key;
+	      else
+	    	  msg = java.text.MessageFormat.format(pattern, params);
+	      
+	      forcedLog(FQCN, priority, msg, t);
+	    }
 	}
 }

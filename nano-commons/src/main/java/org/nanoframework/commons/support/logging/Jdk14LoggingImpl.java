@@ -111,4 +111,57 @@ public class Jdk14LoggingImpl implements org.nanoframework.commons.support.loggi
         return debugCount;
     }
 
+	@Override
+	public void warn(String paramString, Object[] paramArrayOfObject) {
+		log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
+        warnCount++;
+	}
+
+	@Override
+	public void warn(Throwable paramThrowable) {
+		log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
+        warnCount++;
+	}
+
+	@Override
+	public void info(String paramString, Object[] paramArrayOfObject) {
+		log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
+		infoCount++;
+	}
+
+	@Override
+	public void info(Throwable paramThrowable) {
+		log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
+		infoCount++;
+	}
+
+	@Override
+	public void info(String paramString, Throwable paramThrowable) {
+		log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramThrowable);
+		infoCount++;
+	}
+
+	@Override
+	public void debug(String paramString, Object[] paramArrayOfObject) {
+		log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
+		debugCount++;
+	}
+
+	@Override
+	public void debug(Throwable paramThrowable) {
+		log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
+		debugCount++;
+	}
+
+	@Override
+	public void error(String paramString, Object[] paramArrayOfObject) {
+		log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
+		errorCount++;
+	}
+	
+	@Override
+	public void error(Throwable paramThrowable) {
+		log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
+		errorCount++;
+	}
 }

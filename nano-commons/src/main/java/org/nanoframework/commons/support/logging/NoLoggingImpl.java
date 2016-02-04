@@ -107,4 +107,48 @@ public class NoLoggingImpl implements Logger {
         return debugCount;
     }
 
+	@Override
+	public void warn(String paramString, Object[] paramArrayOfObject) {
+		warnCount ++;
+	}
+
+	@Override
+	public void warn(Throwable paramThrowable) {
+		warnCount ++;
+	}
+
+	@Override
+	public void info(String paramString, Object[] paramArrayOfObject) {
+		infoCount ++;
+	}
+
+	@Override
+	public void info(Throwable paramThrowable) {
+		infoCount ++;
+	}
+
+	@Override
+	public void info(String paramString, Throwable paramThrowable) {
+		infoCount ++;
+	}
+
+	@Override
+	public void debug(String paramString, Object[] paramArrayOfObject) {
+		debugCount ++;
+	}
+
+	@Override
+	public void debug(Throwable paramThrowable) {
+		debugCount ++;
+	}
+
+	@Override
+	public void error(String paramString, Object[] paramArrayOfObject) {
+		errorCount ++;
+	}
+	
+	@Override
+	public void error(Throwable paramThrowable) {
+		errorCount ++;
+	}
 }

@@ -116,4 +116,49 @@ public class JakartaCommonsLoggingImpl implements org.nanoframework.commons.supp
         return debugCount;
     }
 
+	@Override
+	public void warn(String paramString, Object[] paramArrayOfObject) {
+		
+	}
+
+	@Override
+	public void warn(Throwable paramThrowable) {
+		
+	}
+
+	@Override
+	public void info(String paramString, Object[] paramArrayOfObject) {
+			
+	}
+
+	@Override
+	public void info(Throwable paramThrowable) {
+		
+	}
+
+	@Override
+	public void info(String paramString, Throwable paramThrowable) {
+		
+	}
+
+	@Override
+	public void debug(String paramString, Object[] paramArrayOfObject) {
+		
+	}
+
+	@Override
+	public void debug(Throwable paramThrowable) {
+		
+	}
+
+	@Override
+	public void error(String paramString, Object[] paramArrayOfObject) {
+		
+	}
+	
+	@Override
+	public void error(Throwable paramThrowable) {
+		
+	}
+
 }

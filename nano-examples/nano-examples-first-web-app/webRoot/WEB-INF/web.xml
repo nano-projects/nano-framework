@@ -8,6 +8,48 @@
 	</listener>
 	
 	<filter>
+		<filter-name>corsFilter</filter-name>
+		<filter-class>org.nanoframework.web.server.filter.CrossOriginFilter</filter-class>
+		<init-param>
+			<param-name>allowedOrigins</param-name>
+			<param-value>*</param-value>
+		</init-param>
+		<init-param>
+			<param-name>allowedMethods</param-name>
+			<param-value>GET,POST,PUT,DELETE,HEAD</param-value>
+		</init-param>
+		<init-param>
+			<param-name>allowedHeaders</param-name>
+			<param-value>X-Requested-With,Content-Type,Accept,Origin</param-value>
+		</init-param>
+		<init-param>
+			<param-name>preflightMaxAge</param-name>
+			<param-value>1800</param-value>
+		</init-param>
+		<init-param>
+			<param-name>allowCredentials</param-name>
+			<param-value>true</param-value>
+		</init-param>
+		<init-param>
+			<param-name>exposedHeaders</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<param-name>forwardPreflight</param-name>
+			<param-value></param-value>
+		</init-param>
+		<init-param>
+			<param-name>chainPreflight</param-name>
+			<param-value>true</param-value>
+		</init-param>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>corsFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
 		<filter-name>httpRequestFilter</filter-name>
 		<filter-class>org.nanoframework.web.server.filter.HttpRequestFilter</filter-class>
 	</filter>

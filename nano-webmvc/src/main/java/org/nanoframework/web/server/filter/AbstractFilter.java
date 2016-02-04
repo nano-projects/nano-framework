@@ -75,14 +75,12 @@ public abstract class AbstractFilter implements Filter {
 		request.setCharacterEncoding(Charset.UTF8.value());
 		response.setCharacterEncoding(Charset.UTF8.value());
 		
-		if(allowResponse((HttpServletRequest) request, (HttpServletResponse) response, chain) && 
-				invoke((HttpServletRequest) request, (HttpServletResponse) response)) {
+		if(invoke((HttpServletRequest) request, (HttpServletResponse) response)) {
 			chain.doFilter(request, response);
 		}
 	}
 	
 	protected abstract boolean invoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
-	protected abstract boolean allowResponse(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException;
 	
 	@Override
 	public void destroy() {

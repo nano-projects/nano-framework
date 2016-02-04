@@ -131,4 +131,48 @@ public class SLF4JImpl implements org.nanoframework.commons.support.logging.Logg
 		debugCount = 0;
 	}
 
+	@Override
+	public void warn(String paramString, Object[] paramArrayOfObject) {
+		log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, paramString, paramArrayOfObject, null);
+	}
+
+	@Override
+	public void warn(Throwable paramThrowable) {
+		log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, null, null, paramThrowable);
+	}
+
+	@Override
+	public void info(String paramString, Object[] paramArrayOfObject) {
+		log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, paramString, paramArrayOfObject, null);
+	}
+
+	@Override
+	public void info(Throwable paramThrowable) {
+		log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, null, null, paramThrowable);
+	}
+
+	@Override
+	public void info(String paramString, Throwable paramThrowable) {
+		log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, paramString, null, paramThrowable);
+	}
+
+	@Override
+	public void debug(String paramString, Object[] paramArrayOfObject) {
+		log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, paramString, paramArrayOfObject, null);
+	}
+
+	@Override
+	public void debug(Throwable paramThrowable) {
+		log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, null, null, paramThrowable);
+	}
+
+	@Override
+	public void error(String paramString, Object[] paramArrayOfObject) {
+		log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, paramString, paramArrayOfObject, null);
+	}
+	
+	@Override
+	public void error(Throwable paramThrowable) {
+		log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, null, null, paramThrowable);
+	}
 }

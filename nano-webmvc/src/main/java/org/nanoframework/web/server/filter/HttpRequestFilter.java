@@ -45,7 +45,7 @@ import com.alibaba.fastjson.JSON;
  * @date 2015年6月23日 下午2:38:22 
  * 
  */
-public class HttpRequestFilter extends CorsFilter {
+public class HttpRequestFilter extends AbstractFilter {
 	private Logger LOG = LoggerFactory.getLogger(HttpRequestFilter.class);
 	
 	@Override
