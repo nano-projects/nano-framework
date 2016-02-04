@@ -43,57 +43,57 @@ public abstract class CorsFilter extends AbstractFilter {
 	 * @throws ServletException 
 	 */
 	protected boolean allowResponse(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
-		if(request.getMethod().equals(RequestMethod.OPTIONS.name())) {
-			if(!Cors.get().allowEnable)
-				return false;
-			
-			String currentOrigin = request.getHeader(Cors.REQUEST_HEADERS_ORIGIN);
-			if (response.getStatus() < 300 && ObjectCompare.isInList(Cors.ALL_ALLOW, Cors.get().allowOrigin) || 
-					ObjectCompare.isInList(currentOrigin.trim(), Cors.get().allowOrigin)) {  
-		        response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_ALLOW_ORIGIN, currentOrigin);  
-		    } else {
-		    	response.setStatus(HttpStatusCode.SC_UNAUTHORIZED);
-		    	return false;
-		    }
-			
-		    if (response.getStatus() < 300 && StringUtils.isNotBlank(Cors.get().allowMethod)) { 
-		    	String requestMethod = request.getHeader(Cors.REQUEST_HEADERS_ACCESS_CONTROL_REQUEST_METHOD);
-		    	String[] allowMethods = Cors.get().allowMethods;
-		    	if(request.getMethod().equals(RequestMethod.OPTIONS.name()) && 
-		    			!ObjectCompare.isInList(Cors.ALL_ALLOW, allowMethods) && 
-		    			!ObjectCompare.isInList(requestMethod.trim(), allowMethods)) {
-		    		response.setStatus(HttpStatusCode.SC_UNAUTHORIZED);
-		    	}
-		    		
-		        response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_ALLOW_METHODS, requestMethod);  
-		    }
-		    
-		    if (response.getStatus() < 300 && StringUtils.isNotBlank(Cors.get().allowCredentials)) { 
-		        response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_ALLOW_CREDENTIALS, Cors.get().allowCredentials);  
-		    }
-		    
-		    if (response.getStatus() < 300 && StringUtils.isNotBlank(Cors.get().allowHeader)) { 
-		    	String requestHeaders = request.getHeader(Cors.REQUEST_HEADERS_ACCESS_CONTROL_REQUEST_HEADERS);
-		    	String[] allowHeaders = Cors.get().allowHeaders;
-		    	if(StringUtils.isNotBlank(requestHeaders)) {
-		    		String[] headers = requestHeaders.split(",");
-		    		if(!ObjectCompare.isInList(Cors.ALL_ALLOW, allowHeaders)) {
-		        		for(String header : headers) {
-		        			if(!ObjectCompare.isInList(header.trim(), allowHeaders)) {
-		        				response.setStatus(HttpStatusCode.SC_UNAUTHORIZED);
-		        				break;
-		        			}
-		        		}
-		    		}
-		    	}
-		    	
-				response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders);  
-		    }
-		    
-		    if (response.getStatus() < 300 && StringUtils.isNotBlank(Cors.get().exposeHeader)) { 
-		        response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_EXPOSE_HEADERS, Cors.get().exposeHeader);  
-		    }
+		if(!Cors.get().allowEnable)
+			return false;
 		
+		String currentOrigin = request.getHeader(Cors.REQUEST_HEADERS_ORIGIN);
+		if (response.getStatus() < 300 && ObjectCompare.isInList(Cors.ALL_ALLOW, Cors.get().allowOrigin) || 
+				ObjectCompare.isInList(currentOrigin.trim(), Cors.get().allowOrigin)) {  
+	        response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_ALLOW_ORIGIN, currentOrigin);  
+	    } else {
+	    	response.setStatus(HttpStatusCode.SC_UNAUTHORIZED);
+	    	return false;
+	    }
+		
+	    if (response.getStatus() < 300 && StringUtils.isNotBlank(Cors.get().allowMethod)) { 
+	    	String requestMethod = request.getHeader(Cors.REQUEST_HEADERS_ACCESS_CONTROL_REQUEST_METHOD);
+	    	String[] allowMethods = Cors.get().allowMethods;
+	    	if(request.getMethod().equals(RequestMethod.OPTIONS.name()) && 
+	    			!ObjectCompare.isInList(Cors.ALL_ALLOW, allowMethods) && 
+	    			!ObjectCompare.isInList(requestMethod.trim(), allowMethods)) {
+	    		response.setStatus(HttpStatusCode.SC_UNAUTHORIZED);
+	    	}
+	    		
+	        response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_ALLOW_METHODS, requestMethod);  
+	    }
+	    
+	    if (response.getStatus() < 300 && StringUtils.isNotBlank(Cors.get().allowCredentials)) { 
+	        response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_ALLOW_CREDENTIALS, Cors.get().allowCredentials);  
+	    }
+	    
+	    if (response.getStatus() < 300 && StringUtils.isNotBlank(Cors.get().allowHeader)) { 
+	    	String requestHeaders = request.getHeader(Cors.REQUEST_HEADERS_ACCESS_CONTROL_REQUEST_HEADERS);
+	    	String[] allowHeaders = Cors.get().allowHeaders;
+	    	if(StringUtils.isNotBlank(requestHeaders)) {
+	    		String[] headers = requestHeaders.split(",");
+	    		if(!ObjectCompare.isInList(Cors.ALL_ALLOW, allowHeaders)) {
+	        		for(String header : headers) {
+	        			if(!ObjectCompare.isInList(header.trim(), allowHeaders)) {
+	        				response.setStatus(HttpStatusCode.SC_UNAUTHORIZED);
+	        				break;
+	        			}
+	        		}
+	    		}
+	    	}
+	    	
+			response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_ALLOW_HEADERS, requestHeaders);  
+	    }
+	    
+	    if (response.getStatus() < 300 && StringUtils.isNotBlank(Cors.get().exposeHeader)) { 
+	        response.setHeader(Cors.RESPONSE_HEADERS_ACCESS_CONTROL_EXPOSE_HEADERS, Cors.get().exposeHeader);  
+	    }
+		
+	    if(request.getMethod().equals(RequestMethod.OPTIONS.name())) {
 			if(response.getStatus() >= 300)
 				return false;
 			
