@@ -47,7 +47,7 @@ public class SSHTest {
 	
 	private String host = "192.168.180.137";
 	private String username = "yanghe";
-	private String passwd = "MzZGRTBFQTFFNDVGNjZENDk3QjVCNzkyMDIwNDlFQ0Q=";
+	private String passwd = "MzZGRTBFQTFFNDVGNjZENDk3QjVCNzkyMDIwNDlFQ0Q1";
 	private int port = 10180;
 	private GanymedSSH danymedSSH;
 	private Socket socket;
