@@ -108,7 +108,7 @@ public class NoLoggingImpl implements Logger {
     }
 
 	@Override
-	public void warn(String paramString, Object[] paramArrayOfObject) {
+	public void warn(String paramString, Object... paramArrayOfObject) {
 		warnCount ++;
 	}
 
@@ -118,7 +118,7 @@ public class NoLoggingImpl implements Logger {
 	}
 
 	@Override
-	public void info(String paramString, Object[] paramArrayOfObject) {
+	public void info(String paramString, Object... paramArrayOfObject) {
 		infoCount ++;
 	}
 
@@ -133,7 +133,7 @@ public class NoLoggingImpl implements Logger {
 	}
 
 	@Override
-	public void debug(String paramString, Object[] paramArrayOfObject) {
+	public void debug(String paramString, Object... paramArrayOfObject) {
 		debugCount ++;
 	}
 
@@ -143,7 +143,7 @@ public class NoLoggingImpl implements Logger {
 	}
 
 	@Override
-	public void error(String paramString, Object[] paramArrayOfObject) {
+	public void error(String paramString, Object... paramArrayOfObject) {
 		errorCount ++;
 	}
 	

@@ -110,10 +110,11 @@ public class EtcdClient implements Closeable {
 	 *            URI to create connection on
 	 */
 	public EtcdClient(EtcdSecurityContext securityContext, URI... baseUri) {
+		if(baseUri.length == 0)
+			throw new IllegalArgumentException("baseUri must be not empty!");
+		
 		this.retryHandler = RetryWithExponentialBackOff.DEFAULT;
-
-		this.client = new EtcdNettyClient(securityContext,
-				(baseUri.length == 0) ? new URI[] { URI.create("https://127.0.0.1:4001") } : baseUri);
+		this.client = new EtcdNettyClient(securityContext, baseUri);
 	}
 
 	/**

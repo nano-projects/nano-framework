@@ -121,7 +121,7 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
     }
 
 	@Override
-	public void warn(String paramString, Object[] paramArrayOfObject) {
+	public void warn(String paramString, Object... paramArrayOfObject) {
 		warnCount++;
 		log.logIfEnabled(FQCN, Level.WARN, null, paramString, paramArrayOfObject);
 	}
@@ -133,7 +133,7 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
 	}
 
 	@Override
-	public void info(String paramString, Object[] paramArrayOfObject) {
+	public void info(String paramString, Object... paramArrayOfObject) {
 		infoCount++;
 		log.logIfEnabled(FQCN, Level.INFO, null, paramString, paramArrayOfObject);
 	}
@@ -151,7 +151,7 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
 	}
 
 	@Override
-	public void debug(String paramString, Object[] paramArrayOfObject) {
+	public void debug(String paramString, Object... paramArrayOfObject) {
 		debugCount++;
 		log.logIfEnabled(FQCN, Level.DEBUG, null, paramString, paramArrayOfObject);
 	}
@@ -163,7 +163,7 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
 	}
 
 	@Override
-	public void error(String paramString, Object[] paramArrayOfObject) {
+	public void error(String paramString, Object... paramArrayOfObject) {
 		errorCount++;
 		log.logIfEnabled(FQCN, Level.ERROR, null, paramString, paramArrayOfObject);
 	}

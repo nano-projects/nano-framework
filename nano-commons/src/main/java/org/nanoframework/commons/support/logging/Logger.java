@@ -47,21 +47,21 @@ public interface Logger {
 
     void resetStat();
 
-    void warn(String paramString, Object[] paramArrayOfObject);
+    void warn(String paramString, Object... paramArrayOfObject);
 
     void warn(Throwable paramThrowable);
 
-    void info(String paramString, Object[] paramArrayOfObject);
+    void info(String paramString, Object... paramArrayOfObject);
 
     void info(Throwable paramThrowable);
 
     void info(String paramString, Throwable paramThrowable);
 
-    void debug(String paramString, Object[] paramArrayOfObject);
+    void debug(String paramString, Object... paramArrayOfObject);
 
     void debug(Throwable paramThrowable);
 
-    void error(String paramString, Object[] paramArrayOfObject);
+    void error(String paramString, Object... paramArrayOfObject);
 
     void error(Throwable paramThrowable);
 }

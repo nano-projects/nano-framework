@@ -60,6 +60,8 @@ public class MybatisDataSourceLoader extends DataSourceLoader {
 			MultiDataSourceModule module = new MultiDataSourceModule(config);
 			modules.add(module);
 		}
+		
+		modules.add(new MultiTransactionalModule());
 	}
 
 }

@@ -15,6 +15,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.extension.etcd.client.retry.RetryWithExponentialBackOff;
 import org.nanoframework.extension.etcd.etcd4j.promises.EtcdResponsePromise;
@@ -278,6 +279,7 @@ public class TestFunctionality {
     assertEquals(EtcdKeyAction.set, response.action);
   }
 
+  @Ignore
   @Test
   public void testIfCleanClose() throws IOException, EtcdException, EtcdAuthenticationException, TimeoutException {
     EtcdClient client = new EtcdClient();

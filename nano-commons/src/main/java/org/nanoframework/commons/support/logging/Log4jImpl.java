@@ -124,7 +124,7 @@ public class Log4jImpl extends Category implements org.nanoframework.commons.sup
 	}
 
 	@Override
-	public void warn(String paramString, Object[] paramArrayOfObject) {
+	public void warn(String paramString, Object... paramArrayOfObject) {
 		l7dlog(Level.WARN, paramString, paramArrayOfObject, null);
 	}
 
@@ -134,7 +134,7 @@ public class Log4jImpl extends Category implements org.nanoframework.commons.sup
 	}
 
 	@Override
-	public void info(String paramString, Object[] paramArrayOfObject) {
+	public void info(String paramString, Object... paramArrayOfObject) {
 		l7dlog(Level.INFO, paramString, paramArrayOfObject, null);
 	}
 
@@ -149,7 +149,7 @@ public class Log4jImpl extends Category implements org.nanoframework.commons.sup
 	}
 
 	@Override
-	public void debug(String paramString, Object[] paramArrayOfObject) {
+	public void debug(String paramString, Object... paramArrayOfObject) {
 		l7dlog(Level.DEBUG, paramString, paramArrayOfObject, null);
 	}
 
@@ -159,7 +159,7 @@ public class Log4jImpl extends Category implements org.nanoframework.commons.sup
 	}
 	
 	@Override
-	public void error(String paramString, Object[] paramArrayOfObject) {
+	public void error(String paramString, Object... paramArrayOfObject) {
 		l7dlog(Level.ERROR, paramString, paramArrayOfObject, null);
 	}
 

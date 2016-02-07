@@ -112,7 +112,7 @@ public class Jdk14LoggingImpl implements org.nanoframework.commons.support.loggi
     }
 
 	@Override
-	public void warn(String paramString, Object[] paramArrayOfObject) {
+	public void warn(String paramString, Object... paramArrayOfObject) {
 		log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
         warnCount++;
 	}
@@ -124,7 +124,7 @@ public class Jdk14LoggingImpl implements org.nanoframework.commons.support.loggi
 	}
 
 	@Override
-	public void info(String paramString, Object[] paramArrayOfObject) {
+	public void info(String paramString, Object... paramArrayOfObject) {
 		log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
 		infoCount++;
 	}
@@ -142,7 +142,7 @@ public class Jdk14LoggingImpl implements org.nanoframework.commons.support.loggi
 	}
 
 	@Override
-	public void debug(String paramString, Object[] paramArrayOfObject) {
+	public void debug(String paramString, Object... paramArrayOfObject) {
 		log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
 		debugCount++;
 	}
@@ -154,7 +154,7 @@ public class Jdk14LoggingImpl implements org.nanoframework.commons.support.loggi
 	}
 
 	@Override
-	public void error(String paramString, Object[] paramArrayOfObject) {
+	public void error(String paramString, Object... paramArrayOfObject) {
 		log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
 		errorCount++;
 	}

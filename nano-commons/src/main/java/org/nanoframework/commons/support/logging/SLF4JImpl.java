@@ -132,7 +132,7 @@ public class SLF4JImpl implements org.nanoframework.commons.support.logging.Logg
 	}
 
 	@Override
-	public void warn(String paramString, Object[] paramArrayOfObject) {
+	public void warn(String paramString, Object... paramArrayOfObject) {
 		log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, paramString, paramArrayOfObject, null);
 	}
 
@@ -142,7 +142,7 @@ public class SLF4JImpl implements org.nanoframework.commons.support.logging.Logg
 	}
 
 	@Override
-	public void info(String paramString, Object[] paramArrayOfObject) {
+	public void info(String paramString, Object... paramArrayOfObject) {
 		log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, paramString, paramArrayOfObject, null);
 	}
 
@@ -157,7 +157,7 @@ public class SLF4JImpl implements org.nanoframework.commons.support.logging.Logg
 	}
 
 	@Override
-	public void debug(String paramString, Object[] paramArrayOfObject) {
+	public void debug(String paramString, Object... paramArrayOfObject) {
 		log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, paramString, paramArrayOfObject, null);
 	}
 
@@ -167,7 +167,7 @@ public class SLF4JImpl implements org.nanoframework.commons.support.logging.Logg
 	}
 
 	@Override
-	public void error(String paramString, Object[] paramArrayOfObject) {
+	public void error(String paramString, Object... paramArrayOfObject) {
 		log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, paramString, paramArrayOfObject, null);
 	}
 	

@@ -117,7 +117,7 @@ public class JakartaCommonsLoggingImpl implements org.nanoframework.commons.supp
     }
 
 	@Override
-	public void warn(String paramString, Object[] paramArrayOfObject) {
+	public void warn(String paramString, Object... paramArrayOfObject) {
 		
 	}
 
@@ -127,7 +127,7 @@ public class JakartaCommonsLoggingImpl implements org.nanoframework.commons.supp
 	}
 
 	@Override
-	public void info(String paramString, Object[] paramArrayOfObject) {
+	public void info(String paramString, Object... paramArrayOfObject) {
 			
 	}
 
@@ -142,7 +142,7 @@ public class JakartaCommonsLoggingImpl implements org.nanoframework.commons.supp
 	}
 
 	@Override
-	public void debug(String paramString, Object[] paramArrayOfObject) {
+	public void debug(String paramString, Object... paramArrayOfObject) {
 		
 	}
 
@@ -152,7 +152,7 @@ public class JakartaCommonsLoggingImpl implements org.nanoframework.commons.supp
 	}
 
 	@Override
-	public void error(String paramString, Object[] paramArrayOfObject) {
+	public void error(String paramString, Object... paramArrayOfObject) {
 		
 	}
 	
