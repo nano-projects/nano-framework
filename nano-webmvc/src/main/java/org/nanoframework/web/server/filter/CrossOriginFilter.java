@@ -40,7 +40,7 @@ public class CrossOriginFilter implements Filter {
 	public static final String OLD_CHAIN_PREFLIGHT_PARAM = "forwardPreflight";
 	public static final String CHAIN_PREFLIGHT_PARAM = "chainPreflight";
 	private static final String ANY_ORIGIN = "*";
-	private static final List<String> SIMPLE_HTTP_METHODS = Arrays.asList(new String[] { "GET", "POST", "PUT", "DELETE", "HEAD" });
+	private static final List<String> SIMPLE_HTTP_METHODS = Arrays.asList(new String[] { "GET", "POST", "HEAD" });
 	private boolean anyOriginAllowed;
 	private List<String> allowedOrigins = new ArrayList<>();
 	private List<String> allowedMethods = new ArrayList<>();
