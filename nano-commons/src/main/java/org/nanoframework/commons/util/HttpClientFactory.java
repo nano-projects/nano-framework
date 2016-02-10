@@ -16,7 +16,6 @@
 package org.nanoframework.commons.util;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,11 +38,8 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
 
 public class HttpClientFactory {
-	private final Logger LOG = LoggerFactory.getLogger(HttpClientFactory.class);
 	private PoolingHttpClientConnectionManager pool;
 	private final String UTF8 = "UTF-8";
 	private final String EMPTY = "";
@@ -85,12 +81,12 @@ public class HttpClientFactory {
 	 * @param url
 	 * @return
 	 */
-	public String httpGetRequest(String url) {
+	public String httpGetRequest(String url) throws IOException {
 		HttpGet httpGet = new HttpGet(url);
 		return getResult(httpGet);
 	}
 
-	public String httpGetRequest(String url, Map<String, String> params) throws URISyntaxException {
+	public String httpGetRequest(String url, Map<String, String> params) throws URISyntaxException, IOException {
 		URIBuilder builder = new URIBuilder();
 		builder.setPath(url);
 
@@ -101,7 +97,7 @@ public class HttpClientFactory {
 		return getResult(httpGet);
 	}
 
-	public String httpGetRequest(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException {
+	public String httpGetRequest(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException {
 		URIBuilder builder = new URIBuilder();
 		builder.setPath(url);
 
@@ -115,25 +111,25 @@ public class HttpClientFactory {
 		return getResult(httpGet);
 	}
 
-	public String httpPostRequest(String url) {
+	public String httpPostRequest(String url) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
 		return getResult(httpPost);
 	}
 
-	public String httpPostRequest(String url, Map<String, String> params) throws UnsupportedEncodingException {
+	public String httpPostRequest(String url, Map<String, String> params) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
 		List<NameValuePair> pairs = covertParams2NVPS(params);
 		httpPost.setEntity(new UrlEncodedFormEntity(pairs, UTF8));
 		return getResult(httpPost);
 	}
 	
-	public String httpPostRequest(String url, String json) {
+	public String httpPostRequest(String url, String json) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
 		httpPost.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
 		return getResult(httpPost);
 	}
 	
-	public String httpPostRequest(String url, Map<String, String> headers, String json) {
+	public String httpPostRequest(String url, Map<String, String> headers, String json) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
 		if(!CollectionUtils.isEmpty(headers))
 			headers.forEach((key, value) -> httpPost.addHeader(key, value));
@@ -142,7 +138,7 @@ public class HttpClientFactory {
 		return getResult(httpPost);
 	}
 
-	public String httpPostRequest(String url, Map<String, String> headers, Map<String, String> params) throws UnsupportedEncodingException {
+	public String httpPostRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
 		if(!CollectionUtils.isEmpty(headers))
 			headers.forEach((key, value) -> httpPost.addHeader(key, value));
@@ -152,25 +148,25 @@ public class HttpClientFactory {
 		return getResult(httpPost);
 	}
 	
-	public String httpPutRequest(String url) {
+	public String httpPutRequest(String url) throws IOException {
 		HttpPut httpPut = new HttpPut(url);
 		return getResult(httpPut);
 	}
 
-	public String httpPutRequest(String url, Map<String, String> params) throws UnsupportedEncodingException {
+	public String httpPutRequest(String url, Map<String, String> params) throws IOException {
 		HttpPut httpPut = new HttpPut(url);
 		List<NameValuePair> pairs = covertParams2NVPS(params);
 		httpPut.setEntity(new UrlEncodedFormEntity(pairs, UTF8));
 		return getResult(httpPut);
 	}
 	
-	public String httpPutRequest(String url, String json) {
+	public String httpPutRequest(String url, String json) throws IOException {
 		HttpPut httpPut = new HttpPut(url);
 		httpPut.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
 		return getResult(httpPut);
 	}
 	
-	public String httpPutRequest(String url, Map<String, String> headers, String json) {
+	public String httpPutRequest(String url, Map<String, String> headers, String json) throws IOException {
 		HttpPut httpPut = new HttpPut(url);
 		if(!CollectionUtils.isEmpty(headers))
 			headers.forEach((key, value) -> httpPut.addHeader(key, value));
@@ -179,7 +175,7 @@ public class HttpClientFactory {
 		return getResult(httpPut);
 	}
 	
-	public String httpPutRequest(String url, Map<String, String> headers, Map<String, String> params) throws UnsupportedEncodingException {
+	public String httpPutRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
 		HttpPut httpPut = new HttpPut(url);
 		if(!CollectionUtils.isEmpty(headers))
 			headers.forEach((key, value) -> httpPut.addHeader(key, value));
@@ -204,19 +200,15 @@ public class HttpClientFactory {
 	 * @param request
 	 * @return
 	 */
-	private String getResult(HttpRequestBase request) {
+	private String getResult(HttpRequestBase request) throws IOException {
 		CloseableHttpClient httpClient = null;
-		try {
-			httpClient = getHttpClient();
-			CloseableHttpResponse response = httpClient.execute(request);
-			HttpEntity entity = response.getEntity();
-			if (entity != null) {
-				String result = EntityUtils.toString(entity);
-				response.close();
-				return result;
-			}
-		} catch (IOException e) {
-			LOG.error("getResult Error: {}", e.getMessage());
+		httpClient = getHttpClient();
+		CloseableHttpResponse response = httpClient.execute(request);
+		HttpEntity entity = response.getEntity();
+		if (entity != null) {
+			String result = EntityUtils.toString(entity);
+			response.close();
+			return result;
 		}
 
 		return EMPTY;
