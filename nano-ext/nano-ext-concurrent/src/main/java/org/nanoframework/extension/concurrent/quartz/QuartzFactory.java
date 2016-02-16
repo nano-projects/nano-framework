@@ -111,11 +111,12 @@ public class QuartzFactory {
 	 * @return 返回当前任务
 	 */
 	protected BaseQuartz unbind(BaseQuartz quartz) {
-		startedQuartz.remove(quartz.getConfig().getId());
-		startedQuartzSize.decrementAndGet();
-		
-		if(LOG.isDebugEnabled())
-			LOG.debug("解绑任务 : 任务号[ " + quartz.getConfig().getId() + " ], 现存任务数: " + startedQuartzSize.get());
+		BaseQuartz removed = startedQuartz.remove(quartz.getConfig().getId());
+		if(removed != null) {
+			startedQuartzSize.decrementAndGet();
+			if(LOG.isDebugEnabled())
+				LOG.debug("解绑任务 : 任务号[ " + quartz.getConfig().getId() + " ], 现存任务数: " + startedQuartzSize.get());
+		}
 		
 		return quartz;
 	}
