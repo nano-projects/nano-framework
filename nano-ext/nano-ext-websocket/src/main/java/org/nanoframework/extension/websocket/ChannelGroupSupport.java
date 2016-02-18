@@ -28,7 +28,9 @@ import io.netty.channel.group.ChannelGroup;
  * 
  * @author yanghe
  * @date 2015年8月19日 上午9:22:34
+ * @see new implementation can see {@link ChannelGroupItem} 
  */
+@Deprecated
 public class ChannelGroupSupport {
 
 	public static final ConcurrentMap<String, List<ChannelGroupSupport>> GROUP = new ConcurrentHashMap<>();
