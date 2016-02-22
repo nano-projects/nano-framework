@@ -4,6 +4,7 @@ import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.DefaultHttpHeaders;
 import io.netty.handler.codec.http.HttpHeaders;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.nanoframework.extension.etcd.etcd4j.EtcdUtil.convertDate;
@@ -13,6 +14,7 @@ import static org.junit.Assert.*;
 /**
  * Examples are taken out of the api.md of etcd project.
  */
+@Ignore
 public class EtcdKeysResponseParserTest {
 
   private HttpHeaders headers;

@@ -1,5 +1,6 @@
 package org.nanoframework.extension.etcd.client.util;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.net.URI;
@@ -10,6 +11,7 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@Ignore
 public class SRV2URIsTest {
 
   @Test

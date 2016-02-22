@@ -31,6 +31,7 @@ import org.nanoframework.extension.etcd.etcd4j.responses.EtcdVersionResponse;
 /**
  * Performs tests on a real server at local address. All actions are performed in "etcd4j_test" dir
  */
+@Ignore
 public class TestFunctionality {
 
   private EtcdClient etcd;
