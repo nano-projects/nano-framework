@@ -17,8 +17,8 @@ package org.nanoframework.server;
 
 import java.io.FileInputStream;
 import java.util.Properties;
+import java.util.concurrent.Executors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -30,6 +30,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.RuntimeUtil;
+import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.server.exception.JettyServerException;
 import org.nanoframework.server.exception.ReadXMLException;
 
@@ -66,6 +67,7 @@ public class JettyCustomServer extends Server {
 			DEFAULT = new JettyCustomServer();
 		} catch(Exception e) { }
 	}
+	
 	public JettyCustomServer() {
 		this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(Constants.CONTEXT_ROOT), null, null, null);
 	}
@@ -148,6 +150,14 @@ public class JettyCustomServer extends Server {
 		} catch (Exception e) {
 			throw new JettyServerException(e.getMessage(), e);
 		}
+	}
+	
+	public void startServerDaemon() {
+		Executors.newFixedThreadPool(1, (runnable) -> {
+			Thread jetty = new Thread(runnable);
+			jetty.setName("Jetty Server Deamon: " + System.currentTimeMillis());
+			return jetty;
+		}).execute(() -> startServer());
 	}
 
 }
