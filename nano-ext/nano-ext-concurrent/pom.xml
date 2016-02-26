@@ -47,5 +47,9 @@
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.nanoframework</groupId>
+			<artifactId>nano-ext-etcd</artifactId>
+		</dependency>
 	</dependencies>
 </project>

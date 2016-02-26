@@ -38,6 +38,10 @@ import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.core.component.scan.ComponentScan;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.extension.concurrent.exception.QuartzException;
+import org.nanoframework.extension.concurrent.quartz.defaults.etcd.EtcdOrderWatcherQuartz;
+import org.nanoframework.extension.concurrent.quartz.defaults.etcd.EtcdQuartz;
+import org.nanoframework.extension.concurrent.quartz.defaults.etcd.EtcdQuartzOperate;
+import org.nanoframework.extension.concurrent.quartz.defaults.monitor.LocalJmxMonitorQuartz;
 import org.nanoframework.extension.concurrent.queue.BlockingQueueFactory;
 
 import com.google.common.collect.Sets;
@@ -57,7 +61,7 @@ public class QuartzFactory {
 	private final ConcurrentMap<String, BaseQuartz> stoppingQuartz = new ConcurrentHashMap<>();
 	private final ConcurrentMap<String , BaseQuartz> stoppedQuartz = new ConcurrentHashMap<>();
 	private final ConcurrentMap<String, Set<BaseQuartz>> group = new ConcurrentHashMap<>();
-	private static final QuartzThreadFactory threadFactory = new QuartzThreadFactory();
+	public static final QuartzThreadFactory threadFactory = new QuartzThreadFactory();
 	private static final ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool(threadFactory);
 	
 	private static boolean isLoaded = false;
@@ -67,6 +71,8 @@ public class QuartzFactory {
 	public static final String INCLUDES = "context.quartz.group.includes";
 	public static final String EXCLUSIONS = "context.quartz.group.exclusions";
 	public static final String DEFAULT_QUARTZ_NAME_PREFIX = "Quartz-Thread-Pool: ";
+	
+	private static EtcdQuartzOperate etcdQuartz;
 	
 	private QuartzFactory() {
 		
@@ -135,7 +141,7 @@ public class QuartzFactory {
 	 * 返回所有任务
 	 * @return 任务集合
 	 */
-	public Collection<BaseQuartz> getStartedQuartzs() {
+	public Collection<BaseQuartz> getStartedQuartz() {
 		return startedQuartz.values();
 	}
 	
@@ -143,7 +149,7 @@ public class QuartzFactory {
 		return stoppedQuartz.size();
 	}
 	
-	public Collection<BaseQuartz> getStopedQuratz() {
+	public Collection<BaseQuartz> getStoppedQuratz() {
 		return stoppedQuartz.values();
 	}
 	
@@ -171,6 +177,9 @@ public class QuartzFactory {
 	
 	public void close(final BaseQuartz quartz) {
 		if(quartz != null && !quartz.isClose()) {
+			/** Sync to Etcd by stop method */
+			etcdQuartz.stopping(quartz.getConfig().getGroup(), quartz.getConfig().getId());
+			
 			quartz.setClose(true);
 			stoppingQuartz.put(quartz.getConfig().getId(), quartz);
 			startedQuartz.remove(quartz.getConfig().getId(), quartz);
@@ -187,6 +196,9 @@ public class QuartzFactory {
 		startedQuartz.forEach((id, quartz) -> {
 			if(groupName.equals(quartz.getConfig().getGroup())) {
 				if(!quartz.isClose()) {
+					/** Sync to Etcd by stop method */
+					etcdQuartz.stopping(quartz.getConfig().getGroup(), quartz.getConfig().getId());
+					
 					quartz.setClose(true);
 					stoppingQuartz.put(quartz.getConfig().getId(), quartz);
 					ids.add(quartz.getConfig().getId());
@@ -207,6 +219,9 @@ public class QuartzFactory {
 				try {
 					BaseQuartz quartz = startedQuartz.get(id);
 					if(quartz != null && !quartz.isClose()) {
+						/** Sync to Etcd by stop method */
+						etcdQuartz.stopping(quartz.getConfig().getGroup(), quartz.getConfig().getId());
+						
 						quartz.setClose(true);
 						stoppingQuartz.put(quartz.getConfig().getId(), quartz);
 					}
@@ -233,6 +248,9 @@ public class QuartzFactory {
 				bind(quartz);
 				threadFactory.setBaseQuartz(quartz);
 				service.execute(quartz);
+				
+				/** Sync to Etcd by start method */
+				etcdQuartz.start(quartz.getConfig().getGroup(), quartz.getConfig().getId());
 			});
 			
 			stoppedQuartz.clear();
@@ -252,6 +270,9 @@ public class QuartzFactory {
 						threadFactory.setBaseQuartz(quartz);
 						service.execute(quartz);
 						keys.add(id);
+						
+						/** Sync to Etcd by start method */
+						etcdQuartz.start(quartz.getConfig().getGroup(), quartz.getConfig().getId());
 					}
 				}
 			});
@@ -270,6 +291,9 @@ public class QuartzFactory {
 			threadFactory.setBaseQuartz(quartz);
 			service.execute(quartz);
 			stoppedQuartz.remove(id);
+			
+			/** Sync to Etcd by start method */
+			etcdQuartz.start(quartz.getConfig().getGroup(), quartz.getConfig().getId());
 		}
 	}
 	
@@ -293,7 +317,10 @@ public class QuartzFactory {
 			addQuartz(_new);
 			if(autoStart)
 				start(config.getId());
-			
+			else {
+				/** Sync to Etcd by start method */
+				etcdQuartz.stopped(_new.getConfig().getGroup(), _new.getConfig().getId(), false);
+			}
 		}
 	}
 	
@@ -340,27 +367,41 @@ public class QuartzFactory {
 		rebalance(quartz.getConfig().getGroup());
 	}
 	
-	public void removeQuartz(BaseQuartz quartz, boolean force) {
+	public int removeQuartz(BaseQuartz quartz, boolean force) {
 		Set<BaseQuartz> groupQuartz = group.get(quartz.getConfig().getGroup());
-		close(quartz.getConfig().getId());
-		
+		boolean remove = false;
 		if(groupQuartz.size() > 1 || force) {
 			groupQuartz.remove(quartz);
-			quartz.setRemove(true);
+			quartz.setRemove(remove = true);
 		}
 		
+		if(quartz.isClosed()) {
+			/** Sync to Etcd by start method */
+			etcdQuartz.stopped(quartz.getConfig().getGroup(), quartz.getConfig().getId(), remove);
+		} else
+			close(quartz.getConfig().getId());
+		
 		rebalance(quartz.getConfig().getGroup());
+		
+		return groupQuartz.size();
 	}
 	
-	public void removeQuartz(BaseQuartz quartz) {
-		removeQuartz(quartz, false);
+	public int removeQuartz(BaseQuartz quartz) {
+		return removeQuartz(quartz, false);
 	}
 	
-	public void removeQuartz(String groupName) {
+	public int removeQuartz(String groupName) {
 		BaseQuartz quartz = findLast(groupName);
 		if(quartz != null) {
-			removeQuartz(quartz);
+			return removeQuartz(quartz);
 		}
+		
+		return 0;
+	}
+	
+	public final void removeGroup(String groupName) {
+		while(removeQuartz(groupName) > 1) ;
+		closeGroup(groupName);
 	}
 	
 	public int getGroupSize(String groupName) {
@@ -413,7 +454,9 @@ public class QuartzFactory {
 		Assert.hasLength(groupName);
 		Set<BaseQuartz> groupQuartz = group.get(groupName);
 		if(!CollectionUtils.isEmpty(groupQuartz)) {
+			AtomicInteger idx = new AtomicInteger(0);
 			groupQuartz.forEach(quartz -> {
+				quartz.getConfig().setNum(idx.getAndIncrement());
 				quartz.getConfig().setTotal(groupQuartz.size());
 			});
 		}
@@ -506,8 +549,8 @@ public class QuartzFactory {
 					for(int p = 0; p < parallel; p ++) {
 						BaseQuartz baseQuartz = (BaseQuartz) Globals.get(Injector.class).getInstance(clz);
 						QuartzConfig config = new QuartzConfig();
-						config.setId(quartz.name() + "-" + p);
-						config.setName("Quartz-Thread-Pool: " + config.getId());
+						config.setId(quartz.name() + "-" + baseQuartz.getIndex(quartz.name()));
+						config.setName(DEFAULT_QUARTZ_NAME_PREFIX + config.getId());
 						config.setGroup(quartz.name());
 						config.setService(service);
 						config.setBeforeAfterOnly(quartz.beforeAfterOnly());
@@ -538,9 +581,38 @@ public class QuartzFactory {
 				
 			}
 			
+			/** Create and start Etcd Scheduler */
+			createEtcdScheduler(componentClasses);
 		}
 		
 		isLoaded = true;
+	}
+	
+	private static final void createEtcdScheduler(Set<Class<?>> componentClasses) {
+		try {
+			boolean enable = Boolean.parseBoolean(System.getProperty(EtcdQuartz.ETCD_ENABLE, "false"));
+			if(enable) {
+				EtcdQuartz quartz = new EtcdQuartz(componentClasses);
+				etcdQuartz = quartz;
+				quartz.getConfig().getService().execute(quartz);
+				quartz.syncBaseDirTTL();
+				quartz.syncInfo();
+				quartz.syncClass();
+				
+				/** Start Order Scheduler */
+				EtcdOrderWatcherQuartz etcdOrderQuartz = new EtcdOrderWatcherQuartz(quartz.getEtcd());
+				etcdOrderQuartz.getConfig().getService().execute(etcdOrderQuartz);
+				
+				if(LocalJmxMonitorQuartz.JMX_ENABLE) {
+					LocalJmxMonitorQuartz jmxQuartz = new LocalJmxMonitorQuartz(quartz.getEtcd());
+					jmxQuartz.getConfig().getService().execute(jmxQuartz);
+				}
+			} else 
+				etcdQuartz = EtcdQuartzOperate.EMPTY;
+			
+		} catch(QuartzException e) {
+			LOG.error(e.getMessage(), e);
+		}
 	}
 	
 	/**
@@ -596,6 +668,9 @@ public class QuartzFactory {
 					stoppedQuartz.put(id, quartz);
 				
 				stoppingQuartz.remove(id, quartz);
+				
+				/** Sync to Etcd by stopped method */
+				etcdQuartz.stopped(quartz.getConfig().getGroup(), id, quartz.isRemove());
 			});
 		}
 

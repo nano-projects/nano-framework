@@ -31,6 +31,13 @@ import java.util.concurrent.locks.ReentrantLock;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 
+@Deprecated
+/**
+ * 
+ * @author yanghe
+ * @date 2016年2月26日 下午4:12:23
+ * @see org.nanoframework.extension.concurrent.quartz.defaults.monitor.Statistic
+ */
 public class Statistic {
 	private static Logger logger = LoggerFactory.getLogger(Statistic.class);
 	private static ConcurrentMap<String , AtomicLong> statisticMap = new ConcurrentHashMap<String , AtomicLong>();
