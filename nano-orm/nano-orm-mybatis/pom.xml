@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.nanoframework</groupId>
 		<artifactId>nano-orm</artifactId>
-		<version>1.2.12-SNAPSHOT</version>
+		<version>1.2.12</version>
 	</parent>
 	<artifactId>nano-orm-mybatis</artifactId>
 	<name>Nano ORM Mybatis</name>

@@ -4,7 +4,7 @@
 
 	<groupId>org.nanoframework</groupId>
 	<artifactId>nano</artifactId>
-	<version>1.2.12-SNAPSHOT</version>
+	<version>1.2.12</version>
 	<packaging>pom</packaging>
 	<inceptionYear>2015</inceptionYear>
 
@@ -80,7 +80,7 @@
 		<connection>scm:git:git@github.com:nano-projects/nano-framework.git</connection>
 		<developerConnection>scm:git:git@github.com:nano-projects/nano-framework.git</developerConnection>
 		<url>https://github.com/nano-projects/nano-framework</url>
-		<tag>HEAD</tag>
+		<tag>nano-1.2.12</tag>
 	</scm>
 
 	<dependencyManagement>
