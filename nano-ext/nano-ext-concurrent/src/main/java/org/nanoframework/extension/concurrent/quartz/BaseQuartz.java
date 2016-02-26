@@ -16,7 +16,10 @@
 package org.nanoframework.extension.concurrent.quartz;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -41,11 +44,15 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 	private int nowTimes = 0;
 	private Object LOCK = new Object();
 	private AtomicBoolean isLock = new AtomicBoolean(false);
+	private static Map<String, AtomicLong> index = new HashMap<String, AtomicLong>();
 	
 	public BaseQuartz() { }
 	
 	public BaseQuartz(QuartzConfig config) {
 		Assert.notNull(config, "QuartzConfig must not be null");
+		if(config.getRunNumberOfTimes() != null && config.getRunNumberOfTimes() < 0)
+			throw new QuartzException("运行次数不能小于0.");
+		
 		this.config = config;
 	}
 	
@@ -226,6 +233,10 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 		this.close = close;
 	}
 	
+	public void setClosed(boolean closed) {
+		this.closed = closed;
+	}
+	
 	public void setRemove(boolean remove) {
 		this.remove = remove;
 	}
@@ -240,6 +251,14 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 	
 	public void setConfig(QuartzConfig config) {
 		this.config = config;
+	}
+	
+	public long getIndex(String group) {
+		AtomicLong idx;
+		if((idx = index.get(group)) == null)
+			index.put(group, idx = new AtomicLong());
+		
+		return idx.getAndIncrement();
 	}
 	
 	@Override

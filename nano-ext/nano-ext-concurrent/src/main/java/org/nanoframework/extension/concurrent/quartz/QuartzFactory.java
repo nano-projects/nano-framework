@@ -63,8 +63,10 @@ public class QuartzFactory {
 	private static boolean isLoaded = false;
 	
 	public static final String BASE_PACKAGE = "context.quartz-scan.base-package";
+	public static final String AUTO_RUN = "context.quartz.run.auto";
 	public static final String INCLUDES = "context.quartz.group.includes";
 	public static final String EXCLUSIONS = "context.quartz.group.exclusions";
+	public static final String DEFAULT_QUARTZ_NAME_PREFIX = "Quartz-Thread-Pool: ";
 	
 	private QuartzFactory() {
 		
@@ -160,15 +162,18 @@ public class QuartzFactory {
 	public void close(String id) {
 		try {
 			BaseQuartz quartz = startedQuartz.get(id);
-			if(quartz != null && !quartz.isClose()) {
-				quartz.setClose(true);
-				stoppingQuartz.put(quartz.getConfig().getId(), quartz);
-				startedQuartz.remove(id, quartz);
-			}
+			close(quartz);
 		} finally {
 			if(LOG.isDebugEnabled())
 				LOG.debug("关闭任务: 任务号[ " + id + " ]");
-			
+		}
+	}
+	
+	public void close(final BaseQuartz quartz) {
+		if(quartz != null && !quartz.isClose()) {
+			quartz.setClose(true);
+			stoppingQuartz.put(quartz.getConfig().getId(), quartz);
+			startedQuartz.remove(quartz.getConfig().getId(), quartz);
 		}
 	}
 	
@@ -265,6 +270,30 @@ public class QuartzFactory {
 			threadFactory.setBaseQuartz(quartz);
 			service.execute(quartz);
 			stoppedQuartz.remove(id);
+		}
+	}
+	
+	public void append(String groupName, int size, boolean autoStart) {
+		BaseQuartz quartz = findLast(groupName);
+		if(quartz == null) 
+			return ;
+		
+		for(int idx = 0; idx < size; idx ++) {
+			QuartzConfig config = (QuartzConfig) quartz.getConfig().clone();
+			int total = config.getTotal();
+			config.setTotal(total + 1);
+			config.setNum(total);
+			config.setId(groupName + "-" + quartz.getIndex(groupName));
+			config.setName(DEFAULT_QUARTZ_NAME_PREFIX + config.getId());
+			BaseQuartz _new = quartz.clone();
+			_new.setClose(true);
+			_new.setClosed(true);
+			_new.setRemove(false);
+			_new.setConfig(config);
+			addQuartz(_new);
+			if(autoStart)
+				start(config.getId());
+			
 		}
 	}
 	
