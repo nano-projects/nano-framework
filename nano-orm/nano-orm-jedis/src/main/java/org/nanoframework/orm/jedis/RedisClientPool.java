@@ -108,6 +108,21 @@ public class RedisClientPool {
 		
 	}
 	
+	public ShardedJedisPool appendJedis(RedisConfig config) {
+		Assert.notNull(config);
+		Assert.hasLength(config.getRedisType());
+		
+		if(!jedisPool.containsKey(config.getRedisType())) {
+			ShardedJedisPool pool;
+			redisConfigs.put(config.getRedisType(), config);
+			jedisPool.put(config.getRedisType(), pool = createJedisPool(config));
+			GlobalRedisClient.set(config.getRedisType(), new RedisClientImpl(config.getRedisType()));
+			return pool;
+		}
+		
+		return jedisPool.get(config.getRedisType());
+	}
+	
 	public void bindGlobal() {
 		jedisPool.forEach((type, pool) -> GlobalRedisClient.set(type, new RedisClientImpl(type)));
 		LOG.info("RedisClient Pools: " + GlobalRedisClient.keys());

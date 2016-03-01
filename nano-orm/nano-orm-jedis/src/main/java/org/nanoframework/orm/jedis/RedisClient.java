@@ -79,13 +79,13 @@ public interface RedisClient {
 	 * 
 	 * @param keys key动态数组
 	 */
-	public void del(String... keys);
+	public long del(String... keys);
 	
 	/**
 	 * 删除给定列表的所有key 。
 	 * @param keys key列表
 	 */
-	public void del(List<String> keys);
+	public long del(List<String> keys);
 	
 	/**
 	 * 检查给定 key 是否存在。

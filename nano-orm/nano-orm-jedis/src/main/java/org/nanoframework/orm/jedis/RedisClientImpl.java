@@ -62,6 +62,11 @@ public class RedisClientImpl implements RedisClient {
 		config = POOL.getRedisConfig(type);
 	}
 	
+	public RedisClientImpl(RedisConfig config) {
+		RedisClientPool.POOL.appendJedis(config);
+		this.config = config;
+	}
+	
 	/**
 	 * FastJson Object to JsonString
 	 * 
@@ -124,18 +129,27 @@ public class RedisClientImpl implements RedisClient {
 	}
 
 	@Override
-	public void del(String... keys) {
+	public long del(String... keys) {
 		if(keys.length == 0)
-			return ;
+			return 0;
 		
 		ShardedJedis jedis = null;
 		try{
 			jedis = POOL.getJedis(config.getRedisType());
 			ShardedJedisPipeline pipeline = jedis.pipelined();
-			for(String key : keys)
-				pipeline.del(key);
+			List<Response<Long>> responses = new ArrayList<>();
+			for(String key : keys) {
+				responses.add(pipeline.del(key));
+			}
 			
 			pipeline.sync();
+			
+			AtomicLong dels = new AtomicLong(0);
+			if(!CollectionUtils.isEmpty(responses)) {
+				responses.forEach(res -> dels.addAndGet(res.get()));
+			}
+			
+			return dels.get();
 		} catch(Exception e) {
 			throw new RedisClientException(e.getMessage());
 			
@@ -147,12 +161,12 @@ public class RedisClientImpl implements RedisClient {
 	}
 	
 	@Override
-	public void del(List<String> keys) {
+	public long del(List<String> keys) {
 		Assert.notNull(keys);
 		if(keys.isEmpty())
-			return ;
+			return 0;
 		
-		del(keys.toArray(new String[keys.size()]));
+		return del(keys.toArray(new String[keys.size()]));
 	}
 
 	@Override
