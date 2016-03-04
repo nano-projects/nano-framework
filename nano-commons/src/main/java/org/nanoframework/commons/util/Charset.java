@@ -21,7 +21,10 @@ package org.nanoframework.commons.util;
  * @date 2015年8月19日 上午9:02:19
  */
 public enum Charset {
-	UTF8("UTF-8"), ISO_8859_1("ISO-8859-1");
+	UTF8("UTF-8"),
+	GBK("GBK"),
+	GB2312("GB2312"),
+	ISO_8859_1("ISO-8859-1");
 
 	private String charset;
 
