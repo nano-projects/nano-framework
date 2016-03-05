@@ -32,6 +32,7 @@ public class I18nTests {
 	public void i18nTest() {
 		LOG.debug(MessageSource.DEFAULT.getMessage("message.hello", new Object[] { ".1." }));
 		LOG.debug(MessageSource.DEFAULT.getMessage("message.hello", new Object[] { ".2." }, Locale.TRADITIONAL_CHINESE));
+		LOG.debug(MessageSource.DEFAULT.getMessage("message.hello", new Object[] { ".3." }, Locale.ROOT));
 	}
 	
 	@Test

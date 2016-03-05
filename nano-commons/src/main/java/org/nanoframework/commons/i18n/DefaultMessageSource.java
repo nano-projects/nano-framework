@@ -22,7 +22,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.nanoframework.commons.loader.PropertiesLoader;
-import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.Charset;
 import org.nanoframework.commons.util.StringUtils;
 
@@ -32,7 +31,7 @@ import org.nanoframework.commons.util.StringUtils;
  */
 public class DefaultMessageSource implements MessageSource {
 	private static final ConcurrentMap<Locale, Properties> MESSAGE = new ConcurrentHashMap<>();
-	public static final String DEFAULT_PREFIX_MESSAGE = "/messages/messages_";
+	public static final String DEFAULT_PREFIX_MESSAGE = "/messages/messages";
 	public static final String PROPERITES_SUFFIX = ".properties";
 	private final Object LOCK = new Object();
 	private Locale locale;
@@ -40,8 +39,7 @@ public class DefaultMessageSource implements MessageSource {
 	protected DefaultMessageSource() { }
 	
 	protected DefaultMessageSource(Locale locale) {
-		Assert.notNull(locale, "Locale must be not null.");
-		this.locale = locale;
+		this.locale = locale == null ? Locale.ROOT : locale;
 		load(locale);
 	}
 	
@@ -50,7 +48,7 @@ public class DefaultMessageSource implements MessageSource {
 		if((properties = MESSAGE.get(locale)) == null) {
 			synchronized (LOCK) {
 				if((properties = MESSAGE.get(locale)) == null) {
-					properties = PropertiesLoader.load(DEFAULT_PREFIX_MESSAGE + locale.getLanguage() + (StringUtils.isEmpty(locale.getCountry()) ? "" : "_" + locale.getCountry()) + PROPERITES_SUFFIX);
+					properties = PropertiesLoader.load(DEFAULT_PREFIX_MESSAGE + (StringUtils.isEmpty(locale.getLanguage()) ? "" : "_" + locale.getLanguage()) + (StringUtils.isEmpty(locale.getCountry()) ? "" : "_" + locale.getCountry()) + PROPERITES_SUFFIX);
 					MESSAGE.put(locale, properties);
 				}
 			}
