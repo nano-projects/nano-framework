@@ -33,17 +33,27 @@ public class Cookies {
 		if(StringUtils.isEmpty(name))
 			throw new NullPointerException("Cookie name cannot be null");
 		
+		Cookie cookie = getCookie(request, name);
+		if(cookie != null) {
+			return cookie.getValue();
+		}
+		
+		return null;
+	}
+	
+	public static final Cookie getCookie(HttpServletRequest request, String name) {
+		if(StringUtils.isEmpty(name))
+			throw new NullPointerException("Cookie name cannot be null");
+		
 		Cookie[] cookies = request.getCookies();
-		String value = null;
 		if (cookies != null) {
 			for (Cookie cookie : cookies) {
 				if (cookie.getName().equals(name)) {
-					value = cookie.getValue();
-					break;
+					return cookie;
 				}
 			}
 		}
 		
-		return value;
+		return null;
 	}
 }

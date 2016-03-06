@@ -55,9 +55,6 @@ public class RedirectView implements View {
 		}
 		
 		String encodedRedirectURL = response.encodeRedirectURL(page + builder.toString());
-		String root;
-		if(!encodedRedirectURL.startsWith(root = System.getProperty(Constants.CONTEXT_ROOT)))
-			encodedRedirectURL = root + encodedRedirectURL;
 		
 		/** HttpServletResponse.sendRedirect */
 		response.sendRedirect(encodedRedirectURL);

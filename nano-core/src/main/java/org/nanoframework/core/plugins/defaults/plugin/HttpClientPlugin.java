@@ -24,8 +24,8 @@ import javax.servlet.ServletConfig;
 
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
-import org.nanoframework.commons.util.HttpClientFactory;
 import org.nanoframework.commons.util.StringUtils;
+import org.nanoframework.core.httpclient.HttpClientFactory;
 import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoaderException;
 
