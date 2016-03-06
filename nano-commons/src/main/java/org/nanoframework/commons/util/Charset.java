@@ -16,10 +16,13 @@
 package org.nanoframework.commons.util;
 
 /**
- * 
+ * new implementation see {@link org.nanoframework.commons.util.Charsets}
  * @author yanghe
  * @date 2015年8月19日 上午9:02:19
+ * 
+ * 
  */
+@Deprecated
 public enum Charset {
 	UTF8("UTF-8"),
 	GBK("GBK"),
