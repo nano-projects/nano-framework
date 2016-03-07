@@ -55,7 +55,7 @@ public class Constants {
 		if(object == null)
 			throw new ExtensionRuntimeException("消息对象不能为空!");
 		
-		return StringFormat.toBytes(JSON.toJSONString(object), Charset.UTF8);
+		return StringFormat.toBytes(JSON.toJSONString(object), Charsets.UTF_8);
 		
 	}
 }

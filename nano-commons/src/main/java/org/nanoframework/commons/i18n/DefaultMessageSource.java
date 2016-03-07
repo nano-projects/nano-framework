@@ -15,14 +15,13 @@
  */
 package org.nanoframework.commons.i18n;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.nanoframework.commons.loader.PropertiesLoader;
-import org.nanoframework.commons.util.Charset;
+import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.StringUtils;
 
 /**
@@ -143,10 +142,6 @@ public class DefaultMessageSource implements MessageSource {
 			}
 		}
 		
-		try {
-			return new String(newMessage.getBytes(Charset.ISO_8859_1.value()), Charset.UTF8.value());
-		} catch(UnsupportedEncodingException e) {
-			return newMessage;
-		}
+		return new String(newMessage.getBytes(Charsets.ISO_8859_1), Charsets.UTF_8);
 	}
 }

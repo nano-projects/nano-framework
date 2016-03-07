@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.commons.util.Charset;
+import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.extension.ssh.exception.SSHException;
 
 import ch.ethz.ssh2.Session;
@@ -59,7 +59,7 @@ abstract class SSHExecutor extends SSH implements Runnable {
 			session.execCommand(cmd);
 			
     		stdout = new StreamGobbler(session.getStdout()); 
-            reader = new BufferedReader(new InputStreamReader(stdout, Charset.UTF8.value()));
+            reader = new BufferedReader(new InputStreamReader(stdout, Charsets.UTF_8));
     		String line;
             while(!close && (line = reader.readLine()) != null) {
             	LOG.info(line);

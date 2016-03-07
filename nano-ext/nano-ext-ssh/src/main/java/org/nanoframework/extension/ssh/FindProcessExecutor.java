@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.commons.util.Charset;
+import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.extension.ssh.exception.SSHException;
 import org.nanoframework.extension.ssh.exception.UnSupportedSSHException;
 
@@ -57,7 +57,7 @@ public final class FindProcessExecutor extends CallableSSHExecutor<Boolean> {
 			session.execCommand(cmd);
 			
     		stdout = new StreamGobbler(session.getStdout()); 
-            reader = new BufferedReader(new InputStreamReader(stdout, Charset.UTF8.value()));
+            reader = new BufferedReader(new InputStreamReader(stdout, Charsets.UTF_8));
     		String line;
             while(!close && (line = reader.readLine()) != null) {
             	if(LOG.isDebugEnabled())

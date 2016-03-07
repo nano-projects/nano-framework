@@ -15,7 +15,7 @@
  */
 package org.nanoframework.commons.format;
 
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,8 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nanoframework.commons.exception.StringFormatException;
-import org.nanoframework.commons.util.Charset;
 import org.nanoframework.commons.util.URLContext;
 
 /**
@@ -89,12 +87,7 @@ public class StringFormat {
 	}
 	
 	public static final byte[] toBytes(String strings, Charset charset) {
-		try {
-			return strings.getBytes(charset.value());
-		} catch(UnsupportedEncodingException e) {
-			throw new StringFormatException(e.getMessage(), e);
-		}
-		
+		return strings.getBytes(charset);
 	}
 	
 }

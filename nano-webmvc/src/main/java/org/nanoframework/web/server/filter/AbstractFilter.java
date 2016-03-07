@@ -41,7 +41,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.nanoframework.commons.format.StringFormat;
-import org.nanoframework.commons.util.Charset;
+import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.ContentType;
 import org.nanoframework.commons.util.ObjectUtils;
@@ -72,8 +72,8 @@ public abstract class AbstractFilter implements Filter {
 
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		request.setCharacterEncoding(Charset.UTF8.value());
-		response.setCharacterEncoding(Charset.UTF8.value());
+		request.setCharacterEncoding(Charsets.UTF_8.name());
+		response.setCharacterEncoding(Charsets.UTF_8.name());
 		
 		if(invoke((HttpServletRequest) request, (HttpServletResponse) response)) {
 			chain.doFilter(request, response);
@@ -158,7 +158,7 @@ public abstract class AbstractFilter implements Filter {
 				break;
 		}
 		
-		String uri = URLDecoder.decode(((HttpServletRequest) request).getRequestURI(), Charset.UTF8.value());
+		String uri = URLDecoder.decode(((HttpServletRequest) request).getRequestURI(), Charsets.UTF_8.name());
 		URLContext urlContext;
 		if(StringUtils.isNotBlank(paramString)) {
 			uri += "?" + paramString;

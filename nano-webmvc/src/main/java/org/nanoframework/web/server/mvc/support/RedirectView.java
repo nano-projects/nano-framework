@@ -22,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.web.server.mvc.View;
 
 import com.alibaba.fastjson.JSON;
