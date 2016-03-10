@@ -132,6 +132,12 @@ public class HttpClientFactory {
 		httpPost.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
 		return getResult(httpPost);
 	}
+	
+	public HttpResponse httpPostRequest(String url, String stream, ContentType contentType) throws IOException {
+		HttpPost httpPost = new HttpPost(url);
+		httpPost.setEntity(new StringEntity(stream, contentType));
+		return getResult(httpPost);
+	}
 
 	public HttpResponse httpPostRequest(String url, Map<String, String> headers, String json) throws IOException {
 		HttpPost httpPost = new HttpPost(url);
@@ -139,6 +145,15 @@ public class HttpClientFactory {
 			headers.forEach((key, value) -> httpPost.addHeader(key, value));
 
 		httpPost.setEntity(new StringEntity(json, ContentType.APPLICATION_JSON));
+		return getResult(httpPost);
+	}
+	
+	public HttpResponse httpPostRequest(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException {
+		HttpPost httpPost = new HttpPost(url);
+		if (!CollectionUtils.isEmpty(headers))
+			headers.forEach((key, value) -> httpPost.addHeader(key, value));
+
+		httpPost.setEntity(new StringEntity(stream, contentType));
 		return getResult(httpPost);
 	}
 

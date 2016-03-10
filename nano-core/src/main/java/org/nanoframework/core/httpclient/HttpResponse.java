@@ -21,16 +21,4 @@ public class HttpResponse extends BaseEntity {
 		return new HttpResponse(statusCode, reasonPhrase, entity);
 	}
 
-	public int getStatusCode() {
-		return statusCode;
-	}
-
-	public String getReasonPhrase() {
-		return reasonPhrase;
-	}
-
-	public String getEntity() {
-		return entity;
-	}
-
 }
