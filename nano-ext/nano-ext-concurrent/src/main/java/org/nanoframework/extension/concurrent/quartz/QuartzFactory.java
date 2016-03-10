@@ -18,6 +18,7 @@ package org.nanoframework.extension.concurrent.quartz;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -44,6 +45,7 @@ import org.nanoframework.extension.concurrent.quartz.defaults.etcd.EtcdQuartzOpe
 import org.nanoframework.extension.concurrent.quartz.defaults.monitor.LocalJmxMonitorQuartz;
 import org.nanoframework.extension.concurrent.queue.BlockingQueueFactory;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
@@ -56,7 +58,6 @@ public class QuartzFactory {
 	private static Logger LOG = LoggerFactory.getLogger(QuartzFactory.class);
 	private static QuartzFactory FACTORY;
 	private static final Object LOCK = new Object();
-	private AtomicInteger startedQuartzSize = new AtomicInteger(0);
 	private final ConcurrentMap<String , BaseQuartz> startedQuartz = new ConcurrentHashMap<>();
 	private final ConcurrentMap<String, BaseQuartz> stoppingQuartz = new ConcurrentHashMap<>();
 	private final ConcurrentMap<String , BaseQuartz> stoppedQuartz = new ConcurrentHashMap<>();
@@ -70,7 +71,10 @@ public class QuartzFactory {
 	public static final String AUTO_RUN = "context.quartz.run.auto";
 	public static final String INCLUDES = "context.quartz.group.includes";
 	public static final String EXCLUSIONS = "context.quartz.group.exclusions";
+	public static final String SHUTDOWN_TIMEOUT = "context.quartz.shutdown.timeout";
 	public static final String DEFAULT_QUARTZ_NAME_PREFIX = "Quartz-Thread-Pool: ";
+	
+	private final long shutdownTimeout = Long.parseLong(System.getProperty(SHUTDOWN_TIMEOUT, "60000"));
 	
 	private static EtcdQuartzOperate etcdQuartz;
 	
@@ -103,7 +107,6 @@ public class QuartzFactory {
 		try {
 			quartz.setClose(false);
 			startedQuartz.put(quartz.getConfig().getId(), quartz);
-			startedQuartzSize.incrementAndGet();
 			return quartz;
 		} finally {
 			if(LOG.isInfoEnabled())
@@ -121,9 +124,8 @@ public class QuartzFactory {
 	protected BaseQuartz unbind(BaseQuartz quartz) {
 		BaseQuartz removed = startedQuartz.remove(quartz.getConfig().getId());
 		if(removed != null) {
-			startedQuartzSize.decrementAndGet();
 			if(LOG.isDebugEnabled())
-				LOG.debug("解绑任务 : 任务号[ " + quartz.getConfig().getId() + " ], 现存任务数: " + startedQuartzSize.get());
+				LOG.debug("解绑任务 : 任务号[ " + quartz.getConfig().getId() + " ], 现存任务数: " + startedQuartz.size());
 		}
 		
 		return quartz;
@@ -134,7 +136,7 @@ public class QuartzFactory {
 	 * @return 任务数
 	 */
 	public int getStartedQuartzSize() {
-		return startedQuartzSize.get();
+		return startedQuartz.size();
 	}
 	
 	/**
@@ -697,14 +699,17 @@ public class QuartzFactory {
 			
 			long time = System.currentTimeMillis();
 			LOG.info("开始停止任务调度");
-			FACTORY.closeAll();
-			Collection<BaseQuartz> quartzs = FACTORY.getStoppingQuartz();
+			closeAll();
+			List<BaseQuartz> quartzs = Lists.newArrayList();
+			quartzs.addAll(getStartedQuartz());
+			quartzs.addAll(getStoppingQuartz());
 			for(BaseQuartz quartz : quartzs) {
 				quartz.thisNotify();
 			}
 			
-			while((FACTORY.getStartedQuartzSize() > 0 || FACTORY.getStoppingQuartzSize() > 0) && System.currentTimeMillis() - time < 300000L) 
-				try { Thread.sleep(10L); } catch(InterruptedException e) { }
+			while((getStartedQuartzSize() > 0 || getStoppingQuartzSize() > 0) && System.currentTimeMillis() - time < shutdownTimeout) {
+				try { Thread.sleep(100L); } catch(InterruptedException e) { }
+			}
 			
  			LOG.info("停止任务调度完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
 		}
