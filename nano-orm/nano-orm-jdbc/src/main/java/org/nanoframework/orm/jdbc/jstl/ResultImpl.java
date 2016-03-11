@@ -87,6 +87,8 @@ class ResultImpl implements Result, Serializable {
     private String[] columnNames;
     private String[] columnLabels;
     private boolean isLimited;
+    
+    private final boolean JDBC_JSTL_CASE_INSENSITIVE_ORDER = Boolean.parseBoolean(System.getProperty("context.jdbc.jstl.case.insensitive.order", "false"));
 
     /**
      * This constructor reads the ResultSet and saves a cached copy.
@@ -128,7 +130,11 @@ class ResultImpl implements Result, Serializable {
                 break;
             }
             Object[] columns = new Object[noOfColumns];
-            SortedMap<String, Object> columnMap = new TreeMap<>();
+            SortedMap<String, Object> columnMap;
+            if(JDBC_JSTL_CASE_INSENSITIVE_ORDER)
+            	columnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
+            else 
+            	columnMap = new TreeMap<>();
 
             // JDBC uses 1 as the lowest index!
             for (int i = 1; i <= noOfColumns; i++) {
