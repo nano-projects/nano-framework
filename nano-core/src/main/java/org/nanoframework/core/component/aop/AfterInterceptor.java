@@ -38,6 +38,10 @@ public class AfterInterceptor implements MethodInterceptor {
 		Object obj = null;
 		try { 
 			return obj = invocation.proceed();
+		} catch(Throwable e) {
+			obj = e;
+			throw e;
+			
 		} finally {
 			method.invoke(instance, invocation, obj);
 		}

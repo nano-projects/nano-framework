@@ -42,6 +42,10 @@ public class BeforeAndAfterInterceptor implements MethodInterceptor {
 		try { 
 			beforeMethod.invoke(beforeInstance, invocation);
 			return obj = invocation.proceed();
+		} catch(Throwable e) {
+			obj = e;
+			throw e;
+			
 		} finally {
 			afterMethod.invoke(afterInstance, invocation, obj);
 		}

@@ -56,6 +56,10 @@ public class BeforeAndAfterMoreInterceptor implements MethodInterceptor {
 			}
 			
 			return obj = invocation.proceed();
+		} catch(Throwable e) {
+			obj = e;
+			throw e;
+			
 		} finally {
 			for(Iterator<Entry<Method, Object>> iter = afterMap.entrySet().iterator(); iter.hasNext(); ) {
 				Entry<Method, Object> entry = iter.next();

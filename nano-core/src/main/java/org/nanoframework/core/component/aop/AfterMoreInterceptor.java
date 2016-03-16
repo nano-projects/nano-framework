@@ -47,6 +47,10 @@ public class AfterMoreInterceptor implements MethodInterceptor {
 		Object obj = null;
 		try { 
 			return obj = invocation.proceed();
+		} catch(Throwable e) {
+			obj = e;
+			throw e;
+			
 		} finally {
 			for(Iterator<Entry<Method, Object>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
 				Entry<Method, Object> entry = iter.next();
