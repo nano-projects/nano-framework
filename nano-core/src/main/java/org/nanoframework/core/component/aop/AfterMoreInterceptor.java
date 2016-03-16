@@ -40,15 +40,7 @@ public class AfterMoreInterceptor implements MethodInterceptor {
 		Map<Method, Object> map = Maps.newLinkedHashMap();
 		for(After after : afters) {
 			Method method = after.classType().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
-			Object instance;
-			if(after.singleton()) {
-				if((instance = Globals.get(after.classType())) == null) {
-					instance = Globals.get(Injector.class).getInstance(after.classType());
-					Globals.set(after.classType(), instance);
-				}
-			} else 
-				instance = after.classType().newInstance();
-			
+			Object instance = Globals.get(Injector.class).getInstance(after.classType());
 			map.put(method, instance);
 		}
 		

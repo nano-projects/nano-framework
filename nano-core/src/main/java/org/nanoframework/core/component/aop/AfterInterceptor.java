@@ -33,14 +33,7 @@ public class AfterInterceptor implements MethodInterceptor {
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		After after = invocation.getMethod().getAnnotation(After.class);
 		Method method = after.classType().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
-		Object instance;
-		if(after.singleton()) {
-			if((instance = Globals.get(after.classType())) == null) {
-				instance = Globals.get(Injector.class).getInstance(after.classType());
-				Globals.set(after.classType(), instance);
-			}
-		} else 
-			instance = after.classType().newInstance();
+		Object instance = Globals.get(Injector.class).getInstance(after.classType());
 		
 		Object obj = null;
 		try { 

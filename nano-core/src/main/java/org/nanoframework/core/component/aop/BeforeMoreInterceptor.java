@@ -40,15 +40,7 @@ public class BeforeMoreInterceptor implements MethodInterceptor {
 		Map<Method, Object> map = Maps.newLinkedHashMap();
 		for(Before before : befores) {
 			Method method = before.classType().getMethod(MethodNames.BEFORE, MethodInvocation.class);
-			Object instance;
-			if(before.singleton()) {
-				if((instance = Globals.get(before.classType())) == null) {
-					instance = Globals.get(Injector.class).getInstance(before.classType());
-					Globals.set(before.classType(), instance);
-				}
-			} else 
-				instance = before.classType().newInstance();
-			
+			Object instance = Globals.get(Injector.class).getInstance(before.classType());
 			map.put(method, instance);
 		}
 		

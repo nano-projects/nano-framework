@@ -30,5 +30,4 @@ import java.lang.annotation.Target;
 @Documented
 public @interface BeforeAndAfter {
 	Class<? extends IBeforeAndAfter> classType();
-	boolean singleton() default true;
 }

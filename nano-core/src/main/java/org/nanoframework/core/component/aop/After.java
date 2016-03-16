@@ -30,5 +30,4 @@ import java.lang.annotation.Target;
 @Documented
 public @interface After {
 	Class<? extends IAfter> classType();
-	boolean singleton() default true;
 }
