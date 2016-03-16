@@ -19,7 +19,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.nanoframework.core.component.aop.Before;
+import org.nanoframework.core.component.aop.BeforeMore;
 import org.nanoframework.core.status.ResultMap;
+import org.nanoframework.examples.first.webapp.aop.Examples2AOP;
 import org.nanoframework.examples.first.webapp.aop.ExamplesAOP;
 import org.nanoframework.examples.first.webapp.component.MybatisExampleComponent;
 import org.nanoframework.examples.first.webapp.domain.Test;
@@ -36,7 +38,8 @@ public class MybatisExampleComponentImpl implements MybatisExampleComponent {
 	@Inject
 	private ExampleMapper exampleMapper;
 	
-	@Before(classType = ExamplesAOP.class, methodName = "before")
+//	@Before(classType = ExamplesAOP.class, methodName = "before")
+	@BeforeMore(befores = { @Before(classType = ExamplesAOP.class), @Before(classType = Examples2AOP.class) })
 	@Override
 	public Object findAll() {
 		List<Test> testList = exampleMapper.select();

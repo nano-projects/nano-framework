@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.component.aop;
+package org.nanoframework.examples.first.webapp.aop;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.aopalliance.intercept.MethodInvocation;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.core.component.aop.IBefore;
 
 /**
  * @author yanghe
- * @date 2015年10月8日 下午5:23:18
+ * @date 2015年10月14日 上午10:35:57
  */
-@Target({ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface After {
-	Class<? extends IAfter> classType();
-	boolean singleton() default true;
+public class Examples2AOP implements IBefore {
+	private Logger LOG = LoggerFactory.getLogger(Examples2AOP.class);
+	
+	@Override
+	public void before(MethodInvocation invocation) {
+		LOG.debug("Before invoke by Examples2 AOP.");
+	}
 }

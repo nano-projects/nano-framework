@@ -16,33 +16,47 @@
 package org.nanoframework.core.component.aop;
 
 import java.lang.reflect.Method;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.nanoframework.core.globals.Globals;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
 /**
  * @author yanghe
  * @date 2015年10月8日 下午5:30:23
  */
-public class BeforeInterceptor implements MethodInterceptor {
+public class BeforeMoreInterceptor implements MethodInterceptor {
 
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
-		Before before = invocation.getMethod().getAnnotation(Before.class);
-		Method method = before.classType().getMethod(MethodNames.BEFORE, MethodInvocation.class);
-		Object instance;
-		if(before.singleton()) {
-			if((instance = Globals.get(before.classType())) == null) {
-				instance = Globals.get(Injector.class).getInstance(before.classType());
-				Globals.set(before.classType(), instance);
-			}
-		} else 
-			instance = before.classType().newInstance();
+		BeforeMore beforeMore = invocation.getMethod().getAnnotation(BeforeMore.class);
+		Before[] befores = beforeMore.befores();
+		Map<Method, Object> map = Maps.newLinkedHashMap();
+		for(Before before : befores) {
+			Method method = before.classType().getMethod(MethodNames.BEFORE, MethodInvocation.class);
+			Object instance;
+			if(before.singleton()) {
+				if((instance = Globals.get(before.classType())) == null) {
+					instance = Globals.get(Injector.class).getInstance(before.classType());
+					Globals.set(before.classType(), instance);
+				}
+			} else 
+				instance = before.classType().newInstance();
+			
+			map.put(method, instance);
+		}
 		
-		method.invoke(instance, invocation);
+		for(Iterator<Entry<Method, Object>> iter = map.entrySet().iterator(); iter.hasNext(); ) {
+			Entry<Method, Object> entry = iter.next();
+			entry.getKey().invoke(entry.getValue(), invocation);
+		}
+		
 		return invocation.proceed();
 	}
 }

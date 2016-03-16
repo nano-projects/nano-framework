@@ -29,8 +29,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface BeforeAndAfter {
-	Class<?> classType();
-	String beforeMethodName() default "before";
-	String afterMethodName() default "after";
+	Class<? extends IBeforeAndAfter> classType();
 	boolean singleton() default true;
 }

@@ -29,7 +29,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Before {
-	Class<?> classType();
-	String methodName() default "before";
+	Class<? extends IBefore> classType();
 	boolean singleton() default true;
 }

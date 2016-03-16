@@ -21,10 +21,16 @@ import javax.servlet.ServletConfig;
 
 import org.nanoframework.core.component.aop.After;
 import org.nanoframework.core.component.aop.AfterInterceptor;
+import org.nanoframework.core.component.aop.AfterMore;
+import org.nanoframework.core.component.aop.AfterMoreInterceptor;
 import org.nanoframework.core.component.aop.Before;
 import org.nanoframework.core.component.aop.BeforeAndAfter;
 import org.nanoframework.core.component.aop.BeforeAndAfterInterceptor;
+import org.nanoframework.core.component.aop.BeforeAndAfterMore;
+import org.nanoframework.core.component.aop.BeforeAndAfterMoreInterceptor;
 import org.nanoframework.core.component.aop.BeforeInterceptor;
+import org.nanoframework.core.component.aop.BeforeMore;
+import org.nanoframework.core.component.aop.BeforeMoreInterceptor;
 import org.nanoframework.core.plugins.Module;
 
 import com.google.inject.matcher.Matchers;
@@ -40,6 +46,11 @@ public class AOPModule extends Module {
 		bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new BeforeInterceptor());
 		bindInterceptor(Matchers.any(), Matchers.annotatedWith(After.class), new AfterInterceptor());
 		bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfter.class), new BeforeAndAfterInterceptor());
+		
+		// Interceptor More
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeMore.class), new BeforeMoreInterceptor());
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(AfterMore.class), new AfterMoreInterceptor());
+		bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfterMore.class), new BeforeAndAfterMoreInterceptor());
 	}
 
 	@Override
