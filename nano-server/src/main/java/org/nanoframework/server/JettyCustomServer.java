@@ -17,9 +17,8 @@ package org.nanoframework.server;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
@@ -33,7 +32,6 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.commons.util.StringUtils;
@@ -205,9 +203,9 @@ public class JettyCustomServer extends Server {
 			if(!file.exists())
 				file.createNewFile();
 		
-			try(OutputStream output = new FileOutputStream(file)) {
-				output.write(pid.getBytes(Charsets.UTF_8));
-				output.flush();
+			try(FileWriter writer = new FileWriter(file, false)) {
+				writer.write(pid);
+				writer.flush();
 			}
 		} catch(Throwable e) {
 			throw new JettyServerException(e.getMessage(), e);

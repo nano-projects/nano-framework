@@ -709,6 +709,9 @@ public class QuartzFactory {
 			
 			while((getStartedQuartzSize() > 0 || getStoppingQuartzSize() > 0) && System.currentTimeMillis() - time < shutdownTimeout) {
 				try { Thread.sleep(100L); } catch(InterruptedException e) { }
+				for(BaseQuartz quartz : quartzs) {
+					quartz.thisNotify();
+				}
 			}
 			
  			LOG.info("停止任务调度完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
