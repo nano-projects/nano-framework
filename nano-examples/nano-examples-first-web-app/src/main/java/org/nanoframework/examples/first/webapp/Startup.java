@@ -23,6 +23,6 @@ import org.nanoframework.server.JettyCustomServer;
  */
 public class Startup {
 	public static void main(String[] args) {
-		new JettyCustomServer("/examples-context.properties").startServerDaemon();
+		new JettyCustomServer("/examples-context.properties").bootstrap(args);
 	}
 }

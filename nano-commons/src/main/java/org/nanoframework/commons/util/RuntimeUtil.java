@@ -76,6 +76,24 @@ public class RuntimeUtil {
 		}
 
 	}
+	
+	/**
+	 * 根据进程号优雅退出进程
+	 * 
+	 * @param PID 进程号
+	 * @throws IOException IO异常
+	 */
+	public static void exitProcess(String PID) throws IOException {
+		if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
+			String[] cmds = new String[] { "/bin/sh", "-c", "kill -15 " + PID };
+			Runtime.getRuntime().exec(cmds);
+
+		} else if (OSNAME.indexOf("Windows") > -1) {
+			Runtime.getRuntime().exec("cmd /c taskkill /pid " + PID + " /f ");
+
+		}
+
+	}
 
 	/**
 	 * 根据进程号查询该进程是否存在

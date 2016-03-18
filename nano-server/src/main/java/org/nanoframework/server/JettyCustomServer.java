@@ -15,8 +15,13 @@
  */
 package org.nanoframework.server;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Properties;
+import java.util.Scanner;
 import java.util.concurrent.Executors;
 
 import org.eclipse.jetty.server.Server;
@@ -28,6 +33,7 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
+import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.commons.util.StringUtils;
@@ -67,6 +73,13 @@ public class JettyCustomServer extends Server {
 			DEFAULT = new JettyCustomServer();
 		} catch(Exception e) { }
 	}
+	
+	private static final String JETTY_PID_FILE = "jetty.pid";
+	
+	public static final String[] cmd = new String[] {
+		"start", 
+		"stop"
+	};
 	
 	public JettyCustomServer() {
 		this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(Constants.CONTEXT_ROOT), null, null, null);
@@ -144,11 +157,36 @@ public class JettyCustomServer extends Server {
 
 	public void startServer() {
 		try {
+			writePID2File();
 			super.start();
-			LOG.info("current thread:" + super.getThreadPool().getThreads() + "| idle thread:" + super.getThreadPool().getIdleThreads());
+			LOG.info("Current thread: {} | Idle thread: {}", super.getThreadPool().getThreads(), super.getThreadPool().getIdleThreads());
 			super.join();
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			throw new JettyServerException(e.getMessage(), e);
+		}
+	}
+	
+	/**
+	 * 根据PID优雅停止进程
+	 * 
+	 * @since 1.2.15
+	 */
+	public void stopServer() {
+		try {
+			String pid = readPID();
+			if(StringUtils.isNotBlank(pid)) {
+				if(RuntimeUtil.exsitsProcess(pid)) {
+					RuntimeUtil.exitProcess(pid);
+					delPID();
+					return ;
+				} else {
+					return ;
+				}
+			}
+			
+			throw new JettyServerException("Not found jetty.pid");
+		} catch(Throwable e) {
+			throw new JettyServerException("Stop Server error: " + e.getMessage());
 		}
 	}
 	
@@ -160,4 +198,69 @@ public class JettyCustomServer extends Server {
 		}).execute(() -> startServer());
 	}
 
+	public void writePID2File() {
+		try {
+			final String pid = RuntimeUtil.PID;
+			File file = new File(JETTY_PID_FILE);
+			if(!file.exists())
+				file.createNewFile();
+		
+			try(OutputStream output = new FileOutputStream(file)) {
+				output.write(pid.getBytes(Charsets.UTF_8));
+				output.flush();
+			}
+		} catch(Throwable e) {
+			throw new JettyServerException(e.getMessage(), e);
+		}
+	}
+	
+	public String readPID() {
+		try {
+			File file = new File(JETTY_PID_FILE);
+			if(file.exists()) {
+				try (InputStream input = new FileInputStream(file)) {
+					try (Scanner scanner = new Scanner(input)) {
+						StringBuilder builder = new StringBuilder();
+						while(scanner.hasNextLine()) {
+							builder.append(scanner.nextLine());
+						}
+						
+						return builder.toString();
+					}
+				}
+			}
+			
+			return StringUtils.EMPTY;
+		} catch(Throwable e) {
+			throw new JettyServerException("Read PID file error: " + e.getMessage());
+		}
+	}
+	
+	public void delPID() {
+		try {
+			File file = new File(JETTY_PID_FILE);
+			if(file.exists()) 
+				file.delete();
+			
+		} catch(Throwable e) {
+			throw new JettyServerException("Del PID file error: " + e.getMessage());
+		}
+	}
+	
+	public final void bootstrap(String[] args) {
+		if(args.length > 0) {
+			if(StringUtils.equals(args[0], cmd[0])) {
+				startServerDaemon();
+				
+			} else if(StringUtils.equals(args[0], cmd[1])) {
+				stopServer();
+				
+			} else {
+				throw new JettyServerException("Unknown command in args list");
+				
+			}
+		} else {
+			startServerDaemon();
+		}
+	}
 }
