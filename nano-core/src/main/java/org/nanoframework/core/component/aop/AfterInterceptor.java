@@ -32,8 +32,8 @@ public class AfterInterceptor implements MethodInterceptor {
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		After after = invocation.getMethod().getAnnotation(After.class);
-		Method method = after.classType().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
-		Object instance = Globals.get(Injector.class).getInstance(after.classType());
+		Method method = after.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
+		Object instance = Globals.get(Injector.class).getInstance(after.value());
 		
 		Object obj = null;
 		try { 

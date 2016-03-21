@@ -32,8 +32,8 @@ public class BeforeInterceptor implements MethodInterceptor {
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		Before before = invocation.getMethod().getAnnotation(Before.class);
-		Method method = before.classType().getMethod(MethodNames.BEFORE, MethodInvocation.class);
-		Object instance = Globals.get(Injector.class).getInstance(before.classType());
+		Method method = before.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
+		Object instance = Globals.get(Injector.class).getInstance(before.value());
 		
 		method.invoke(instance, invocation);
 		return invocation.proceed();

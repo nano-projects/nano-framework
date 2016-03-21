@@ -36,11 +36,11 @@ public class AfterMoreInterceptor implements MethodInterceptor {
 	@Override
 	public Object invoke(MethodInvocation invocation) throws Throwable {
 		AfterMore afterMore = invocation.getMethod().getAnnotation(AfterMore.class);
-		After[] afters = afterMore.afters();
+		After[] afters = afterMore.value();
 		Map<Method, Object> map = Maps.newLinkedHashMap();
 		for(After after : afters) {
-			Method method = after.classType().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
-			Object instance = Globals.get(Injector.class).getInstance(after.classType());
+			Method method = after.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
+			Object instance = Globals.get(Injector.class).getInstance(after.value());
 			map.put(method, instance);
 		}
 		

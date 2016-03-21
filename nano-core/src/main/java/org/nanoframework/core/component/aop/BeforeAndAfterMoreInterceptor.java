@@ -38,13 +38,13 @@ public class BeforeAndAfterMoreInterceptor implements MethodInterceptor {
 		BeforeAndAfterMore beforeAndAfterMore = invocation.getMethod().getAnnotation(BeforeAndAfterMore.class);
 		Map<Method, Object> beforeMap = Maps.newLinkedHashMap();
 		Map<Method, Object> afterMap = Maps.newLinkedHashMap();
-		for(BeforeAndAfter beforeAndAfter : beforeAndAfterMore.beforeAndAfters()) {
-			Method beforeMethod = beforeAndAfter.classType().getMethod(MethodNames.BEFORE, MethodInvocation.class);
-			Object beforeInstance = Globals.get(Injector.class).getInstance(beforeAndAfter.classType());
+		for(BeforeAndAfter beforeAndAfter : beforeAndAfterMore.value()) {
+			Method beforeMethod = beforeAndAfter.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
+			Object beforeInstance = Globals.get(Injector.class).getInstance(beforeAndAfter.value());
 			beforeMap.put(beforeMethod, beforeInstance);
 			
-			Method afterMethod = beforeAndAfter.classType().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
-			Object afterInstance = Globals.get(Injector.class).getInstance(beforeAndAfter.classType());
+			Method afterMethod = beforeAndAfter.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
+			Object afterInstance = Globals.get(Injector.class).getInstance(beforeAndAfter.value());
 			afterMap.put(afterMethod, afterInstance);
 		}
 		

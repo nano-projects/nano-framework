@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Before {
-	Class<? extends IBefore> classType();
+	Class<? extends IBefore> value();
 }

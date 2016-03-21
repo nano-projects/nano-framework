@@ -39,7 +39,7 @@ public class MybatisExampleComponentImpl implements MybatisExampleComponent {
 	private ExampleMapper exampleMapper;
 	
 //	@Before(classType = ExamplesAOP.class, methodName = "before")
-	@BeforeMore(befores = { @Before(classType = ExamplesAOP.class), @Before(classType = Examples2AOP.class) })
+	@BeforeMore(value = { @Before(classType = ExamplesAOP.class), @Before(classType = Examples2AOP.class) })
 	@Override
 	public Object findAll() {
 		List<Test> testList = exampleMapper.select();

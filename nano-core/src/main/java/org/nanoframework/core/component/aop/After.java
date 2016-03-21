@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface After {
-	Class<? extends IAfter> classType();
+	Class<? extends IAfter> value();
 }

@@ -29,5 +29,5 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface BeforeAndAfterMore {
-	BeforeAndAfter[] beforeAndAfters();
+	BeforeAndAfter[] value();
 }
