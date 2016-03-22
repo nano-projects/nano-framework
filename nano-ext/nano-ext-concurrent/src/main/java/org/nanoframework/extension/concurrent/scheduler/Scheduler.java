@@ -33,7 +33,7 @@ public @interface Scheduler {
 	
 	/**
 	 * 调度任务组
-	 * @return String
+	 * @return Class
 	 */
 	Class<? extends BaseScheduler> group();
 	
