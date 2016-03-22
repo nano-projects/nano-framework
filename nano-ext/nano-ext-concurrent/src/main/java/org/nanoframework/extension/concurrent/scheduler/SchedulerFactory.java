@@ -515,8 +515,8 @@ public class SchedulerFactory {
 						LOG.info("Inject Scheduler Class: " + clz.getName());
 					
 					Scheduler scheduler = clz.getAnnotation(Scheduler.class);
-					if(!ObjectCompare.isInListByRegEx(clz.getClass().getSimpleName(), includes) || ObjectCompare.isInListByRegEx(clz.getClass().getSimpleName(), exclusions)) {
-						LOG.warn("过滤任务组: " + clz.getClass().getSimpleName() + ", 类名 [ " + clz.getName()+ " ]");
+					if(!ObjectCompare.isInListByRegEx(clz.getSimpleName(), includes) || ObjectCompare.isInListByRegEx(clz.getSimpleName(), exclusions)) {
+						LOG.warn("过滤任务组: " + clz.getSimpleName() + ", 类名 [ " + clz.getName()+ " ]");
 						continue ;
 					}
 					
@@ -548,9 +548,9 @@ public class SchedulerFactory {
 					for(int p = 0; p < parallel; p ++) {
 						BaseScheduler baseScheduler = (BaseScheduler) Globals.get(Injector.class).getInstance(clz);
 						SchedulerConfig config = new SchedulerConfig();
-						config.setId(clz.getClass().getSimpleName() + "-" + baseScheduler.getIndex(clz.getClass().getSimpleName()));
+						config.setId(clz.getSimpleName() + "-" + baseScheduler.getIndex(clz.getSimpleName()));
 						config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + config.getId());
-						config.setGroup(clz.getClass().getSimpleName());
+						config.setGroup(clz.getSimpleName());
 						config.setService(service);
 						config.setBeforeAfterOnly(scheduler.beforeAfterOnly());
 						config.setRunNumberOfTimes(scheduler.runNumberOfTimes());
