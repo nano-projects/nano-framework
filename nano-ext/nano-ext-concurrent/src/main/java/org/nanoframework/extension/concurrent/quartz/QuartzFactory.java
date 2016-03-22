@@ -54,6 +54,7 @@ import com.google.inject.Injector;
  * @author yanghe
  * @date 2015年6月8日 下午5:24:13 
  */
+@Deprecated
 public class QuartzFactory {
 	private static Logger LOG = LoggerFactory.getLogger(QuartzFactory.class);
 	private static QuartzFactory FACTORY;

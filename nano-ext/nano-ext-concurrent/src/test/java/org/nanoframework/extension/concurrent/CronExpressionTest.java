@@ -19,7 +19,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.junit.Test;
-import org.nanoframework.extension.concurrent.quartz.CronExpression;
+import org.nanoframework.extension.concurrent.scheduler.CronExpression;
 
 /**
  * @author yanghe

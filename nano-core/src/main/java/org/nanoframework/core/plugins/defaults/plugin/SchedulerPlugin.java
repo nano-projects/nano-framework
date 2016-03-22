@@ -1,11 +1,11 @@
 /**
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ * 		http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,23 +24,21 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
  * @author yanghe
- * @date 2015年10月30日 下午11:41:09
- * @see SchedulerPlugin
+ * @date 2016年03月22日 下午16:52:09
  */
-@Deprecated
-public class QuartzPlugin implements Plugin {
+public class SchedulerPlugin implements Plugin {
 
-	private Logger LOG = LoggerFactory.getLogger(QuartzPlugin.class);
+	private Logger LOG = LoggerFactory.getLogger(SchedulerPlugin.class);
 	
 	@Override
 	public void load() throws Throwable {
 		try {
-			Class<?> QuartzFactory = Class.forName("org.nanoframework.extension.concurrent.quartz.QuartzFactory");
-			Object quartzFactory = QuartzFactory.getMethod("getInstance").invoke(QuartzFactory);
+			Class<?> SchedulerFactory = Class.forName("org.nanoframework.extension.concurrent.scheduler.SchedulerFactory");
+			Object schedulerFactory = SchedulerFactory.getMethod("getInstance").invoke(SchedulerFactory);
 			long time = System.currentTimeMillis();
 			LOG.info("开始加载任务调度");
-			QuartzFactory.getMethod("load").invoke(QuartzFactory);
-			QuartzFactory.getMethod("startAll").invoke(quartzFactory);
+			SchedulerFactory.getMethod("load").invoke(SchedulerFactory);
+			SchedulerFactory.getMethod("startAll").invoke(schedulerFactory);
 			LOG.info("加载任务调度结束, 耗时: " + (System.currentTimeMillis() - time) + "ms");
 		} catch(Exception e) {
 			if(!(e instanceof ClassNotFoundException))

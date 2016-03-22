@@ -25,6 +25,7 @@ import org.nanoframework.extension.concurrent.quartz.Quartz;
  * @author yanghe
  * @date 2015年12月28日 下午4:00:33
  */
+@Deprecated
 @Quartz(name = "HelloWorldQuartz", parallel = 1)
 public class HelloWorldQuartz extends BaseQuartz {
 	private Logger LOG = LoggerFactory.getLogger(HelloWorldQuartz.class);

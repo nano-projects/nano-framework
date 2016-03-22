@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz.defaults.etcd;
+package org.nanoframework.extension.concurrent.scheduler.defaults.etcd;
 
-@Deprecated
-public interface EtcdQuartzOperate {
-	final EtcdQuartzOperate EMPTY = new EtcdQuartzOperate() {
+/**
+ * 
+ * @author yanghe
+ * @date 2016年3月22日 下午5:14:25
+ */
+public interface EtcdSchedulerOperate {
+	final EtcdSchedulerOperate EMPTY = new EtcdSchedulerOperate() {
 		@Override
 		public void stopping(String group, String id) { }
 		

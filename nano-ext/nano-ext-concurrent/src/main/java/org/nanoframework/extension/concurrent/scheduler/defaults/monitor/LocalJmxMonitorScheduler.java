@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz.defaults.monitor;
+package org.nanoframework.extension.concurrent.scheduler.defaults.monitor;
 
-import static org.nanoframework.extension.concurrent.quartz.QuartzFactory.DEFAULT_QUARTZ_NAME_PREFIX;
-import static org.nanoframework.extension.concurrent.quartz.QuartzFactory.threadFactory;
+import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.DEFAULT_SCHEDULER_NAME_PREFIX;
+import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.threadFactory;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
@@ -30,11 +30,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.nanoframework.commons.crypt.CryptUtil;
-import org.nanoframework.extension.concurrent.exception.QuartzException;
-import org.nanoframework.extension.concurrent.quartz.BaseQuartz;
-import org.nanoframework.extension.concurrent.quartz.QuartzConfig;
-import org.nanoframework.extension.concurrent.quartz.defaults.etcd.EtcdQuartz;
-import org.nanoframework.extension.concurrent.quartz.defaults.monitor.JmxMonitor.MemoryUsage;
+import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdScheduler;
+import org.nanoframework.extension.concurrent.scheduler.BaseScheduler;
+import org.nanoframework.extension.concurrent.scheduler.SchedulerConfig;
+import org.nanoframework.extension.concurrent.scheduler.defaults.monitor.JmxMonitor.MemoryUsage;
 import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
 
 
@@ -42,24 +41,23 @@ import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
  * 使用组件进行初始化，而非启动时初始化
  * 
  * @author yanghe
- * @date 2016年1月8日 上午9:46:03
+ * @date 2016年3月22日 下午5:14:03
  */
-@Deprecated
-public class LocalJmxMonitorQuartz extends BaseQuartz {
+public class LocalJmxMonitorScheduler extends BaseScheduler {
 	private final EtcdClient etcd;
 	
-	public static final String JMX_KEY = EtcdQuartz.DIR + "/Jmx.store";
-	public static final int JMX_RATE = Integer.parseInt(System.getProperty("context.quartz.app.jmx.rate", "5"));
-	public static final boolean JMX_ENABLE = Boolean.parseBoolean(System.getProperty("context.quartz.app.jmx.enable", "false"));
+	public static final String JMX_KEY = EtcdScheduler.DIR + "/Jmx.store";
+	public static final int JMX_RATE = Integer.parseInt(System.getProperty("context.scheduler.app.jmx.rate", "5"));
+	public static final boolean JMX_ENABLE = Boolean.parseBoolean(System.getProperty("context.scheduler.app.jmx.enable", "false"));
 	
-	public LocalJmxMonitorQuartz(EtcdClient etcd) {
+	public LocalJmxMonitorScheduler(EtcdClient etcd) {
 		this.etcd = etcd;
 		
-		QuartzConfig config = new QuartzConfig();
-		config.setId("LocalJmxMonitorQuartz-0");
-		config.setName(DEFAULT_QUARTZ_NAME_PREFIX + "LocalJmxMonitorQuartz-0");
-		config.setGroup("LocalJmxMonitorQuartz");
-		threadFactory.setBaseQuartz(this);
+		SchedulerConfig config = new SchedulerConfig();
+		config.setId("LocalJmxMonitorScheduler-0");
+		config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "LocalJmxMonitorScheduler-0");
+		config.setGroup("LocalJmxMonitorScheduler");
+		threadFactory.setBaseScheduler(this);
 		config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
 		config.setTotal(1);
 		config.setDaemon(true);
@@ -69,13 +67,13 @@ public class LocalJmxMonitorQuartz extends BaseQuartz {
 	}
 	
 	@Override
-	public void before() throws QuartzException {
+	public void before() {
 		
 	}
 
 	@SuppressWarnings("restriction")
 	@Override
-	public void execute() throws QuartzException {
+	public void execute() {
 		try {
 			JmxMonitor monitor = new JmxMonitor();
 			
@@ -111,7 +109,7 @@ public class LocalJmxMonitorQuartz extends BaseQuartz {
 			/** User defined */
 			monitor.setTps(Statistic.getInstance().setAndGetPointer(JMX_RATE));
 			
-			etcd.put(JMX_KEY, CryptUtil.encrypt(monitor.toString(), EtcdQuartz.SYSTEM_ID)).send().get();
+			etcd.put(JMX_KEY, CryptUtil.encrypt(monitor.toString(), EtcdScheduler.SYSTEM_ID)).send().get();
 		} catch(Throwable e) {
 			LOG.error(e.getMessage(), e);
 			thisWait(1000);
@@ -120,12 +118,12 @@ public class LocalJmxMonitorQuartz extends BaseQuartz {
 	}
 
 	@Override
-	public void after() throws QuartzException {
+	public void after() {
 		
 	}
 
 	@Override
-	public void destroy() throws QuartzException {
+	public void destroy() {
 		
 	}
 

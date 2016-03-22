@@ -1,5 +1,5 @@
 /**
- * Copyright 2015- the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz;
+package org.nanoframework.extension.concurrent.scheduler;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -23,22 +23,19 @@ import java.lang.annotation.Target;
 
 /**
  * 任务调度注解
- * 
  * @author yanghe
- * @date 2015年6月11日 下午2:32:03 
- *
+ * @date 2016年3月22日 下午5:15:27
  */
-@Deprecated
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface Quartz {
+public @interface Scheduler {
 	
 	/**
-	 * 调度任务名称
+	 * 调度任务组
 	 * @return String
 	 */
-	String name();
+	Class<? extends BaseScheduler> group();
 	
 	/**
 	 * 调度任务before()和after()方法是否在整个任务生命周期中只执行一次, 为true时只执行, 默认: false
@@ -77,9 +74,9 @@ public @interface Quartz {
 	boolean coreParallel() default false;
 	
 	/**
-	 * Quartz cron表达式
+	 * Scheduler cron表达式
 	 * @return
-	 * @see org.nanoframework.extension.concurrent.quartz.CronExpression
+	 * @see org.nanoframework.extension.concurrent.scheduler.CronExpression
 	 */
 	String cron() default "";
 	

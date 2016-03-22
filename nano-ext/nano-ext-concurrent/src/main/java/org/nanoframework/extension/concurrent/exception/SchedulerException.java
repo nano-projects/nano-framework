@@ -22,20 +22,19 @@ package org.nanoframework.extension.concurrent.exception;
  * @date 2015年6月11日 下午2:59:02 
  *
  */
-@Deprecated
-public class QuartzException extends RuntimeException {
+public class SchedulerException extends RuntimeException {
 	private static final long serialVersionUID = -2775206802007728986L;
 
-	public QuartzException() {
+	public SchedulerException() {
 
 	}
 	
-	public QuartzException(String message) {
+	public SchedulerException(String message) {
 		super(message);
 		
 	}
 	
-	public QuartzException(String message, Throwable cause) {
+	public SchedulerException(String message, Throwable cause) {
 		super(message, cause);
 		
 	}

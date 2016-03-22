@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz.defaults.etcd;
+package org.nanoframework.extension.concurrent.scheduler.defaults.etcd;
 
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.ObjectCompare;
-import org.nanoframework.extension.concurrent.quartz.QuartzConfig;
+import org.nanoframework.extension.concurrent.scheduler.SchedulerConfig;
 
-@Deprecated
+/**
+ * 
+ * @author yanghe
+ * @date 2016年3月22日 下午5:13:29
+ */
 public class EtcdOrder extends BaseEntity {
 	private static final long serialVersionUID = 6645140062880311456L;
 
@@ -28,7 +32,7 @@ public class EtcdOrder extends BaseEntity {
 	private String id;
 	private Integer size;
 	private Boolean autoStart;
-	private QuartzConfig config;
+	private SchedulerConfig config;
 	private String className;
 
 	public boolean valid() {
@@ -91,11 +95,11 @@ public class EtcdOrder extends BaseEntity {
 		this.autoStart = autoStart;
 	}
 
-	public QuartzConfig getConfig() {
+	public SchedulerConfig getConfig() {
 		return config;
 	}
 
-	public void setConfig(QuartzConfig config) {
+	public void setConfig(SchedulerConfig config) {
 		this.config = config;
 	}
 

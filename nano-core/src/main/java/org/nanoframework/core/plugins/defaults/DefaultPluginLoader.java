@@ -26,6 +26,7 @@ import org.nanoframework.core.plugins.defaults.plugin.HttpClientPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.JedisPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.Log4j2Plugin;
 import org.nanoframework.core.plugins.defaults.plugin.QuartzPlugin;
+import org.nanoframework.core.plugins.defaults.plugin.SchedulerPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
 
 /**
@@ -50,6 +51,7 @@ public class DefaultPluginLoader extends PluginLoader {
 		plugins.add(new Log4j2Plugin());
 		plugins.add(new JedisPlugin());
 		plugins.add(new QuartzPlugin());
+		plugins.add(new SchedulerPlugin());
 		plugins.add(new WebSocketPlugin());
 		plugins.add(new HttpClientPlugin());
 		

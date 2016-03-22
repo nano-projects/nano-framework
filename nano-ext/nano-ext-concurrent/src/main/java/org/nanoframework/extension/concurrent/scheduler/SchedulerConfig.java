@@ -1,11 +1,11 @@
 /**
- * Copyright 2015 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ * 		http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,19 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz;
+package org.nanoframework.extension.concurrent.scheduler;
 
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.nanoframework.commons.entity.BaseEntity;
-import org.nanoframework.extension.concurrent.exception.QuartzException;
+import org.nanoframework.extension.concurrent.exception.SchedulerException;
 
 /**
+ * 
  * @author yanghe
- * @date 2015年12月3日 下午10:15:05
+ * @date 2016年3月22日 下午5:15:49
  */
-@Deprecated
-public class QuartzConfig extends BaseEntity {
+public class SchedulerConfig extends BaseEntity {
 	private static final long serialVersionUID = 5426844475306359870L;
 	
 	private String id;
@@ -87,7 +87,7 @@ public class QuartzConfig extends BaseEntity {
 
 	public void setRunNumberOfTimes(Integer runNumberOfTimes) {
 		if(runNumberOfTimes == null || runNumberOfTimes < 0)
-			throw new QuartzException("运行次数不能小于0.");
+			throw new SchedulerException("运行次数不能小于0.");
 		
 		this.runNumberOfTimes = runNumberOfTimes;
 	}

@@ -1,11 +1,11 @@
 /**
- * Copyright 2015- the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ * 		http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz;
+package org.nanoframework.extension.concurrent.scheduler;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -24,20 +24,17 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.extension.concurrent.exception.QuartzException;
+import org.nanoframework.extension.concurrent.exception.SchedulerException;
 
 /**
  * 抽象Task类，对基本操作进行了封装
- * 
  * @author yanghe
- * @date 2015年6月8日 下午5:10:18 
- *
+ * @date 2016年3月22日 下午5:15:06
  */
-@Deprecated
-public abstract class BaseQuartz implements Runnable, Cloneable {
-	protected static Logger LOG = LoggerFactory.getLogger(BaseQuartz.class);
+public abstract class BaseScheduler implements Runnable, Cloneable {
+	protected static Logger LOG = LoggerFactory.getLogger(BaseScheduler.class);
 	
-	private QuartzConfig config;
+	private SchedulerConfig config;
 	private boolean close = true;
 	private boolean closed = true;
 	private boolean remove = false;
@@ -47,12 +44,12 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 	private AtomicBoolean isLock = new AtomicBoolean(false);
 	private static Map<String, AtomicLong> index = new HashMap<String, AtomicLong>();
 	
-	public BaseQuartz() { }
+	public BaseScheduler() { }
 	
-	public BaseQuartz(QuartzConfig config) {
-		Assert.notNull(config, "QuartzConfig must not be null");
+	public BaseScheduler(SchedulerConfig config) {
+		Assert.notNull(config, "SchedulerConfig must not be null");
 		if(config.getRunNumberOfTimes() != null && config.getRunNumberOfTimes() < 0)
-			throw new QuartzException("运行次数不能小于0.");
+			throw new SchedulerException("运行次数不能小于0.");
 		
 		this.config = config;
 	}
@@ -126,7 +123,7 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 			
 		} finally {
 			closed = true;
-			QuartzFactory.getInstance().unbind(this);
+			SchedulerFactory.getInstance().unbind(this);
 			destroy();
 			
 		}
@@ -137,7 +134,7 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 	 */
 	private void finallyProcess() {
 		if(config.getService() == null) 
-			throw new QuartzException("ThreadPoolExecutor不能为空");
+			throw new SchedulerException("ThreadPoolExecutor不能为空");
 		
 		if(!close && !config.getService().isShutdown()) {
 			long interval = delay();
@@ -196,27 +193,23 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 	
 	/**
 	 * 逻辑执行前操作
-	 * @throws QuartzException 任务异常
 	 */
-	public abstract void before() throws QuartzException;
+	public abstract void before();
 	
 	/**
 	 * 逻辑执行操作
-	 * @throws QuartzException 任务异常
 	 */
-	public abstract void execute() throws QuartzException;
+	public abstract void execute();
 	
 	/**
 	 * 逻辑执行后操作
-	 * @throws QuartzException 任务异常
 	 */
-	public abstract void after() throws QuartzException;
+	public abstract void after();
 	
 	/**
 	 * 任务结束后销毁资源操作
-	 * @throws QuartzException 任务异常
 	 */
-	public abstract void destroy() throws QuartzException;
+	public abstract void destroy();
 
 	public boolean isRunning() {
 		return isRunning;
@@ -246,11 +239,11 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 		return remove;
 	}
 
-	public QuartzConfig getConfig() {
+	public SchedulerConfig getConfig() {
 		return config;
 	}
 	
-	public void setConfig(QuartzConfig config) {
+	public void setConfig(SchedulerConfig config) {
 		this.config = config;
 	}
 	
@@ -263,11 +256,11 @@ public abstract class BaseQuartz implements Runnable, Cloneable {
 	}
 	
 	@Override
-	public BaseQuartz clone() {
+	public BaseScheduler clone() {
 		try {
-			return (BaseQuartz) super.clone();
+			return (BaseScheduler) super.clone();
 		} catch(CloneNotSupportedException e) {
-			throw new QuartzException(e.getMessage(), e);
+			throw new SchedulerException(e.getMessage(), e);
 		}
 	}
 }

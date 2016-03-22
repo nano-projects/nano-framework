@@ -1,11 +1,11 @@
 /**
- * Copyright 2015- the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ * 		http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,34 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz;
+package org.nanoframework.extension.concurrent.scheduler;
 
 import java.util.concurrent.ThreadFactory;
 
 /**
+ * 
  * @author yanghe
- * @date 2015年12月03日 下午8:31:13 
- * @see org.nanoframework.extension.concurrent.scheduler.SchedulerThreadFactory
+ * @date 2016年3月22日 下午5:16:32
  */
-@Deprecated
-public class QuartzThreadFactory implements ThreadFactory {
-	private BaseQuartz baseQuartz;
+public class SchedulerThreadFactory implements ThreadFactory {
+	private BaseScheduler baseScheduler;
 
 	@Override
 	public Thread newThread(Runnable runnable) {
-		if(baseQuartz == null) {
+		if(baseScheduler == null) {
 			Thread thread = new Thread(runnable);
-			thread.setName("Quartz-Thread-" + System.currentTimeMillis());
+			thread.setName("Scheduler-Thread-" + System.currentTimeMillis());
 			return thread;
 		}
 		
-		Thread thread = new Thread(baseQuartz);
-		thread.setName(baseQuartz.getConfig().getName());
-		thread.setDaemon(baseQuartz.getConfig().getDaemon());
+		Thread thread = new Thread(baseScheduler);
+		thread.setName(baseScheduler.getConfig().getName());
+		thread.setDaemon(baseScheduler.getConfig().getDaemon());
 		return thread;
 	}
 
-	public void setBaseQuartz(BaseQuartz baseQuartz) {
-		this.baseQuartz = baseQuartz;
+	public void setBaseScheduler(BaseScheduler baseScheduler) {
+		this.baseScheduler = baseScheduler;
 	}
 }

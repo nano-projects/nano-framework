@@ -13,11 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz.defaults.etcd;
+package org.nanoframework.extension.concurrent.scheduler.defaults.etcd;
 
 import org.nanoframework.commons.entity.BaseEntity;
 
-@Deprecated
+/**
+ * 
+ * @author yanghe
+ * @date 2016年3月22日 下午5:13:14
+ */
 public class EtcdAppInfo extends BaseEntity {
 	private static final long serialVersionUID = -5412741101794352940L;
 

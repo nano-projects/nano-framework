@@ -27,6 +27,7 @@ import org.nanoframework.extension.concurrent.quartz.Quartz;
  * @author yanghe
  * @date 2015年11月1日 下午6:01:35
  */
+@Deprecated
 @Quartz(name = "CrontabMinuteQuartz", beforeAfterOnly = true, cron = "0 */1 * * * ?", lazy = true, parallel = 1)
 public class CrontabMinuteQuartz extends BaseQuartz {
 

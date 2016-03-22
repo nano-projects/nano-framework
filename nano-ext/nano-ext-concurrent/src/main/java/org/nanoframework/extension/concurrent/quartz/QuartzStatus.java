@@ -2,6 +2,7 @@ package org.nanoframework.extension.concurrent.quartz;
 
 import org.nanoframework.commons.entity.BaseEntity;
 
+@Deprecated
 public class QuartzStatus extends BaseEntity {
 	private static final long serialVersionUID = 5876395587017572488L;
 

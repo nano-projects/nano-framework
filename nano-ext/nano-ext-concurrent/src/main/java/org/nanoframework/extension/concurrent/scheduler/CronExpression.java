@@ -1,4 +1,4 @@
-package org.nanoframework.extension.concurrent.quartz;
+package org.nanoframework.extension.concurrent.scheduler;
 
 import java.io.Serializable;
 import java.text.ParseException;
@@ -179,7 +179,6 @@ import java.util.TreeSet;
  * @author Contributions from Mads Henderson
  * @author Refactoring from CronTrigger to CronExpression by Aaron Craven
  */
-@Deprecated
 public final class CronExpression implements Serializable, Cloneable {
 
     private static final long serialVersionUID = 12423409423L;

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.quartz.defaults.etcd;
+package org.nanoframework.extension.concurrent.scheduler.defaults.etcd;
 
-import static org.nanoframework.extension.concurrent.quartz.QuartzFactory.DEFAULT_QUARTZ_NAME_PREFIX;
-import static org.nanoframework.extension.concurrent.quartz.QuartzFactory.threadFactory;
+import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.DEFAULT_SCHEDULER_NAME_PREFIX;
+import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.threadFactory;
 
 import java.text.ParseException;
 import java.util.List;
@@ -28,12 +28,12 @@ import java.util.concurrent.TimeUnit;
 import org.nanoframework.commons.crypt.CryptUtil;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.StringUtils;
-import org.nanoframework.extension.concurrent.exception.QuartzException;
-import org.nanoframework.extension.concurrent.quartz.BaseQuartz;
-import org.nanoframework.extension.concurrent.quartz.CronExpression;
-import org.nanoframework.extension.concurrent.quartz.QuartzConfig;
-import org.nanoframework.extension.concurrent.quartz.QuartzFactory;
+import org.nanoframework.extension.concurrent.exception.SchedulerException;
 import org.nanoframework.extension.concurrent.queue.BlockingQueueFactory;
+import org.nanoframework.extension.concurrent.scheduler.BaseScheduler;
+import org.nanoframework.extension.concurrent.scheduler.CronExpression;
+import org.nanoframework.extension.concurrent.scheduler.SchedulerConfig;
+import org.nanoframework.extension.concurrent.scheduler.SchedulerFactory;
 import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
 import org.nanoframework.extension.etcd.etcd4j.responses.EtcdKeysResponse;
 import org.nanoframework.extension.etcd.etcd4j.responses.EtcdKeysResponse.EtcdNode;
@@ -41,27 +41,31 @@ import org.nanoframework.extension.etcd.etcd4j.responses.EtcdKeysResponse.EtcdNo
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
-@Deprecated
-public class EtcdOrderWatcherQuartz extends BaseQuartz {
+/**
+ * 
+ * @author yanghe
+ * @date 2016年3月22日 下午5:13:33
+ */
+public class EtcdOrderWatcherScheduler extends BaseScheduler {
 	
-	public static final String ORDER = EtcdQuartz.DIR + "/Order.list";
+	public static final String ORDER = EtcdScheduler.DIR + "/Order.list";
 	
-	private BlockingQueue<Object> nodesQueue = BlockingQueueFactory.getInstance().getQueue(EtcdOrderWatcherQuartz.class.getName());
+	private BlockingQueue<Object> nodesQueue = BlockingQueueFactory.getInstance().getQueue(EtcdOrderWatcherScheduler.class.getName());
 	
 	private final EtcdClient etcd;
 	
-	private EtcdOrderExecuteQuartz etcdOrderExecuteQuartz;
+	private EtcdOrderExecuteScheduler etcdOrderExecuteScheduler;
 	
-	private EtcdOrderFetchQuartz etcdOrderFetchQuartz;
+	private EtcdOrderFetchScheduler etcdOrderFetchScheduler;
 	
-	public EtcdOrderWatcherQuartz(EtcdClient etcd) {
+	public EtcdOrderWatcherScheduler(EtcdClient etcd) {
 		this.etcd = etcd;
 		
-		QuartzConfig config = new QuartzConfig();
-		config.setId("EtcdOrderWatcherQuartz-0");
-		config.setName(DEFAULT_QUARTZ_NAME_PREFIX + "EtcdOrderWatcherQuartz-0");
-		config.setGroup("EtcdOrderWatcherQuartz");
-		threadFactory.setBaseQuartz(this);
+		SchedulerConfig config = new SchedulerConfig();
+		config.setId("EtcdOrderWatcherScheduler-0");
+		config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "EtcdOrderWatcherScheduler-0");
+		config.setGroup("EtcdOrderWatcherScheduler");
+		threadFactory.setBaseScheduler(this);
 		config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
 		config.setTotal(1);
 		config.setDaemon(true);
@@ -71,31 +75,31 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 	}
 	
 	@Override
-	public void before() throws QuartzException {
-		if(etcdOrderExecuteQuartz == null) {
+	public void before() throws SchedulerException {
+		if(etcdOrderExecuteScheduler == null) {
 			synchronized (this) {
-				if(etcdOrderExecuteQuartz == null) {
-					etcdOrderExecuteQuartz = this.new EtcdOrderExecuteQuartz();
-					etcdOrderExecuteQuartz.getConfig().getService().execute(etcdOrderExecuteQuartz);
+				if(etcdOrderExecuteScheduler == null) {
+					etcdOrderExecuteScheduler = this.new EtcdOrderExecuteScheduler();
+					etcdOrderExecuteScheduler.getConfig().getService().execute(etcdOrderExecuteScheduler);
 				}
 			}
 		}
 		
-		if(etcdOrderFetchQuartz == null) {
+		if(etcdOrderFetchScheduler == null) {
 			synchronized (this) {
-				if(etcdOrderFetchQuartz == null) {
-					etcdOrderFetchQuartz = this.new EtcdOrderFetchQuartz();
-					etcdOrderFetchQuartz.getConfig().getService().execute(etcdOrderFetchQuartz);
+				if(etcdOrderFetchScheduler == null) {
+					etcdOrderFetchScheduler = this.new EtcdOrderFetchScheduler();
+					etcdOrderFetchScheduler.getConfig().getService().execute(etcdOrderFetchScheduler);
 				}
 			}
 		}
 	}
 
 	@Override
-	public void execute() throws QuartzException {
+	public void execute() throws SchedulerException {
 		try {
 			etcd.get(ORDER).recursive().sorted().waitForChange().send().get();
-			etcdOrderFetchQuartz.active();
+			etcdOrderFetchScheduler.active();
 			
 		} catch (Exception e) {
 			LOG.error("waitForChange error: " + e.getMessage());
@@ -105,25 +109,25 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 	}
 	
 	@Override
-	public void after() throws QuartzException {
+	public void after() throws SchedulerException {
 
 	}
 
 	@Override
-	public void destroy() throws QuartzException {
+	public void destroy() throws SchedulerException {
 
 	}
 	
-	private class EtcdOrderFetchQuartz extends BaseQuartz {
+	private class EtcdOrderFetchScheduler extends BaseScheduler {
 		private boolean active = false;
 		private int count = 0;
 		
-		public EtcdOrderFetchQuartz() {
-			QuartzConfig config = new QuartzConfig();
-			config.setId("EtcdOrderFetchQuartz-0");
-			config.setName(DEFAULT_QUARTZ_NAME_PREFIX + "EtcdOrderFetchQuartz-0");
-			config.setGroup("EtcdOrderFetchQuartz");
-			threadFactory.setBaseQuartz(this);
+		public EtcdOrderFetchScheduler() {
+			SchedulerConfig config = new SchedulerConfig();
+			config.setId("EtcdOrderFetchScheduler-0");
+			config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "EtcdOrderFetchScheduler-0");
+			config.setGroup("EtcdOrderFetchScheduler");
+			threadFactory.setBaseScheduler(this);
 			config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
 			config.setTotal(1);
 			config.setDaemon(true);
@@ -133,10 +137,10 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 		}
 		
 		@Override
-		public void before() throws QuartzException { }
+		public void before() throws SchedulerException { }
 
 		@Override
-		public void execute() throws QuartzException {
+		public void execute() throws SchedulerException {
 			if(active) {
 				try {
 					EtcdKeysResponse response = etcd.get(ORDER).sorted().send().get();
@@ -178,24 +182,24 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 		}
 
 		@Override
-		public void after() throws QuartzException { }
+		public void after() throws SchedulerException { }
 
 		@Override
-		public void destroy() throws QuartzException { }
+		public void destroy() throws SchedulerException { }
 		
 	}
 
-	private class EtcdOrderExecuteQuartz extends BaseQuartz {
+	private class EtcdOrderExecuteScheduler extends BaseScheduler {
 		private TypeReference<EtcdOrder> type = new TypeReference<EtcdOrder>() {};
-		private QuartzFactory FACTORY = QuartzFactory.getInstance();
+		private SchedulerFactory FACTORY = SchedulerFactory.getInstance();
 		private String value;
 		
-		public EtcdOrderExecuteQuartz() {
-			QuartzConfig config = new QuartzConfig();
-			config.setId("EtcdOrderExecuteQuartz-0");
-			config.setName(DEFAULT_QUARTZ_NAME_PREFIX + "EtcdOrderExecuteQuartz-0");
-			config.setGroup("EtcdOrderExecuteQuartz");
-			threadFactory.setBaseQuartz(this);
+		public EtcdOrderExecuteScheduler() {
+			SchedulerConfig config = new SchedulerConfig();
+			config.setId("EtcdOrderExecuteScheduler-0");
+			config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "EtcdOrderExecuteScheduler-0");
+			config.setGroup("EtcdOrderExecuteScheduler");
+			threadFactory.setBaseScheduler(this);
 			config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
 			config.setTotal(1);
 			config.setDaemon(true);
@@ -204,17 +208,17 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 		}
 		
 		@Override
-		public void before() throws QuartzException {
+		public void before() throws SchedulerException {
 			try {
 				value = (String) nodesQueue.poll(1000, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) { }
 		}
 
 		@Override
-		public void execute() throws QuartzException {
+		public void execute() throws SchedulerException {
 			if(!StringUtils.isEmpty(value)) {
 				try {
-					EtcdOrder order = JSON.parseObject(CryptUtil.decrypt(value, EtcdQuartz.SYSTEM_ID), type);
+					EtcdOrder order = JSON.parseObject(CryptUtil.decrypt(value, EtcdScheduler.SYSTEM_ID), type);
 					if(order != null && order.valid()) {
 						switch(order.getAction()) {
 							case APPEND: 
@@ -239,7 +243,7 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 								FACTORY.closeAll();
 								break;
 							case REMOVE: 
-								FACTORY.removeQuartz(FACTORY.find(order.getId()));
+								FACTORY.removeScheduler(FACTORY.find(order.getId()));
 								break;
 							case REMOVE_GROUP: 
 								FACTORY.removeGroup(order.getGroup());
@@ -256,12 +260,12 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 		}
 
 		@Override
-		public void after() throws QuartzException {
+		public void after() throws SchedulerException {
 			value = null;
 		}
 
 		@Override
-		public void destroy() throws QuartzException {
+		public void destroy() throws SchedulerException {
 			
 		}
 		
