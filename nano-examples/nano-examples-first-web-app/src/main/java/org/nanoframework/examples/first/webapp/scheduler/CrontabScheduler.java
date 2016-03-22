@@ -26,7 +26,7 @@ import org.nanoframework.extension.concurrent.scheduler.Scheduler;
  * @author yanghe
  * @date 2016年03月22日 下午5:01:35
  */
-@Scheduler(group = CrontabScheduler.class, beforeAfterOnly = true, cron = "*/5 * * * * ?", parallel = 1, daemon = true)
+@Scheduler(beforeAfterOnly = true, cron = "*/5 * * * * ?", parallel = 1, daemon = true)
 public class CrontabScheduler extends BaseScheduler {
 
 	private Logger LOG = LoggerFactory.getLogger(CrontabScheduler.class);

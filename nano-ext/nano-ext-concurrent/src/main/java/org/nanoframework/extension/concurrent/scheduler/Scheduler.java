@@ -32,12 +32,6 @@ import java.lang.annotation.Target;
 public @interface Scheduler {
 	
 	/**
-	 * 调度任务组
-	 * @return Class
-	 */
-	Class<? extends BaseScheduler> group();
-	
-	/**
 	 * 调度任务before()和after()方法是否在整个任务生命周期中只执行一次, 为true时只执行, 默认: false
 	 * @return boolean
 	 */
