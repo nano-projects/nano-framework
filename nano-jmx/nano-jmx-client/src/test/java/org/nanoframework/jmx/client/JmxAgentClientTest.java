@@ -24,6 +24,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -33,6 +34,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
  * @author yanghe
  * @date 2015年8月19日 上午9:07:48
  */
+@Ignore
 public class JmxAgentClientTest {
 	private Logger LOG = LoggerFactory.getLogger(JmxAgentClientTest.class);
 	

@@ -23,6 +23,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
@@ -48,6 +49,7 @@ public class SortedSetTest {
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Ignore
 	@Test
 	public void sortedSetTest() {
 		if(redisClient == null)

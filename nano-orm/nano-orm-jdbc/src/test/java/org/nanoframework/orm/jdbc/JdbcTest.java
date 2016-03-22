@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
@@ -42,6 +43,7 @@ import org.nanoframework.orm.jdbc.jstl.Result;
 @JdbcCreater
 public class JdbcTest {
 
+	@Ignore
 	@Test
 	public void test0() throws LoaderException, IOException, IllegalArgumentException, IllegalAccessException, PropertyVetoException, SQLException {
 		List<JdbcConfig> configs = null;
@@ -62,6 +64,7 @@ public class JdbcTest {
 		
 	}
 	
+	@Ignore
 	@Test
 	public void test1() throws LoaderException, IOException, IllegalArgumentException, IllegalAccessException, PropertyVetoException, SQLException {
 		List<JdbcConfig> configs = null;

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -47,6 +48,7 @@ import com.alibaba.fastjson.TypeReference;
  * @author yanghe
  * @date 2015年8月19日 上午9:07:55
  */
+@Ignore
 public class JmxClientTest {
 
 	private Logger LOG = LoggerFactory.getLogger(JmxClientTest.class);

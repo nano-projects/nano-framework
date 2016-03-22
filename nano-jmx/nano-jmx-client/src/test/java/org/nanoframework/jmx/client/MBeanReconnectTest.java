@@ -18,6 +18,7 @@ package org.nanoframework.jmx.client;
 import java.io.IOException;
 import java.lang.management.RuntimeMXBean;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -28,6 +29,7 @@ import org.nanoframework.jmx.client.management.impl.RuntimeImpl;
  * @author yanghe
  * @date 2015年8月19日 下午2:09:38
  */
+@Ignore
 public class MBeanReconnectTest {
 	private Logger LOG = LoggerFactory.getLogger(MBeanReconnectTest.class);
 	

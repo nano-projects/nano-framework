@@ -20,6 +20,7 @@ import java.lang.management.ThreadMXBean;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -33,6 +34,7 @@ import com.alibaba.fastjson.TypeReference;
  * @author yanghe
  * @date 2015年8月19日 上午9:08:02
  */
+@Ignore
 public class ThreadingTest {
 
 	private Logger LOG = LoggerFactory.getLogger(ThreadingTest.class);

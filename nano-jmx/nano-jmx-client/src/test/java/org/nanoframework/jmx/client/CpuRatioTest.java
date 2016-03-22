@@ -18,6 +18,7 @@ package org.nanoframework.jmx.client;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -27,9 +28,11 @@ import org.nanoframework.jmx.client.management.impl.OperatingSystemImpl;
  * @author yanghe
  * @date 2015年9月2日 下午5:35:54
  */
+@Ignore
 public class CpuRatioTest {
-	private Logger LOG = LoggerFactory.getLogger(ThreadingTest.class);
+	private Logger LOG = LoggerFactory.getLogger(CpuRatioTest.class);
 	JmxClient client;
+	
 	
 	@Before
 	public void init() {

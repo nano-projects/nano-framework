@@ -26,6 +26,7 @@ import javax.management.MBeanException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ReflectionException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -54,6 +55,7 @@ public class SSHTest {
 	private ShellExecutor ssh;
 	private FindProcessExecutor callSsh;
 	
+	@Ignore
 	@Test
 	public void test0() throws InterruptedException, MalformedObjectNameException, AttributeNotFoundException, InstanceNotFoundException, MBeanException, ReflectionException {
 		try {
