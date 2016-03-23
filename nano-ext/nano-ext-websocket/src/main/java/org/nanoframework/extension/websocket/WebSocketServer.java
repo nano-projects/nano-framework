@@ -15,8 +15,6 @@
  */
 package org.nanoframework.extension.websocket;
 
-import static io.netty.handler.codec.http.HttpHeaders.Names.HOST;
-
 import java.security.cert.CertificateException;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +31,7 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.handler.ssl.SslContext;
@@ -155,7 +154,7 @@ public final class WebSocketServer {
     }
     
     public String getWebSocketLocation(FullHttpRequest req) {
-        String _location =  req.headers().get(HOST) + location;
+        String _location =  req.headers().get(HttpHeaderNames.HOST) + location;
         if (ssl) {
             return "wss://" + _location;
         } else {
