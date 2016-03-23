@@ -17,6 +17,13 @@ package org.nanoframework.extension.concurrent.quartz.defaults.monitor;
 
 import org.nanoframework.commons.entity.BaseEntity;
 
+/**
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.monitor.Pointer}
+ * The next version will be removed
+ * 
+ * @author yanghe
+ * @date 2016年3月23日 上午9:33:00
+ */
 @Deprecated
 public class Pointer extends BaseEntity {
 	private static final long serialVersionUID = 7350989467756362845L;

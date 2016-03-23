@@ -6,6 +6,13 @@ import java.util.Map;
 
 import org.nanoframework.commons.entity.BaseEntity;
 
+/**
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.monitor.JmxMonitor}
+ * The next version will be removed
+ * 
+ * @author yanghe
+ * @date 2016年3月23日 上午9:34:05
+ */
 @Deprecated
 public class JmxMonitor extends BaseEntity {
 	private static final long serialVersionUID = 743543178402183287L;

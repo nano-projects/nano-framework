@@ -19,6 +19,13 @@ import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.ObjectCompare;
 import org.nanoframework.extension.concurrent.quartz.QuartzConfig;
 
+/**
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdOrder}
+ * The next version will be removed
+ * 
+ * @author yanghe
+ * @date 2016年3月23日 上午9:36:16
+ */
 @Deprecated
 public class EtcdOrder extends BaseEntity {
 	private static final long serialVersionUID = 6645140062880311456L;

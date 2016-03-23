@@ -2,6 +2,13 @@ package org.nanoframework.extension.concurrent.quartz;
 
 import org.nanoframework.commons.entity.BaseEntity;
 
+/**
+ * This is a stupid name, now renamed to {@link org.nanoframework.extension.concurrent.scheduler.SchedulerStatus}
+ * The next version will be removed
+ * 
+ * @author yanghe
+ * @date 2016年3月23日 上午9:29:55
+ */
 @Deprecated
 public class QuartzStatus extends BaseEntity {
 	private static final long serialVersionUID = 5876395587017572488L;

@@ -15,6 +15,13 @@
  */
 package org.nanoframework.extension.concurrent.quartz.defaults.etcd;
 
+/**
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdSchedulerOperate}
+ * The next version will be removed
+ * 
+ * @author yanghe
+ * @date 2016年3月23日 上午9:34:18
+ */
 @Deprecated
 public interface EtcdQuartzOperate {
 	final EtcdQuartzOperate EMPTY = new EtcdQuartzOperate() {

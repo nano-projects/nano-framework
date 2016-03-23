@@ -17,6 +17,13 @@ package org.nanoframework.extension.concurrent.quartz.defaults.etcd;
 
 import org.nanoframework.commons.entity.BaseEntity;
 
+/**
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdAppInfo}
+ * The next version will be removed
+ * 
+ * @author yanghe
+ * @date 2016年3月23日 上午9:36:27
+ */
 @Deprecated
 public class EtcdAppInfo extends BaseEntity {
 	private static final long serialVersionUID = -5412741101794352940L;

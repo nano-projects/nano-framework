@@ -174,10 +174,13 @@ import java.util.TreeSet;
  * </ul>
  * </p>
  * 
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.CronExpression}
+ * The next version will be removed
  * 
  * @author Sharada Jambula, James House
  * @author Contributions from Mads Henderson
  * @author Refactoring from CronTrigger to CronExpression by Aaron Craven
+ * @author yanghe
  */
 @Deprecated
 public final class CronExpression implements Serializable, Cloneable {

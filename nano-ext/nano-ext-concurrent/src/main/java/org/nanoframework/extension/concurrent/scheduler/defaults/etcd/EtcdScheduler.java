@@ -213,7 +213,7 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 	public void syncInstance() {
 		Collection<BaseScheduler> started = SchedulerFactory.getInstance().getStartedScheduler();
 		Collection<BaseScheduler> stopping = SchedulerFactory.getInstance().getStoppingScheduler();
-		Collection<BaseScheduler> stopped = SchedulerFactory.getInstance().getStoppedQuratz();
+		Collection<BaseScheduler> stopped = SchedulerFactory.getInstance().getStoppedScheduler();
 		
 		if(!CollectionUtils.isEmpty(started)) {
 			for(BaseScheduler scheduler : started) 

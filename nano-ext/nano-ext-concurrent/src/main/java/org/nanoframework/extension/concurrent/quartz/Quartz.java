@@ -22,7 +22,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 任务调度注解
+ * This is a stupid name, now renamed to {@link org.nanoframework.extension.concurrent.scheduler.Scheduler}
+ * The next version will be removed
  * 
  * @author yanghe
  * @date 2015年6月11日 下午2:32:03 

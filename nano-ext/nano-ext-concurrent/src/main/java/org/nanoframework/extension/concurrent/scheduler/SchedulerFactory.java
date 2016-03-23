@@ -151,7 +151,7 @@ public class SchedulerFactory {
 		return stoppedScheduler.size();
 	}
 	
-	public Collection<BaseScheduler> getStoppedQuratz() {
+	public Collection<BaseScheduler> getStoppedScheduler() {
 		return stoppedScheduler.values();
 	}
 	

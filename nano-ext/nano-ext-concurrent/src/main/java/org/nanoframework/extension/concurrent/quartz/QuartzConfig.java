@@ -21,6 +21,9 @@ import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.extension.concurrent.exception.QuartzException;
 
 /**
+ * This is a stupid name, now renamed to {@link org.nanoframework.extension.concurrent.scheduler.SchedulerConfig}
+ * The next version will be removed
+ * 
  * @author yanghe
  * @date 2015年12月3日 下午10:15:05
  */

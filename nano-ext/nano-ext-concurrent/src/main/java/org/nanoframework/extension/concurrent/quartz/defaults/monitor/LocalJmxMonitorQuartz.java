@@ -40,6 +40,8 @@ import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
 
 /**
  * 使用组件进行初始化，而非启动时初始化
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.monitor.LocalJmxMonitorScheduler}
+ * The next version will be removed
  * 
  * @author yanghe
  * @date 2016年1月8日 上午9:46:03

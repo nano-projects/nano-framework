@@ -10,6 +10,13 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.monitor.Statistic}
+ * The next version will be removed
+ * 
+ * @author yanghe
+ * @date 2016年3月23日 上午9:31:58
+ */
 @Deprecated
 public class Statistic {
 	private ConcurrentMap<String , AtomicLong> statisticMap = new ConcurrentHashMap<String , AtomicLong>();

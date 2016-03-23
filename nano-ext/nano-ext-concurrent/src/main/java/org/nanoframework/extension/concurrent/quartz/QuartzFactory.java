@@ -50,7 +50,9 @@ import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
 /**
- * 任务工厂
+ * This is a stupid name, now renamed to {@link org.nanoframework.extension.concurrent.scheduler.SchedulerFactory}
+ * The next version will be removed
+ * 
  * @author yanghe
  * @date 2015年6月8日 下午5:24:13 
  */
@@ -88,9 +90,9 @@ public class QuartzFactory {
 			synchronized (LOCK) {
 				if(FACTORY == null) {
 					FACTORY = new QuartzFactory();
-					StatusMonitorQuartz statusMonitor = FACTORY.new StatusMonitorQuartz();
-					statusMonitor.getConfig().getService().execute(statusMonitor);
-					Runtime.getRuntime().addShutdownHook(new Thread(FACTORY.new ShutdownHook()));
+//					StatusMonitorQuartz statusMonitor = FACTORY.new StatusMonitorQuartz();
+//					statusMonitor.getConfig().getService().execute(statusMonitor);
+//					Runtime.getRuntime().addShutdownHook(new Thread(FACTORY.new ShutdownHook()));
 				}
 			}
 		}
@@ -638,6 +640,7 @@ public class QuartzFactory {
 		});
 	}
 	
+	@Deprecated
 	protected class StatusMonitorQuartz extends BaseQuartz {
 		private final ConcurrentMap<String, BaseQuartz> closed;
 		

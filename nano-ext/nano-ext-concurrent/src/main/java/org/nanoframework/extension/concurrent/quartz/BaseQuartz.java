@@ -27,7 +27,8 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.extension.concurrent.exception.QuartzException;
 
 /**
- * 抽象Task类，对基本操作进行了封装
+ * This is a stupid name, now renamed to {@link org.nanoframework.extension.concurrent.scheduler.BaseScheduler}
+ * The next version will be removed
  * 
  * @author yanghe
  * @date 2015年6月8日 下午5:10:18 

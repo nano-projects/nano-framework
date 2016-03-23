@@ -18,9 +18,11 @@ package org.nanoframework.extension.concurrent.quartz;
 import java.util.concurrent.ThreadFactory;
 
 /**
+ * This is a stupid name, now renamed to {@link org.nanoframework.extension.concurrent.scheduler.SchedulerThreadFactory}
+ * The next version will be removed
+ * 
  * @author yanghe
  * @date 2015年12月03日 下午8:31:13 
- * @see org.nanoframework.extension.concurrent.scheduler.SchedulerThreadFactory
  */
 @Deprecated
 public class QuartzThreadFactory implements ThreadFactory {

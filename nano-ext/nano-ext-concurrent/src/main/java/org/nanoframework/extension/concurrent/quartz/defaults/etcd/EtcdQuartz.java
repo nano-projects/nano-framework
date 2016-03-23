@@ -51,6 +51,11 @@ import org.nanoframework.extension.etcd.client.retry.RetryWithExponentialBackOff
 import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
 import org.nanoframework.extension.etcd.etcd4j.responses.EtcdKeysResponse;
 
+/**
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdScheduler}
+ * The next version will be removed
+ * 
+ */
 @Deprecated
 public class EtcdQuartz extends BaseQuartz implements EtcdQuartzOperate {
 

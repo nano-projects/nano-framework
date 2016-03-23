@@ -41,6 +41,13 @@ import org.nanoframework.extension.etcd.etcd4j.responses.EtcdKeysResponse.EtcdNo
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 
+/**
+ * move to {@link org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdOrderWatcherScheduler}
+ * The next version will be removed
+ * 
+ * @author yanghe
+ * @date 2016年3月23日 上午9:35:05
+ */
 @Deprecated
 public class EtcdOrderWatcherQuartz extends BaseQuartz {
 	
@@ -114,6 +121,7 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 
 	}
 	
+	@Deprecated
 	private class EtcdOrderFetchQuartz extends BaseQuartz {
 		private boolean active = false;
 		private int count = 0;
@@ -185,6 +193,7 @@ public class EtcdOrderWatcherQuartz extends BaseQuartz {
 		
 	}
 
+	@Deprecated
 	private class EtcdOrderExecuteQuartz extends BaseQuartz {
 		private TypeReference<EtcdOrder> type = new TypeReference<EtcdOrder>() {};
 		private QuartzFactory FACTORY = QuartzFactory.getInstance();
