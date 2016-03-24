@@ -17,6 +17,8 @@ package org.nanoframework.orm.jedis;
 
 import static org.nanoframework.orm.jedis.RedisClientPool.POOL;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -54,9 +56,11 @@ import redis.clients.jedis.Tuple;
  * @date 2015年7月26日 上午11:01:19 
  *
  */
-public class RedisClientImpl implements RedisClient {
+public class RedisClientImpl implements RedisClient, Closeable {
 	
 	private RedisConfig config;
+	
+	private final ThreadLocal<Object[]> transactional = new ThreadLocal<>();
 	
 	public RedisClientImpl(String type) {
 		config = POOL.getRedisConfig(type);
@@ -126,6 +130,40 @@ public class RedisClientImpl implements RedisClient {
 	
 	private boolean isSuccess(long value) {
 		return value == SUCCESS ? true : false;
+	}
+	
+	@Override
+	public ShardedJedisPipeline pipeline() {
+		if(transactional.get() != null) 
+			throw new RedisClientException("The current thread already open pipeline");
+		
+		ShardedJedis jedis = null;
+		try{
+			jedis = POOL.getJedis(config.getRedisType());
+			ShardedJedisPipeline pipeline = jedis.pipelined();
+			transactional.set(new Object[] { jedis, pipeline });
+			return pipeline;
+		} catch(Exception e) {
+			POOL.close(jedis);
+			throw new RedisClientException("Open jedis transactional error: " + e.getMessage());
+		}
+	}
+	
+	@Override
+	public void sync() {
+		Object[] transaction = transactional.get();
+		if(transaction != null) {
+			((ShardedJedisPipeline) transaction[1]).sync();
+		}
+	}
+	
+	@Override
+	public void close() throws IOException {
+		Object[] transaction = transactional.get();
+		if(transaction != null) {
+			POOL.close((ShardedJedis) transaction[0]);
+			transactional.remove();
+		}
 	}
 
 	@Override
@@ -3232,5 +3270,5 @@ public class RedisClientImpl implements RedisClient {
 	public <T> double zscore(String key, T member) {
 		return zscore(key, toJSONString(member));
 	}
-	
+
 }
