@@ -15,6 +15,8 @@
  */
 package org.nanoframework.extension.concurrent.scheduler.defaults.monitor;
 
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.SCHEDULER_APP_JMX_ENABLE;
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.SCHEDULER_APP_JMX_RATE;
 import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.DEFAULT_SCHEDULER_NAME_PREFIX;
 import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.threadFactory;
 
@@ -30,9 +32,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.nanoframework.commons.crypt.CryptUtil;
-import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdScheduler;
 import org.nanoframework.extension.concurrent.scheduler.BaseScheduler;
 import org.nanoframework.extension.concurrent.scheduler.SchedulerConfig;
+import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdScheduler;
 import org.nanoframework.extension.concurrent.scheduler.defaults.monitor.JmxMonitor.MemoryUsage;
 import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
 
@@ -47,8 +49,8 @@ public class LocalJmxMonitorScheduler extends BaseScheduler {
 	private final EtcdClient etcd;
 	
 	public static final String JMX_KEY = EtcdScheduler.DIR + "/Jmx.store";
-	public static final int JMX_RATE = Integer.parseInt(System.getProperty("context.scheduler.app.jmx.rate", "5"));
-	public static final boolean JMX_ENABLE = Boolean.parseBoolean(System.getProperty("context.scheduler.app.jmx.enable", "false"));
+	public static final int JMX_RATE = Integer.parseInt(System.getProperty(SCHEDULER_APP_JMX_RATE, "5"));
+	public static final boolean JMX_ENABLE = Boolean.parseBoolean(System.getProperty(SCHEDULER_APP_JMX_ENABLE, "false"));
 	
 	public LocalJmxMonitorScheduler(EtcdClient etcd) {
 		this.etcd = etcd;

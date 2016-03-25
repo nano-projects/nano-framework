@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.ObjectCompare;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.web.server.http.status.HttpStatusCode;
 
 /**
@@ -43,6 +43,7 @@ import org.nanoframework.web.server.http.status.HttpStatusCode;
  * @date 2015年7月25日 下午8:32:08 
  *
  */
+@Deprecated
 public class ConnectFilter implements Filter {
 
 	private Logger LOG = LoggerFactory.getLogger(ConnectFilter.class);
@@ -55,10 +56,10 @@ public class ConnectFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		String uri = ((HttpServletRequest) request).getRequestURI();
-		String filter = System.getProperty(Constants.CONTEXT_SECURITY_FILTER);
+		String filter = System.getProperty(ApplicationContext.CONTEXT_SECURITY_FILTER);
 		String[] filters = StringUtils.isEmpty(filter) ? new String[0] : filter.split(";");
 		
-		String suffix = System.getProperty(Constants.CONTEXT_SUFFIX_FILTER);
+		String suffix = System.getProperty(ApplicationContext.CONTEXT_SUFFIX_FILTER);
 		String[] suffixs = StringUtils.isEmpty(suffix) ? new String[0] : suffix.split(";");
 		try {
 			if(ObjectCompare.isInListByRegEx(uri, filters) || ObjectCompare.isInEndWiths(uri, suffixs)) {

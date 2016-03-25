@@ -25,12 +25,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.ContentType;
-import org.nanoframework.commons.util.URLContext;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.component.exception.BindRequestParamException;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
+import org.nanoframework.core.context.URLContext;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.support.RedirectModel;
 

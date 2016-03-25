@@ -15,6 +15,12 @@
  */
 package org.nanoframework.extension.concurrent.scheduler;
 
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.BASE_PACKAGE;
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_ENABLE;
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.EXCLUSIONS;
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.INCLUDES;
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.SHUTDOWN_TIMEOUT;
+
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -39,11 +45,11 @@ import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.core.component.scan.ComponentScan;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.extension.concurrent.exception.SchedulerException;
+import org.nanoframework.extension.concurrent.queue.BlockingQueueFactory;
 import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdOrderWatcherScheduler;
 import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdScheduler;
 import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdSchedulerOperate;
 import org.nanoframework.extension.concurrent.scheduler.defaults.monitor.LocalJmxMonitorScheduler;
-import org.nanoframework.extension.concurrent.queue.BlockingQueueFactory;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -67,11 +73,6 @@ public class SchedulerFactory {
 	
 	private static boolean isLoaded = false;
 	
-	public static final String BASE_PACKAGE = "context.scheduler-scan.base-package";
-	public static final String AUTO_RUN = "context.scheduler.run.auto";
-	public static final String INCLUDES = "context.scheduler.group.includes";
-	public static final String EXCLUSIONS = "context.scheduler.group.exclusions";
-	public static final String SHUTDOWN_TIMEOUT = "context.scheduler.shutdown.timeout";
 	public static final String DEFAULT_SCHEDULER_NAME_PREFIX = "Scheduler-Thread-Pool: ";
 	
 	private final long shutdownTimeout = Long.parseLong(System.getProperty(SHUTDOWN_TIMEOUT, "60000"));
@@ -180,7 +181,7 @@ public class SchedulerFactory {
 	public void close(final BaseScheduler scheduler) {
 		if(scheduler != null && !scheduler.isClose()) {
 			/** Sync to Etcd by stop method */
-			etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId());
+			etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 			
 			scheduler.setClose(true);
 			stoppingScheduler.put(scheduler.getConfig().getId(), scheduler);
@@ -199,7 +200,7 @@ public class SchedulerFactory {
 			if(groupName.equals(scheduler.getConfig().getGroup())) {
 				if(!scheduler.isClose()) {
 					/** Sync to Etcd by stop method */
-					etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId());
+					etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 					
 					scheduler.setClose(true);
 					stoppingScheduler.put(scheduler.getConfig().getId(), scheduler);
@@ -222,7 +223,7 @@ public class SchedulerFactory {
 					BaseScheduler scheduler = startedScheduler.get(id);
 					if(scheduler != null && !scheduler.isClose()) {
 						/** Sync to Etcd by stop method */
-						etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId());
+						etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 						
 						scheduler.setClose(true);
 						stoppingScheduler.put(scheduler.getConfig().getId(), scheduler);
@@ -252,7 +253,7 @@ public class SchedulerFactory {
 				service.execute(scheduler);
 				
 				/** Sync to Etcd by start method */
-				etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId());
+				etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 			});
 			
 			stoppedScheduler.clear();
@@ -274,7 +275,7 @@ public class SchedulerFactory {
 						keys.add(id);
 						
 						/** Sync to Etcd by start method */
-						etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId());
+						etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 					}
 				}
 			});
@@ -295,7 +296,7 @@ public class SchedulerFactory {
 			stoppedScheduler.remove(id);
 			
 			/** Sync to Etcd by start method */
-			etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId());
+			etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 		}
 	}
 	
@@ -321,7 +322,7 @@ public class SchedulerFactory {
 				start(config.getId());
 			else {
 				/** Sync to Etcd by start method */
-				etcdScheduler.stopped(_new.getConfig().getGroup(), _new.getConfig().getId(), false);
+				etcdScheduler.stopped(_new.getConfig().getGroup(), _new.getConfig().getId(), false, scheduler.getAnalysis());
 			}
 		}
 	}
@@ -379,7 +380,7 @@ public class SchedulerFactory {
 		
 		if(scheduler.isClosed()) {
 			/** Sync to Etcd by start method */
-			etcdScheduler.stopped(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), remove);
+			etcdScheduler.stopped(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), remove, scheduler.getAnalysis());
 		} else
 			close(scheduler.getConfig().getId());
 		
@@ -562,6 +563,7 @@ public class SchedulerFactory {
 					
 						config.setDaemon(scheduler.daemon());
 						config.setLazy(scheduler.lazy());
+						config.setDefined(scheduler.defined());
 						baseScheduler.setConfig(config);
 						
 						if(getInstance().stoppedScheduler.containsKey(config.getId())) {
@@ -589,7 +591,7 @@ public class SchedulerFactory {
 	
 	private static final void createEtcdScheduler(Set<Class<?>> componentClasses) {
 		try {
-			boolean enable = Boolean.parseBoolean(System.getProperty(EtcdScheduler.ETCD_ENABLE, "false"));
+			boolean enable = Boolean.parseBoolean(System.getProperty(ETCD_ENABLE, "false"));
 			if(enable) {
 				EtcdScheduler scheduler = new EtcdScheduler(componentClasses);
 				etcdScheduler = scheduler;
@@ -669,7 +671,7 @@ public class SchedulerFactory {
 				stoppingScheduler.remove(id, scheduler);
 				
 				/** Sync to Etcd by stopped method */
-				etcdScheduler.stopped(scheduler.getConfig().getGroup(), id, scheduler.isRemove());
+				etcdScheduler.stopped(scheduler.getConfig().getGroup(), id, scheduler.isRemove(), scheduler.getAnalysis());
 			});
 		}
 

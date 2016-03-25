@@ -22,10 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.core.component.stereotype.bind.MapperNode;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
+import org.nanoframework.core.context.ApplicationContext;
 
 /**
  * @author yanghe
@@ -35,7 +35,7 @@ public class MapperNodeTest {
 
 	@Test
 	public void addNodeTest() {
-		System.setProperty(Constants.CONTEXT_ROOT, "/jetty");
+		System.setProperty(ApplicationContext.CONTEXT_ROOT, "/jetty");
 		Map<RequestMethod, RequestMapper> mapper = new HashMap<>();
 		mapper.put(RequestMethod.GET, RequestMapper.create().setObject(this).setClz(this.getClass()));
 		MapperNode.addLeaf("/jetty/test/{hello}/get", mapper);

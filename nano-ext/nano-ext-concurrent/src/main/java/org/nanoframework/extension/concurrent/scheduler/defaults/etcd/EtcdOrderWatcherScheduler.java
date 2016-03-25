@@ -28,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 import org.nanoframework.commons.crypt.CryptUtil;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.StringUtils;
-import org.nanoframework.extension.concurrent.exception.SchedulerException;
 import org.nanoframework.extension.concurrent.queue.BlockingQueueFactory;
 import org.nanoframework.extension.concurrent.scheduler.BaseScheduler;
 import org.nanoframework.extension.concurrent.scheduler.CronExpression;
@@ -75,7 +74,7 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
 	}
 	
 	@Override
-	public void before() throws SchedulerException {
+	public void before() {
 		if(etcdOrderExecuteScheduler == null) {
 			synchronized (this) {
 				if(etcdOrderExecuteScheduler == null) {
@@ -96,7 +95,7 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
 	}
 
 	@Override
-	public void execute() throws SchedulerException {
+	public void execute() {
 		try {
 			etcd.get(ORDER).recursive().sorted().waitForChange().send().get();
 			etcdOrderFetchScheduler.active();
@@ -109,12 +108,12 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
 	}
 	
 	@Override
-	public void after() throws SchedulerException {
+	public void after() {
 
 	}
 
 	@Override
-	public void destroy() throws SchedulerException {
+	public void destroy() {
 
 	}
 	
@@ -131,16 +130,17 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
 			config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
 			config.setTotal(1);
 			config.setDaemon(true);
+			config.setBeforeAfterOnly(true);
 			try { config.setCron(new CronExpression("* * * * * ?")); } catch (ParseException e) { }
 			setConfig(config);
 			
 		}
 		
 		@Override
-		public void before() throws SchedulerException { }
+		public void before() { }
 
 		@Override
-		public void execute() throws SchedulerException {
+		public void execute() {
 			if(active) {
 				try {
 					EtcdKeysResponse response = etcd.get(ORDER).sorted().send().get();
@@ -182,10 +182,10 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
 		}
 
 		@Override
-		public void after() throws SchedulerException { }
+		public void after() { }
 
 		@Override
-		public void destroy() throws SchedulerException { }
+		public void destroy() { }
 		
 	}
 
@@ -208,14 +208,14 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
 		}
 		
 		@Override
-		public void before() throws SchedulerException {
+		public void before() {
 			try {
 				value = (String) nodesQueue.poll(1000, TimeUnit.MILLISECONDS);
 			} catch (InterruptedException e) { }
 		}
 
 		@Override
-		public void execute() throws SchedulerException {
+		public void execute() {
 			if(!StringUtils.isEmpty(value)) {
 				try {
 					EtcdOrder order = JSON.parseObject(CryptUtil.decrypt(value, EtcdScheduler.SYSTEM_ID), type);
@@ -260,12 +260,12 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
 		}
 
 		@Override
-		public void after() throws SchedulerException {
+		public void after() {
 			value = null;
 		}
 
 		@Override
-		public void destroy() throws SchedulerException {
+		public void destroy() {
 			
 		}
 		

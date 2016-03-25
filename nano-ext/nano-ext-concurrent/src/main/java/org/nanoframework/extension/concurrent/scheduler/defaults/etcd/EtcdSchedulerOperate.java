@@ -15,6 +15,8 @@
  */
 package org.nanoframework.extension.concurrent.scheduler.defaults.etcd;
 
+import org.nanoframework.extension.concurrent.scheduler.SchedulerAnalysis;
+
 /**
  * 
  * @author yanghe
@@ -23,17 +25,17 @@ package org.nanoframework.extension.concurrent.scheduler.defaults.etcd;
 public interface EtcdSchedulerOperate {
 	final EtcdSchedulerOperate EMPTY = new EtcdSchedulerOperate() {
 		@Override
-		public void stopping(String group, String id) { }
+		public void stopping(String group, String id, SchedulerAnalysis analysis) { }
 		
 		@Override
-		public void stopped(String group, String id, boolean isRemove) { }
+		public void stopped(String group, String id, boolean isRemove, SchedulerAnalysis analysis) { }
 		
 		@Override
-		public void start(String group, String id) { }
+		public void start(String group, String id, SchedulerAnalysis analysis) { }
 		
 	};
 	
-	public void start(String group, String id);
-	public void stopping(String group, String id);
-	public void stopped(String group, String id, boolean isRemove);
+	public void start(String group, String id, SchedulerAnalysis analysis);
+	public void stopping(String group, String id, SchedulerAnalysis analysis);
+	public void stopped(String group, String id, boolean isRemove, SchedulerAnalysis analysis);
 }

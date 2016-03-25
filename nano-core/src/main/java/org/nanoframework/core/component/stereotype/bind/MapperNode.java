@@ -22,9 +22,9 @@ import java.util.Set;
 
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.component.exception.ComponentServiceRepeatException;
+import org.nanoframework.core.context.ApplicationContext;
 
 /**
  * 
@@ -44,7 +44,7 @@ public class MapperNode extends BaseEntity {
 	public static final String SLASH = "/";
 	public static final MapperNode ROOT = new MapperNode() {
 		private static final long serialVersionUID = 5928454777545648552L; {
-		String context = System.getProperty(Constants.CONTEXT_ROOT);
+		String context = System.getProperty(ApplicationContext.CONTEXT_ROOT);
 		if(StringUtils.isBlank(context))
 			throw new IllegalArgumentException("无效的/无法获取context.root属性");
 		

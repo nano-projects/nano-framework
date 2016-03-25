@@ -15,6 +15,13 @@
  */
 package org.nanoframework.extension.concurrent.quartz;
 
+import static org.nanoframework.core.context.ApplicationContext.Quartz.BASE_PACKAGE;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.ETCD_ENABLE;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.EXCLUSIONS;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.INCLUDES;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.SHUTDOWN_TIMEOUT;
+import static org.nanoframework.extension.concurrent.quartz.defaults.monitor.LocalJmxMonitorQuartz.JMX_ENABLE;
+
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -70,11 +77,6 @@ public class QuartzFactory {
 	
 	private static boolean isLoaded = false;
 	
-	public static final String BASE_PACKAGE = "context.quartz-scan.base-package";
-	public static final String AUTO_RUN = "context.quartz.run.auto";
-	public static final String INCLUDES = "context.quartz.group.includes";
-	public static final String EXCLUSIONS = "context.quartz.group.exclusions";
-	public static final String SHUTDOWN_TIMEOUT = "context.quartz.shutdown.timeout";
 	public static final String DEFAULT_QUARTZ_NAME_PREFIX = "Quartz-Thread-Pool: ";
 	
 	private final long shutdownTimeout = Long.parseLong(System.getProperty(SHUTDOWN_TIMEOUT, "60000"));
@@ -595,7 +597,7 @@ public class QuartzFactory {
 	
 	private static final void createEtcdScheduler(Set<Class<?>> componentClasses) {
 		try {
-			boolean enable = Boolean.parseBoolean(System.getProperty(EtcdQuartz.ETCD_ENABLE, "false"));
+			boolean enable = Boolean.parseBoolean(System.getProperty(ETCD_ENABLE, "false"));
 			if(enable) {
 				EtcdQuartz quartz = new EtcdQuartz(componentClasses);
 				etcdQuartz = quartz;
@@ -608,7 +610,7 @@ public class QuartzFactory {
 				EtcdOrderWatcherQuartz etcdOrderQuartz = new EtcdOrderWatcherQuartz(quartz.getEtcd());
 				etcdOrderQuartz.getConfig().getService().execute(etcdOrderQuartz);
 				
-				if(LocalJmxMonitorQuartz.JMX_ENABLE) {
+				if(JMX_ENABLE) {
 					LocalJmxMonitorQuartz jmxQuartz = new LocalJmxMonitorQuartz(quartz.getEtcd());
 					jmxQuartz.getConfig().getService().execute(jmxQuartz);
 				}

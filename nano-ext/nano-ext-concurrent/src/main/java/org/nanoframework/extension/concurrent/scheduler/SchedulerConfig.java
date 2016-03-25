@@ -40,6 +40,7 @@ public class SchedulerConfig extends BaseEntity {
 	private CronExpression cron;
 	private Boolean daemon = false;
 	private Boolean lazy = false;
+	private String[] defined = {};
 	
 	public String getId() {
 		return id;
@@ -138,6 +139,14 @@ public class SchedulerConfig extends BaseEntity {
 
 	public void setLazy(Boolean lazy) {
 		this.lazy = lazy;
+	}
+
+	public String[] getDefined() {
+		return defined;
+	}
+
+	public void setDefined(String[] defined) {
+		this.defined = defined;
 	}
 	
 }

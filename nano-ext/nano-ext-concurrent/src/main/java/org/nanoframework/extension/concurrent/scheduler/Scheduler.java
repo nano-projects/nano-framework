@@ -91,4 +91,10 @@ public @interface Scheduler {
 	 * @return
 	 */
 	boolean lazy() default false;
+	
+	/**
+	 * 用户自定义属性
+	 * @return
+	 */
+	String[] defined() default { };
 }

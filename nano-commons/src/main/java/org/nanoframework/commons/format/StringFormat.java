@@ -16,14 +16,6 @@
 package org.nanoframework.commons.format;
 
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang3.StringUtils;
-import org.nanoframework.commons.util.URLContext;
 
 /**
  * 字符串转换处理类
@@ -33,58 +25,6 @@ import org.nanoframework.commons.util.URLContext;
  *
  */
 public class StringFormat {
-
-	/**
-	 * 转换URL <br>
-	 * 将context及参数名转位小写，以使其不区分大小写
-	 * @param url 请求URL
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
-	public static final URLContext formatURL(String url) {
-		if (StringUtils.isEmpty(url))
-			throw new NullPointerException("URL不能为空");
-
-		String[] _url = url.split("[?]");
-
-		String context = _url[0];
-		URLContext urlContext = URLContext.create().setContext(context.toLowerCase());
-
-		// 拆分参数列表
-		if (_url.length > 1) {
-			Map<String, Object> keyValue = new HashMap<>();
-			String[] params = _url[1].split("&");
-			if (params.length > 0) {
-				boolean hasArray = false;
-				for (String param : params) {
-					String[] kv = param.split("=");
-					if(kv[0].endsWith("[]")) {
-						hasArray = true;
-						List<String> values = (List<String>) keyValue.get(kv[0]);
-						if(values == null)
-							values = new ArrayList<>();
-						
-						values.add(kv[1]);
-						keyValue.put(kv[0], values);
-					} else 
-						keyValue.put(kv[0].toLowerCase(), kv[1]);
-				}
-				
-				if(hasArray) {
-					keyValue.entrySet().stream().filter(entry -> entry.getKey().endsWith("[]")).forEach(entry -> {
-						keyValue.put(entry.getKey(), ((List<String>) entry.getValue()).toArray(new String[0]));
-					});
-				}
-			}
-
-			urlContext.setParameter(keyValue);
-		} else {
-			urlContext.setParameter(Collections.emptyMap());
-		}
-
-		return urlContext;
-
-	}
 	
 	public static final byte[] toBytes(String strings, Charset charset) {
 		return strings.getBytes(charset);

@@ -40,17 +40,16 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.nanoframework.commons.format.StringFormat;
 import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.ContentType;
 import org.nanoframework.commons.util.ObjectUtils;
 import org.nanoframework.commons.util.StringUtils;
-import org.nanoframework.commons.util.URLContext;
 import org.nanoframework.core.component.exception.BindRequestParamException;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
+import org.nanoframework.core.context.URLContext;
 import org.nanoframework.core.status.ResultMap;
 import org.nanoframework.web.server.http.status.Response;
 import org.nanoframework.web.server.mvc.Model;
@@ -162,7 +161,7 @@ public abstract class AbstractFilter implements Filter {
 		URLContext urlContext;
 		if(StringUtils.isNotBlank(paramString)) {
 			uri += "?" + paramString;
-			urlContext = StringFormat.formatURL(uri);
+			urlContext = URLContext.formatURL(uri);
 			urlContext.getParameter().putAll(parameter);
 		} else 
 			urlContext = URLContext.create().setContext(uri).setParameter(parameter);

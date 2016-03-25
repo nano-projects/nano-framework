@@ -110,8 +110,5 @@ public class EtcdOrder extends BaseEntity {
 	public void setClassName(String className) {
 		this.className = className;
 	}
-
-	public enum OrderAction {
-		APPEND, START, STOP, REMOVE, START_GROUP, STOP_GROUP, REMOVE_GROUP, START_ALL, STOP_ALL;
-	}
+	
 }

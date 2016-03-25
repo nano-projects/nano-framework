@@ -15,6 +15,7 @@
  */
 package org.nanoframework.extension.websocket;
 
+import static org.nanoframework.core.context.ApplicationContext.WEBSOCKET_BASE_PACKAGE;
 import java.security.cert.CertificateException;
 import java.util.Properties;
 import java.util.Set;
@@ -29,8 +30,8 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.core.component.scan.ComponentScan;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
 
 import com.google.inject.Injector;
@@ -42,7 +43,6 @@ import com.google.inject.Injector;
 public class WebSocketFactory {
 	private static Logger LOG = LoggerFactory.getLogger(WebSocketFactory.class);
 	private static boolean isLoaded = false;
-	public static final String BASE_PACKAGE = "context.websocket-scan.base-package";
 	
 	private static final ConcurrentMap<String, WebSocketServer> handlerMap = new ConcurrentHashMap<>();
 	
@@ -55,8 +55,8 @@ public class WebSocketFactory {
 			throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
 		}
 		
-		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(BASE_PACKAGE) != null).forEach(item -> {
-			ComponentScan.scan(item.getProperty(BASE_PACKAGE));
+		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(WEBSOCKET_BASE_PACKAGE) != null).forEach(item -> {
+			ComponentScan.scan(item.getProperty(WEBSOCKET_BASE_PACKAGE));
 		});
 		
 		Set<Class<?>> componentClasses = ComponentScan.filter(WebSocket.class);
@@ -127,7 +127,7 @@ public class WebSocketFactory {
 						location = websocket.location();
 					
 					Assert.hasLength(location);
-					location = System.getProperty(Constants.CONTEXT_ROOT) + location;
+					location = System.getProperty(ApplicationContext.CONTEXT_ROOT) + location;
 					
 					AbstractWebSocketHandler handler = (AbstractWebSocketHandler) Globals.get(Injector.class).getInstance(clz);
 					handler.setLocation(location);

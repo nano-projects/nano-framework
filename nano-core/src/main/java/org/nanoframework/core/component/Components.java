@@ -43,6 +43,7 @@ import org.nanoframework.core.component.stereotype.bind.RequestMapping;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 import org.nanoframework.core.component.stereotype.bind.RequestParam;
 import org.nanoframework.core.component.stereotype.bind.ValueConstants;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.core.status.ComponentStatus;
 
@@ -57,10 +58,6 @@ import com.google.inject.Injector;
 public class Components {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Components.class);
-	
-	public static final String BASE_PACKAGE = "context.component-scan.base-package";
-	
-//	private static ConcurrentMap<String, RequestMapper> mapping = new ConcurrentHashMap<>();
 	
 	private static boolean isLoaded = false;
 	
@@ -85,8 +82,8 @@ public class Components {
 			
 		}
 		
-		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(BASE_PACKAGE) != null).forEach(item -> {
-			String[] packageNames = item.getProperty(BASE_PACKAGE).split(",");
+		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(ApplicationContext.COMPONENT_BASE_PACKAGE) != null).forEach(item -> {
+			String[] packageNames = item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE).split(",");
 			for(String packageName : packageNames)
 				ComponentScan.scan(packageName);
 		});

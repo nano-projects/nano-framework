@@ -15,8 +15,15 @@
  */
 package org.nanoframework.extension.concurrent.quartz.defaults.etcd;
 
+import static org.nanoframework.core.context.ApplicationContext.Quartz.ETCD_APP_NAME;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.ETCD_CLIENT_ID;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.ETCD_MAX_RETRY_COUNT;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.ETCD_URI;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.ETCD_USER;
 import static org.nanoframework.extension.concurrent.quartz.QuartzFactory.DEFAULT_QUARTZ_NAME_PREFIX;
 import static org.nanoframework.extension.concurrent.quartz.QuartzFactory.threadFactory;
+import static org.nanoframework.extension.concurrent.quartz.defaults.monitor.LocalJmxMonitorQuartz.JMX_ENABLE;
+import static org.nanoframework.extension.concurrent.quartz.defaults.monitor.LocalJmxMonitorQuartz.JMX_RATE;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
@@ -46,7 +53,6 @@ import org.nanoframework.extension.concurrent.quartz.QuartzConfig;
 import org.nanoframework.extension.concurrent.quartz.QuartzFactory;
 import org.nanoframework.extension.concurrent.quartz.QuartzStatus;
 import org.nanoframework.extension.concurrent.quartz.QuartzStatus.Status;
-import org.nanoframework.extension.concurrent.quartz.defaults.monitor.LocalJmxMonitorQuartz;
 import org.nanoframework.extension.etcd.client.retry.RetryWithExponentialBackOff;
 import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
 import org.nanoframework.extension.etcd.etcd4j.responses.EtcdKeysResponse;
@@ -62,11 +68,6 @@ public class EtcdQuartz extends BaseQuartz implements EtcdQuartzOperate {
 	private final Set<Class<?>> clsSet;
 	
 	public static final String SYSTEM_ID = MD5Utils.getMD5String(UUID.randomUUID().toString() + System.currentTimeMillis() + Math.random());
-	public static final String ETCD_ENABLE = "context.quartz.etcd.enable";
-	public static final String ETCD_URI = "context.quartz.etcd.uri";
-	public static final String ETCD_USER = "context.quartz.etcd.username";
-	public static final String ETCD_CLIENT_ID = "context.quartz.etcd.clientid";
-	public static final String ETCD_APP_NAME = "context.quartz.app.name";
 	
 	public static final String ROOT_RESOURCE = "/machairodus/" + System.getProperty(ETCD_USER, "");
 	public static final String DIR = ROOT_RESOURCE + "/" + SYSTEM_ID;
@@ -74,6 +75,7 @@ public class EtcdQuartz extends BaseQuartz implements EtcdQuartzOperate {
 	public static final String INSTANCE_KEY = DIR + "/Quartz.list";
 	public static final String INFO_KEY = DIR + "/App.info";
 	private static String APP_NAME;
+	private final int maxRetryCount = Integer.parseInt(System.getProperty(ETCD_MAX_RETRY_COUNT, "1"));
 	
 	private Map<Class<?>, String> clsIndex = new HashMap<Class<?>, String>();
 	private Map<String, String> indexMap = new HashMap<String, String>();
@@ -160,8 +162,8 @@ public class EtcdQuartz extends BaseQuartz implements EtcdQuartzOperate {
 		EtcdAppInfo info = new EtcdAppInfo();
 		info.setSystemId(SYSTEM_ID);
 		info.setAppName(APP_NAME);
-		info.setJmxEnable(LocalJmxMonitorQuartz.JMX_ENABLE);
-		info.setJmxRate(LocalJmxMonitorQuartz.JMX_RATE);
+		info.setJmxEnable(JMX_ENABLE);
+		info.setJmxRate(JMX_RATE);
 		
 		RuntimeMXBean runtime = ManagementFactory.getRuntimeMXBean();
 		info.setStartTime(runtime.getStartTime());
@@ -263,7 +265,7 @@ public class EtcdQuartz extends BaseQuartz implements EtcdQuartzOperate {
 			
 			if(uriList.size() > 0) {
 				etcd = new EtcdClient(username, clientId, uriList.toArray(new URI[uriList.size()]));
-				etcd.setRetryHandler(new RetryWithExponentialBackOff(20, 4, -1));
+				etcd.setRetryHandler(new RetryWithExponentialBackOff(20, maxRetryCount, -1));
 			}
 		}
 	}

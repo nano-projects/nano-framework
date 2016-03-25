@@ -29,10 +29,7 @@ import com.alibaba.fastjson.JSON;
 public class Constants {
 	public static final String PLUGIN_LOADER = "pluginLoader";
 	public static final String MAIN_CONTEXT = "/context.properties";
-	public static final String CONTEXT_ROOT = "context.root";
-	public static final String CONTEXT_FILTER = "context.filter";
-	public static final String CONTEXT_SECURITY_FILTER = "context.security.filter";
-	public static final String CONTEXT_SUFFIX_FILTER = "context.suffix.filter";
+	
 	public static final String SERVER_SSL = "server.ssl";
 	public static final String SERVER_PORT = "server.port";
 	public static final String SERVER_SSL_PORT = "server.ssl.port";

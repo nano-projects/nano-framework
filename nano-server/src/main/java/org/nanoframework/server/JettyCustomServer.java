@@ -35,6 +35,7 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.commons.util.StringUtils;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.server.exception.JettyServerException;
 import org.nanoframework.server.exception.ReadXMLException;
 
@@ -80,7 +81,7 @@ public class JettyCustomServer extends Server {
 	};
 	
 	public JettyCustomServer() {
-		this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(Constants.CONTEXT_ROOT), null, null, null);
+		this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null, null, null);
 	}
 	
 	public JettyCustomServer(String mainContext) {
@@ -93,7 +94,7 @@ public class JettyCustomServer extends Server {
 		}
 		
 		readXmlConfig(DEFAULT_JETTY_CONFIG);
-		applyHandle(CONTEXT.getProperty(Constants.CONTEXT_ROOT), null);
+		applyHandle(CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null);
 	}
 	
 	public JettyCustomServer(String xmlConfigPath, String contextPath, String resourceBase, String webXmlPath) {

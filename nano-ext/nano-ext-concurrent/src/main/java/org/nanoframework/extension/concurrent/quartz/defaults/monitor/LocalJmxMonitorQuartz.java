@@ -15,6 +15,8 @@
  */
 package org.nanoframework.extension.concurrent.quartz.defaults.monitor;
 
+import static org.nanoframework.core.context.ApplicationContext.Quartz.SCHEDULER_APP_JMX_ENABLE;
+import static org.nanoframework.core.context.ApplicationContext.Quartz.SCHEDULER_APP_JMX_RATE;
 import static org.nanoframework.extension.concurrent.quartz.QuartzFactory.DEFAULT_QUARTZ_NAME_PREFIX;
 import static org.nanoframework.extension.concurrent.quartz.QuartzFactory.threadFactory;
 
@@ -51,8 +53,8 @@ public class LocalJmxMonitorQuartz extends BaseQuartz {
 	private final EtcdClient etcd;
 	
 	public static final String JMX_KEY = EtcdQuartz.DIR + "/Jmx.store";
-	public static final int JMX_RATE = Integer.parseInt(System.getProperty("context.quartz.app.jmx.rate", "5"));
-	public static final boolean JMX_ENABLE = Boolean.parseBoolean(System.getProperty("context.quartz.app.jmx.enable", "false"));
+	public static final int JMX_RATE = Integer.parseInt(System.getProperty(SCHEDULER_APP_JMX_RATE, "5"));
+	public static final boolean JMX_ENABLE = Boolean.parseBoolean(System.getProperty(SCHEDULER_APP_JMX_ENABLE, "false"));
 	
 	public LocalJmxMonitorQuartz(EtcdClient etcd) {
 		this.etcd = etcd;

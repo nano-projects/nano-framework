@@ -18,7 +18,6 @@ package org.nanoframework.commons;
 import org.nanoframework.commons.crypt.CryptTest;
 import org.nanoframework.commons.entity.BaseEntityTest;
 import org.nanoframework.commons.format.ClassCastTest;
-import org.nanoframework.commons.format.StringFormatTest;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
@@ -34,7 +33,6 @@ public class CommonsTestSuite {
 		suite.addTest(new JUnit4TestAdapter(CryptTest.class));
 		suite.addTest(new JUnit4TestAdapter(BaseEntityTest.class));
 		suite.addTest(new JUnit4TestAdapter(ClassCastTest.class));
-		suite.addTest(new JUnit4TestAdapter(StringFormatTest.class));
 		return suite;
 	}
 }

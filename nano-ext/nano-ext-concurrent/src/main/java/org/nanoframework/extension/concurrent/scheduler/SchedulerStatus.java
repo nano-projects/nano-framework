@@ -29,14 +29,24 @@ public class SchedulerStatus extends BaseEntity {
 	private String group;
 	private String id;
 	private Status status;
+	private long executing;
+	private long beforeException;
+	private long executeException;
+	private long afterException;
+	private String performCycle;
 
 	public SchedulerStatus() {
 	}
 
-	public SchedulerStatus(String group, String id, Status status) {
+	public SchedulerStatus(String group, String id, Status status, SchedulerAnalysis analysis) {
 		this.group = group;
 		this.id = id;
 		this.status = status;
+		this.executing = analysis.executing.get();
+		this.beforeException = analysis.beforeException.get();
+		this.executeException = analysis.executeException.get();
+		this.afterException = analysis.afterException.get();
+		this.performCycle = analysis.performCycle();
 	}
 
 	public Long getKey() {
@@ -69,6 +79,46 @@ public class SchedulerStatus extends BaseEntity {
 
 	public void setStatus(Status status) {
 		this.status = status;
+	}
+
+	public long getExecuting() {
+		return executing;
+	}
+
+	public void setExecuting(long executing) {
+		this.executing = executing;
+	}
+
+	public long getBeforeException() {
+		return beforeException;
+	}
+
+	public void setBeforeException(long beforeException) {
+		this.beforeException = beforeException;
+	}
+
+	public long getExecuteException() {
+		return executeException;
+	}
+
+	public void setExecuteException(long executeException) {
+		this.executeException = executeException;
+	}
+
+	public long getAfterException() {
+		return afterException;
+	}
+
+	public void setAfterException(long afterException) {
+		this.afterException = afterException;
+	}
+
+	public String getPerformCycle() {
+		return performCycle;
+	}
+
+	public void setPerformCycle(String performCycle) {
+		this.performCycle = performCycle;
 	}
 
 	public enum Status {

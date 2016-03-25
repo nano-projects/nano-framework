@@ -30,9 +30,11 @@ import org.nanoframework.core.plugins.defaults.plugin.SchedulerPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
 
 /**
+ * 默认的插件加载器
  * @author yanghe
  * @date 2015年10月30日 下午10:51:07
  */
+@SuppressWarnings("deprecation")
 public class DefaultPluginLoader extends PluginLoader {
 
 	@Override
