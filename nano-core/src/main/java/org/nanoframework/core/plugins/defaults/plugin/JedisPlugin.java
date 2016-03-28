@@ -38,7 +38,7 @@ public class JedisPlugin implements Plugin {
 	private List<Properties> properties;
 	
 	@Override
-	public void load() throws Throwable {
+	public boolean load() throws Throwable {
 		try {
 			Class<?> redisClientPool = Class.forName("org.nanoframework.orm.jedis.RedisClientPool");
 			long time = System.currentTimeMillis();
@@ -49,7 +49,11 @@ public class JedisPlugin implements Plugin {
 		} catch(Throwable e) {
 			if(!(e instanceof ClassNotFoundException))
 				throw new PluginLoaderException(e.getMessage(), e);
+			
+			return false;
 		}
+		
+		return true;
 	}
 
 	@Override

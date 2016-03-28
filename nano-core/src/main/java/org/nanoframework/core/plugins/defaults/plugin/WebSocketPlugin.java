@@ -32,7 +32,7 @@ public class WebSocketPlugin implements Plugin {
 	private Logger LOG = LoggerFactory.getLogger(WebSocketPlugin.class);
 	
 	@Override
-	public void load() throws Throwable {
+	public boolean load() throws Throwable {
 		try {
 			Class<?> websocket = Class.forName("org.nanoframework.extension.websocket.WebSocketFactory");
 			long time = System.currentTimeMillis();
@@ -43,7 +43,10 @@ public class WebSocketPlugin implements Plugin {
 			if(!(e instanceof ClassNotFoundException))
 				throw new RuntimeException(e);
 			
+			return false;
 		}
+		
+		return true;
 	}
 
 	@Override

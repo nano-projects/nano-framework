@@ -22,6 +22,6 @@ import javax.servlet.ServletConfig;
  * @date 2015年10月30日 下午11:23:59
  */
 public interface Plugin {
-	void load() throws Throwable;
+	boolean load() throws Throwable;
 	void config(ServletConfig config) throws Throwable;
 }

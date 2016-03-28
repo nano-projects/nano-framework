@@ -33,7 +33,7 @@ public class Log4jPlugin implements Plugin {
 	private String log4j;
 	
 	@Override
-	public void load() throws Throwable {
+	public boolean load() throws Throwable {
 		if(StringUtils.isNotBlank(log4j)) {
 			URL url = this.getClass().getResource(log4j);
 			if (url != null) {
@@ -44,9 +44,15 @@ public class Log4jPlugin implements Plugin {
 				} catch(Exception e) {
 					if(!(e instanceof ClassNotFoundException))
 						throw new PluginLoaderException(e.getMessage(), e);
+					
+					return false;
 				}
 			}
+		} else {
+			return false;
 		}
+		
+		return true;
 	}
 
 	@Override

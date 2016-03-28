@@ -38,7 +38,7 @@ public class ShiroPlugin implements Plugin {
 	private String shiroIni;
 	
 	@Override
-	public void load() throws Throwable {
+	public boolean load() throws Throwable {
 		if(StringUtils.isNotBlank(shiroIni)) {
 			Class<?> IniSecurityManagerFactory = null;
 			Class<?> SecurityUtils = null;
@@ -65,8 +65,14 @@ public class ShiroPlugin implements Plugin {
 				} catch(Exception e) {
 					throw new PluginLoaderException("加载ShiroPlugin异常: " + e.getMessage());
 				}
+			} else {
+				return false;
 			}
+		} else {
+			return false;
 		}
+		
+		return true;
 	}
 
 	@Override

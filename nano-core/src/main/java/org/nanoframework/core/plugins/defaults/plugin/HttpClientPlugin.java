@@ -47,7 +47,7 @@ public class HttpClientPlugin implements Plugin {
 	private int maxPerRoute;
 	
 	@Override
-	public void load() throws Throwable {
+	public boolean load() throws Throwable {
 		timeToLive = Long.parseLong(properties.getProperty(TIME_TO_LIVE, "-1"));
 		tunit = TimeUnit.valueOf(properties.getProperty(TIME_UNIT, "MILLISECONDS"));
 		maxTotal = Integer.parseInt(properties.getProperty(MAX_TOTAL, "20"));
@@ -62,11 +62,14 @@ public class HttpClientPlugin implements Plugin {
 			Method setDefaultMaxPerRoute = PoolingHttpClientConnectionManager.getMethod("setDefaultMaxPerRoute", int.class);
 			setDefaultMaxPerRoute.invoke(manager, maxPerRoute);
 			HttpClientFactory.create(manager);
-			
 		} catch(Throwable e) {
 			if(!(e instanceof ClassNotFoundException))
 				throw new PluginLoaderException(e.getMessage(), e);
+			
+			return false;
 		}
+		
+		return true;
 	}
 
 	@Override

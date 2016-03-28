@@ -33,7 +33,7 @@ public class QuartzPlugin implements Plugin {
 	private Logger LOG = LoggerFactory.getLogger(QuartzPlugin.class);
 	
 	@Override
-	public void load() throws Throwable {
+	public boolean load() throws Throwable {
 		try {
 			Class<?> QuartzFactory = Class.forName("org.nanoframework.extension.concurrent.quartz.QuartzFactory");
 			Object quartzFactory = QuartzFactory.getMethod("getInstance").invoke(QuartzFactory);
@@ -45,7 +45,11 @@ public class QuartzPlugin implements Plugin {
 		} catch(Exception e) {
 			if(!(e instanceof ClassNotFoundException))
 				throw new PluginLoaderException(e.getMessage(), e);
+			
+			return false;
 		}
+		
+		return true;
 	}
 
 	@Override
