@@ -15,7 +15,7 @@
  */
 package org.nanoframework.examples.first.webapp.component.impl;
 
-import org.nanoframework.core.status.ResultMap;
+import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.examples.first.webapp.component.HelloWorldComponent;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;

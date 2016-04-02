@@ -21,7 +21,7 @@ import java.util.Map;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
-import org.nanoframework.core.status.ResultMap;
+import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.examples.first.webapp.component.JdbcExamplesComponent;
 import org.nanoframework.examples.first.webapp.constant.DataSource;
 import org.nanoframework.examples.first.webapp.dao.JdbcExamplesDao;

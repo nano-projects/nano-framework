@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.status;
+package org.nanoframework.web.server.http.status;
 
 /**
  * 组件服务调用状态码
@@ -22,7 +22,6 @@ package org.nanoframework.core.status;
  * @date 2015年7月25日 下午9:08:21 
  *
  */
-@Deprecated
 public interface ComponentStatus {
 
 	/** 组件调用异常 */

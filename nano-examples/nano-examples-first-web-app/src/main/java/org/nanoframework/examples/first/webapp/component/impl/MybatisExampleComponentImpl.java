@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.nanoframework.core.component.aop.Before;
 import org.nanoframework.core.component.aop.BeforeMore;
-import org.nanoframework.core.status.ResultMap;
+import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.examples.first.webapp.aop.Examples2AOP;
 import org.nanoframework.examples.first.webapp.aop.ExamplesAOP;
 import org.nanoframework.examples.first.webapp.component.MybatisExampleComponent;

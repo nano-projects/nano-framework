@@ -147,22 +147,17 @@ public enum HttpStatus {
     INSUFFICIENT_STORAGE(SC_INSUFFICIENT_STORAGE, "INSUFFICIENT_STORAGE");
 	
     /** 状态码 */
-    private int code;
+    public final int code;
     
     /** 消息描述 */
-    private String info;
+    public final String info;
 	
 	private HttpStatus(int code, String info) {
 		this.code = code;
 		this.info = info;
-
 	}
 
-	public int status() {
-		return code;
-	}
-	
-	public String info() {
-		return info;
+	public ResultMap to() {
+		return ResultMap.create(this.info, this);
 	}
 }

@@ -2,7 +2,7 @@ package org.nanoframework.examples.first.webapp.component.impl;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.nanoframework.core.status.ResultMap;
+import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.examples.first.webapp.component.ControlComponent;
 import org.nanoframework.web.server.http.status.HttpStatusCode;
 

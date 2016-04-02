@@ -45,7 +45,6 @@ import org.nanoframework.core.component.stereotype.bind.RequestParam;
 import org.nanoframework.core.component.stereotype.bind.ValueConstants;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
-import org.nanoframework.core.status.ComponentStatus;
 
 import com.google.inject.Injector;
 
@@ -201,8 +200,6 @@ public class Components {
 	 * @param mapper 组件映射
 	 * @param parameter 参数列表
 	 * @return 返回调用结果
-	 * 
-	 * @see org.nanoframework.web.component.Components#bindParam(Method, Map, Object...)
 	 */
 	public static final Object invoke(RequestMapper mapper, Map<String, Object> parameter, Object... objs) {
 		if (mapper != null) {
@@ -216,15 +213,13 @@ public class Components {
 				
 			} catch(Exception e) {
 				LOG.error(e.getMessage());
-				if(e instanceof ComponentInvokeException)
+				if(e instanceof ComponentInvokeException) {
 					throw (ComponentInvokeException) e;
-				
-				else {
+				} else {
 					Throwable tmp = e;
 					while(tmp.getCause() != null) {
 						if(tmp.getCause() instanceof ComponentInvokeException) {
 							throw (ComponentInvokeException) tmp.getCause();
-							
 						} else {
 							tmp = tmp.getCause();
 						}
@@ -234,9 +229,9 @@ public class Components {
 				}
 			}
 
-		} else
-			return ComponentStatus.NOT_FOUND;
-		
+		} else {
+			throw new ComponentInvokeException("Not found resources!");
+		}
 	}
 	
 	/**

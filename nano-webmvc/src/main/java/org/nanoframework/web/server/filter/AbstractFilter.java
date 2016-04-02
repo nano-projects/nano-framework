@@ -15,13 +15,13 @@
  */
 package org.nanoframework.web.server.filter;
 
-import static org.nanoframework.core.status.ComponentStatus.BIND_PARAM_EXCEPTION_CODE;
-import static org.nanoframework.core.status.ComponentStatus.INVOKE_ERROR_CODE;
-import static org.nanoframework.core.status.ComponentStatus.IO_EXCEPTION_CODE;
-import static org.nanoframework.core.status.ComponentStatus.SERVLET_EXCEPTION;
-import static org.nanoframework.core.status.ComponentStatus.UNKNOWN;
-import static org.nanoframework.core.status.ComponentStatus.UNSUPPORT_REQUEST_METHOD_CODE;
-import static org.nanoframework.core.status.ComponentStatus.UNSUPPORT_REQUEST_METHOD_DESC;
+import static org.nanoframework.web.server.http.status.ComponentStatus.BIND_PARAM_EXCEPTION_CODE;
+import static org.nanoframework.web.server.http.status.ComponentStatus.INVOKE_ERROR_CODE;
+import static org.nanoframework.web.server.http.status.ComponentStatus.IO_EXCEPTION_CODE;
+import static org.nanoframework.web.server.http.status.ComponentStatus.SERVLET_EXCEPTION;
+import static org.nanoframework.web.server.http.status.ComponentStatus.UNKNOWN;
+import static org.nanoframework.web.server.http.status.ComponentStatus.UNSUPPORT_REQUEST_METHOD_CODE;
+import static org.nanoframework.web.server.http.status.ComponentStatus.UNSUPPORT_REQUEST_METHOD_DESC;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -50,8 +50,8 @@ import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 import org.nanoframework.core.context.URLContext;
-import org.nanoframework.core.status.ResultMap;
 import org.nanoframework.web.server.http.status.Response;
+import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 

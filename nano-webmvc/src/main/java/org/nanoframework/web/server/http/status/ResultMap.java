@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.status;
+package org.nanoframework.web.server.http.status;
 
 import org.nanoframework.commons.entity.BaseEntity;
 
@@ -21,8 +21,8 @@ import org.nanoframework.commons.entity.BaseEntity;
  * Http 返回消息对象
  * @author yanghe
  * @date 2015年7月25日 下午8:18:08 
+ *
  */
-@Deprecated
 public class ResultMap extends BaseEntity {
 	private static final long serialVersionUID = -4525859189036534494L;
 	
@@ -54,16 +54,28 @@ public class ResultMap extends BaseEntity {
 		return new ResultMap(status, message, info);
 	}
 	
+	public static ResultMap create(String message, HttpStatus status) {
+		return new ResultMap(status.code, message, status.info);
+	}
+	
+	/**
+	 * @return the info
+	 */
 	public String getInfo() {
 		return info;
 	}
-
+	
+	/**
+	 * @return the status
+	 */
 	public int getStatus() {
 		return status;
 	}
-
+	
+	/**
+	 * @return the message
+	 */
 	public String getMessage() {
 		return message;
 	}
-	
 }
