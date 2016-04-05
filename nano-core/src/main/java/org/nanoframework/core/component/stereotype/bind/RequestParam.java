@@ -33,8 +33,17 @@ import java.lang.annotation.Target;
 public @interface RequestParam {
 
 	/**
-	 * The name of the request parameter to bind to.
+	 * The value of the request parameter to bind to.
+	 * @return parameter name value
 	 */
+	String value() default "";
+	
+	/**
+	 * The name of the request parameter to bind to.
+	 * 
+	 * The property name is too stupid,  Deprecated it.
+	 */
+	@Deprecated
 	String name() default "";
 
 	/**

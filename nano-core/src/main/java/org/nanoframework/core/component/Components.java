@@ -25,13 +25,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.format.ClassCast;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.component.exception.BindRequestParamException;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.core.component.scan.ComponentScan;
@@ -143,22 +143,27 @@ public class Components {
 				Class<?> type = parameter.getType();
 				RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
 				if(requestParam != null) {
-					Object param = params.get(requestParam.name().toLowerCase());
-					if(param == null && !StringUtils.equals(requestParam.defaultValue(), ValueConstants.DEFAULT_NONE))
+					String value = requestParam.value();
+					if(StringUtils.isBlank(value)) {
+						value = requestParam.name();
+					}
+						
+					Object param = params.get(value.toLowerCase());
+					if(param == null && !StringUtils.equals(requestParam.defaultValue(), ValueConstants.DEFAULT_NONE)) {
 						param = requestParam.defaultValue();
+					}
 					
 					/** 空字符参数现在也将被判定为空，在必填的情况下也将抛出绑定参数异常 by yanghe on 2015-07-01 19:08 */
-					if(requestParam.required() && (param == null || (param instanceof String && StringUtils.isEmpty((String) param))))
-						throw new BindRequestParamException("参数:["+requestParam.name().toLowerCase()+"]为必填项，但是获取的参数值为空.");
+					if(requestParam.required() && (param == null || (param instanceof String && StringUtils.isEmpty((String) param)))) {
+						throw new BindRequestParamException("参数:[" + value + "]为必填项，但是获取的参数值为空.");
+					}
 					
 					try {
 						Object obj = ClassCast.cast(param, type.getName());
 						values.add(obj);
-						
 					} catch(org.nanoframework.commons.exception.ClassCastException e) {
 						LOG.error(e.getMessage(), e);
 						throw new BindRequestParamException("类型转换异常: 数据类型 [ " + type.getName() + " ], 值 [ " + param + " ]");
-						
 					}
 				} else {
 					PathVariable pathVariable = parameter.getAnnotation(PathVariable.class);
