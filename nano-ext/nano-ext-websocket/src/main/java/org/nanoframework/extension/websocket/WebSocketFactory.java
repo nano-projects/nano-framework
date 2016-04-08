@@ -55,7 +55,7 @@ public class WebSocketFactory {
 			throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
 		}
 		
-		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(WEBSOCKET_BASE_PACKAGE) != null).forEach(item -> {
+		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.getProperty(WEBSOCKET_BASE_PACKAGE) != null).forEach(item -> {
 			ComponentScan.scan(item.getProperty(WEBSOCKET_BASE_PACKAGE));
 		});
 		
@@ -67,8 +67,11 @@ public class WebSocketFactory {
 				if(AbstractWebSocketHandler.class.isAssignableFrom(clz)) {
 					LOG.info("Inject WebSocket Class: " + clz.getName());
 					WebSocket websocket = clz.getAnnotation(WebSocket.class);
-					if(StringUtils.isEmpty(websocket.value())) 
-						throw new WebSocketException("WebSocket名不能为空, 类名 [ " + clz.getName()+ " ]");
+					String webSocketName = websocket.value();
+					if(StringUtils.isBlank(websocket.value())) {
+//						throw new WebSocketException("WebSocket名不能为空, 类名 [ " + clz.getName()+ " ]");
+						webSocketName = clz.getSimpleName();
+					}
 					
 					String host = null;
 					Integer port = null;
@@ -131,7 +134,7 @@ public class WebSocketFactory {
 					
 					AbstractWebSocketHandler handler = (AbstractWebSocketHandler) Globals.get(Injector.class).getInstance(clz);
 					handler.setLocation(location);
-					handlerMap.put(websocket.value(), WebSocketServer.create(host, port, proxyPort, ssl, location, handler));
+					handlerMap.put(webSocketName, WebSocketServer.create(host, port, proxyPort, ssl, location, handler));
 					
 				} else 
 					throw new WebSocketException("必须继承: [ "+AbstractWebSocketHandler.class.getName()+" ]");

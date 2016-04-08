@@ -27,6 +27,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
@@ -195,8 +196,7 @@ public class HttpClientFactory {
 		return getResult(httpPut);
 	}
 
-	public HttpResponse httpPutRequest(String url, Map<String, String> headers, Map<String, String> params)
-			throws IOException {
+	public HttpResponse httpPutRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
 		HttpPut httpPut = new HttpPut(url);
 		if (!CollectionUtils.isEmpty(headers))
 			headers.forEach((key, value) -> httpPut.addHeader(key, value));
@@ -204,6 +204,20 @@ public class HttpClientFactory {
 		List<NameValuePair> pairs = covertParams2NVPS(params);
 		httpPut.setEntity(new UrlEncodedFormEntity(pairs, UTF8));
 		return getResult(httpPut);
+	}
+	
+	public HttpResponse httpDeleteRequest(String url) throws IOException {
+		HttpDelete httpDelete = new HttpDelete(url);
+		return getResult(httpDelete);
+	}
+	
+	public HttpResponse httpDeleteRequest(String url, Map<String, String> headers) throws IOException {
+		HttpDelete httpDelete = new HttpDelete(url);
+		if (!CollectionUtils.isEmpty(headers)) {
+			headers.forEach((key, value) -> httpDelete.addHeader(key, value));
+		}
+		
+		return getResult(httpDelete);
 	}
 
 	private List<NameValuePair> covertParams2NVPS(Map<String, String> params) {
