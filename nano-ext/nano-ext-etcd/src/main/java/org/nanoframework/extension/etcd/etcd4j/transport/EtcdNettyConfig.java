@@ -35,9 +35,9 @@ public class EtcdNettyConfig implements Cloneable {
 
   private Class<? extends SocketChannel> socketChannelClass = NioSocketChannel.class;
 
-  private int connectTimeout = 300;
+  private int connectTimeout = 3000;
 
-  private int maxFrameSize = 1024 * 100;
+  private int maxFrameSize = 1024 * 1000;
 
   private String hostName;
 
@@ -45,10 +45,9 @@ public class EtcdNettyConfig implements Cloneable {
    * Constructor
    */
   public EtcdNettyConfig() {
-    String frameSize = System.getProperty("mousio.etcd4j.maxFrameSize");
+    String frameSize = System.getProperty("context.etcd.max.frame.size");
     if (frameSize != null) {
-      logger.warn("Setting mousio.etcd4j.maxFrameSize through system propery is deprecated. " +
-          "Please use the EtcdNettyConfig class");
+      logger.warn("Setting context.etcd.max.frame.size through system propery is deprecated. Please use the EtcdNettyConfig class");
       maxFrameSize = Integer.parseInt(frameSize);
     }
   }
