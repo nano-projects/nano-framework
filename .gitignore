@@ -12,3 +12,5 @@ conf/
 *.log
 webRoot/
 jetty.pid
+.checkstyle
+.fbIncludeFilterFile
