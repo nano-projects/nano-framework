@@ -32,7 +32,6 @@
 		<mysql-connector-version>5.1.29</mysql-connector-version>
 		<c3p0-version>0.9.1.2</c3p0-version>
 		<druid-version>1.0.15</druid-version>
-		<httpclient-version>4.5.1</httpclient-version>
 		<netty-version>4.1.0.Beta8</netty-version>
 		<sso-version>2.0</sso-version>
 		<jedis-version>2.7.2</jedis-version>
@@ -241,14 +240,6 @@
 				<version>${netty-version}</version>
 			</dependency>
 
-			<!-- HttpClient Component -->
-			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>
-				<version>${httpclient-version}</version>
-			</dependency>
-
-
 			<!-- Jetty -->
 			<dependency>
 				<groupId>org.eclipse.jetty.aggregate</groupId>
@@ -353,6 +344,11 @@
 			<dependency>
 				<groupId>org.nanoframework</groupId>
 				<artifactId>nano-ext-mail</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-httpclient</artifactId>
 				<version>${project.version}</version>
 			</dependency>
 

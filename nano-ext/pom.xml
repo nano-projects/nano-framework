@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -17,9 +18,12 @@
 
 	<properties>
 		<jackson-version>2.3.0</jackson-version>
-		
+
 		<!-- Java Mail -->
 		<javax.mail.version>1.4.7</javax.mail.version>
+		
+		<!-- HttpClient Component -->
+		<httpclient-version>4.5.1</httpclient-version>
 	</properties>
 
 	<modules>
@@ -29,8 +33,8 @@
 		<module>nano-ext-shiro</module>
 		<module>nano-ext-etcd</module>
 		<module>nano-ext-mail</module>
-    <module>nano-ext-httpclient</module>
-  </modules>
+		<module>nano-ext-httpclient</module>
+	</modules>
 
 	<dependencyManagement>
 		<dependencies>
@@ -61,12 +65,19 @@
 				<artifactId>jackson-module-afterburner</artifactId>
 				<version>${jackson-version}</version>
 			</dependency>
-			
+
 			<!-- Java Mail -->
 			<dependency>
 				<groupId>javax.mail</groupId>
 				<artifactId>mail</artifactId>
 				<version>${javax.mail.version}</version>
+			</dependency>
+			
+			<!-- HttpClient Component -->
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${httpclient-version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

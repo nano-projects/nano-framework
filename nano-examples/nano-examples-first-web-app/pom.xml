@@ -94,11 +94,6 @@
 		</dependency>
 		
 		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-		</dependency>
-
-		<dependency>
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-orm-mybatis</artifactId>
 		</dependency>
