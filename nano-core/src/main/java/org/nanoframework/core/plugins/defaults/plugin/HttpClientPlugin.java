@@ -32,13 +32,15 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 /**
  * @author yanghe
  * @date 2016年2月7日 下午1:53:07
+ * @deprecated deprecated it
  */
+@Deprecated
 public class HttpClientPlugin implements Plugin {
 	public static final String DEFAULT_HTTPCLIENT_PARAMETER_NAME = "httpclient";
-	public static final String TIME_TO_LIVE = "httpclient.time.to.live";
-	public static final String TIME_UNIT = "httpclient.timeunit";
-	public static final String MAX_TOTAL = "httpclient.max.total";
-	public static final String DEFAULT_MAX_PER_ROUTE = "httpclient.default.max.per.route";
+	public static final String TIME_TO_LIVE = "context.httpclient.time.to.live";
+	public static final String TIME_UNIT = "context.httpclient.timeunit";
+	public static final String MAX_TOTAL = "context.httpclient.max.total";
+	public static final String MAX_PER_ROUTE = "context.httpclient.default.max.per.route";
 	
 	private Properties properties;
 	private long timeToLive;
@@ -51,7 +53,7 @@ public class HttpClientPlugin implements Plugin {
 		timeToLive = Long.parseLong(properties.getProperty(TIME_TO_LIVE, "-1"));
 		tunit = TimeUnit.valueOf(properties.getProperty(TIME_UNIT, "MILLISECONDS"));
 		maxTotal = Integer.parseInt(properties.getProperty(MAX_TOTAL, "20"));
-		maxPerRoute = Integer.parseInt(properties.getProperty(DEFAULT_MAX_PER_ROUTE, "2"));
+		maxPerRoute = Integer.parseInt(properties.getProperty(MAX_PER_ROUTE, "2"));
 		
 		try {
 			Class<?> PoolingHttpClientConnectionManager = Class.forName("org.apache.http.impl.conn.PoolingHttpClientConnectionManager");

@@ -43,6 +43,13 @@ import org.apache.http.util.EntityUtils;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.CollectionUtils;
 
+/**
+ *
+ * @author yanghe
+ * @since 1.3.3
+ * @deprecated move to nano-ext-httpclient module
+ */
+@Deprecated
 public class HttpClientFactory {
 	private PoolingHttpClientConnectionManager pool;
 	private final String UTF8 = "UTF-8";

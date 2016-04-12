@@ -2,6 +2,14 @@ package org.nanoframework.core.httpclient;
 
 import org.nanoframework.commons.entity.BaseEntity;
 
+/**
+ * 
+ *
+ * @author yanghe
+ * @since 1.3.3
+ * @deprecated Move to nano-ext-httpclient module
+ */
+@Deprecated
 public class HttpResponse extends BaseEntity {
 	private static final long serialVersionUID = -3602195552991064086L;
 
