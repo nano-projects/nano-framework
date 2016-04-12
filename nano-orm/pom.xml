@@ -27,22 +27,7 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<!-- Nano ORM Modules -->
-			<dependency>
-				<groupId>org.nanoframework</groupId>
-				<artifactId>nano-orm-jdbc</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.nanoframework</groupId>
-				<artifactId>nano-orm-mybatis</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.nanoframework</groupId>
-				<artifactId>nano-orm-jedis</artifactId>
-				<version>${project.version}</version>
-			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 </project>

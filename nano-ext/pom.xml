@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -16,8 +17,10 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<jackson-version>2.3.0</jackson-version>
+		
+		<!-- Java Mail -->
+		<javax.mail.version>1.4.7</javax.mail.version>
 	</properties>
 
 	<modules>
@@ -26,6 +29,7 @@
 		<module>nano-ext-concurrent</module>
 		<module>nano-ext-shiro</module>
 		<module>nano-ext-etcd</module>
+		<module>nano-ext-mail</module>
 	</modules>
 
 	<dependencyManagement>
@@ -57,32 +61,12 @@
 				<artifactId>jackson-module-afterburner</artifactId>
 				<version>${jackson-version}</version>
 			</dependency>
-
-			<!-- Nano Extension Modules -->
+			
+			<!-- Java Mail -->
 			<dependency>
-				<groupId>org.nanoframework</groupId>
-				<artifactId>nano-ext-ssh</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.nanoframework</groupId>
-				<artifactId>nano-ext-websocket</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.nanoframework</groupId>
-				<artifactId>nano-ext-concurrent</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.nanoframework</groupId>
-				<artifactId>nano-ext-shiro</artifactId>
-				<version>${project.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.nanoframework</groupId>
-				<artifactId>nano-ext-etcd</artifactId>
-				<version>${project.version}</version>
+				<groupId>javax.mail</groupId>
+				<artifactId>mail</artifactId>
+				<version>${javax.mail.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

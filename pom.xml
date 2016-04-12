@@ -345,6 +345,16 @@
 				<artifactId>nano-ext-shiro</artifactId>
 				<version>${project.version}</version>
 			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-etcd</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.nanoframework</groupId>
+				<artifactId>nano-ext-mail</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 
 			<!-- Nano ORM Modules -->
 			<dependency>
