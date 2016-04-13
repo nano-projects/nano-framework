@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.nanoframework</groupId>
 		<artifactId>nano-jmx</artifactId>
-		<version>1.3.3-SNAPSHOT</version>
+		<version>1.3.3</version>
 	</parent>
 	<artifactId>nano-jmx-client</artifactId>
 	<name>Nano JMX Client</name>
