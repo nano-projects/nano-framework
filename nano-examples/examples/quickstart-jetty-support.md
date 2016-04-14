@@ -9,6 +9,7 @@
 <dependency>
 	<groupId>org.nanoframework</groupId>
 	<artifactId>nano-webmvc</artifactId>
+	<version>1.3.3</version>
 </dependency>
 ```
 ##### 替换为
@@ -16,6 +17,7 @@
 <dependency>
 	<groupId>org.nanoframework</groupId>
 	<artifactId>nano-server</artifactId>
+	<version>1.3.3</version>
 </dependency>
 ```
 
