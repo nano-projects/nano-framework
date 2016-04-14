@@ -18,8 +18,11 @@ package org.nanoframework.extension.websocket;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.commons.util.ObjectCompare;
 
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
@@ -34,24 +37,37 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 public class ChannelGroupItem {
 	private static final Logger LOG = LoggerFactory.getLogger(ChannelGroupItem.class);
 	public static final ConcurrentMap<String, ChannelGroupItem> GROUP = new ConcurrentHashMap<>();
-	private ChannelGroup group;
+	private static final ChannelGroup DEFAULT = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
 	private ConcurrentMap<String, Channel> items;
 
-	public ChannelGroupItem(ChannelGroup group) {
+	public ChannelGroupItem() {
 		this.items = new ConcurrentHashMap<>();
-		this.group = group;
 	}
 
 	public ConcurrentMap<String, Channel> getItems() {
 		return items;
 	}
-
+	
 	public ChannelGroup getGroup() {
-		return group;
+	    ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+	    if(!CollectionUtils.isEmpty(items)) {
+	        items.forEach((itemId, channel) -> channelGroup.add(channel));
+	    }
+	    
+	    return channelGroup;
 	}
-
-	public void setGroup(ChannelGroup group) {
-		this.group = group;
+	
+	public ChannelGroup getGroup(String... itemIds) {
+	    if(ArrayUtils.isEmpty(itemIds)) {
+	        return DEFAULT;
+	    }
+	    
+	    ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
+        if(!CollectionUtils.isEmpty(items)) {
+            items.entrySet().stream().filter(entry -> ObjectCompare.isInList(entry.getKey(), itemIds)).forEach(entry -> channelGroup.add(entry.getValue()));
+        }
+        
+        return channelGroup;
 	}
 
 	public static ChannelGroupItem get(String groupId) {
@@ -63,12 +79,9 @@ public class ChannelGroupItem {
 		if(group != null) {
 			if(!group.items.containsKey(itemId)) {
 				group.items.put(itemId, channel);
-				group.group.add(channel);
 			}
 		} else {
-			ChannelGroup channelGroup = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
-			channelGroup.add(channel);
-			group = new ChannelGroupItem(channelGroup);
+			group = new ChannelGroupItem();
 			group.items.put(itemId, channel);
 		}
 		
@@ -78,12 +91,8 @@ public class ChannelGroupItem {
 	public static void remove(String groupId, String itemId) {
 		ChannelGroupItem group = get(groupId);
 		if(group != null) {
-			Channel channel;
-			if((channel = group.items.remove(itemId)) != null) {
+			if(group.items.remove(itemId) != null) {
 				LOG.warn("Remove ChannelGroup Items: {}", itemId);
-				
-				if(group.group.remove(channel))
-					LOG.warn("Remove ChannelGroup Groups: {}", channel.id().asLongText());
 			}
 		}
 	}
