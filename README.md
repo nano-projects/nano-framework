@@ -18,4 +18,4 @@ mvn clean install -Dmaven.test.skip=true
 
 Quickstart
 ----
-- [Get started in 5 minutes](nano-examples/examples/quickstart.md)
+- [User's Guide of Examples](nano-examples/examples/examples.md)
