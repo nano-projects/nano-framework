@@ -16,21 +16,16 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<h2-version>1.4.189</h2-version>
+		
 	</properties>
 
 	<modules>
-		<module>nano-examples-first-web-app</module>
+		
 	</modules>
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>com.h2database</groupId>
-				<artifactId>h2</artifactId>
-				<version>${h2-version}</version>
-			</dependency>
+			
 		</dependencies>
 	</dependencyManagement>
 </project>
