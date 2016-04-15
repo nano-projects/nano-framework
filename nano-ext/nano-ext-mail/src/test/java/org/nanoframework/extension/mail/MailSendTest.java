@@ -15,15 +15,16 @@
  */
 package org.nanoframework.extension.mail;
 
+import static org.nanoframework.extension.mail.AbstractMailSenderFactory.DEBUG_ENABLED;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.FROM;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.HOST;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.PASSWORD;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.PORT;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.USERNAME;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.VALIDATE;
-import static org.nanoframework.extension.mail.AbstractMailSenderFactory.DEBUG_ENABLED;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.format.DateFormat;
 import org.nanoframework.commons.format.Pattern;
@@ -50,6 +51,7 @@ public class MailSendTest {
         System.setProperty(DEBUG_ENABLED, "true");
     }
     
+    @Ignore
     @Test
     public void sendMailTest() {
         DefaultMailSenderFactory mailSenderFactory = Guice.createInjector().getInstance(DefaultMailSenderFactory.class);
