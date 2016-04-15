@@ -15,8 +15,6 @@
  */
 package org.nanoframework.extension.mail.defaults;
 
-import org.nanoframework.commons.format.DateFormat;
-import org.nanoframework.commons.format.Pattern;
 import org.nanoframework.extension.mail.AbstractMailSenderFactory;
 
 import com.google.inject.Singleton;
@@ -59,13 +57,24 @@ public class DefaultMailSenderFactory extends AbstractMailSenderFactory {
     @Override
     public String buildContent(String content) {
         StringBuilder builder = new StringBuilder();
-        builder.append("<div style='font-size:12px;'>").append(content).append("</div>");
-        builder.append("<div style='margin-top:100px;font-size:11px;'>");
-        builder.append("    <div style='margin-top:5px;'>--------------------------------------------------------------------------------------</div>");
-        builder.append("    <div style='margin-top:5px;'>此邮件由系统自动生成，请勿回复，如有问题请联系管理员。</div>");
-        builder.append("    <div style='margin-top:5px;'>").append(DateFormat.format(System.currentTimeMillis(), Pattern.DATETIME)).append("</div>");
-        builder.append("    <div style='margin-top:5px;'>--------------------------------------------------------------------------------------</div>");
-        builder.append("</div>");
+        builder.append("<!DOCTYPE html>");
+        builder.append("<html lang=\"en\">");
+        builder.append("<head>");
+        builder.append("  <meta charset=\"UTF-8\">");
+        builder.append("  <style>");
+        builder.append("    body { background-color: #eaeaea; padding: 20px 20% 20px 20%; }");
+        builder.append("    .content { background-color: white; padding: 20px; border-radius: 5px; min-height: 200px; ");
+        builder.append("    -webkit-box-shadow: #aaaaaa 2px 2px 2px; -moz-box-shadow: #aaaaaa 2px 2px 2px; box-shadow: #aaaaaa 2px 2px 2px; }");
+        builder.append("    p { font-weight: 300; font-size: 14px; font-family: \"Chalkboard\"; }");
+        builder.append("  </style>");
+        builder.append("</head>");
+        builder.append("<body>");
+        builder.append("  <div class=\"content\">");
+        builder.append(content);
+        builder.append("  </div>");
+        builder.append("</body>");
+        builder.append("</html>");
+        
         return builder.toString();
     }
 

@@ -25,6 +25,8 @@ import static org.nanoframework.extension.mail.AbstractMailSenderFactory.DEBUG_E
 
 import org.junit.Before;
 import org.junit.Test;
+import org.nanoframework.commons.format.DateFormat;
+import org.nanoframework.commons.format.Pattern;
 import org.nanoframework.extension.mail.defaults.DefaultMailSenderFactory;
 
 import com.google.inject.Guice;
@@ -51,6 +53,11 @@ public class MailSendTest {
     @Test
     public void sendMailTest() {
         DefaultMailSenderFactory mailSenderFactory = Guice.createInjector().getInstance(DefaultMailSenderFactory.class);
-        Assert.assertEquals(mailSenderFactory.sendMail("NanoFramework Compiler", "Package or Depoly NanoFramework", "comicme_yanghe@icloud.com"), true);
+        StringBuilder builder = new StringBuilder();
+        builder.append("<p>NanoFramework</p>");
+        builder.append("<p>Compiler or Package or Depoly this Framework</p>");
+        builder.append("<p>").append(DateFormat.format(System.currentTimeMillis(), Pattern.DATETIME)).append("</p>");
+        builder.append("<p>nanoframework.org © 2015-2016</p>");
+        Assert.assertEquals(mailSenderFactory.sendMail("NanoFramework Compiler", builder.toString(), "comicme_yanghe@icloud.com"), true);
     }
 }
