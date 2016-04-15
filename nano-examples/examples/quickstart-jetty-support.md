@@ -4,7 +4,16 @@
 ####1. 复制quickstart并重名为jetty-support
 
 ####2. 编辑 pom.xml
-#####2.1. 修改依赖
+#####2.1. 修改 artifactId
+```xml
+<artifactId>nano-examples-quickstart</artifactId>
+```
+##### 修改为
+```xml
+<artifactId>nano-examples-jetty-support</artifactId>
+```
+
+#####2.2. 修改依赖
 ```xml
 <dependency>
 	<groupId>org.nanoframework</groupId>
@@ -21,7 +30,7 @@
 </dependency>
 ```
 
-#####2.2. 修改resource
+#####2.3. 修改resource
 ```xml
 <resource>
 	<directory>src/main/webapp</directory>
@@ -38,6 +47,8 @@
 ####3. 在 src/main/webapp/WEB-INF下添加 jetty.xml 及 webdefault.xml
 - [jetty.xml](https://github.com/nano-projects/nano-framework/tree/master/nano-examples/nano-examples-jetty-support/src/main/webapp/WEB-INF/jetty.xml)
 - [webdefault.xml](https://github.com/nano-projects/nano-framework/tree/master/nano-examples/nano-examples-jetty-support/src/main/webapp/WEB-INF/webdefault.xml)
+
+##### 启动服务的端口从jetty.xml中进行设置
 
 ####4. 添加启动器
 #####4.1. 在src/main/java下创建类 org.nanoframework.examples.quickstart.Bootstrap

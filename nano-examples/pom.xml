@@ -23,6 +23,7 @@
 	<modules>
 		<module>nano-examples-quickstart</module>
 		<module>nano-examples-jetty-support</module>
+		<module>nano-examples-restful</module>
 	</modules>
 
 	<dependencyManagement>
