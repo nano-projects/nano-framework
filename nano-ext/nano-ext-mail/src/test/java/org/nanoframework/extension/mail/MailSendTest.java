@@ -21,6 +21,7 @@ import static org.nanoframework.extension.mail.AbstractMailSenderFactory.PASSWOR
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.PORT;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.USERNAME;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.VALIDATE;
+import static org.nanoframework.extension.mail.AbstractMailSenderFactory.DEBUG_ENABLED;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -44,6 +45,7 @@ public class MailSendTest {
         System.setProperty(USERNAME, "test@nanoframework.org");
         System.setProperty(PASSWORD, "RkUxNTM4Mjg4RUNDNzYyQkEyMzQwRDMyOEUyNEI1NTY1");
         System.setProperty(FROM, "test@nanoframework.org");
+        System.setProperty(DEBUG_ENABLED, "true");
     }
     
     @Test

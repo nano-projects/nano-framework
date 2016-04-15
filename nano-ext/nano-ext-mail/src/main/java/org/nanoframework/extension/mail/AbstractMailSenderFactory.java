@@ -59,6 +59,8 @@ public abstract class AbstractMailSenderFactory {
     public static final String FROM = "javax.mail.server.from";
     /** Singleton mail session instance. */
     public static final String SINGLETON_SESSION_INSTANCE = "javax.mail.server.session.singleton";
+    /** Mail Session Debug enabled. */
+    public static final String DEBUG_ENABLED = "javax.mail.server.session.debug.enabled";
     
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractMailSenderFactory.class);
     
@@ -69,6 +71,8 @@ public abstract class AbstractMailSenderFactory {
     protected final String password = StringUtils.isBlank(System.getProperty(PASSWORD)) ? StringUtils.EMPTY : CryptUtil.decrypt(System.getProperty(PASSWORD), username);
     protected final String from = System.getProperty(FROM);
     protected final boolean singletonSessionInstance = Boolean.parseBoolean(System.getProperty(SINGLETON_SESSION_INSTANCE, "true"));
+    /** Mail session debug enabled, default is false */
+    protected final boolean debugEnabled = Boolean.parseBoolean(System.getProperty(DEBUG_ENABLED, "false"));
     
     /**
      * 以文本格式发送邮件.
@@ -92,6 +96,8 @@ public abstract class AbstractMailSenderFactory {
         } else {
             sendMailSession = Session.getInstance(pro, authenticator);
         }
+        
+        sendMailSession.setDebug(debugEnabled);
         
         try {
             // 根据session创建一个邮件消息   
@@ -139,6 +145,8 @@ public abstract class AbstractMailSenderFactory {
         } else {
             sendMailSession = Session.getInstance(pro, authenticator);
         }
+        
+        sendMailSession.setDebug(debugEnabled);
         
         try {
             // 根据session创建一个邮件消息   
