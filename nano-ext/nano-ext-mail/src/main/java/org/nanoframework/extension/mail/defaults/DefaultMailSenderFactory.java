@@ -66,6 +66,11 @@ public class DefaultMailSenderFactory extends AbstractMailSenderFactory {
         builder.append("    .content { background-color: white; padding: 20px; border-radius: 5px; min-height: 200px; ");
         builder.append("    -webkit-box-shadow: #aaaaaa 2px 2px 2px; -moz-box-shadow: #aaaaaa 2px 2px 2px; box-shadow: #aaaaaa 2px 2px 2px; }");
         builder.append("    p { font-weight: 300; font-size: 14px; font-family: \"Chalkboard\"; }");
+        builder.append("    a { text-decoration:none; }");
+        builder.append("    a:link { text-decoration:none; }");
+        builder.append("    a:visited { text-decoration:none; }");
+        builder.append("    a:hover { text-decoration:none; }");
+        builder.append("    a:active { text-decoration:none; }");
         builder.append("  </style>");
         builder.append("</head>");
         builder.append("<body>");
