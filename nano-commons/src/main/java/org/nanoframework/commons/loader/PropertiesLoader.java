@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -28,6 +29,7 @@ import org.nanoframework.commons.io.ClassPathResource;
 import org.nanoframework.commons.io.Resource;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.ResourceUtils;
 
 /**
@@ -79,7 +81,7 @@ public class PropertiesLoader {
 		
 		try {
 			Properties prop = new Properties();
-			prop.load(input);
+			prop.load(new InputStreamReader(input, Charsets.UTF_8));
 			return prop;
 		} catch(IOException e) {
 			throw new LoaderException("加载属性文件异常: " + e.getMessage());
@@ -98,7 +100,7 @@ public class PropertiesLoader {
 			throw new LoaderException("文件对象为空");
 		
 		Properties prop = new Properties();
-		prop.load(new FileInputStream(file));
+		prop.load(new InputStreamReader(new FileInputStream(file), Charsets.UTF_8));
 		
 		return prop;
 		
