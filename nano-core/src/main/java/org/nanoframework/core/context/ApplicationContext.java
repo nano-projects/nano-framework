@@ -99,6 +99,16 @@ public final class ApplicationContext {
 		public static final String SCHEDULER_APP_JMX_RATE = "context.scheduler.app.jmx.rate";
 		/** JMX同步ETCD属性 */
 		public static final String SCHEDULER_APP_JMX_ENABLE = "context.scheduler.app.jmx.enable";
+		/** ETCD元素过期时间 */
+		public static final String ETCD_KEY_TTL = "context.scheduler.etcd.key.ttl";
+		/**
+		 * @see org.nanoframework.extension.etcd.etcd4j.transport.EtcdNettyConfig#CONNECT_TIMEOUT
+		 */
+		public static final String ETCD_CONNECT_TIMEOUT = "context.scheduler.etcd.connect.timeout";
+		/**
+		 * @see org.nanoframework.extension.etcd.etcd4j.transport.EtcdNettyConfig#FRAME_SIZE
+		 */
+		public static final String ETCD_FRAME_SIZE = "context.scheduler.etcd.max.frame.size";
 	}
 	
 	/** WebSocket服务扫描属性 */

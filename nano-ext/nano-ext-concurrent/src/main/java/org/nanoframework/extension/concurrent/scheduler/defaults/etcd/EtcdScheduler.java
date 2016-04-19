@@ -21,6 +21,7 @@ import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_M
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_SCHEDULER_ANALYSIS;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_URI;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_USER;
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_KEY_TTL;
 import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.DEFAULT_SCHEDULER_NAME_PREFIX;
 import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.threadFactory;
 
@@ -73,15 +74,15 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 	public static final String CLS_KEY = DIR + "/Scheduler.class";
 	public static final String INSTANCE_KEY = DIR + "/Scheduler.list";
 	public static final String INFO_KEY = DIR + "/App.info";
-	private final int maxRetryCount = Integer.parseInt(System.getProperty(ETCD_MAX_RETRY_COUNT, "1"));
 	public static final boolean SCHEDULER_ANALYSIS_ENABLE = Boolean.parseBoolean(System.getProperty(ETCD_SCHEDULER_ANALYSIS, "false"));
+	private static String APP_NAME;
 	
+	private final int maxRetryCount = Integer.parseInt(System.getProperty(ETCD_MAX_RETRY_COUNT, "1"));
+	private final int timeout = Integer.parseInt(System.getProperty(ETCD_KEY_TTL, "120"));
 	private Map<Class<?>, String> clsIndex = new HashMap<Class<?>, String>();
 	private Map<String, String> indexMap = new HashMap<String, String>();
 	
-	private static String APP_NAME;
 	private boolean init = false;
-	private final int timeout = 75;
 	private EtcdClient etcd;
 	
 	public EtcdScheduler(Set<Class<?>> clsSet) {

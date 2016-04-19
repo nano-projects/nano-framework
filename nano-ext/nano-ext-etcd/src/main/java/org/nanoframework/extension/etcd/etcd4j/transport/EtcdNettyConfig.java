@@ -40,16 +40,26 @@ public class EtcdNettyConfig implements Cloneable {
   private int maxFrameSize = 1024 * 1000;
 
   private String hostName;
+  
+  private final String CONNECT_TIMEOUT = "context.scheduler.etcd.connect.timeout";
+  private final String FRAME_SIZE = "context.scheduler.etcd.max.frame.size";
 
   /**
    * Constructor
    */
   public EtcdNettyConfig() {
-    String frameSize = System.getProperty("context.etcd.max.frame.size");
-    if (frameSize != null) {
-      logger.warn("Setting context.etcd.max.frame.size through system propery is deprecated. Please use the EtcdNettyConfig class");
-      maxFrameSize = Integer.parseInt(frameSize);
+    String connectTimeout = System.getProperty(CONNECT_TIMEOUT);
+    if(connectTimeout != null && !connectTimeout.trim().isEmpty()) {
+      logger.warn("Setting context.scheduler.etcd.connect.timeout to " + connectTimeout.trim());
+      this.connectTimeout = Integer.parseInt(connectTimeout.trim());
     }
+    
+    String frameSize = System.getProperty(FRAME_SIZE);
+    if (frameSize != null && !frameSize.trim().isEmpty()) {
+      logger.warn("Setting context.scheduler.etcd.max.frame.size to " + frameSize.trim());
+      maxFrameSize = Integer.parseInt(frameSize.trim());
+    }
+    
   }
 
   /**
