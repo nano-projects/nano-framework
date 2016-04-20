@@ -38,7 +38,7 @@
 		<servlet-api-version>3.0.1</servlet-api-version>
 		<servlet-jsp-api-version>2.2.1</servlet-jsp-api-version>
 		<servlet-jsp-jstl-api-version>1.2.1</servlet-jsp-jstl-api-version>
-		<jetty-version>8.1.17.v20150415</jetty-version>
+		<jetty-version>8.1.19.v20160209</jetty-version>
 		<jsp-support-version>2.2.3</jsp-support-version>
 		<tomcat-version>2.2</tomcat-version>
 		<ganymed-version>262</ganymed-version>
@@ -248,11 +248,11 @@
 			</dependency>
 
 			<!-- Jetty Webapp -->
-			<dependency>
+			<!-- <dependency>
 				<groupId>org.eclipse.jetty</groupId>
 				<artifactId>jetty-webapp</artifactId>
 				<version>${jetty-version}</version>
-			</dependency>
+			</dependency> -->
 
 			<!-- JSP Support -->
 			<dependency>
