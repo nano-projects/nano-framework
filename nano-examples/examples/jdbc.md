@@ -434,4 +434,4 @@ curl -i http://localhost:8080/quickstart/rest/elements
 
 源码
 ----
-- [nano-examples-restful](https://github.com/nano-projects/nano-framework/tree/master/nano-examples/nano-examples-jdbc)
+- [nano-examples-jdbc](https://github.com/nano-projects/nano-framework/tree/master/nano-examples/nano-examples-jdbc)
