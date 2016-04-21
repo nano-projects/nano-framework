@@ -9,7 +9,7 @@
 <dependency>
 	<groupId>org.nanoframework</groupId>
 	<artifactId>nano-webmvc</artifactId>
-	<version>1.3.3</version>
+	<version>1.3.4</version>
 </dependency>
 ```
 #####2.2. 在pom.xml的build标签中添加resources

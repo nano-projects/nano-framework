@@ -11,8 +11,9 @@ NanoFramework
 安装
 ----
 ```shell
-git clone git@github.com:nano-projects/nano-framework.git
-cd nano-framework
+wget https://github.com/nano-projects/nano-framework/archive/nano-1.3.4.tar.gz
+tar -zxvf nano-1.3.4.tar.gz
+cd nano-framework-nano-1.3.4
 mvn clean install -Dmaven.test.skip=true
 ```
 
