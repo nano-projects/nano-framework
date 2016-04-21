@@ -204,14 +204,14 @@ public class RestComponentImpl implements RestComponent {
 ```
 
 ####4. 启动服务
-#####6.1. Run Bootstrap
-#####6.2. 模拟请求
+##### 4.1. Run Bootstrap
+##### 4.2. 模拟请求
 ###### [下载](https://curl.haxx.se/download.html)CURL工具, 选择使用操作系统的版本
 ###### CURL使用[参考文档](http://blog.csdn.net/lipei1220/article/details/8536520)(Windows版)
 
 ###### GET请求模拟
 ```shell
-curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements
+curl -i http://localhost:8080/quickstart/rest/elements
 ```
 ###### 返回报文
 ```json
@@ -220,8 +220,8 @@ curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements
 
 ###### POST请求模拟
 ```shell
-curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements -XPOST -d 'el={"text":"new hello"}'
-curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements
+curl -i http://localhost:8080/quickstart/rest/elements -XPOST -d 'el={"text":"new hello"}'
+curl -i http://localhost:8080/quickstart/rest/elements
 ```
 ###### 返回报文
 ```json
@@ -230,8 +230,8 @@ curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements
 
 ###### PUT请求模拟
 ```shell
-curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements -XPUT -d 'el={"id":1,"text":"update hello"}'
-curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements
+curl -i http://localhost:8080/quickstart/rest/elements -XPUT -d 'el={"id":1,"text":"update hello"}'
+curl -i http://localhost:8080/quickstart/rest/elements
 ```
 ###### 返回报文
 ```json
@@ -241,7 +241,7 @@ curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements
 ###### DELETE请求模拟
 ```shell
 curl -i http://localhost:8080/quickstart/rest/elements/1 -XDELETE
-curl -i http://{yourIP}:{yourPort}/quickstart/rest/elements
+curl -i http://localhost:8080/quickstart/rest/elements
 ```
 ###### 返回报文
 ```json

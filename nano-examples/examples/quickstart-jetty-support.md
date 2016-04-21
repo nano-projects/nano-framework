@@ -83,7 +83,7 @@ public String hello() {
 
 ####6. 启动服务
 #####6.1. Run Bootstrap
-#####6.2. 访问服务:  http://{yourIP}:{yourPort}/quickstart/hello
+#####6.2. 访问服务:  http://localhost:8080/quickstart/hello
 
 源码
 ----
