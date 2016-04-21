@@ -92,7 +92,7 @@ public class H2DBServerListener implements ServletContextListener {
 
 ###### 现在我们可以启动服务并为H2数据库添加数据库和数据表
 ###### 和之前一样，我们使用Bootstrap类来启动应用
-###### 启动完成后，我们就可以访问 http://{yourIP}:{yourPort}/quickstart/console 来配置我们的数据库了
+###### 启动完成后，我们就可以访问 http://localhost:8080/quickstart/console 来配置我们的数据库了
 ###### 我们使用默认的配置， 密码直接用test即可，当然也可以自行设置，但是不能为空
 ###### 登陆后我们就可以创建我们的测试表了，表结构如下
 ```sql
