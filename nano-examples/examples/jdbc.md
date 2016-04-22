@@ -104,7 +104,7 @@ text varchar(256) not null
 
 ##### 1.3. 添加数据库连接池
 
-###### 在NanoFramework中，集成了2中数据库连接池，druid和c3p0，默认使用druid，在此我们需要在pom.xml中添加druid的依赖以支持jdbc的连接池处理
+###### 在NanoFramework中，集成了2种数据库连接池，druid和c3p0，默认使用druid，在此我们需要在pom.xml中添加druid的依赖以支持jdbc的连接池处理
 ```xml
 <dependency>
 	<groupId>com.alibaba</groupId>
@@ -409,7 +409,7 @@ curl -i http://localhost:8080/quickstart/rest/elements
 ```
 ###### 返回报文
 ```json
-{"message":"OK","value":[{"id":1,"text":"hello1"}],"info":"OK","status":200}
+{"message":"OK","value":[{"id":1,"text":"new hello"}],"info":"OK","status":200}
 ```
 
 ###### PUT请求模拟

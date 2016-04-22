@@ -225,7 +225,7 @@ curl -i http://localhost:8080/quickstart/rest/elements
 ```
 ###### 返回报文
 ```json
-{"message":"OK","value":[{"id":1,"text":"hello1"}],"info":"OK","status":200}
+{"message":"OK","value":[{"id":1,"text":"new hello"}],"info":"OK","status":200}
 ```
 
 ###### PUT请求模拟
