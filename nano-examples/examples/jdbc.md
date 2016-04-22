@@ -182,6 +182,12 @@ druid.filters=stat
 ```properties
 mapper.package.jdbc=/quickstart.jdbc.properties
 ```
+###### 多数据源支持配置示例，在本示例中请不要添加以下属性，可以自行进行试验
+```properties
+mapper.package.root=quickstart0,quickstart1
+mapper.package.jdbc.quickstart0=/quickstart0.jdbc.properties
+mapper.package.jdbc.quickstart1=/quickstart1.jdbc.properties
+```
 
 #### 3. 开发我们的ORM层代码
 ###### 为了规范化代码结构，我们需要创建Dao和对应的实现类来完成对数据库的操作，如下
