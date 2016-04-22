@@ -95,7 +95,7 @@ public interface ElementsMapper {
 
 ##### 2.4. 定义Mybatis SQL相关的xml文件
 ###### 在 src/main/resources 下建立文件 org.nanoframework.examples.quickstart.mapper.ElementsMapper.xml
-###### 请务必注意文件的包路径，必须要与mapper接口所在路径一直，否则将无法生效
+###### 请务必注意文件的包路径，必须要与mapper接口所在路径一致，否则将无法生效
 ```xml
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
@@ -279,6 +279,9 @@ public interface Elements2Mapper {
     
 }
 ```
+
+###### Mybatis提供的增删改查操作的相关注解(@Select, @Insert, @Update, @Delete)，这些操作对应JDBC相应的操作。
+###### 但是这些注解不能完全实现Mybatis中xml的实现，所以有些时候还是需要使用xml来完成比较特使的任务的。
 
 ##### 3.2. 修改RestComponentImpl
 ```java
