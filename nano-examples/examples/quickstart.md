@@ -108,7 +108,7 @@ public class HelloWorldComponentImpl implements HelloWorldComponent {
 
 ####7. 添加Web容器(Tomcat, Jetty等)
 #####7.1. 启动项目
-#####7.2. 访问服务:  http://{yourIP}:{yourPort}/quickstart/hello
+#####7.2. 访问服务:  http://localhost:8080/quickstart/hello
 
 源码
 ----

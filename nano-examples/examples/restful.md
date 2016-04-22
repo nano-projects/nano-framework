@@ -1,10 +1,10 @@
 开启Restful之旅
 ----
 
-####1. 复制 nano-examples-jetty-support 并重名为 nano-examples-restful
+#### 1. 复制 nano-examples-jetty-support 并重名为 nano-examples-restful
 
-####2. 编辑 pom.xml
-#####2.1. 修改 artifactId
+#### 2. 编辑 pom.xml
+##### 2.1. 修改 artifactId
 ```xml
 <artifactId>nano-examples-jetty-support</artifactId>
 ```
@@ -13,8 +13,8 @@
 <artifactId>nano-examples-restful</artifactId>
 ```
 
-####3. 创建Restful(GET, POST, PUT, DELETE)服务
-#####3.1. 创建 Element对象
+#### 3. 创建Restful(GET, POST, PUT, DELETE)服务
+##### 3.1. 创建 Element对象
 ###### org.nanoframework.examples.quickstart.domain.Element
 ```java
 package org.nanoframework.examples.quickstart.domain;
@@ -46,7 +46,7 @@ public class Element extends BaseEntity {
 }
 ```
 
-#####3.2. 创建Rest组件服务
+##### 3.2. 创建Rest组件服务
 ###### 接口: org.nanoframework.examples.quickstart.component.RestComponent
 ```java
 package org.nanoframework.examples.quickstart.component;
@@ -78,7 +78,7 @@ public class RestComponentImpl implements RestComponent {
 
 ```
 
-#####3.3. 添加GET请求处理
+##### 3.3. 添加GET请求处理
 ###### RestComponent接口中增加 getElements 和 getElement 方法
 ```java
     /**
@@ -119,7 +119,7 @@ public class RestComponentImpl implements RestComponent {
     }
 ```
 
-#####3.4. 添加POST请求
+##### 3.4. 添加POST请求
 ###### RestComponent接口中增加 postElement 方法
 ```java
     /**
@@ -148,7 +148,7 @@ public class RestComponentImpl implements RestComponent {
 
 ```
 
-#####3.5. 添加PUT请求
+##### 3.5. 添加PUT请求
 ###### RestComponent接口中增加 putElement 方法
 ```java
     /**
@@ -176,7 +176,7 @@ public class RestComponentImpl implements RestComponent {
 
 ```
 
-#####3.6. 添加DELETE请求
+##### 3.6. 添加DELETE请求
 ###### RestComponent接口中增加 deleteElement 方法
 ```java
     /**
@@ -203,49 +203,136 @@ public class RestComponentImpl implements RestComponent {
 
 ```
 
-####4. 启动服务
+#### 4. 启动服务
 ##### 4.1. Run Bootstrap
-##### 4.2. 模拟请求
-###### [下载](https://curl.haxx.se/download.html)CURL工具, 选择使用操作系统的版本
-###### CURL使用[参考文档](http://blog.csdn.net/lipei1220/article/details/8536520)(Windows版)
 
-###### GET请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements
+#### 5. 编写测试类模拟请求
+###### 为了能够快速的进行测试，我们需要在pom.xml中添加httpclient依赖
+```xml
+    <dependency>
+		<groupId>org.nanoframework</groupId>
+		<artifactId>nano-ext-httpclient</artifactId>
+		<version>1.3.4</version>
+	</dependency>
 ```
-###### 返回报文
-```json
-{"message":"OK","value":[],"info":"OK","status":200}
+###### 为了能查看日志输出，我们需要添加Log4j相关的依赖
+```xml
+    <dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-api</artifactId>
+		<version>1.7.7</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-api</artifactId>
+		<version>2.5</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-core</artifactId>
+		<version>2.5</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.logging.log4j</groupId>
+		<artifactId>log4j-slf4j-impl</artifactId>
+		<version>2.5</version>
+	</dependency>
 ```
+##### 5.1. 编写单元测试
+###### 在 src/test/java 下建立测试类 org.nanoframework.examples.quickstart.component.RestTest
+```java
+import java.io.IOException;
+import java.util.Map;
 
-###### POST请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements -XPOST -d 'el={"text":"new hello"}'
-curl -i http://localhost:8080/quickstart/rest/elements
-```
-###### 返回报文
-```json
-{"message":"OK","value":[{"id":1,"text":"new hello"}],"info":"OK","status":200}
-```
+import org.junit.Before;
+import org.junit.Test;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.examples.quickstart.domain.Element;
+import org.nanoframework.extension.httpclient.HttpClient;
 
-###### PUT请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements -XPUT -d 'el={"id":1,"text":"update hello"}'
-curl -i http://localhost:8080/quickstart/rest/elements
-```
-###### 返回报文
-```json
-{"message":"OK","value":[{"id":1,"text":"update hello"}],"info":"OK","status":200}
-```
+import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Maps;
+import com.google.inject.Guice;
 
-###### DELETE请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements/1 -XDELETE
-curl -i http://localhost:8080/quickstart/rest/elements
+public class RestTest {
+    private final Logger logger = LoggerFactory.getLogger(RestTest.class);
+    private HttpClient httpClient;
+    
+    @Before
+    public void before() {
+        httpClient = Guice.createInjector().getInstance(HttpClient.class);
+    }
+    
+    private void getAllTest() throws IOException {
+        logger.debug("Get ALL: {}", httpClient.httpGetRequest("http://localhost:8080/quickstart/rest/elements").entity);
+    }
+    
+    private void getByIdTest(long id) throws IOException {
+        logger.debug("GET by ID [{}]: {}", id, httpClient.httpGetRequest("http://localhost:8080/quickstart/rest/elements/" + id).entity);
+    }
+    
+    private void postTest() throws IOException {
+        Element el = new Element();
+        el.setText("new hello");
+        Map<String, String> params = Maps.newHashMap();
+        params.put("el", JSON.toJSONString(el));
+        logger.debug(httpClient.httpPostRequest("http://localhost:8080/quickstart/rest/elements", params).entity);
+        
+        getAllTest();
+        getByIdTest(1);
+    }
+    
+    private void putTest() throws IOException {
+        Element el = new Element();
+        el.setId(1L);
+        el.setText("Update Hello");
+        Map<String, String> params = Maps.newHashMap();
+        params.put("el", JSON.toJSONString(el));
+        logger.debug(httpClient.httpPutRequest("http://localhost:8080/quickstart/rest/elements", params).entity);
+        
+        getAllTest();
+        getByIdTest(1L);
+    }
+    
+    private void deleteTest(long id) throws IOException {
+        logger.debug(httpClient.httpDeleteRequest("http://localhost:8080/quickstart/rest/elements/" + id).entity);
+        getAllTest();
+        getByIdTest(id);
+
+    }
+    
+    @Test
+    public void httpTest() throws IOException {
+        logger.debug("POST Request");
+        postTest();
+        logger.debug("");
+        logger.debug("PUT Request");
+        putTest();
+        logger.debug("DELETE Request");
+        logger.debug("");
+        deleteTest(1);
+    }
+}
 ```
-###### 返回报文
-```json
-{"message":"OK","value":[],"info":"OK","status":200}
+###### 执行单元测试，查看输出日志信息
+```logger
+POST Request 
+{"info":"OK","message":"OK","status":200} 
+Get ALL: {"message":"OK","value":[{"id":1,"text":"new hello"}],"info":"OK","status":200} 
+GET by ID [1]: {"message":"OK","value":{"id":1,"text":"new hello"},"info":"OK","status":200} 
+```
+```logger
+PUT Request 
+{"info":"OK","message":"OK","status":200} 
+Get ALL: {"message":"OK","value":[{"id":1,"text":"Update Hello"}],"info":"OK","status":200} 
+GET by ID [1]: {"message":"OK","value":{"id":1,"text":"Update Hello"},"info":"OK","status":200} 
+```
+```logger
+DELETE Request 
+{"info":"OK","message":"OK","status":200} 
+Get ALL: {"message":"OK","value":[],"info":"OK","status":200} 
+GET by ID [1]: {"message":"OK","info":"OK","status":200} 
 ```
 
 源码
