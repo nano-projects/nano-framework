@@ -88,36 +88,69 @@ JDBC事务管理初识
 
 #### 3. 启动服务
 ##### 3.1. Run Bootstrap
-##### 3.2. 模拟请求
-###### [下载](https://curl.haxx.se/download.html)CURL工具, 选择使用操作系统的版本
-###### CURL使用[参考文档](http://blog.csdn.net/lipei1220/article/details/8536520)(Windows版)
 
-###### POST请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements/batch -XPOST -d 'els[]={"text":"new hello batch 0"}&els[]={"text":"new hello batch 1"}'
-curl -i http://localhost:8080/quickstart/rest/elements
+#### 4. 编写测试类模拟请求
+##### 4.1. 编写单元测试
+##### 在 src/test/java 下建立测试类 org.nanoframework.examples.quickstart.component.JdbcTransactionalTest
+```java
+import java.io.IOException;
+
+import org.apache.http.entity.ContentType;
+import org.junit.Before;
+import org.junit.Test;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.extension.httpclient.HttpClient;
+
+import com.google.inject.Guice;
+
+public class JdbcTransactionalTest {
+    private Logger logger = LoggerFactory.getLogger(JdbcTransactionalTest.class);
+    private HttpClient httpClient;
+    
+    @Before
+    public void before() {
+        httpClient = Guice.createInjector().getInstance(HttpClient.class);
+    }
+    
+    private void getAllTest() throws IOException {
+        logger.debug("Get ALL: {}", httpClient.httpGetRequest("http://localhost:8080/quickstart/rest/elements").entity);
+    }
+    
+    @Test
+    public void transactionalTest() throws IOException {
+        logger.debug("");
+        logger.debug("Batch Test: ");
+        logger.debug(httpClient.httpPostRequest("http://localhost:8080/quickstart/rest/elements/batch", 
+                "els[]={\"text\":\"new hello batch 0\"}&els[]={\"text\":\"new hello batch 1\"}", ContentType.APPLICATION_FORM_URLENCODED).entity);
+                
+        getAllTest();
+    }
+    
+    @Test
+    public void transactionalFailTest() throws IOException {
+        logger.debug("");
+        logger.debug("Fail Batch Test: ");
+        logger.debug(httpClient.httpPostRequest("http://localhost:8080/quickstart/rest/elements/batch", 
+                "els[]={\"text\":\"new hello batch 2\"}&els[]={}", ContentType.APPLICATION_FORM_URLENCODED).entity);
+                
+        getAllTest();
+    }
+}
 ```
-###### 返回报文
-```json
-{"message":"OK","value":[{"id":33,"text":"new hello batch 0"},{"id":34,"text":"new hello batch 1"}],"info":"OK","status":200}
+###### 执行单元测试，查看输出日志信息
+##### 注意： 执行单元测试前，请先清理表数据，以达到测试效果
+```logger
+Batch Test:  
+{"info":"OK","message":"OK","status":200} 
+Get ALL: {"message":"OK","value":[{"id":1,"text":"new hello batch 0"},{"id":2,"text":"new hello batch 1"}],"info":"OK","status":200} 
+```
+```logger
+Fail Batch Test:  
+{"info":"ComponentInvokeException","message":"组件调用异常: NULL not allowed for column \"TEXT\"; SQL statement:\ninsert into elements (text) values (?) [23502-191]","status":9099} 
+Get ALL: {"message":"OK","value":[{"id":1,"text":"new hello batch 0"},{"id":2,"text":"new hello batch 1"}],"info":"OK","status":200} 
 ```
 
-###### POST请求模拟 失败请求
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements/batch -XPOST -d 'els[]={"text":"new hello batch 2"}&els[]={}'
-```
-###### 返回报文
-```json
-{"info":"ComponentInvokeException","message":"组件调用异常: NULL not allowed for column \"TEXT\"; SQL statement:\ninsert into elements (text) values (?) [23502-191]","status":9099}
-```
-###### 失败后查询数据变化
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements
-```
-###### 返回报文
-```json
-{"message":"OK","value":[{"id":33,"text":"new hello batch 0"},{"id":34,"text":"new hello batch 1"}],"info":"OK","status":200}
-```
 ###### 第二条数据在写入的时候因为text字段为null所以无法写入表，抛出异常后，成功的回滚了第一条写入的数据。
 ###### 这样，我们的简单事务处理就开发完成了。
 

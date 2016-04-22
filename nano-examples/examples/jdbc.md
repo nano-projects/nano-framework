@@ -395,48 +395,8 @@ public class ElementsDaoImpl implements ElementsDao {
 
 #### 5. 启动服务
 ##### 5.1. Run Bootstrap
-##### 5.2. 模拟请求
-###### [下载](https://curl.haxx.se/download.html)CURL工具, 选择使用操作系统的版本
-###### CURL使用[参考文档](http://blog.csdn.net/lipei1220/article/details/8536520)(Windows版)
-
-###### GET请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements
-```
-###### 返回报文
-```json
-{"message":"OK","value":[],"info":"OK","status":200}
-```
-
-###### POST请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements -XPOST -d 'el={"text":"new hello"}'
-curl -i http://localhost:8080/quickstart/rest/elements
-```
-###### 返回报文
-```json
-{"message":"OK","value":[{"id":1,"text":"new hello"}],"info":"OK","status":200}
-```
-
-###### PUT请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements -XPUT -d 'el={"id":1,"text":"update hello"}'
-curl -i http://localhost:8080/quickstart/rest/elements
-```
-###### 返回报文
-```json
-{"message":"OK","value":[{"id":1,"text":"update hello"}],"info":"OK","status":200}
-```
-
-###### DELETE请求模拟
-```shell
-curl -i http://localhost:8080/quickstart/rest/elements/1 -XDELETE
-curl -i http://localhost:8080/quickstart/rest/elements
-```
-###### 返回报文
-```json
-{"message":"OK","value":[],"info":"OK","status":200}
-```
+##### 5.2. 使用上一篇中使用的单元测试类 RestTest 进行测试
+###### 测试前重建表结构以达到正确的输出内容，测试的输出结果与Restful示例代码中的结果一致，这里不再给出结果
 
 源码
 ----
