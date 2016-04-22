@@ -26,6 +26,7 @@
 		<module>nano-examples-jdbc</module>
 		<module>nano-examples-jdbc-transactional</module>
 		<module>nano-examples-jdbc-customize</module>
+		<module>nano-examples-mybatis</module>
 	</modules>
 
 	<dependencyManagement>

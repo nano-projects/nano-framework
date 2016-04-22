@@ -7,3 +7,4 @@ Examples
 - [JDBC起步](jdbc.md)
 - [JDBC事务管理初识](jdbc.transactional.md)
 - [自定义JDBC操作](jdbc.customize.md)
+- [体验Mybatis带来的快感](mybatis.md)

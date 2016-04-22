@@ -3,7 +3,7 @@ JDBC起步
 
   基于前篇Restful，我们将原有的内存存储数据的模式修改为数据库的模式，这里我们使用NanoFramework中对JDBC的封装模块 nano-orm-jdbc 的使用进行介绍
 
-####1. 前期准备
+#### 1. 前期准备
 
 ###### 为了简化示例代码，这里使用了H2来作为数据库。我们只需要在pom文件中增加h2的依赖并添加启动类即可
 ###### 按照惯例，我们使用前一个示例版本作为本示例的基础， 复制 nano-examples-restful 并重名为 nano-examples-jdbc
