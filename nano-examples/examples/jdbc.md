@@ -6,7 +6,7 @@ JDBC起步
 ####1. 前期准备
 
 ###### 为了简化示例代码，这里使用了H2来作为数据库。我们只需要在pom文件中增加h2的依赖并添加启动类即可
-###### 按照惯例，我们使用前一个示例版本作为本示例的基础， 复制 restful并重名为jdbc
+###### 按照惯例，我们使用前一个示例版本作为本示例的基础， 复制 nano-examples-restful 并重名为 nano-examples-jdbc
 
 ##### 1.1. 修改artifactId
 ```xml
@@ -113,7 +113,7 @@ text varchar(256) not null
 </dependency>
 ```
 
-##### 2. 正式开始我们的JDBC开发
+#### 2. 正式开始我们的JDBC开发
 ###### 首先我们需要为我们的应用添加数据库的连接池配置(即数据源), 我们需要在 src/main/resources 下添加 quickstart.jdbc.properties 属性文件, 内容如下
 ```properties
 JDBC.environment.id=quickstart
@@ -183,7 +183,7 @@ druid.filters=stat
 mapper.package.jdbc=/quickstart.jdbc.properties
 ```
 
-##### 3. 开发我们的ORM层代码
+#### 3. 开发我们的ORM层代码
 ###### 为了规范化代码结构，我们需要创建Dao和对应的实现类来完成对数据库的操作，如下
 ###### 创建接口 org.nanoframework.examples.quickstart.dao.ElementsDao
 ```java
@@ -322,7 +322,7 @@ public class ElementsDaoImpl implements ElementsDao {
 }
 ```
 
-##### 4. 修改组件服务
+#### 4. 修改组件服务
 ###### 为了简化开发，我们在此不编写Service类来做逻辑处理，在正式开发过程中我们需要使用Service来做逻辑处理
 ###### 修改RestComponentImpl的代码实现，如下
 ```java

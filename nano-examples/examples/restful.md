@@ -1,7 +1,7 @@
 开启Restful之旅
 ----
 
-####1. 复制jetty-support并重名为restful
+####1. 复制 nano-examples-jetty-support 并重名为 nano-examples-restful
 
 ####2. 编辑 pom.xml
 #####2.1. 修改 artifactId

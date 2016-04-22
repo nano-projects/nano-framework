@@ -1,7 +1,7 @@
 使用内嵌Jetty来替换Tomcat等容器
 ----
 
-####1. 复制quickstart并重名为jetty-support
+####1. 复制 nano-examples-quickstart 并重名为 nano-examples-jetty-support
 
 ####2. 编辑 pom.xml
 #####2.1. 修改 artifactId
