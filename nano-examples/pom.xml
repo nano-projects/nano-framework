@@ -25,6 +25,7 @@
 		<module>nano-examples-restful</module>
 		<module>nano-examples-jdbc</module>
 		<module>nano-examples-jdbc-transactional</module>
+		<module>nano-examples-jdbc-customize</module>
 	</modules>
 
 	<dependencyManagement>
