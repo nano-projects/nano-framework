@@ -21,7 +21,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.nanoframework.commons.loader.PropertiesLoader;
-import org.nanoframework.commons.util.Charsets;
+import org.nanoframework.commons.support.message.MessageFactory;
+import org.nanoframework.commons.support.message.ParameterizedMessageFactory;
 import org.nanoframework.commons.util.StringUtils;
 
 /**
@@ -33,13 +34,17 @@ public class DefaultMessageSource implements MessageSource {
 	public static final String DEFAULT_PREFIX_MESSAGE = "/messages/messages";
 	public static final String PROPERITES_SUFFIX = ".properties";
 	private final Object LOCK = new Object();
+	private final MessageFactory messageFactory;
 	private Locale locale;
 	
-	protected DefaultMessageSource() { }
+	protected DefaultMessageSource() {
+	    this(Locale.getDefault());
+	}
 	
 	protected DefaultMessageSource(Locale locale) {
 		this.locale = locale == null ? Locale.ROOT : locale;
-		load(locale);
+		messageFactory = ParameterizedMessageFactory.INSTANCE;
+		load(this.locale);
 	}
 	
 	protected Properties load(final Locale locale) {
@@ -129,19 +134,6 @@ public class DefaultMessageSource implements MessageSource {
 	}
 
 	protected String formatter(final String message, Object... args) {
-		String newMessage = message;
-		if(args.length > 0) {
-			int index = 0;
-			for(Object arg : args) {
-				final String segment = "{"+index+"}"; 
-				if(newMessage.indexOf(segment) > -1) {
-					newMessage = newMessage.replace(segment, arg.toString());
-				}
-				
-				index ++;
-			}
-		}
-		
-		return new String(newMessage.getBytes(Charsets.ISO_8859_1), Charsets.UTF_8);
+	    return messageFactory.newMessage(message, args).getFormattedMessage();
 	}
 }
