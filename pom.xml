@@ -32,7 +32,7 @@
 		<mysql-connector-version>5.1.29</mysql-connector-version>
 		<c3p0-version>0.9.5.2</c3p0-version>
 		<druid-version>1.0.18</druid-version>
-		<jdbc-pool-version>8.0.33</jdbc-pool-version>
+		<tomcat-jdbc-version>8.0.33</tomcat-jdbc-version>
 		<netty-version>4.1.0.Beta8</netty-version>
 		<sso-version>2.0</sso-version>
 		<jedis-version>2.7.2</jedis-version>
@@ -226,7 +226,7 @@
 			<dependency>
 				<groupId>org.apache.tomcat</groupId>
 				<artifactId>tomcat-jdbc</artifactId>
-				<version>${jdbc-pool-version}</version>
+				<version>${tomcat-jdbc-version}</version>
 			</dependency>
 
 			<dependency>
