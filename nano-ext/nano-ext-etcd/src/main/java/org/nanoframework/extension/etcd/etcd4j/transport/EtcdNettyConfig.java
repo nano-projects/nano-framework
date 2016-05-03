@@ -34,7 +34,7 @@ public class EtcdNettyConfig implements Cloneable {
   private static final String EVENT_LOOP_GROUP = "context.scheduler.etcd.event.loop.group";
   private static final String CONNECT_TIMEOUT = "context.scheduler.etcd.connect.timeout";
   private static final String FRAME_SIZE = "context.scheduler.etcd.max.frame.size";
-  private static final int DEFAULT_EVENT_LOOP_GROUP = Integer.parseInt(System.getProperty(EVENT_LOOP_GROUP, "0"));
+  private static final int DEFAULT_EVENT_LOOP_GROUP = Integer.parseInt(System.getProperty(EVENT_LOOP_GROUP, "5"));
   
   private EventLoopGroup eventLoopGroup = new NioEventLoopGroup(DEFAULT_EVENT_LOOP_GROUP < 0 ? 0 : DEFAULT_EVENT_LOOP_GROUP);
   
