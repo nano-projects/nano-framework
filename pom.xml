@@ -24,14 +24,14 @@
 		<log4j2-version>2.5</log4j2-version>
 		<google-guice-version>4.0</google-guice-version>
 		<google-guice-multibindings-version>4.0</google-guice-multibindings-version>
-		<commons-lang3-version>3.3</commons-lang3-version>
+		<commons-lang3-version>3.4</commons-lang3-version>
 		<commons-codec-version>1.10</commons-codec-version>
-		<fastjson-version>1.2.5</fastjson-version>
-		<mybatis-version>3.2.5</mybatis-version>
-		<mybatis-guice-version>3.6</mybatis-guice-version>
+		<fastjson-version>1.2.11</fastjson-version>
+		<mybatis-version>3.4.0</mybatis-version>
+		<mybatis-guice-version>3.7.1</mybatis-guice-version>
 		<mysql-connector-version>5.1.29</mysql-connector-version>
-		<c3p0-version>0.9.1.2</c3p0-version>
-		<druid-version>1.0.15</druid-version>
+		<c3p0-version>0.9.5.2</c3p0-version>
+		<druid-version>1.0.18</druid-version>
 		<netty-version>4.1.0.Beta8</netty-version>
 		<sso-version>2.0</sso-version>
 		<jedis-version>2.7.2</jedis-version>
@@ -211,7 +211,7 @@
 			</dependency>
 
 			<dependency>
-				<groupId>c3p0</groupId>
+				<groupId>com.mchange</groupId>
 				<artifactId>c3p0</artifactId>
 				<version>${c3p0-version}</version>
 			</dependency>

@@ -10,6 +10,9 @@
   <packaging>war</packaging>
   <name>Nano Examples Mybatis</name>
   <url>http://maven.apache.org</url>
+  <properties>
+  	<druid-version>1.0.18</druid-version>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>
@@ -53,7 +56,7 @@
 	<dependency>
 		<groupId>com.alibaba</groupId>
 		<artifactId>druid</artifactId>
-		<version>1.0.15</version>
+		<version>${druid-version}</version>
 	</dependency>
   </dependencies>
   <build>
