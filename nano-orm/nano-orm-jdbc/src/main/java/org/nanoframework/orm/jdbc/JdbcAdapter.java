@@ -38,6 +38,7 @@ import org.nanoframework.orm.jdbc.jstl.ResultSupport;
 import org.nanoframework.orm.jdbc.pool.C3P0Pool;
 import org.nanoframework.orm.jdbc.pool.DruidPool;
 import org.nanoframework.orm.jdbc.pool.Pool;
+import org.nanoframework.orm.jdbc.pool.TomcatJdbcPool;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
@@ -62,10 +63,10 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 	
 	private JdbcAdapter(Collection<JdbcConfig> configs, PoolType poolType) throws PropertyVetoException, SQLException {
 		Assert.notNull(poolType);
-		if(init.get())
+		if(init.get()) {
 			throw new SQLException("数据源已经加载");
+		}
 		
-		// TODO 根据PoolType初始化连接池
 		switch(poolType) {
 			case C3P0:
 				pool = new C3P0Pool(configs);
@@ -73,6 +74,9 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 			case DRUID: 
 				pool = new DruidPool(configs);
 				break;
+			case TOMCAT_JDBC_POOL:
+			    pool = new TomcatJdbcPool(configs);
+			    break;
 		}
 		
 		init.set(true);
@@ -91,17 +95,14 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 				throw new DataSourceException("只有实现JdbcCreater注解的类或方法才可以实例化此对象");
 			}
 			
-			if(ADAPTER == null) {
-				synchronized (LOCK) {
-					if(ADAPTER == null) {
-						ADAPTER = new JdbcAdapter(configs, poolType);
-					}
-				}
-			} else {
-				ADAPTER.shutdown();
-				ADAPTER = null;
-				return newInstance(configs, poolType, obj);
-				
+			synchronized (LOCK) {
+    			if(ADAPTER == null) {
+    				ADAPTER = new JdbcAdapter(configs, poolType);
+    			} else {
+    				ADAPTER.shutdown();
+    				ADAPTER = null;
+    				return newInstance(configs, poolType, obj);
+    			}
 			}
 			
 			return ADAPTER;
@@ -442,7 +443,6 @@ public class JdbcAdapter implements DefaultSqlExecutor {
     public void shutdown() {
     	pool.closeAndClear();
     	pool = null;
-    	ADAPTER = null;
     	init.set(false);
     }
 

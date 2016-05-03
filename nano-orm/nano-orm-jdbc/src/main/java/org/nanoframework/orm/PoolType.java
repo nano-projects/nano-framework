@@ -20,5 +20,5 @@ package org.nanoframework.orm;
  * @date 2015年9月30日 下午2:37:22
  */
 public enum PoolType {
-	C3P0, DRUID;
+	C3P0, DRUID, TOMCAT_JDBC_POOL;
 }

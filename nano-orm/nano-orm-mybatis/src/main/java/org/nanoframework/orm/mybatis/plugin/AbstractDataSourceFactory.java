@@ -41,8 +41,9 @@ public class AbstractDataSourceFactory implements DataSourceFactory {
 			if (metaDataSource.hasSetter(propertyName)) {
 				String value = (String) properties.get(propertyName);
 				/**　对没有设置值的属性跳过设置 */
-				if(StringUtils.isNotEmpty(value) && value.startsWith("${") && value.endsWith("}"))
+				if(StringUtils.isNotEmpty(value) && value.startsWith("${") && value.endsWith("}")) {
 					continue ;
+				}
 				
 				Object convertedValue = convertValue(metaDataSource, propertyName, value);
 				metaDataSource.setValue(propertyName, convertedValue);

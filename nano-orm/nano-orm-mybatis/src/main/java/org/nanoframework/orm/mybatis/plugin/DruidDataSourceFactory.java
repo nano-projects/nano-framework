@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,9 +17,11 @@ package org.nanoframework.orm.mybatis.plugin;
 
 import javax.sql.DataSource;
 
+import org.apache.ibatis.datasource.DataSourceException;
+
 /**
  * @author yanghe
- * @date 2015年9月30日 下午1:50:37
+ * @since 1.3.6
  */
 public class DruidDataSourceFactory extends AbstractDataSourceFactory {
 
@@ -27,6 +29,8 @@ public class DruidDataSourceFactory extends AbstractDataSourceFactory {
 		try {
 			Class<?> DruidDataSource = Class.forName("com.alibaba.druid.pool.DruidDataSource");
 			this.dataSource = (DataSource) DruidDataSource.newInstance();
-		} catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) { }
+		} catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+		    throw new DataSourceException(e.getMessage(), e);
+		}
 	}
 }

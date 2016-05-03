@@ -19,6 +19,7 @@ import java.io.IOException;
 
 import org.apache.http.entity.ContentType;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -44,6 +45,7 @@ public class JdbcTransactionalTest {
         logger.debug("Get ALL: {}", httpClient.httpGetRequest("http://localhost:8080/quickstart/rest/elements").entity);
     }
     
+    @Ignore
     @Test
     public void transactionalTest() throws IOException {
         logger.debug("");
@@ -54,6 +56,7 @@ public class JdbcTransactionalTest {
         getAllTest();
     }
     
+    @Ignore
     @Test
     public void transactionalFailTest() throws IOException {
         logger.debug("");

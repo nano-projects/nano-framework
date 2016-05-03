@@ -36,14 +36,14 @@ import org.nanoframework.orm.jdbc.config.JdbcConfig;
  * @date 2015年9月30日 下午3:50:14
  */
 public class DruidPool implements Pool {
-	private Logger LOG = LoggerFactory.getLogger(DruidPool.class);
-	private ConcurrentMap<String, DataSource> dataSources = new ConcurrentHashMap<>();
+	private final Logger logger = LoggerFactory.getLogger(DruidPool.class);
+	private final ConcurrentMap<String, DataSource> dataSources = new ConcurrentHashMap<>();
 
 	Class<?> DruidDataSource; { 
 		try { 
 			DruidDataSource = Class.forName("com.alibaba.druid.pool.DruidDataSource");
 		} catch(ClassNotFoundException e) {
-			LOG.warn("Unload class [ com.alibaba.druid.pool.DruidDataSource ]");
+			logger.warn("Unload class [ com.alibaba.druid.pool.DruidDataSource ]");
 		}
 	}
 	
@@ -51,12 +51,13 @@ public class DruidPool implements Pool {
 		Assert.notNull(configs);
 		Assert.notEmpty(configs);
 		
-		if(dataSources != null && !dataSources.isEmpty())
+		if(dataSources != null && !dataSources.isEmpty()) {
 			closeAndClear();
+		}
 		
-		List<DruidJdbcConfig> _configs = new ArrayList<>();
-		configs.forEach(config -> _configs.add((DruidJdbcConfig) config));
-		for(DruidJdbcConfig config : _configs) {
+		List<DruidJdbcConfig> druidJdbcConfigs = new ArrayList<>();
+		configs.forEach(config -> druidJdbcConfigs.add((DruidJdbcConfig) config));
+		for(DruidJdbcConfig config : druidJdbcConfigs) {
 			DataSource dataSource;
 			try {
 				dataSource = (DataSource) DruidDataSource.newInstance();

@@ -29,6 +29,7 @@ import org.nanoframework.orm.jdbc.binding.JdbcModule;
 import org.nanoframework.orm.jdbc.config.C3P0JdbcConfig;
 import org.nanoframework.orm.jdbc.config.DruidJdbcConfig;
 import org.nanoframework.orm.jdbc.config.JdbcConfig;
+import org.nanoframework.orm.jdbc.config.TomcatJdbcConfig;
 
 /**
  * @author yanghe
@@ -54,31 +55,26 @@ public class JdbcDataSourceLoader extends DataSourceLoader {
 		PoolType poolType = poolType(properties);
 		switch(poolType) {
 			case C3P0: 
-				Map<String, JdbcConfig> configs;
-				if((configs = configAggs.get(poolType)) == null) {
-					configs = new LinkedHashMap<>();
-					JdbcConfig config = new C3P0JdbcConfig(properties);
-					configs.put(config.getEnvironmentId(), config);
-					configAggs.put(poolType, configs);
-				} else {
-					JdbcConfig config = new C3P0JdbcConfig(properties);
-					configs.put(config.getEnvironmentId(), config);
-				}
-				
+			    toConfig(new C3P0JdbcConfig(properties), poolType);
 				break;
 			case DRUID: 
-				if((configs = configAggs.get(poolType)) == null) {
-					configs = new LinkedHashMap<>();
-					JdbcConfig config = new DruidJdbcConfig(properties);
-					configs.put(config.getEnvironmentId(), config);
-					configAggs.put(poolType, configs);
-				} else {
-					JdbcConfig config = new DruidJdbcConfig(properties);
-					configs.put(config.getEnvironmentId(), config);
-				}
-				
+			    toConfig(new DruidJdbcConfig(properties), poolType);
 				break;
+			case TOMCAT_JDBC_POOL:
+			    toConfig(new TomcatJdbcConfig(properties), poolType);
+                break;
 		}
+	}
+	
+	private void toConfig(JdbcConfig config, PoolType poolType) {
+	    Map<String, JdbcConfig> configs;
+	    if((configs = configAggs.get(poolType)) == null) {
+            configs = new LinkedHashMap<>();
+            configs.put(config.getEnvironmentId(), config);
+            configAggs.put(poolType, configs);
+        } else {
+            configs.put(config.getEnvironmentId(), config);
+        }
 	}
 	
 	@Override

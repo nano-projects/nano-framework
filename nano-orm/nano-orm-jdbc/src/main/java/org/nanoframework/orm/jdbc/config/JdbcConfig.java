@@ -70,9 +70,9 @@ public abstract class JdbcConfig extends BaseEntity {
 					String value = properties.getProperty(property.name());
 					if(StringUtils.isNotBlank(value)) {
 						_setAttributeValue(field.getName(), value);
-					} else if(property.required()) 
+					} else if(property.required()) {
 						throw new DataSourceException("属性 [" + property.name() + "] 设置为必选项，这里却获取了无效的属性值");
-					
+					}
 				}
 			}
 		}

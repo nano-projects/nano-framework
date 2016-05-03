@@ -19,6 +19,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
 
 /**
  * Cookie通用类
@@ -29,9 +30,19 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class Cookies {
 
+    /**
+     * 
+     * @param request HttpServletRequest
+     * @param name cookie name
+     * @return cookie value
+     * @see Cookies#get(String)
+     * @deprecated
+     */
+    @Deprecated
 	public static final String get(HttpServletRequest request, String name) {
-		if(StringUtils.isEmpty(name))
+		if(StringUtils.isEmpty(name)) {
 			throw new NullPointerException("Cookie name cannot be null");
+		}
 		
 		Cookie cookie = getCookie(request, name);
 		if(cookie != null) {
@@ -41,9 +52,19 @@ public class Cookies {
 		return null;
 	}
 	
+    /**
+     * 
+     * @param request HttpServletRequest
+     * @param name cookie name
+     * @return Cookie
+     * @see Cookies#getCookie(String)
+     * @deprecated
+     */
+    @Deprecated
 	public static final Cookie getCookie(HttpServletRequest request, String name) {
-		if(StringUtils.isEmpty(name))
+		if(StringUtils.isEmpty(name)) {
 			throw new NullPointerException("Cookie name cannot be null");
+		}
 		
 		Cookie[] cookies = request.getCookies();
 		if (cookies != null) {
@@ -56,4 +77,35 @@ public class Cookies {
 		
 		return null;
 	}
+	
+	public static final String get(String name) {
+        if(StringUtils.isEmpty(name)) {
+            throw new NullPointerException("Cookie name cannot be null");
+        }
+        
+        Cookie cookie = getCookie(name);
+        if(cookie != null) {
+            return cookie.getValue();
+        }
+        
+        return null;
+    }
+    
+    public static final Cookie getCookie(String name) {
+        if(StringUtils.isEmpty(name)) {
+            throw new NullPointerException("Cookie name cannot be null");
+        }
+        
+        final HttpServletRequest request = HttpContext.get(HttpServletRequest.class);
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals(name)) {
+                    return cookie;
+                }
+            }
+        }
+        
+        return null;
+    }
 }

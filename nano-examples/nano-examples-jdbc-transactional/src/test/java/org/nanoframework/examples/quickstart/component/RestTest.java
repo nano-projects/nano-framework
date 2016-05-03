@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -81,6 +82,7 @@ public class RestTest {
 
     }
     
+    @Ignore
     @Test
     public void httpTest() throws IOException {
         logger.debug("POST Request");

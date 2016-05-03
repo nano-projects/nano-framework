@@ -56,7 +56,6 @@
 		<dependency>
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-orm-jdbc</artifactId>
-			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
