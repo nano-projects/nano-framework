@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>org.nanoframework</groupId>
 		<artifactId>nano-ext</artifactId>
-		<version>1.3.5-SNAPSHOT</version>
+		<version>1.3.5</version>
 	</parent>
 	<artifactId>nano-ext-etcd</artifactId>
 	<name>Nano Ext Etcd4j</name>
