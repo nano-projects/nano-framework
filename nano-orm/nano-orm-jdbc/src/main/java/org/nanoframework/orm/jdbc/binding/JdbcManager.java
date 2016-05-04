@@ -15,7 +15,7 @@
  */
 package org.nanoframework.orm.jdbc.binding;
 
-import static org.nanoframework.orm.jdbc.JdbcAdapter.ADAPTER;
+import static org.nanoframework.orm.jdbc.JdbcAdapter.adapter;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -84,19 +84,19 @@ public class JdbcManager implements SqlExecutor {
 
 	@Override
 	public void commit() throws SQLException {
-		ADAPTER.commit(this.localConnection.get());
+	    adapter().commit(this.localConnection.get());
 		
 	}
 
 	@Override
 	public void rollback() throws SQLException {
-		ADAPTER.rollback(this.localConnection.get());
+		adapter().rollback(this.localConnection.get());
 	}
 
 	@Override
 	public void close() {
 		try {
-			ADAPTER.close(this.localConnection.get());
+			adapter().close(this.localConnection.get());
 			
 		} finally {
 			this.localConnection.set(null);
@@ -136,9 +136,9 @@ public class JdbcManager implements SqlExecutor {
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			final Connection conn = JdbcManager.this.localConnection.get();
 			if (conn != null) {
-				return method.invoke(ADAPTER, args);
+				return method.invoke(adapter(), args);
 			} else {
-				final Connection newConn = ADAPTER.getConnection(JdbcManager.this.envId);
+				final Connection newConn = adapter().getConnection(JdbcManager.this.envId);
 				try {
 					Parameter[] parameters = method.getParameters();
 					int idx = 0;
@@ -151,14 +151,14 @@ public class JdbcManager implements SqlExecutor {
 						idx ++;
 					}
 					
-					final Object result = method.invoke(ADAPTER, args);
-					ADAPTER.commit(newConn);
+					final Object result = method.invoke(adapter(), args);
+					adapter().commit(newConn);
 					return result;
 				} catch (Throwable t) {
-					ADAPTER.rollback(newConn);
+					adapter().rollback(newConn);
 					throw t;
 				} finally {
-					ADAPTER.close(newConn);
+					adapter().close(newConn);
 				}
 			}
 		}

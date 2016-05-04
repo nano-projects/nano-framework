@@ -15,7 +15,7 @@
  */
 package org.nanoframework.orm.jdbc;
 
-import static org.nanoframework.orm.jdbc.JdbcAdapter.ADAPTER;
+import static org.nanoframework.orm.jdbc.JdbcAdapter.adapter;
 
 import java.beans.PropertyVetoException;
 import java.io.IOException;
@@ -40,7 +40,6 @@ import org.nanoframework.orm.jdbc.jstl.Result;
  * @author yanghe
  * @date 2015年8月19日 上午9:14:31
  */
-@JdbcCreater
 public class JdbcTest {
 
 	@Ignore
@@ -55,13 +54,12 @@ public class JdbcTest {
 		}
 		
 		JdbcAdapter.newInstance(configs, PoolType.C3P0, this.getClass());
-		Connection conn = ADAPTER.getConnection("test");
-		Result result = ADAPTER.executeQuery("select 1", conn);
+		Connection conn = adapter().getConnection("test");
+		Result result = adapter().executeQuery("select 1", conn);
 		System.out.println(result.getRowCount());
 		
 		conn.close();
-		ADAPTER.shutdown();
-		
+		adapter().shutdown();
 	}
 	
 	@Ignore
@@ -76,12 +74,11 @@ public class JdbcTest {
 		}
 		
 		JdbcAdapter.newInstance(configs, PoolType.DRUID, this.getClass());
-		Connection conn = ADAPTER.getConnection("test");
-		Result result = ADAPTER.executeQuery("select 1", conn);
+		Connection conn = adapter().getConnection("test");
+		Result result = adapter().executeQuery("select 1", conn);
 		System.out.println(result.getRowCount());
 		
 		conn.close();
-		ADAPTER.shutdown();
-		
+		adapter().shutdown();
 	}
 }

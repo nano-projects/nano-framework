@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.orm.jdbc.binding;
+package org.nanoframework.orm.jdbc;
 
 import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.nanoframework.orm.PoolType;
-import org.nanoframework.orm.jdbc.JdbcAdapter;
-import org.nanoframework.orm.jdbc.JdbcCreater;
+import org.nanoframework.orm.jdbc.binding.JdbcTransactional;
+import org.nanoframework.orm.jdbc.binding.JdbcTransactionalMethodInterceptor;
 import org.nanoframework.orm.jdbc.config.JdbcConfig;
 
 import com.google.inject.AbstractModule;
@@ -34,7 +34,6 @@ import com.google.inject.AbstractModule;
  * @author yanghe
  * @date 2015年8月19日 上午9:09:08
  */
-@JdbcCreater
 public class JdbcModule extends AbstractModule {
 
 	private Map<String, JdbcConfig> configs;

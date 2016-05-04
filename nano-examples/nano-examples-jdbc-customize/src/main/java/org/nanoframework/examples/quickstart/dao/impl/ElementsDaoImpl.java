@@ -47,7 +47,7 @@ public class ElementsDaoImpl implements ElementsDao {
     private static final String UPDATE = "update elements set text = ? where id = ?";
     private static final String DELETE_BY_ID = "delete from elements where id = ?";
     
-    private final JdbcAdapter adapter = JdbcAdapter.ADAPTER;
+    private final JdbcAdapter adapter = JdbcAdapter.adapter();
     
     @Override
     public List<Element> findAll() {

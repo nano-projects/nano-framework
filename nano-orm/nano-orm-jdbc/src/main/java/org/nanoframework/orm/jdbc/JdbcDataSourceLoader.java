@@ -25,7 +25,6 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.orm.DataSourceLoader;
 import org.nanoframework.orm.ORMType;
 import org.nanoframework.orm.PoolType;
-import org.nanoframework.orm.jdbc.binding.JdbcModule;
 import org.nanoframework.orm.jdbc.config.C3P0JdbcConfig;
 import org.nanoframework.orm.jdbc.config.DruidJdbcConfig;
 import org.nanoframework.orm.jdbc.config.JdbcConfig;
