@@ -37,18 +37,18 @@ public class Log4j2Plugin implements Plugin {
 	@Override
 	public boolean load() throws Throwable {
 		if(StringUtils.isNotBlank(log4j2)) {
-			URL url = this.getClass().getResource(log4j2);
-			if (url != null) {
+		    final File file = ResourceUtils.getFile(log4j2);
+			if (file != null) {
 				try {
-					File file = ResourceUtils.getFile(url);
 					Class<?> LogManager = Class.forName("org.apache.logging.log4j.LogManager");
 					Object context = LogManager.getMethod("getContext", boolean.class).invoke(LogManager, false);
 					Class<?> LoggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
 					LoggerContext.getMethod("setConfigLocation", URI.class).invoke(context, file.toURI());
 					LoggerContext.getMethod("reconfigure").invoke(context);
 				} catch(Exception e) {
-					if(!(e instanceof ClassNotFoundException))
+					if(!(e instanceof ClassNotFoundException)) {
 						throw new PluginLoaderException(e.getMessage(), e);
+					}
 					
 					return false;
 				}
