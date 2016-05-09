@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.nanoframework</groupId>
         <artifactId>nano-examples</artifactId>
-        <version>1.3.6</version>
+        <version>1.3.7-SNAPSHOT</version>
     </parent>
     <artifactId>nano-examples-mybatis</artifactId>
     <packaging>war</packaging>
