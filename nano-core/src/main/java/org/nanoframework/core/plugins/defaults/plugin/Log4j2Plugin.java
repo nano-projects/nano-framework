@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@ package org.nanoframework.core.plugins.defaults.plugin;
 
 import java.io.File;
 import java.net.URI;
-import java.net.URL;
 
 import javax.servlet.ServletConfig;
 
@@ -31,38 +30,38 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  * @date 2015年11月17日 上午9:06:59
  */
 public class Log4j2Plugin implements Plugin {
-	public static final String DEFAULT_LOG4J2_PARAMETER_NAME = "log4j2";
-	private String log4j2;
-	
-	@Override
-	public boolean load() throws Throwable {
-		if(StringUtils.isNotBlank(log4j2)) {
-		    final File file = ResourceUtils.getFile(log4j2);
-			if (file != null) {
-				try {
-					Class<?> LogManager = Class.forName("org.apache.logging.log4j.LogManager");
-					Object context = LogManager.getMethod("getContext", boolean.class).invoke(LogManager, false);
-					Class<?> LoggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
-					LoggerContext.getMethod("setConfigLocation", URI.class).invoke(context, file.toURI());
-					LoggerContext.getMethod("reconfigure").invoke(context);
-				} catch(Exception e) {
-					if(!(e instanceof ClassNotFoundException)) {
-						throw new PluginLoaderException(e.getMessage(), e);
-					}
-					
-					return false;
-				}
-			}
-		} else {
-			return false;
-		}
-		
-		return true;
-	}
+    public static final String DEFAULT_LOG4J2_PARAMETER_NAME = "log4j2";
+    private String log4j2;
 
-	@Override
-	public void config(ServletConfig config) throws Throwable {
-		log4j2 = config.getInitParameter(DEFAULT_LOG4J2_PARAMETER_NAME);
-	}
+    @Override
+    public boolean load() throws Throwable {
+        if (StringUtils.isNotBlank(log4j2)) {
+            final File file = ResourceUtils.getFile(log4j2);
+            if (file != null) {
+                try {
+                    Class<?> LogManager = Class.forName("org.apache.logging.log4j.LogManager");
+                    Object context = LogManager.getMethod("getContext", boolean.class).invoke(LogManager, false);
+                    Class<?> LoggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
+                    LoggerContext.getMethod("setConfigLocation", URI.class).invoke(context, file.toURI());
+                    LoggerContext.getMethod("reconfigure").invoke(context);
+                } catch (Exception e) {
+                    if (!(e instanceof ClassNotFoundException)) {
+                        throw new PluginLoaderException(e.getMessage(), e);
+                    }
+
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void config(ServletConfig config) throws Throwable {
+        log4j2 = config.getInitParameter(DEFAULT_LOG4J2_PARAMETER_NAME);
+    }
 
 }
