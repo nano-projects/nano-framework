@@ -27,6 +27,7 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.ContentType;
+import org.nanoframework.commons.util.MapBuild;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.component.exception.BindRequestParamException;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
@@ -37,7 +38,6 @@ import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.support.RedirectModel;
 
 import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Maps;
 /**
  * Http请求拦截器 <br>
  * 此拦截器为NanoFramework框架的请求主入口 <br>
@@ -65,12 +65,12 @@ public class HttpRequestFilter extends AbstractFilter {
 				}
 				
 				Model model = new RedirectModel();
-				HttpContext.set(HttpContextBuild.create()
+				HttpContext.set(MapBuild.<Class<?>, Object> create()
 				        .put(HttpServletRequest.class, request)
-				        .put(HttpServletResponse.class, response)
-				        .put(Model.class, model)
-				        .put(URLContext.class, urlContext)
-				        .build());
+		                .put(HttpServletResponse.class, response)
+		                .put(Model.class, model)
+		                .put(URLContext.class, urlContext)
+		                .build());
 				
 				Object ret = Components.invoke(mapper, urlContext.getParameter(), request, response, model, urlContext);
 				process(request, response, out, urlContext, ret, model);
@@ -124,32 +124,4 @@ public class HttpRequestFilter extends AbstractFilter {
 	    }
 	}
 	
-	/**
-    *
-    * @author yanghe
-    * @since 1.3.5
-    */
-	protected static class HttpContextBuild {
-	    private Map<Class<?>, Object> context;
-	    
-	    protected static HttpContextBuild create() {
-	        HttpContextBuild build = new HttpContextBuild();
-	        build.context = Maps.newHashMap();
-	        return build;
-	    }
-	    
-	    protected HttpContextBuild put(Object instance) {
-	        context.put(instance.getClass(), instance);
-	        return this;
-	    }
-	    
-	    protected HttpContextBuild put(Class<?> type, Object instance) {
-            context.put(type, instance);
-            return this;
-        }
-	    
-	    protected Map<Class<?>, Object> build() {
-	        return context;
-	    }
-	}
 }

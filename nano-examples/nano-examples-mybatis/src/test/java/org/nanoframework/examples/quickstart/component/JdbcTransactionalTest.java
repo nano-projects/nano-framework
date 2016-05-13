@@ -42,7 +42,7 @@ public class JdbcTransactionalTest {
     }
     
     private void getAllTest() throws IOException {
-        logger.debug("Get ALL: {}", httpClient.httpGetRequest("http://localhost:8080/quickstart/rest/elements").entity);
+        logger.debug("Get ALL: {}", httpClient.get("http://localhost:8080/quickstart/rest/elements").entity);
     }
     
     @Ignore
@@ -50,7 +50,7 @@ public class JdbcTransactionalTest {
     public void transactionalTest() throws IOException {
         logger.debug("");
         logger.debug("Batch Test: ");
-        logger.debug(httpClient.httpPostRequest("http://localhost:8080/quickstart/rest/elements/batch", 
+        logger.debug(httpClient.post("http://localhost:8080/quickstart/rest/elements/batch", 
                 "els[]={\"text\":\"new hello batch 0\"}&els[]={\"text\":\"new hello batch 1\"}", ContentType.APPLICATION_FORM_URLENCODED).entity);
         
         getAllTest();
@@ -61,7 +61,7 @@ public class JdbcTransactionalTest {
     public void transactionalFailTest() throws IOException {
         logger.debug("");
         logger.debug("Fail Batch Test: ");
-        logger.debug(httpClient.httpPostRequest("http://localhost:8080/quickstart/rest/elements/batch", 
+        logger.debug(httpClient.post("http://localhost:8080/quickstart/rest/elements/batch", 
                 "els[]={\"text\":\"new hello batch 2\"}&els[]={}", ContentType.APPLICATION_FORM_URLENCODED).entity);
         
         getAllTest();

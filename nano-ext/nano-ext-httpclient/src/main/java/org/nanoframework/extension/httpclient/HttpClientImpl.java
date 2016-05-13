@@ -101,15 +101,14 @@ public class HttpClientImpl implements HttpClient {
         manager.setDefaultMaxPerRoute(maxPerRoute);
         pool = manager;
     }
-
+    
     @Override
-    public HttpResponse httpGetRequest(String url) throws IOException {
-        HttpGet httpGet = new HttpGet(url);
-        return getResult(httpGet);
+    public HttpResponse get(String url) throws IOException {
+        return getResult(new HttpGet(url));
     }
 
     @Override
-    public HttpResponse httpGetRequest(String url, Map<String, String> params) throws URISyntaxException, IOException {
+    public HttpResponse get(String url, Map<String, String> params) throws URISyntaxException, IOException {
         URIBuilder builder = new URIBuilder();
         builder.setPath(url);
 
@@ -121,7 +120,7 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public HttpResponse httpGetRequest(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException {
+    public HttpResponse get(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException {
         URIBuilder builder = new URIBuilder();
         builder.setPath(url);
 
@@ -137,13 +136,12 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public HttpResponse httpPostRequest(String url) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        return getResult(httpPost);
+    public HttpResponse post(String url) throws IOException {
+        return getResult(new HttpPost(url));
     }
 
     @Override
-    public HttpResponse httpPostRequest(String url, Map<String, String> params) throws IOException {
+    public HttpResponse post(String url, Map<String, String> params) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         List<NameValuePair> pairs = covertParams2NVPS(params);
         httpPost.setEntity(new UrlEncodedFormEntity(pairs, UTF_8));
@@ -151,21 +149,21 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public HttpResponse httpPostRequest(String url, String json) throws IOException {
+    public HttpResponse post(String url, String json) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(new StringEntity(json, APPLICATION_JSON));
         return getResult(httpPost);
     }
-    
+
     @Override
-    public HttpResponse httpPostRequest(String url, String stream, ContentType contentType) throws IOException {
+    public HttpResponse post(String url, String stream, ContentType contentType) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         httpPost.setEntity(new StringEntity(stream, contentType));
         return getResult(httpPost);
     }
 
     @Override
-    public HttpResponse httpPostRequest(String url, Map<String, String> headers, String json) throws IOException {
+    public HttpResponse post(String url, Map<String, String> headers, String json) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         if (!CollectionUtils.isEmpty(headers)) {
             headers.forEach((key, value) -> httpPost.addHeader(key, value));
@@ -174,9 +172,9 @@ public class HttpClientImpl implements HttpClient {
         httpPost.setEntity(new StringEntity(json, APPLICATION_JSON));
         return getResult(httpPost);
     }
-    
+
     @Override
-    public HttpResponse httpPostRequest(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException {
+    public HttpResponse post(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         if (!CollectionUtils.isEmpty(headers)) {
             headers.forEach((key, value) -> httpPost.addHeader(key, value));
@@ -187,8 +185,7 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public HttpResponse httpPostRequest(String url, Map<String, String> headers, Map<String, String> params)
-            throws IOException {
+    public HttpResponse post(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
         HttpPost httpPost = new HttpPost(url);
         if (!CollectionUtils.isEmpty(headers)) {
             headers.forEach((key, value) -> httpPost.addHeader(key, value));
@@ -200,13 +197,12 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public HttpResponse httpPutRequest(String url) throws IOException {
-        HttpPut httpPut = new HttpPut(url);
-        return getResult(httpPut);
+    public HttpResponse put(String url) throws IOException {
+        return getResult(new HttpPut(url));
     }
 
     @Override
-    public HttpResponse httpPutRequest(String url, Map<String, String> params) throws IOException {
+    public HttpResponse put(String url, Map<String, String> params) throws IOException {
         HttpPut httpPut = new HttpPut(url);
         List<NameValuePair> pairs = covertParams2NVPS(params);
         httpPut.setEntity(new UrlEncodedFormEntity(pairs, UTF_8));
@@ -214,14 +210,14 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public HttpResponse httpPutRequest(String url, String json) throws IOException {
+    public HttpResponse put(String url, String json) throws IOException {
         HttpPut httpPut = new HttpPut(url);
         httpPut.setEntity(new StringEntity(json, APPLICATION_JSON));
         return getResult(httpPut);
     }
 
     @Override
-    public HttpResponse httpPutRequest(String url, Map<String, String> headers, String json) throws IOException {
+    public HttpResponse put(String url, Map<String, String> headers, String json) throws IOException {
         HttpPut httpPut = new HttpPut(url);
         if (!CollectionUtils.isEmpty(headers)) {
             headers.forEach((key, value) -> httpPut.addHeader(key, value));
@@ -232,7 +228,7 @@ public class HttpClientImpl implements HttpClient {
     }
 
     @Override
-    public HttpResponse httpPutRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
+    public HttpResponse put(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
         HttpPut httpPut = new HttpPut(url);
         if (!CollectionUtils.isEmpty(headers)) {
             headers.forEach((key, value) -> httpPut.addHeader(key, value));
@@ -242,15 +238,14 @@ public class HttpClientImpl implements HttpClient {
         httpPut.setEntity(new UrlEncodedFormEntity(pairs, UTF_8));
         return getResult(httpPut);
     }
-    
+
     @Override
-    public HttpResponse httpDeleteRequest(String url) throws IOException {
-        HttpDelete httpDelete = new HttpDelete(url);
-        return getResult(httpDelete);
+    public HttpResponse delete(String url) throws IOException {
+        return getResult(new HttpDelete(url));
     }
-    
+
     @Override
-    public HttpResponse httpDeleteRequest(String url, Map<String, String> headers) throws IOException {
+    public HttpResponse delete(String url, Map<String, String> headers) throws IOException {
         HttpDelete httpDelete = new HttpDelete(url);
         if (!CollectionUtils.isEmpty(headers)) {
             headers.forEach((key, value) -> httpDelete.addHeader(key, value));
@@ -258,7 +253,7 @@ public class HttpClientImpl implements HttpClient {
         
         return getResult(httpDelete);
     }
-
+    
     protected List<NameValuePair> covertParams2NVPS(Map<String, String> params) {
         if (CollectionUtils.isEmpty(params)) {
             return Collections.emptyList();
@@ -267,6 +262,108 @@ public class HttpClientImpl implements HttpClient {
         List<NameValuePair> pairs = new ArrayList<>();
         params.forEach((key, value) -> pairs.add(new BasicNameValuePair(key, value)));
         return pairs;
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpGetRequest(String url) throws IOException {
+        return get(url);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpGetRequest(String url, Map<String, String> params) throws URISyntaxException, IOException {
+        return get(url, params);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpGetRequest(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException {
+        return get(url, headers, params);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPostRequest(String url) throws IOException {
+        return post(url);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPostRequest(String url, Map<String, String> params) throws IOException {
+        return post(url, params);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPostRequest(String url, String json) throws IOException {
+        return post(url, json);
+    }
+    
+    @Deprecated
+    @Override
+    public HttpResponse httpPostRequest(String url, String stream, ContentType contentType) throws IOException {
+        return post(url, stream, contentType);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPostRequest(String url, Map<String, String> headers, String json) throws IOException {
+        return post(url, headers, json);
+    }
+    
+    @Deprecated
+    @Override
+    public HttpResponse httpPostRequest(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException {
+        return post(url, headers, stream, contentType);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPostRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
+        return post(url, headers, params);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPutRequest(String url) throws IOException {
+        return put(url);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPutRequest(String url, Map<String, String> params) throws IOException {
+        return put(url, params);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPutRequest(String url, String json) throws IOException {
+        return put(url, json);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPutRequest(String url, Map<String, String> headers, String json) throws IOException {
+        return put(url, headers, json);
+    }
+
+    @Deprecated
+    @Override
+    public HttpResponse httpPutRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
+        return put(url, headers, params);
+    }
+    
+    @Deprecated
+    @Override
+    public HttpResponse httpDeleteRequest(String url) throws IOException {
+        return delete(url);
+    }
+    
+    @Deprecated
+    @Override
+    public HttpResponse httpDeleteRequest(String url, Map<String, String> headers) throws IOException {
+        return delete(url, headers);
     }
 
     /**

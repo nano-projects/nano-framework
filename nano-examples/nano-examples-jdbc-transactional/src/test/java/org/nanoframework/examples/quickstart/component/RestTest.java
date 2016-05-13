@@ -45,11 +45,11 @@ public class RestTest {
     }
     
     private void getAllTest() throws IOException {
-        logger.debug("Get ALL: {}", httpClient.httpGetRequest("http://localhost:8080/quickstart/rest/elements").entity);
+        logger.debug("Get ALL: {}", httpClient.get("http://localhost:8080/quickstart/rest/elements").entity);
     }
     
     private void getByIdTest(long id) throws IOException {
-        logger.debug("GET by ID [{}]: {}", id, httpClient.httpGetRequest("http://localhost:8080/quickstart/rest/elements/" + id).entity);
+        logger.debug("GET by ID [{}]: {}", id, httpClient.get("http://localhost:8080/quickstart/rest/elements/" + id).entity);
     }
     
     private void postTest() throws IOException {
@@ -57,7 +57,7 @@ public class RestTest {
         el.setText("new hello");
         Map<String, String> params = Maps.newHashMap();
         params.put("el", JSON.toJSONString(el));
-        logger.debug(httpClient.httpPostRequest("http://localhost:8080/quickstart/rest/elements", params).entity);
+        logger.debug(httpClient.post("http://localhost:8080/quickstart/rest/elements", params).entity);
         
         getAllTest();
         getByIdTest(1);
@@ -69,14 +69,14 @@ public class RestTest {
         el.setText("Update Hello");
         Map<String, String> params = Maps.newHashMap();
         params.put("el", JSON.toJSONString(el));
-        logger.debug(httpClient.httpPutRequest("http://localhost:8080/quickstart/rest/elements", params).entity);
+        logger.debug(httpClient.put("http://localhost:8080/quickstart/rest/elements", params).entity);
         
         getAllTest();
         getByIdTest(1L);
     }
     
     private void deleteTest(long id) throws IOException {
-        logger.debug(httpClient.httpDeleteRequest("http://localhost:8080/quickstart/rest/elements/" + id).entity);
+        logger.debug(httpClient.delete("http://localhost:8080/quickstart/rest/elements/" + id).entity);
         getAllTest();
         getByIdTest(id);
 

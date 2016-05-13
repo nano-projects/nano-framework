@@ -36,7 +36,9 @@ public interface HttpClient {
      * @param url request url
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to get
      */
+    @Deprecated
     HttpResponse httpGetRequest(String url) throws IOException;
 
     /**
@@ -47,7 +49,9 @@ public interface HttpClient {
      * @return HttpResponse
      * @throws URISyntaxException if URI Syntax errors occur
      * @throws IOException if I/O errors occur
+     * @deprecated rename to get
      */
+    @Deprecated
     HttpResponse httpGetRequest(String url, Map<String, String> params) throws URISyntaxException, IOException;
 
     /**
@@ -59,7 +63,9 @@ public interface HttpClient {
      * @return HttpResponse
      * @throws URISyntaxException if URI Syntax errors occur
      * @throws IOException if I/O errors occur
+     * @deprecated rename to get
      */
+    @Deprecated
     HttpResponse httpGetRequest(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException;
 
     /**
@@ -68,7 +74,9 @@ public interface HttpClient {
      * @param url request url
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to post
      */
+    @Deprecated
     HttpResponse httpPostRequest(String url) throws IOException;
 
     /**
@@ -78,7 +86,9 @@ public interface HttpClient {
      * @param params request parameter map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to post
      */
+    @Deprecated
     HttpResponse httpPostRequest(String url, Map<String, String> params) throws IOException;
 
     /**
@@ -88,7 +98,9 @@ public interface HttpClient {
      * @param json request json string
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to post
      */
+    @Deprecated
     HttpResponse httpPostRequest(String url, String json) throws IOException;
     
     /**
@@ -99,7 +111,9 @@ public interface HttpClient {
      * @param contentType httpclient ContentType
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to post
      */
+    @Deprecated
     HttpResponse httpPostRequest(String url, String stream, ContentType contentType) throws IOException;
 
     /**
@@ -110,7 +124,9 @@ public interface HttpClient {
      * @param json json string
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to post
      */
+    @Deprecated
     HttpResponse httpPostRequest(String url, Map<String, String> headers, String json) throws IOException;
     
     /**
@@ -122,7 +138,9 @@ public interface HttpClient {
      * @param contentType httpclient ContentType
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to post
      */
+    @Deprecated
     HttpResponse httpPostRequest(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
 
     /**
@@ -133,7 +151,9 @@ public interface HttpClient {
      * @param params request parameter map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to post
      */
+    @Deprecated
     HttpResponse httpPostRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
 
     /**
@@ -142,7 +162,9 @@ public interface HttpClient {
      * @param url request url
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to put
      */
+    @Deprecated
     HttpResponse httpPutRequest(String url) throws IOException;
 
     /**
@@ -152,7 +174,9 @@ public interface HttpClient {
      * @param params request parameter map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to put
      */
+    @Deprecated
     HttpResponse httpPutRequest(String url, Map<String, String> params) throws IOException;
 
     /**
@@ -162,7 +186,9 @@ public interface HttpClient {
      * @param json request json string
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to put
      */
+    @Deprecated
     HttpResponse httpPutRequest(String url, String json) throws IOException;
 
     /**
@@ -173,7 +199,9 @@ public interface HttpClient {
      * @param json json string
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to put
      */
+    @Deprecated
     HttpResponse httpPutRequest(String url, Map<String, String> headers, String json) throws IOException;
 
     /**
@@ -184,7 +212,9 @@ public interface HttpClient {
      * @param params request parameter map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to put
      */
+    @Deprecated
     HttpResponse httpPutRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
     
     /**
@@ -193,7 +223,9 @@ public interface HttpClient {
      * @param url request url
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to delete
      */
+    @Deprecated
     HttpResponse httpDeleteRequest(String url) throws IOException;
     
     /**
@@ -203,6 +235,185 @@ public interface HttpClient {
      * @param headers request headers map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
+     * @deprecated rename to delete
      */
+    @Deprecated
     HttpResponse httpDeleteRequest(String url, Map<String, String> headers) throws IOException;
+    
+    
+    /**
+     * Http 'GET' request.
+     * 
+     * @param url request url
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse get(String url) throws IOException;
+
+    /**
+     * Http 'GET' request.
+     * 
+     * @param url request url
+     * @param params request parameter map
+     * @return HttpResponse
+     * @throws URISyntaxException if URI Syntax errors occur
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse get(String url, Map<String, String> params) throws URISyntaxException, IOException;
+
+    /**
+     * Http 'GET' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @param params request parameter map
+     * @return HttpResponse
+     * @throws URISyntaxException if URI Syntax errors occur
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse get(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException;
+
+    /**
+     * Http 'POST' request.
+     * 
+     * @param url request url
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse post(String url) throws IOException;
+
+    /**
+     * Http 'POST' request.
+     * 
+     * @param url request url
+     * @param params request parameter map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse post(String url, Map<String, String> params) throws IOException;
+
+    /**
+     * Http 'POST' request.
+     * 
+     * @param url request url
+     * @param json request json string
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse post(String url, String json) throws IOException;
+    
+    /**
+     * Http 'POST' request.
+     * 
+     * @param url request url
+     * @param stream stream string
+     * @param contentType httpclient ContentType
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse post(String url, String stream, ContentType contentType) throws IOException;
+
+    /**
+     * Http 'POST' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @param json json string
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse post(String url, Map<String, String> headers, String json) throws IOException;
+    
+    /**
+     * Http 'POST' request.
+     * 
+     * @param url request url
+     * @param headers request hreaders map
+     * @param stream stream string
+     * @param contentType httpclient ContentType
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse post(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
+
+    /**
+     * Http 'POST' request.
+     * 
+     * @param url request url
+     * @param headers request hreaders map
+     * @param params request parameter map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse post(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+
+    /**
+     * Http 'PUT' request.
+     * 
+     * @param url request url
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse put(String url) throws IOException;
+
+    /**
+     * Http 'PUT' request.
+     * 
+     * @param url request url
+     * @param params request parameter map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse put(String url, Map<String, String> params) throws IOException;
+
+    /**
+     * Http 'PUT' request.
+     * 
+     * @param url request url
+     * @param json request json string
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse put(String url, String json) throws IOException;
+
+    /**
+     * Http 'PUT' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @param json json string
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse put(String url, Map<String, String> headers, String json) throws IOException;
+
+    /**
+     * Http 'PUT' request.
+     * 
+     * @param url request url
+     * @param headers request hreaders map
+     * @param params request parameter map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse put(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'DELETE' request.
+     * 
+     * @param url request url
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse delete(String url) throws IOException;
+    
+    /**
+     * Http 'DELETE' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse delete(String url, Map<String, String> headers) throws IOException;
 }
