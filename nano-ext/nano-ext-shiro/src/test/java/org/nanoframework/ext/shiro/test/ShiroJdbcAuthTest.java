@@ -16,7 +16,6 @@
 package org.nanoframework.ext.shiro.test;
 
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletConfig;
@@ -27,8 +26,12 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.core.plugins.Configure;
 import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoader;
@@ -44,6 +47,8 @@ import junit.framework.Assert;
 public class ShiroJdbcAuthTest {
 	private Logger LOG = LoggerFactory.getLogger(ShiroJdbcAuthTest.class);
 	
+	@Ignore
+	@Before
 	public void before() {
 		PluginLoader loader = new DefaultPluginLoader() {
 			@Override
@@ -54,11 +59,10 @@ public class ShiroJdbcAuthTest {
 		};
 		
 		ServletConfig config = new ServletConfig() {
-			private Map<String, String> map = new HashMap<String, String>() {
-				private static final long serialVersionUID = -1228713388845687367L; {
-				put("context", "/context.properties");
-				put("shiro-ini", "classpath:shiro-jdbc.ini");
-			}};
+			private Map<String, String> map = MapBuilder.<String, String> create()
+			        .put("context", "/context.properties")
+			        .put("shiro-ini", "classpath:shiro-jdbc.ini")
+			        .build();
 			
 			@Override
 			public String getServletName() {
@@ -85,6 +89,8 @@ public class ShiroJdbcAuthTest {
 		loader.init(config);
 	}
 	
+	@Ignore
+	@Test
 	public void test0() {
 		Subject subject = SecurityUtils.getSubject();
 		UsernamePasswordToken token = new UsernamePasswordToken("yanghe", "123456");

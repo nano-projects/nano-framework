@@ -23,26 +23,26 @@ import java.util.Map;
  * @author yanghe
  * @since 1.3.7
  */
-public class MapBuild<K, V> {
+public class MapBuilder<K, V> {
     private Map<K, V> map;
     
-    private MapBuild() {
+    private MapBuilder() {
         
     }
     
-    public static <K, V> MapBuild<K, V> create() {
-        MapBuild<K, V> build = new MapBuild<>();
+    public static <K, V> MapBuilder<K, V> create() {
+        MapBuilder<K, V> build = new MapBuilder<>();
         build.map = new HashMap<>();
         return build;
     }
     
-    public static <K, V> MapBuild<K, V> create(Class<? extends Map<K, V>> cls, Object... params) {
-        MapBuild<K, V> build = new MapBuild<>();
+    public static <K, V> MapBuilder<K, V> create(Class<? extends Map<K, V>> cls, Object... params) {
+        MapBuilder<K, V> build = new MapBuilder<>();
         build.map = ReflectUtils.newInstance(cls, params);
         return build;
     }
     
-    public MapBuild<K, V> put(K key, V value) {
+    public MapBuilder<K, V> put(K key, V value) {
         map.put(key, value);
         return this;
     }

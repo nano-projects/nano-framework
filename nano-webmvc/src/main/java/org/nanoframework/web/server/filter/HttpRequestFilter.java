@@ -27,7 +27,7 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.ContentType;
-import org.nanoframework.commons.util.MapBuild;
+import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.component.exception.BindRequestParamException;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
@@ -65,7 +65,7 @@ public class HttpRequestFilter extends AbstractFilter {
 				}
 				
 				Model model = new RedirectModel();
-				HttpContext.set(MapBuild.<Class<?>, Object> create()
+				HttpContext.set(MapBuilder.<Class<?>, Object> create()
 				        .put(HttpServletRequest.class, request)
 		                .put(HttpServletResponse.class, response)
 		                .put(Model.class, model)

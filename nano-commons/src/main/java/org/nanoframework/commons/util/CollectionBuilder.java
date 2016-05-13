@@ -23,26 +23,26 @@ import java.util.Collection;
  * @author yanghe
  * @since 1.3.7
  */
-public class CollectionBuild<E> {
+public class CollectionBuilder<E> {
     private Collection<E> collection;
     
-    private CollectionBuild() {
+    private CollectionBuilder() {
         
     }
     
-    public static <E> CollectionBuild<E> create() {
-        CollectionBuild<E> build = new CollectionBuild<>();
+    public static <E> CollectionBuilder<E> create() {
+        CollectionBuilder<E> build = new CollectionBuilder<>();
         build.collection = new ArrayList<>();
         return build;
     }
     
-    public static <E> CollectionBuild<E> create(Class<? extends Collection<E>> cls, Object... params) {
-        CollectionBuild<E> build = new CollectionBuild<>();
+    public static <E> CollectionBuilder<E> create(Class<? extends Collection<E>> cls, Object... params) {
+        CollectionBuilder<E> build = new CollectionBuilder<>();
         build.collection = ReflectUtils.newInstance(cls, params);
         return build;
     }
     
-    public CollectionBuild<E> add(E element) {
+    public CollectionBuilder<E> add(E element) {
         collection.add(element);
         return this;
     }
