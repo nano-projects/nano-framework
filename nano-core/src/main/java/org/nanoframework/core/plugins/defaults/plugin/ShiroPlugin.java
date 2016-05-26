@@ -26,7 +26,7 @@ import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
- * 适用于不是web工程的项目，如果是web项目请使用ShiroFilter进行相关配置
+ * 适用于非web工程的项目，如果是web项目请使用ShiroFilter进行相关配置.
  * 
  * @author yanghe
  * @date 2015年12月9日 上午8:59:49
@@ -50,7 +50,7 @@ public class ShiroPlugin implements Plugin {
 				SecurityManager = Class.forName("org.apache.shiro.mgt.SecurityManager");
 				SecurityUtils = Class.forName("org.apache.shiro.SecurityUtils");
 				
-				EnumConverter = Class.forName("org.nanoframework.ext.shiro.util.EnumConverter");
+				EnumConverter = Class.forName("org.nanoframework.extension.shiro.util.EnumConverter");
 			} catch(Exception e) {
 				LOG.warn("未加载shiro api");
 			}

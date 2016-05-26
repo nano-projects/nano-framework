@@ -16,6 +16,8 @@
 
 package org.nanoframework.commons.util;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
@@ -945,4 +947,18 @@ public abstract class ObjectUtils {
 		return JSON.parseObject(JSON.toJSONString(object, SerializerFeature.WriteDateUseDateFormat), type);
 	}
 
+	/**
+     * Unconditionally close a {@link Closeable}. Equivalent to {@link java.io.Closeable#close()}close(), except any exceptions 
+     * will be ignored. This is typically used in finally blocks.
+     * @param resource the resource to close
+     */
+    public static void closeQuietly(final Closeable resource) {
+        try {
+            if (resource != null) {
+                resource.close();
+            }
+        } catch (final IOException e) {
+            //ignore
+        }
+    }
 }

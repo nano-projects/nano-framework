@@ -35,42 +35,50 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
  */
 public class RedirectView implements View {
 
-	/** 跳转到前端的页面URI，主路径("/")为webRoot */
-	private String page;
-	
-	public RedirectView(String page) {
-		this.page = page;
-	}
-	
-	@Override
-	public void redirect(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		if(response == null || request == null)
-			return ;
-		
-		StringBuilder builder = new StringBuilder();
-		if(model != null && model.size() > 0) {
-			builder.append("?");
-			model.forEach((name, o) -> builder.append(name).append("=").append(toJSONString(o)));
-		}
-		
-		String encodedRedirectURL = response.encodeRedirectURL(page + builder.toString());
-		
-		/** HttpServletResponse.sendRedirect */
-		response.sendRedirect(encodedRedirectURL);
-			
-	}
+    /** 跳转到前端的页面URI，主路径("/")为webRoot */
+    private String page;
 
-	public String getPage() {
-		return page;
-	}
-	
-	private String toJSONString(Object value) {
-		if(value == null)
-			return null;
-		
-		if(value instanceof String)
-			return (String) value;
-		
-		return JSON.toJSONString(value, SerializerFeature.WriteDateUseDateFormat);
-	}
+    public RedirectView(String page) {
+        this.page = page;
+    }
+
+    @Override
+    public void redirect(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        if (response == null || request == null) {
+            return;
+        }
+
+        StringBuilder builder = new StringBuilder();
+        if (model != null && model.size() > 0) {
+            if(!page.contains("?")) {
+                builder.append("?");
+            } else {
+                builder.append("&");
+            }
+            
+            builder.append("__version=").append(System.currentTimeMillis());
+            model.forEach((name, o) -> builder.append("&").append(name).append("=").append(toJSONString(o)));
+        }
+
+        String encodedRedirectURL = response.encodeRedirectURL(page + builder.toString());
+
+        /** HttpServletResponse.sendRedirect */
+        response.sendRedirect(encodedRedirectURL);
+    }
+
+    public String getPage() {
+        return page;
+    }
+
+    private String toJSONString(Object value) {
+        if (value == null) {
+            return null;
+        }
+
+        if (value instanceof String) {
+            return (String) value;
+        }
+
+        return JSON.toJSONString(value, SerializerFeature.WriteDateUseDateFormat);
+    }
 }

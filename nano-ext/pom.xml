@@ -34,6 +34,7 @@
         <module>nano-ext-etcd</module>
         <module>nano-ext-mail</module>
         <module>nano-ext-httpclient</module>
+        <module>nano-ext-shiro-client</module>
     </modules>
 
     <dependencyManagement>

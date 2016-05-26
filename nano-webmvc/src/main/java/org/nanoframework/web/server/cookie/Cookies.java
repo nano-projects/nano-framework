@@ -1,11 +1,11 @@
-/**
- * Copyright 2015- the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,11 +22,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
 
 /**
- * Cookie通用类
+ * Cookie通用类.
  * 
  * @author yanghe
- * @date 2015年7月25日 下午8:42:58 
- *
+ * @since 1.3.7
  */
 public class Cookies {
 
@@ -35,10 +34,7 @@ public class Cookies {
      * @param request HttpServletRequest
      * @param name cookie name
      * @return cookie value
-     * @see Cookies#get(String)
-     * @deprecated
      */
-    @Deprecated
 	public static final String get(HttpServletRequest request, String name) {
 		if(StringUtils.isEmpty(name)) {
 			throw new NullPointerException("Cookie name cannot be null");
@@ -57,10 +53,7 @@ public class Cookies {
      * @param request HttpServletRequest
      * @param name cookie name
      * @return Cookie
-     * @see Cookies#getCookie(String)
-     * @deprecated
      */
-    @Deprecated
 	public static final Cookie getCookie(HttpServletRequest request, String name) {
 		if(StringUtils.isEmpty(name)) {
 			throw new NullPointerException("Cookie name cannot be null");

@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -55,10 +56,9 @@ import com.google.inject.Injector;
  *
  */
 public class Components {
-
-	private static final Logger LOG = LoggerFactory.getLogger(Components.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(Components.class);
 	
-	private static boolean isLoaded = false;
+	private static boolean isLoaded;
 	
 	/**
 	 * 加载组件服务，并且装载至组件服务映射表中
@@ -76,23 +76,23 @@ public class Components {
 			throw new LoaderException("Component已经加载，这里不再进行重复的加载，如需重新加载请调用reload方法");
 		}
 
-		if(PropertiesLoader.PROPERTIES.size() == 0) {
+		if(PropertiesLoader.PROPERTIES.isEmpty()) {
 			throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
-			
 		}
 		
-		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(ApplicationContext.COMPONENT_BASE_PACKAGE) != null).forEach(item -> {
-			String[] packageNames = item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE).split(",");
-			for(String packageName : packageNames)
-				ComponentScan.scan(packageName);
+		PropertiesLoader.PROPERTIES.values().stream()
+		.filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE)))
+		.forEach(item -> {
+			Arrays.asList(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE).split(","))
+			.forEach(packageName -> ComponentScan.scan(packageName));
 		});
 		
 		Set<Class<?>> componentClasses = ComponentScan.filter(Component.class);
-		LOG.info("Component size: " + componentClasses.size());
+		LOGGER.info("Component size: " + componentClasses.size());
 		
 		if(componentClasses.size() > 0) {
 			for(Class<?> clz : componentClasses) {
-				LOG.info("Inject Component Class: " + clz.getName());
+				LOGGER.info("Inject Component Class: " + clz.getName());
 				Object obj = Globals.get(Injector.class).getInstance(clz);
 				Method[] methods = clz.getMethods();
 				
@@ -113,11 +113,9 @@ public class Components {
 	 * @throws IOException IO异常类
 	 */
 	public static final void reload() throws LoaderException, IOException {
-//		mapping.clear();
 		MapperNode.clear();
 		isLoaded = false;
 		load();
-		
 	}
 	
 	/**
@@ -131,8 +129,9 @@ public class Components {
 	 * @see org.nanoframework.commons.format.ClassCast#cast(Object, String)
 	 */
 	public static final Object[] bindParam(Method method, Map<String, Object> params, Object... objs) {
-		if(params == null)
+		if(params == null) {
 			params = Collections.emptyMap();
+		}
 		
 		params.keySet().forEach(key -> key = key.toLowerCase());
 		
@@ -162,7 +161,7 @@ public class Components {
 						Object obj = ClassCast.cast(param, type.getName());
 						values.add(obj);
 					} catch(org.nanoframework.commons.exception.ClassCastException e) {
-						LOG.error(e.getMessage(), e);
+						LOGGER.error(e.getMessage(), e);
 						throw new BindRequestParamException("类型转换异常: 数据类型 [ " + type.getName() + " ], 值 [ " + param + " ]");
 					}
 				} else {
@@ -173,11 +172,9 @@ public class Components {
 							try {
 								Object obj = ClassCast.cast(param, type.getName());
 								values.add(obj);
-								
 							} catch(org.nanoframework.commons.exception.ClassCastException e) {
-								LOG.error(e.getMessage(), e);
+								LOGGER.error(e.getMessage(), e);
 								throw new BindRequestParamException("类型转换异常: 数据类型 [ " + type.getName() + " ], 值 [ " + param + " ]");
-								
 							}
 						} else {
 							throw new BindRequestParamException("Restful风格参数:["+pathVariable.value().toLowerCase()+"]为必填项，但是获取的参数值为空.");
@@ -217,7 +214,7 @@ public class Components {
 				return method.invoke(obj, bind);
 				
 			} catch(Exception e) {
-				LOG.error(e.getMessage());
+				LOGGER.error(e.getMessage());
 				if(e instanceof ComponentInvokeException) {
 					throw (ComponentInvokeException) e;
 				} else {

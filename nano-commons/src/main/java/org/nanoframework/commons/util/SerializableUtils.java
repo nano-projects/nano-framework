@@ -29,8 +29,9 @@ import org.nanoframework.commons.exception.SerializationException;
 public class SerializableUtils {
 	public static <T> String encode(T object) {
 		try {
-			if(object == null)
+			if(object == null) {
 				return null;
+			}
 			
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
 			ObjectOutputStream oos = new ObjectOutputStream(bos);
@@ -44,8 +45,9 @@ public class SerializableUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T decode(String objectString) {
 		try {
-			if(StringUtils.isEmpty(objectString))
+			if(StringUtils.isEmpty(objectString)) {
 				return null;
+			}
 			
 			ByteArrayInputStream bis = new ByteArrayInputStream(ZipUtils.gunzipToByte(objectString));
 			ObjectInputStream ois = new ObjectInputStream(bis);

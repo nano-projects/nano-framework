@@ -4,10 +4,6 @@
 	<display-name>Nano Examples First Web App</display-name>
 
 	<listener>
-		<listener-class>org.nanoframework.web.server.listener.ContextLoaderListener</listener-class>
-	</listener>
-
-	<listener>
 		<listener-class>org.apache.shiro.web.env.EnvironmentLoaderListener</listener-class>
 	</listener>
 

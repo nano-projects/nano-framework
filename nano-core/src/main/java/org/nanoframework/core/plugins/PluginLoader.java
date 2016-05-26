@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,84 +37,85 @@ import com.google.inject.Injector;
  * @date 2015年10月30日 下午10:29:16
  */
 public abstract class PluginLoader {
-	private Logger LOG = LoggerFactory.getLogger(PluginLoader.class);
-	private Configure<String> properties = new Configure<>();
-	private Configure<Plugin> plugins = new Configure<>();
-	private Configure<Module> modules = new Configure<>();
-	
-	private ServletConfig config;
-	
-	public void init(ServletConfig config) {
-		Assert.notNull(config);
-		this.config = config;
-		
-		try {
-			initProperties();
-			initModules();
-			initPlugins();
-			initComponent();
-			
-		} catch(Throwable e) {
-			throw new PluginLoaderException(e.getMessage(), e);
-		}
-	}
-	
-	private void initProperties() {
-//		if(!properties.get().contains(Constants.MAIN_CONTEXT))
-//			properties.add(Constants.MAIN_CONTEXT);
-		
-		long time = System.currentTimeMillis();
-		try { 
-			configProperties(properties);
-			for(String path : properties.get()) {
-			 	PropertiesLoader.load(path, true); 
-			}
-		} catch(Exception e) {
-	 		throw new PluginLoaderException(e.getMessage(), e);
-	 	}
-		
-		LOG.info("加载属性文件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-	}
-	
-	private void initModules() throws Throwable {
-		long time = System.currentTimeMillis();
-		configModules(modules);
-		List<Module> _modules = new ArrayList<>();
-		for(Module module : modules.get()) {
-			if(LOG.isInfoEnabled())
-				LOG.info("加载Module: " + module.getClass().getName());
-			
-			module.config(config);
-			_modules.addAll(module.load());
-		}
-		
-		LOG.info("开始进行依赖注入");
-		Globals.set(Injector.class, Guice.createInjector(_modules));
-		LOG.info("依赖注入完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-	}
-	
-	private void initComponent() throws LoaderException, IOException {
-		long time = System.currentTimeMillis();
-		LOG.info("开始加载组件服务");
-		Components.load();
-		LOG.info("加载组件服务结束, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-	}
-	
-	private void initPlugins() throws Throwable {
-		long time = System.currentTimeMillis();
-		configPlugin(plugins);
-		for(Plugin plugin : plugins.get()) {
-			plugin.config(config);
-			if(plugin.load()) {
-				LOG.info("加载插件: " + plugin.getClass().getName());
-			}
-		}
-		
-		LOG.info("加载插件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-	}
-	
-	protected abstract void configProperties(Configure<String> properties);
-	protected abstract void configModules(Configure<Module> modules);
-	protected abstract void configPlugin(Configure<Plugin> plugins);
-	
+    private Logger logger = LoggerFactory.getLogger(PluginLoader.class);
+    private Configure<String> properties = new Configure<>();
+    private Configure<Plugin> plugins = new Configure<>();
+    private Configure<Module> modules = new Configure<>();
+
+    private ServletConfig config;
+
+    public void init(final ServletConfig config) {
+        Assert.notNull(config);
+        this.config = config;
+
+        try {
+            initProperties();
+            initModules();
+            initPlugins();
+            initComponent();
+
+        } catch (final Throwable e) {
+            throw new PluginLoaderException(e.getMessage(), e);
+        }
+    }
+
+    private void initProperties() {
+        long time = System.currentTimeMillis();
+
+        try {
+            configProperties(properties);
+            for (String path : properties.get()) {
+                PropertiesLoader.load(path, true);
+            }
+        } catch (Exception e) {
+            throw new PluginLoaderException(e.getMessage(), e);
+        }
+
+        logger.info("加载属性文件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+    }
+
+    private void initModules() throws Throwable {
+        long time = System.currentTimeMillis();
+        configModules(this.modules);
+        List<Module> loadedModules = new ArrayList<>();
+        for (Module module : this.modules.get()) {
+            if (logger.isInfoEnabled()) {
+                logger.info("加载Module: " + module.getClass().getName());
+            }
+            
+            module.config(config);
+            loadedModules.addAll(module.load());
+        }
+
+        logger.info("开始进行依赖注入");
+        Globals.set(Injector.class, Guice.createInjector(loadedModules));
+        logger.info("依赖注入完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+    }
+
+    private void initComponent() throws LoaderException, IOException {
+        long time = System.currentTimeMillis();
+        logger.info("开始加载组件服务");
+        Components.load();
+        logger.info("加载组件服务结束, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+    }
+
+    private void initPlugins() throws Throwable {
+        long time = System.currentTimeMillis();
+        configPlugin(plugins);
+        for (Plugin plugin : plugins.get()) {
+            plugin.config(config);
+            if (plugin.load()) {
+                logger.info("加载插件: " + plugin.getClass().getName());
+            }
+        }
+
+        logger.info("加载插件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+    }
+
+    protected abstract void configProperties(Configure<String> properties);
+
+    protected abstract void configModules(Configure<Module> modules);
+
+    protected abstract void configPlugin(Configure<Plugin> plugins);
+
 }
