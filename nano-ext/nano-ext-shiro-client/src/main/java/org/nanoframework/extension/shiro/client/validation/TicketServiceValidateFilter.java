@@ -37,7 +37,7 @@ import org.nanoframework.web.server.mvc.support.RedirectView;
 /**
  *
  * @author yanghe
- * @since
+ * @since 1.3.7
  */
 public class TicketServiceValidateFilter extends AbstractShiroClientFilter {
 
@@ -45,38 +45,48 @@ public class TicketServiceValidateFilter extends AbstractShiroClientFilter {
     public void doFilter(final ServletRequest req, final ServletResponse resp, final FilterChain chain) throws IOException, ServletException {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpServletResponse response = (HttpServletResponse) resp;
-        
-        final String ticket = retrieveTicketFromRequest(request);
-        if(StringUtils.isBlank(ticket)) {
+
+        if (isRequestUrlExcluded(request)) {
             logger.debug("Request is ignored.");
             chain.doFilter(request, response);
-            return ;
+            return;
         }
-        
+
+        final String ticket = retrieveTicketFromRequest(request);
+        if (StringUtils.isBlank(ticket)) {
+            logger.debug("Request is ignored.");
+            chain.doFilter(request, response);
+            return;
+        }
+
         try {
             final HttpResponse httpResponse = registrySession(request, ticket);
             decodeSession(httpResponse);
             response.sendRedirect(constructServiceUrl(request, response));
         } catch (final AuthenticationException e) {
             final String service = constructServiceUrl(request, response);
-            final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroServerLoginURL, getProtocol().getServiceParameterName(), service, "sessionId", localSessionId(request));
+            final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroSessionBindURL, getProtocol().getServiceParameterName(), service,
+                    "sessionId", localSessionId(request));
+            
             View view = new RedirectView(shiroServer);
             view.redirect(null, (HttpServletRequest) request, (HttpServletResponse) response);
         }
     }
-    
+
     protected HttpResponse registrySession(final HttpServletRequest request, final String ticket) {
         final HttpClient httpClient = httpClient();
-        
+
         Throwable lastError = null;
-        for(int retry = 0; retry < serviceInvokeRetry; retry++) {
+        for (int retry = 0; retry < serviceInvokeRetry; retry++) {
             try {
-                return httpClient.post(shiroSessionURL + (shiroSessionURL.endsWith("/") ? "" : '/') + localSessionId(request), MapBuilder.<String, String> create().put(getProtocol().getArtifactParameterName(), ticket).build());
-            } catch(final Throwable e) {
+                return httpClient.post(shiroSessionURL + (shiroSessionURL.endsWith("/") ? "" : '/') + localSessionId(request),
+                        MapBuilder.<String, String> create().put(getProtocol().getArtifactParameterName(), ticket).build());
+                
+            } catch (final Throwable e) {
                 lastError = e;
             }
         }
-        
+
         if (lastError != null) {
             throw new RegistrySessionException(lastError.getMessage(), lastError);
         } else {

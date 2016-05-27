@@ -21,8 +21,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.web.servlet.Cookie;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.nanoframework.commons.crypt.DefaultCipherExecutor;
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.web.server.cookie.CookieValueManager;
 import org.nanoframework.web.server.cookie.Cookies;
 import org.nanoframework.web.server.cookie.DefaultCookieValueManager;
@@ -34,8 +32,6 @@ import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
  * @since 1.3.7
  */
 public class CryptCookie extends SimpleCookie {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CryptCookie.class);
-    
     protected static final String DEFAULT_SC_ENCRYPTION_KEY = "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM";
     protected static final String DEFAULT_SC_SIGNING_KEY = "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w";
 
@@ -94,7 +90,6 @@ public class CryptCookie extends SimpleCookie {
         if (cookie != null) {
             value = cookie.getValue();
         } else {
-            LOGGER.debug("No '{}' cookie value", name);
             return value;
         }
         

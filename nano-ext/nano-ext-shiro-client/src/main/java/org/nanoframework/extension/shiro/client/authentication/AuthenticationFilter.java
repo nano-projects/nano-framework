@@ -65,7 +65,7 @@ public class AuthenticationFilter extends AbstractShiroClientFilter {
             chain.doFilter(requestWrapper, response);
         } catch (final AuthenticationException e) {
             final String service = constructServiceUrl(request, response);
-            final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroServerLoginURL, getProtocol().getServiceParameterName(), service, "sessionId", localSessionId(request));
+            final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroSessionBindURL, getProtocol().getServiceParameterName(), service, "sessionId", localSessionId(request));
             View view = new RedirectView(shiroServer);
             view.redirect(null, (HttpServletRequest) request, (HttpServletResponse) response);
         }

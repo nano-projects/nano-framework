@@ -68,7 +68,7 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
     private boolean encodeServiceUrl = true;
     
     protected String shiroSessionURL;
-    protected String shiroServerLoginURL;
+    protected String shiroSessionBindURL;
     protected String sessionIdName;
     protected int serviceInvokeRetry;
 
@@ -80,7 +80,7 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
             setEncodeServiceUrl(getBoolean(ConfigurationKeys.ENCODE_SERVICE_URL));
             
             setShiroSessionURL(getString(ConfigurationKeys.SHIRO_SESSION_URL));
-            setShiroServerLoginURL(getString(ConfigurationKeys.SHIRO_SERVER_LOGIN_URL));
+            setShiroSessionBindURL(getString(ConfigurationKeys.SHIRO_SESSION_BIND_URL));
             setSessionIdName(getString(ConfigurationKeys.SESSION_ID_NAME));
             setServiceInvokeRetry(getInt(ConfigurationKeys.SERVICE_INVOKE_RETRY));
             
@@ -240,8 +240,8 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
         this.shiroSessionURL = shiroSessionURL;
     }
 
-    public void setShiroServerLoginURL(final String shiroServerLoginURL) {
-        this.shiroServerLoginURL = shiroServerLoginURL;
+    public void setShiroSessionBindURL(final String shiroSessionBindURL) {
+        this.shiroSessionBindURL = shiroSessionBindURL;
     }
 
     public void setSessionIdName(final String sessionIdName) {

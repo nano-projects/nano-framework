@@ -12,8 +12,8 @@
             <param-value>http://192.168.19.16:7000/fancy/sso/v1/session</param-value>
         </init-param>
         <init-param>
-            <param-name>shiroServerLoginURL</param-name>
-            <param-value>http://192.168.19.16:7000/fancy/sso/v1/login</param-value>
+            <param-name>shiroSessionBindURL</param-name>
+            <param-value>http://192.168.19.16:7000/fancy/sso/v1/session/bind</param-value>
         </init-param>
         <init-param>
             <param-name>serverName</param-name>
@@ -36,8 +36,8 @@
             <param-value>http://192.168.19.16:7000/fancy/sso/v1/session</param-value>
         </init-param>
         <init-param>
-            <param-name>shiroServerLoginURL</param-name>
-            <param-value>http://192.168.19.16:7000/fancy/sso/v1/login</param-value>
+            <param-name>shiroSessionBindURL</param-name>
+            <param-value>http://192.168.19.16:7000/fancy/sso/v1/session/bind</param-value>
         </init-param>
         <init-param>
             <param-name>serverName</param-name>

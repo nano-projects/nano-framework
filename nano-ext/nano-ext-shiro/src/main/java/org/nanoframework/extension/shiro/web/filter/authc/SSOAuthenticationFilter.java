@@ -26,6 +26,7 @@ import org.nanoframework.commons.crypt.CryptUtil;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.StringUtils;
+import org.nanoframework.extension.shiro.Protocol;
 
 /**
  * 
@@ -33,22 +34,22 @@ import org.nanoframework.commons.util.StringUtils;
  * @since 1.3.7
  */
 public class SSOAuthenticationFilter extends FormAuthenticationFilter {
-    private final Logger logger = LoggerFactory.getLogger(SSOAuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SSOAuthenticationFilter.class);
     
     @Override
     protected void issueSuccessRedirect(final ServletRequest request, final ServletResponse response) throws Exception {
-        final String service = request.getParameter("service");
+        final String service = request.getParameter(Protocol.SHIRO.getServiceParameterName());
         if (StringUtils.isNotBlank(service)) {
             final Session session = SecurityUtils.getSubject().getSession(false);
             final String sessionId = CryptUtil.encrypt((String) session.getId());
             String redirectService;
             if(!service.contains("?")) {
-                redirectService = service + "?ticket=" + sessionId;
+                redirectService = service + '?' + Protocol.SHIRO.getArtifactParameterName() + '=' + sessionId;
             } else {
-                redirectService = service + "&ticket=" + sessionId;
+                redirectService = service + '&' + Protocol.SHIRO.getArtifactParameterName() + '=' + sessionId;
             }
             
-            logger.debug("Redirect: {}", redirectService);
+            LOGGER.debug("Redirect: {}", redirectService);
             ((HttpServletResponse) response).sendRedirect(redirectService);
             return ;
         }

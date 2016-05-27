@@ -31,7 +31,7 @@ public interface ConfigurationKeys {
     ConfigurationKey<String> IGNORE_URL_PATTERN_TYPE = new ConfigurationKey<String>("ignoreUrlPatternType", "REGEX");
     
     ConfigurationKey<String> SHIRO_SESSION_URL = new ConfigurationKey<String>("shiroSessionURL", null);
-    ConfigurationKey<String> SHIRO_SERVER_LOGIN_URL = new ConfigurationKey<String>("shiroServerLoginURL", null);
+    ConfigurationKey<String> SHIRO_SESSION_BIND_URL = new ConfigurationKey<String>("shiroSessionBindURL", null);
     
     ConfigurationKey<String> SESSION_ID_NAME = new ConfigurationKey<String>("sessionIdName", "JSESSIONID");
 }

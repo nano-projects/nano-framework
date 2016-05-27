@@ -17,6 +17,7 @@ package org.nanoframework.core.plugins.defaults.plugin;
 
 import java.io.File;
 import java.net.URI;
+import java.net.URL;
 
 import javax.servlet.ServletConfig;
 
@@ -28,6 +29,7 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 /**
  * @author yanghe
  * @date 2015年11月17日 上午9:06:59
+ * @since 1.3.7
  */
 public class Log4j2Plugin implements Plugin {
     public static final String DEFAULT_LOG4J2_PARAMETER_NAME = "log4j2";
@@ -36,27 +38,45 @@ public class Log4j2Plugin implements Plugin {
     @Override
     public boolean load() throws Throwable {
         if (StringUtils.isNotBlank(log4j2)) {
-            final File file = ResourceUtils.getFile(log4j2);
-            if (file != null) {
-                try {
-                    Class<?> LogManager = Class.forName("org.apache.logging.log4j.LogManager");
-                    Object context = LogManager.getMethod("getContext", boolean.class).invoke(LogManager, false);
-                    Class<?> LoggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
-                    LoggerContext.getMethod("setConfigLocation", URI.class).invoke(context, file.toURI());
-                    LoggerContext.getMethod("reconfigure").invoke(context);
-                } catch (Exception e) {
-                    if (!(e instanceof ClassNotFoundException)) {
-                        throw new PluginLoaderException(e.getMessage(), e);
-                    }
-
-                    return false;
-                }
+            final URL url = this.getClass().getResource(log4j2);
+            if(url != null && load0(url.toURI())) {
+                return true;
             }
-        } else {
-            return false;
+            
+            final File file = ResourceUtils.getFile(log4j2);
+            if(file != null && load0(file.toURI())) {
+                return true;
+            }
+            
+            final URI uri = ResourceUtils.getURL(log4j2).toURI();
+            if(uri != null && load0(uri)) {
+                return true;
+            }
+            
         }
 
-        return true;
+        return false;
+    }
+    
+    protected boolean load0(URI resource) {
+        if (resource != null) {
+            try {
+                Class<?> LogManager = Class.forName("org.apache.logging.log4j.LogManager");
+                Object context = LogManager.getMethod("getContext", boolean.class).invoke(LogManager, false);
+                Class<?> LoggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
+                LoggerContext.getMethod("setConfigLocation", URI.class).invoke(context, resource);
+                LoggerContext.getMethod("reconfigure").invoke(context);
+                return true;
+            } catch (Exception e) {
+                if (!(e instanceof ClassNotFoundException)) {
+                    throw new PluginLoaderException(e.getMessage(), e);
+                }
+
+                return false;
+            }
+        }
+        
+        return false;
     }
 
     @Override
