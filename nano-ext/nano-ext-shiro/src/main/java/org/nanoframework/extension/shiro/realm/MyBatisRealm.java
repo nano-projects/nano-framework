@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -46,7 +46,7 @@ import org.nanoframework.orm.mybatis.GlobalSqlSession;
  * @date 2015年12月8日 下午10:39:29
  */
 public class MyBatisRealm extends JdbcRealm {
-	private Logger LOG = LoggerFactory.getLogger(MyBatisRealm.class);
+	private Logger LOGGER = LoggerFactory.getLogger(MyBatisRealm.class);
 	
     protected SqlSessionManager sqlSessionManager;
     
@@ -73,8 +73,9 @@ public class MyBatisRealm extends JdbcRealm {
         Connection conn = null;
         SimpleAuthenticationInfo info = null;
         try {
-        	if(sqlSessionManager == null)
+        	if(sqlSessionManager == null) {
         		sqlSessionManager = GlobalSqlSession.get(dataSourceName);
+        	}
         	
             conn = (sqlSession = sqlSessionManager.openSession()).getConnection();
             String password = null;
@@ -109,12 +110,14 @@ public class MyBatisRealm extends JdbcRealm {
 
         } catch (SQLException e) {
             final String message = "There was a SQL error while authenticating user [" + username + "]";
-        	LOG.error(message, e);
+        	LOGGER.error(message, e);
 
             // Rethrow any SQL errors as an authentication exception
             throw new AuthenticationException(message, e);
         } finally {
-        	sqlSession.close();
+            if(sqlSession != null) {
+                sqlSession.close();
+            }
         }
 
         return info;
@@ -201,12 +204,14 @@ public class MyBatisRealm extends JdbcRealm {
 
         } catch (SQLException e) {
             final String message = "There was a SQL error while authorizing user [" + username + "]";
-            LOG.error(message, e);
+            LOGGER.error(message, e);
 
             // Rethrow any SQL errors as an authorization exception
             throw new AuthorizationException(message, e);
         } finally {
-        	sqlSession.close();
+            if(sqlSession != null) {
+                sqlSession.close();
+            }
         }
 
         SimpleAuthorizationInfo info = new SimpleAuthorizationInfo(roleNames);

@@ -1,11 +1,17 @@
-package org.nanoframework.extension.shiro.component.impl;
+package org.nanoframework.extension.shiro.web.component.impl;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import org.nanoframework.extension.shiro.component.SSOComponent;
+import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.IncorrectCredentialsException;
+import org.apache.shiro.authc.UnknownAccountException;
+import org.nanoframework.extension.shiro.web.component.SSOComponent;
+import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
+import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 
 public class SSOComponentImpl extends AbstractSSOComponent implements SSOComponent {
+	protected static final String ERROR_MODEL_NAME = "error";
 	
 	@Override
 	public String getSession(final String clientSessionId) {
@@ -46,4 +52,20 @@ public class SSOComponentImpl extends AbstractSSOComponent implements SSOCompone
 	    return unAuthenticated(service);
 	}
 	
+	@Override
+	public View loginFailure(final String shiroLoginFailure, final String service) {
+	    final Model model = HttpContext.get(Model.class);
+	    
+	    if(AccountException.class.getName().equals(shiroLoginFailure)) {
+	        model.addAttribute(ERROR_MODEL_NAME, "无效的用户名");
+	    } else if(UnknownAccountException.class.getName().equals(shiroLoginFailure)) {
+            model.addAttribute(ERROR_MODEL_NAME, "用户不存在");
+        } else if(IncorrectCredentialsException.class.getName().equals(shiroLoginFailure)) {
+            model.addAttribute(ERROR_MODEL_NAME, "密码错误");
+        } else if(shiroLoginFailure != null) {
+            model.addAttribute(ERROR_MODEL_NAME, "未知错误：" + shiroLoginFailure);
+        }
+	    
+	    return unAuthenticated(service);
+	}
 }

@@ -9,11 +9,11 @@
         <filter-class>org.nanoframework.extension.shiro.client.authentication.AuthenticationFilter</filter-class>
         <init-param>
             <param-name>shiroSessionURL</param-name>
-            <param-value>http://192.168.19.16:7000/fancy/sso/v1/session</param-value>
+            <param-value>http://localhost:7000/fancy/sso/v1/session</param-value>
         </init-param>
         <init-param>
             <param-name>shiroSessionBindURL</param-name>
-            <param-value>http://192.168.19.16:7000/fancy/sso/v1/session/bind</param-value>
+            <param-value>http://localhost:7000/fancy/sso/v1/session/bind</param-value>
         </init-param>
         <init-param>
             <param-name>serverName</param-name>
@@ -33,11 +33,11 @@
         <filter-class>org.nanoframework.extension.shiro.client.validation.TicketServiceValidateFilter</filter-class>
         <init-param>
             <param-name>shiroSessionURL</param-name>
-            <param-value>http://192.168.19.16:7000/fancy/sso/v1/session</param-value>
+            <param-value>http://localhost:7000/fancy/sso/v1/session</param-value>
         </init-param>
         <init-param>
             <param-name>shiroSessionBindURL</param-name>
-            <param-value>http://192.168.19.16:7000/fancy/sso/v1/session/bind</param-value>
+            <param-value>http://localhost:7000/fancy/sso/v1/session/bind</param-value>
         </init-param>
         <init-param>
             <param-name>serverName</param-name>

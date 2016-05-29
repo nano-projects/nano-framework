@@ -23,7 +23,7 @@ import org.apache.shiro.session.SessionListenerAdapter;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
-import org.nanoframework.extension.shiro.component.SSOComponent;
+import org.nanoframework.extension.shiro.web.component.SSOComponent;
 import org.nanoframework.orm.jedis.RedisClient;
 
 import com.google.common.collect.Lists;
@@ -62,12 +62,15 @@ public class SSOSessionListener extends SessionListenerAdapter {
         final String shiroSessionListenerPrefix = SSOComponent.SHIRO_SESSION_LISTENER_PREFIX;
         final String shiroClientSessionPrefix = SSOComponent.SHIRO_CLIENT_SESSION_PREFIX;
         final RedisClient shiro = SSOComponent.SHIRO;
+        final String sessionListenerKey = shiroSessionListenerPrefix + sessionId;
         
-        Set<String> clientSessionIds = shiro.smembers(shiroSessionListenerPrefix + sessionId);
+        Set<String> clientSessionIds = shiro.smembers(sessionListenerKey);
         if(!CollectionUtils.isEmpty(clientSessionIds)) {
-            List<String> newClientSessionIds = Lists.newArrayList();
-            clientSessionIds.forEach(clientSessionId -> newClientSessionIds.add(shiroClientSessionPrefix + clientSessionId));
-            shiro.del(newClientSessionIds);
+            List<String> delKeys = Lists.newArrayList();
+            clientSessionIds.forEach(clientSessionId -> delKeys.add(shiroClientSessionPrefix + clientSessionId));
+            delKeys.add(sessionListenerKey);
+            
+            shiro.del(delKeys);
         }
     }
 

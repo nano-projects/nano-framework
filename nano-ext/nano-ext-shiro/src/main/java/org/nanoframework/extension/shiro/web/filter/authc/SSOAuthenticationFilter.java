@@ -15,6 +15,8 @@
  */
 package org.nanoframework.extension.shiro.web.filter.authc;
 
+import java.io.IOException;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
@@ -35,26 +37,34 @@ import org.nanoframework.extension.shiro.Protocol;
  */
 public class SSOAuthenticationFilter extends FormAuthenticationFilter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SSOAuthenticationFilter.class);
-    
+
     @Override
     protected void issueSuccessRedirect(final ServletRequest request, final ServletResponse response) throws Exception {
-        final String service = request.getParameter(Protocol.SHIRO.getServiceParameterName());
-        if (StringUtils.isNotBlank(service)) {
-            final Session session = SecurityUtils.getSubject().getSession(false);
-            final String sessionId = CryptUtil.encrypt((String) session.getId());
-            String redirectService;
-            if(!service.contains("?")) {
-                redirectService = service + '?' + Protocol.SHIRO.getArtifactParameterName() + '=' + sessionId;
-            } else {
-                redirectService = service + '&' + Protocol.SHIRO.getArtifactParameterName() + '=' + sessionId;
-            }
-            
-            LOGGER.debug("Redirect: {}", redirectService);
-            ((HttpServletResponse) response).sendRedirect(redirectService);
-            return ;
+        if (bindService(request, response)) {
+            return;
         }
 
         super.issueSuccessRedirect(request, response);
     }
-    
+
+    protected boolean bindService(final ServletRequest request, final ServletResponse response) throws IOException {
+        final String service = request.getParameter(Protocol.SHIRO.getServiceParameterName());
+        if (StringUtils.isNotBlank(service)) {
+            final Session session = SecurityUtils.getSubject().getSession();
+            final String sessionId = CryptUtil.encrypt((String) session.getId());
+            final String redirectService;
+            if (!service.contains("?")) {
+                redirectService = service + '?' + Protocol.SHIRO.getArtifactParameterName() + '=' + sessionId;
+            } else {
+                redirectService = service + '&' + Protocol.SHIRO.getArtifactParameterName() + '=' + sessionId;
+            }
+
+            LOGGER.debug("Redirect: {}", redirectService);
+            ((HttpServletResponse) response).sendRedirect(redirectService);
+            return true;
+        }
+
+        return false;
+    }
+
 }

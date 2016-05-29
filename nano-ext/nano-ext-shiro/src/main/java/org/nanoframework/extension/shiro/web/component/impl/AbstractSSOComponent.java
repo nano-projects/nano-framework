@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.shiro.component.impl;
+package org.nanoframework.extension.shiro.web.component.impl;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -27,7 +27,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.SerializableUtils;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.extension.shiro.Protocol;
-import org.nanoframework.extension.shiro.component.SSOComponent;
+import org.nanoframework.extension.shiro.web.component.SSOComponent;
 import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
@@ -70,12 +70,8 @@ public abstract class AbstractSSOComponent implements SSOComponent {
             final String sessionSerail = SHIRO.get(SHIRO_SESSION_PREFIX + serverSessionId);
             if(StringUtils.isNotBlank(sessionSerail)) {
                 try {
-                    final Session session = SerializableUtils.decode(sessionSerail);
-                    
-                    for(Object attributeKey : session.getAttributeKeys()) {
-                        if(!validationSession(session, attributeKey)) {
-                            return EMPTY;
-                        }
+                    if(!validationSession(sessionSerail)) {
+                        return EMPTY;
                     }
                     
                     return sessionSerail;
@@ -89,7 +85,18 @@ public abstract class AbstractSSOComponent implements SSOComponent {
         return EMPTY;
     }
     
-    protected boolean validationSession(final Session session, final Object attributeKey) {
+    protected boolean validationSession(final String sessionSerail) {
+        final Session session = SerializableUtils.decode(sessionSerail);
+        for(Object attributeKey : session.getAttributeKeys()) {
+            if(!validationSession0(session, attributeKey)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    protected boolean validationSession0(final Session session, final Object attributeKey) {
         if(((String) attributeKey).contains(AUTHENTICATED_SESSION_KEY)) {
             if(!validationAuthenticatedSession(session.getAttribute(attributeKey))) {
                 return false;
@@ -128,6 +135,10 @@ public abstract class AbstractSSOComponent implements SSOComponent {
         final String serverSessionId = CryptUtil.decrypt(serverEncryptSessionId);
         final String sessionSerail = SHIRO.get(SHIRO_SESSION_PREFIX + serverSessionId);
         if(StringUtils.isNotBlank(sessionSerail)) {
+            if(!validationSession(sessionSerail)) {
+                return EMPTY;
+            }
+            
             storageSession(clientSessionId, serverSessionId);
             return sessionSerail;
         }
@@ -163,9 +174,19 @@ public abstract class AbstractSSOComponent implements SSOComponent {
         }
     }
     
+    protected void addServiceAttribute(final String service) {
+        if(StringUtils.isNotBlank(service)) {
+            final Model model = HttpContext.get(Model.class);
+            model.addAttribute(Protocol.SHIRO.getServiceParameterName(), service);
+        }
+    }
+    
     protected View unAuthenticated(final String service) {
-        final Model model = HttpContext.get(Model.class);
-        model.addAttribute(Protocol.SHIRO.getServiceParameterName(), service);
+        addServiceAttribute(service);
+        return unAuthenticated();
+    }
+    
+    protected View unAuthenticated() {
         if(IS_BIND_SESSION_FORWARD) {
             return new ForwardView(BIND_SESSION_FORWARD_URL, true);
         } else {
