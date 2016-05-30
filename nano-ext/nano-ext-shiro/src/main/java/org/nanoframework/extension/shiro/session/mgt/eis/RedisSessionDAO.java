@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -39,7 +39,7 @@ import com.google.common.collect.Maps;
  * @date 2015年12月10日 上午10:24:05
  */
 public class RedisSessionDAO extends CachingSessionDAO {
-	private Logger LOG = LoggerFactory.getLogger(RedisSessionDAO.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RedisSessionDAO.class);
 	
 	protected static final String DEFAULT_REDIS_SOURCE_NAME = "shiro";
 	protected static final String DEFAULT_SESSION_NAME = "SHIRO_SESSION_";
@@ -107,8 +107,12 @@ public class RedisSessionDAO extends CachingSessionDAO {
 		initRedisClient();
 		RedisClient client = sessions.values().iterator().next();
 		switch(persistType) {
-			case SET: client.del(sessionName + session.getId()); break;
-			case HSET: client.hdel(sessionName, JSON.toJSONString(session.getId())); break;
+			case SET: 
+			    client.del(sessionName + session.getId());
+			    break;
+			case HSET: 
+			    client.hdel(sessionName, JSON.toJSONString(session.getId()));
+			    break;
 		}
 	}
 
@@ -120,18 +124,23 @@ public class RedisSessionDAO extends CachingSessionDAO {
 			try {
 				RedisClient client = item.getValue();
 				switch(persistType) {
-					case SET: value = client.get(sessionName + sessionId); break;
-					case HSET: value = client.hget(sessionName, (String) sessionId); break;
+					case SET: 
+					    value = client.get(sessionName + sessionId);
+					    break;
+					case HSET: 
+					    value = client.hget(sessionName, (String) sessionId);
+					    break;
 				}
 				
 				break;
 			} catch(Exception e) {
-				LOG.error("读取Session异常["+item.getKey()+"]: " + e.getMessage());
+				LOGGER.error("读取Session异常["+item.getKey()+"]: " + e.getMessage());
 			}
 		}
 		
-		if(StringUtils.isNotBlank(value)) 
+		if(StringUtils.isNotBlank(value)) {
 			return SerializableUtils.decode(value);
+		}
 		
 		return null;
 	}
@@ -147,12 +156,14 @@ public class RedisSessionDAO extends CachingSessionDAO {
 			String[] names = jedisSourceNames.split(",");
 			Map<String, RedisClient> sessionMap = Maps.newLinkedHashMap();
 			for(String name : names) {
-				if(StringUtils.isBlank(name))
+				if(StringUtils.isBlank(name)) {
 					continue ;
+				}
 				
 				RedisClient client;
-				if((client = GlobalRedisClient.get(name)) != null)
+				if((client = GlobalRedisClient.get(name)) != null) {
 					sessionMap.put(name, client);
+				}
 			}
 			
 			this.sessions = sessionMap;
@@ -172,7 +183,8 @@ public class RedisSessionDAO extends CachingSessionDAO {
 	}
 	
 	private void initRedisClient() {
-		if(CollectionUtils.isEmpty(sessions))
+		if(CollectionUtils.isEmpty(sessions)) {
 			setRedisSourceNames(redisSourceNames);
+		}
 	}
 }

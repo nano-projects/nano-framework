@@ -17,8 +17,12 @@ package org.nanoframework.extension.shiro.web.component.impl;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
+import java.util.Date;
+
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.mgt.SimpleSession;
+import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.nanoframework.commons.crypt.CryptUtil;
@@ -28,11 +32,14 @@ import org.nanoframework.commons.util.SerializableUtils;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.extension.shiro.Protocol;
 import org.nanoframework.extension.shiro.web.component.SSOComponent;
+import org.nanoframework.extension.shiro.web.service.SSOService;
 import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 import org.nanoframework.web.server.mvc.support.ForwardView;
 import org.nanoframework.web.server.mvc.support.RedirectView;
+
+import com.google.inject.Inject;
 
 /**
  *
@@ -44,18 +51,21 @@ public abstract class AbstractSSOComponent implements SSOComponent {
     
     protected static final String DEFAULT_SHIRO_SESSION_PREFIX = "SHIRO_SESSION_";
     protected static final String DEFAULT_SHIRO_CLIENT_EXPIRE_TIME = "3600";
+    protected static final String DEFAULT_SHIRO_SESSION_LISTENER_EXPIRE_TIME = "7200";
     protected static final String DEFAULT_IS_BIND_SESSION_FORWARD = "true";
     protected static final String DEFAULT_BIND_SESSION_FORWARD_URL = "/pages/login.jsp";
     protected static final String DEFAULT_BIND_SESSION_REDIRECT_URL = EMPTY;
     
     protected static final String SHIRO_SESSION_PREFIX_PROPERTY = "context.sso.shiro.session.prefix";
     protected static final String SHIRO_CLIENT_EXPIRE_TIME_PROPERTY = "context.sso.shiro.client.expire.time";
+    protected static final String SHIRO_SESSION_LISTENER_EXPIRE_TIME_PROPERTY = "context.sso.shiro.session.listener.expire.time";
     protected static final String IS_BIND_SESSION_FORWARD_PROPERTY = "context.sso.is.bind.session.forward";
     protected static final String BIND_SESSION_FORWARD_URL_PROPERTY = "context.sso.bind.session.forward.url";
     protected static final String BIND_SESSION_REDIRECT_URL_PROPERTY = "context.sso.bind.session.redirect.url";
     
     protected static final String SHIRO_SESSION_PREFIX = System.getProperty(SHIRO_SESSION_PREFIX_PROPERTY, DEFAULT_SHIRO_SESSION_PREFIX);
     protected static final int SHIRO_CLIENT_EXPIRE_TIME = Integer.parseInt(System.getProperty(SHIRO_CLIENT_EXPIRE_TIME_PROPERTY, DEFAULT_SHIRO_CLIENT_EXPIRE_TIME));
+    protected static final int SHIRO_SESSION_LISTENER_EXPIRE_TIME = Integer.parseInt(System.getProperty(SHIRO_SESSION_LISTENER_EXPIRE_TIME_PROPERTY, DEFAULT_SHIRO_SESSION_LISTENER_EXPIRE_TIME));
     protected static final boolean IS_BIND_SESSION_FORWARD = Boolean.parseBoolean(System.getProperty(IS_BIND_SESSION_FORWARD_PROPERTY, DEFAULT_IS_BIND_SESSION_FORWARD));
     protected static final String BIND_SESSION_FORWARD_URL = System.getProperty(BIND_SESSION_FORWARD_URL_PROPERTY, DEFAULT_BIND_SESSION_FORWARD_URL);
     protected static final String BIND_SESSION_REDIRECT_URL = System.getProperty(BIND_SESSION_REDIRECT_URL_PROPERTY, DEFAULT_BIND_SESSION_REDIRECT_URL);
@@ -63,8 +73,11 @@ public abstract class AbstractSSOComponent implements SSOComponent {
     protected static final String AUTHENTICATED_SESSION_KEY = "AUTHENTICATED_SESSION_KEY";
     protected static final String PRINCIPALS_SESSION_KEY = "PRINCIPALS_SESSION_KEY";
     
+    @Inject
+    protected SSOService ssoService;
+    
     @Override
-    public String getSession(String clientSessionId) {
+    public String getSession(final String clientSessionId) {
         final String serverSessionId = SHIRO.get(SHIRO_CLIENT_SESSION_PREFIX + clientSessionId);
         if(StringUtils.isNotBlank(serverSessionId)) {
             final String sessionSerail = SHIRO.get(SHIRO_SESSION_PREFIX + serverSessionId);
@@ -74,6 +87,7 @@ public abstract class AbstractSSOComponent implements SSOComponent {
                         return EMPTY;
                     }
                     
+                    expireSession(clientSessionId, serverSessionId);
                     return sessionSerail;
                 } catch (final Throwable e) {
                     LOGGER.error("Session validation error: {}", e.getMessage());
@@ -87,12 +101,19 @@ public abstract class AbstractSSOComponent implements SSOComponent {
     
     protected boolean validationSession(final String sessionSerail) {
         final Session session = SerializableUtils.decode(sessionSerail);
+        if(session instanceof ValidatingSession) {
+            if(!((ValidatingSession) session).isValid()) {
+                return false;
+            }
+        }
+        
         for(Object attributeKey : session.getAttributeKeys()) {
             if(!validationSession0(session, attributeKey)) {
                 return false;
             }
         }
         
+        accessSession(session);
         return true;
     }
     
@@ -130,6 +151,11 @@ public abstract class AbstractSSOComponent implements SSOComponent {
         return false;
     }
     
+    protected void accessSession(final Session session) {
+        ((SimpleSession) session).setLastAccessTime(new Date());
+        ssoService.update(session);
+    }
+    
     @Override
     public String registrySession(String clientSessionId, String serverEncryptSessionId) {
         final String serverSessionId = CryptUtil.decrypt(serverEncryptSessionId);
@@ -162,8 +188,14 @@ public abstract class AbstractSSOComponent implements SSOComponent {
         clearOldSession(clientSessionId);
         
         SHIRO.set(SHIRO_CLIENT_SESSION_PREFIX + clientSessionId, serverSessionId);
-        SHIRO.expire(SHIRO_CLIENT_SESSION_PREFIX + clientSessionId, SHIRO_CLIENT_EXPIRE_TIME);
         SHIRO.sadd(SHIRO_SESSION_LISTENER_PREFIX + serverSessionId, clientSessionId);
+        
+        expireSession(clientSessionId, serverSessionId);
+    }
+    
+    protected void expireSession(final String clientSessionId, final String serverSessionId) {
+        SHIRO.expire(SHIRO_CLIENT_SESSION_PREFIX + clientSessionId, SHIRO_CLIENT_EXPIRE_TIME);
+        SHIRO.expire(SHIRO_SESSION_LISTENER_PREFIX + serverSessionId, SHIRO_SESSION_LISTENER_EXPIRE_TIME);
     }
     
     protected void clearOldSession(final String clientSessionId) {
