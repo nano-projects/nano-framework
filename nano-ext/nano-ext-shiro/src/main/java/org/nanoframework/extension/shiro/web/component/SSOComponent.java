@@ -1,5 +1,8 @@
 package org.nanoframework.extension.shiro.web.component;
 
+import java.util.Map;
+
+import org.apache.shiro.authc.UsernamePasswordToken;
 import org.nanoframework.core.component.stereotype.Component;
 import org.nanoframework.core.component.stereotype.bind.PathVariable;
 import org.nanoframework.core.component.stereotype.bind.RequestMapping;
@@ -8,6 +11,7 @@ import org.nanoframework.core.component.stereotype.bind.RequestParam;
 import org.nanoframework.extension.shiro.web.component.impl.SSOComponentImpl;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
+import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.web.server.mvc.View;
 
 import com.google.inject.ImplementedBy;
@@ -44,4 +48,13 @@ public interface SSOComponent {
     @RequestMapping("/login")
     View loginFailure(@RequestParam(value = "shiroLoginFailure", required = false) String shiroLoginFailure,
             @RequestParam(value = "service", required = false) String service);
+    
+    @RequestMapping(value = "/remote/login", method = RequestMethod.POST)
+    Map<String, Object> login(@RequestParam("token") UsernamePasswordToken token);
+
+    @RequestMapping(value = "/remote/logout", method = RequestMethod.GET)
+    ResultMap logout();
+    
+    @RequestMapping(value = "/remote/logined", method = RequestMethod.GET)
+    Map<String, Object> isLogined();
 }

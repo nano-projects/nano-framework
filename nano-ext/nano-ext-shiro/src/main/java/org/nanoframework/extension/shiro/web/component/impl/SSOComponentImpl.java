@@ -1,17 +1,41 @@
 package org.nanoframework.extension.shiro.web.component.impl;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.nanoframework.extension.shiro.web.component.Status.INTERNAL_SERVER_ERROR;
+import static org.nanoframework.extension.shiro.web.component.Status.INVALID_AUTH;
+import static org.nanoframework.extension.shiro.web.component.Status.INVALID_USER_PASS;
+import static org.nanoframework.extension.shiro.web.component.Status.OK;
+import static org.nanoframework.extension.shiro.web.component.Status.PASSWORD_ERROR;
+import static org.nanoframework.extension.shiro.web.component.Status.UNAUTH;
+import static org.nanoframework.extension.shiro.web.component.Status.UNLOGIN;
 
+import java.util.Map;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
+import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.subject.Subject;
+import org.nanoframework.commons.util.StringUtils;
+import org.nanoframework.extension.shiro.util.ShiroSecurityHelper;
 import org.nanoframework.extension.shiro.web.component.SSOComponent;
 import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
+import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
+@Singleton
 public class SSOComponentImpl extends AbstractSSOComponent implements SSOComponent {
 	protected static final String ERROR_MODEL_NAME = "error";
+	
+	@Inject
+	protected ShiroSecurityHelper helper;
 	
 	@Override
 	public String getSession(final String clientSessionId) {
@@ -68,4 +92,83 @@ public class SSOComponentImpl extends AbstractSSOComponent implements SSOCompone
 	    
 	    return unAuthenticated(service);
 	}
+	
+	@Override
+	public Map<String, Object> login(UsernamePasswordToken token) {
+	    if (StringUtils.isBlank(token.getUsername()) || ArrayUtils.isEmpty(token.getPassword())) {
+            return INVALID_USER_PASS._getBeanToMap();
+        }
+
+        Subject subject = SecurityUtils.getSubject();
+        try {
+            if (subject.isAuthenticated()) {
+                return createOKResult();
+            }
+
+            subject.login(token);
+            if (subject.isAuthenticated()) {
+                return createOKResult();
+            } else {
+                return INVALID_AUTH._getBeanToMap();
+            }
+            
+        } catch (final AuthenticationException e) {
+            return authenticationException(e);
+            
+        } catch (final Throwable e) {
+            LOGGER.error("处理异常: {}", e.getMessage());
+            return INTERNAL_SERVER_ERROR._getBeanToMap();
+        }
+	}
+	
+	protected Map<String, Object> authenticationException(final AuthenticationException e) {
+	    LOGGER.error("权限认证失败: {}", e.getMessage());
+        if (e.getMessage().indexOf("did not match the expected credentials") > -1) {
+            return PASSWORD_ERROR._getBeanToMap();
+        } else {
+            Map<String, Object> authError = UNAUTH._getBeanToMap();
+            authError.put(ResultMap.MESSAGE, e.getMessage());
+            return authError;
+        }
+
+	}
+	
+	@Override
+	public ResultMap logout() {
+	    try {
+            final Subject subject = SecurityUtils.getSubject();
+            if (subject.isAuthenticated() || subject.isRemembered()) {
+                subject.logout();
+                return OK;
+            } else {
+                return UNLOGIN;
+            }
+        } catch (final Throwable e) {
+            LOGGER.error("处理异常: {}", e.getMessage());
+            return INTERNAL_SERVER_ERROR;
+        }
+	}
+	
+	@Override
+    public Map<String, Object> isLogined() {
+	    try {
+	        final Subject subject = SecurityUtils.getSubject();
+	        if(subject.isAuthenticated() || subject.isRemembered()) {
+                return createOKResult();
+	        } else {
+	            return UNLOGIN._getBeanToMap();
+	        }
+	    } catch (final Throwable e) {
+	        LOGGER.debug("登陆校验异常: {}", e.getMessage());
+	        return INTERNAL_SERVER_ERROR._getBeanToMap();
+	    }
+    }
+	
+	protected Map<String, Object> createOKResult() {
+        Map<String, Object> ok = OK._getBeanToMap();
+        String username = helper.getCurrentUsername();
+        ok.put("username", username);
+        return ok;
+    }
+	
 }
