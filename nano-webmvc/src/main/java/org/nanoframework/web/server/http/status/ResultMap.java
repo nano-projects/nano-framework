@@ -15,7 +15,10 @@
  */
 package org.nanoframework.web.server.http.status;
 
+import java.util.Map;
+
 import org.nanoframework.commons.entity.BaseEntity;
+import org.nanoframework.commons.util.CollectionUtils;
 
 /**
  * Http 返回消息对象
@@ -56,6 +59,17 @@ public class ResultMap extends BaseEntity {
 	
 	public static ResultMap create(String message, HttpStatus status) {
 		return new ResultMap(status.code, message, status.info);
+	}
+	
+	public static ResultMap create(Map<String, Object> map) {
+	    if(!CollectionUtils.isEmpty(map)) {
+	        final String info = (String) map.get(INFO);
+	        final int status = (int) map.get(STATUS);
+	        final String message = (String) map.get(MESSAGE);
+	        return create(status, message, info);
+	    }
+	    
+	    throw new IllegalArgumentException("The parameter 'map' must be not empty.");
 	}
 	
 	/**

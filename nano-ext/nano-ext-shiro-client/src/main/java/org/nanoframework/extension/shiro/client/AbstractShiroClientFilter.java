@@ -15,6 +15,8 @@
  */
 package org.nanoframework.extension.shiro.client;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Map;
 
 import javax.servlet.FilterConfig;
@@ -23,7 +25,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.shiro.session.Session;
+import org.nanoframework.commons.util.Constants;
+import org.nanoframework.commons.util.ContentType;
+import org.nanoframework.commons.util.ObjectUtils;
 import org.nanoframework.commons.util.ReflectUtils;
 import org.nanoframework.commons.util.SerializableUtils;
 import org.nanoframework.commons.util.StringUtils;
@@ -39,8 +45,13 @@ import org.nanoframework.extension.shiro.client.matchers.RegexUrlPatternMatcherS
 import org.nanoframework.extension.shiro.client.matchers.UrlPatternMatcherStrategy;
 import org.nanoframework.extension.shiro.client.util.ServiceUtils;
 import org.nanoframework.web.server.cookie.Cookies;
+import org.nanoframework.web.server.http.status.HttpStatus;
 import org.nanoframework.web.server.http.status.HttpStatusCode;
+import org.nanoframework.web.server.mvc.View;
+import org.nanoframework.web.server.mvc.support.RedirectView;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
@@ -50,28 +61,26 @@ import com.google.inject.Injector;
  * @since 1.3.7
  */
 public abstract class AbstractShiroClientFilter extends AbstractConfigurationFilter {
-    private UrlPatternMatcherStrategy ignoreUrlPatternMatcherStrategyClass;
-    private Protocol protocol = Protocol.SHIRO;
+    protected static final String AJAX_REQUEST = "AJAX_REQUEST";
     
     private static final Map<String, Class<? extends UrlPatternMatcherStrategy>> PATTERN_MATCHER_TYPES = Maps.newHashMap();
-
     static {
         PATTERN_MATCHER_TYPES.put("CONTAINS", ContainsPatternUrlPatternMatcherStrategy.class);
         PATTERN_MATCHER_TYPES.put("REGEX", RegexUrlPatternMatcherStrategy.class);
         PATTERN_MATCHER_TYPES.put("EXACT", ExactUrlPatternMatcherStrategy.class);
     }
-
-    private String serverName;
-
-    private String service;
-
-    private boolean encodeServiceUrl = true;
     
     protected String shiroSessionURL;
     protected String shiroSessionBindURL;
     protected String sessionIdName;
     protected int serviceInvokeRetry;
-
+    
+    private UrlPatternMatcherStrategy ignoreUrlPatternMatcherStrategyClass;
+    private Protocol protocol = Protocol.SHIRO;
+    private String serverName;
+    private String service;
+    private boolean encodeServiceUrl = true;
+    
     public final void init(final FilterConfig filterConfig) throws ServletException {
         super.init(filterConfig);
         if (!isIgnoreInitConfiguration()) {
@@ -198,7 +207,49 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
     
     protected HttpServletRequest requestWrapper0(final HttpServletRequest request, HttpResponse response) {
         final Session session = decodeSession(response);
-        return new AuthenticationServletRequest(request, request.getServletContext(), session);
+        return new AuthenticationServletRequest(request, request.getServletContext(), session, httpClient(), serviceInvokeRetry, sessionURL(request));
+    }
+    
+    protected String sessionURL(final HttpServletRequest request, final String... tokens) {
+        final StringBuilder urlBuilder = new StringBuilder(shiroSessionURL + (shiroSessionURL.endsWith("/") ? "" : '/') + localSessionId(request));
+        if(!ArrayUtils.isEmpty(tokens)) {
+            for(final String token : tokens) {
+                urlBuilder.append(token);
+            }
+        }
+        
+        return urlBuilder.toString();
+    }
+    
+    protected void write(final HttpServletRequest request, final HttpServletResponse response, final Object result) throws IOException {
+        write(request, response, result, ContentType.APPLICATION_JSON);
+    }
+    
+    protected void write(final HttpServletRequest request, final HttpServletResponse response, final Object result, final String contentType) throws IOException {
+        response.setContentType(contentType);
+        final Writer out = response.getWriter();
+        final Object callback;
+        if(!ObjectUtils.isEmpty(callback = request.getParameter(Constants.CALLBACK))) {
+            out.write(callback + "(" + JSON.toJSONString(result, SerializerFeature.WriteDateUseDateFormat) + ")");
+        } else { 
+            out.write(JSON.toJSONString(result, SerializerFeature.WriteDateUseDateFormat));
+        }
+    }
+    
+    protected void responseFailure(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
+        final String service = constructServiceUrl(request, response);
+        final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroSessionBindURL, getProtocol().getServiceParameterName(), service,
+                "sessionId", localSessionId(request));
+        
+        final String ajaxRequest = request.getParameter(AJAX_REQUEST);
+        if(StringUtils.isNotBlank(ajaxRequest) && Boolean.parseBoolean(ajaxRequest)) {
+            final Map<String, Object> map = HttpStatus.UNAUTHORIZED.to()._getBeanToMap();
+            map.put(getProtocol().getServiceParameterName(), shiroServer);
+            write(request, response, map);
+        } else {
+            final View view = new RedirectView(shiroServer);
+            view.redirect(null, (HttpServletRequest) request, (HttpServletResponse) response);
+        }
     }
 
     /**

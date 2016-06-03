@@ -18,11 +18,13 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
+import org.nanoframework.commons.util.SerializableUtils;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.extension.shiro.util.ShiroSecurityHelper;
-import org.nanoframework.extension.shiro.web.component.SSOComponent;
 import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
+import org.nanoframework.web.server.http.status.HttpStatus;
 import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
@@ -31,7 +33,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
-public class SSOComponentImpl extends AbstractSSOComponent implements SSOComponent {
+public class SSOComponentImpl extends AbstractSSOComponent {
 	protected static final String ERROR_MODEL_NAME = "error";
 	
 	@Inject
@@ -74,6 +76,36 @@ public class SSOComponentImpl extends AbstractSSOComponent implements SSOCompone
         }
         
 	    return unAuthenticated(service);
+	}
+	
+	@Override
+	public ResultMap syncSessionAttribute(String clientSessionId, String serialAttribute) {
+	    try {
+    	    final String sessionSerail = super.getSession(clientSessionId);
+    	    final Session session = SerializableUtils.decode(sessionSerail);
+    	    final Map<Object, Object> map = SerializableUtils.decode(serialAttribute);
+    	    map.forEach((key, value) -> session.setAttribute(key, value));
+    	    accessSession(session);
+    	    return HttpStatus.OK.to();
+	    } catch(final Throwable e) {
+	        LOGGER.error("Sync session error: {}", e.getMessage());
+	        return ResultMap.create(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+	    }
+	    
+	}
+	
+	@Override
+	public ResultMap syncSessionMaxInactiveInternal(String clientSessionId, Integer maxInactiveInternal) {
+	    try {
+            final String sessionSerail = super.getSession(clientSessionId);
+            final Session session = SerializableUtils.decode(sessionSerail);
+            session.setTimeout(maxInactiveInternal * 1000);
+            accessSession(session);
+            return HttpStatus.OK.to();
+        } catch(final Throwable e) {
+            LOGGER.error("Sync session error: {}", e.getMessage());
+            return ResultMap.create(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 	}
 	
 	@Override

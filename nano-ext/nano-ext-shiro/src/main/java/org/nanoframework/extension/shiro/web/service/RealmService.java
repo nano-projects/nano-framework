@@ -13,29 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.httpclient;
+package org.nanoframework.extension.shiro.web.service;
 
-import java.io.IOException;
+import org.apache.shiro.authz.AuthorizationInfo;
+import org.apache.shiro.subject.PrincipalCollection;
+import org.nanoframework.extension.shiro.web.service.impl.RealmServiceImpl;
 
-import org.apache.http.HttpStatus;
-import org.junit.Test;
-import org.nanoframework.core.component.stereotype.bind.RequestMethod;
-
-import com.google.inject.Guice;
-
-import junit.framework.Assert;
+import com.google.inject.ImplementedBy;
 
 /**
  *
  * @author yanghe
- * @since
+ * @since 1.3.7
  */
-public class HttpClientTest {
+@ImplementedBy(RealmServiceImpl.class)
+public interface RealmService {
+
+    AuthorizationInfo getAuthorizationInfo();
     
-    @Test
-    public void httpGetTest() throws IOException {
-        HttpClient httpClient = Guice.createInjector().getInstance(HttpClient.class);
-        HttpResponse response = httpClient.execute(RequestMethod.GET, "https://www.baidu.com");
-        Assert.assertEquals(response.statusCode, HttpStatus.SC_OK);
-    }
+    AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals);
 }

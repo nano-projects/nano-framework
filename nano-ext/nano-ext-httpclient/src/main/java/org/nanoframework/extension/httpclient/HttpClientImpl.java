@@ -15,36 +15,23 @@
  */
 package org.nanoframework.extension.httpclient;
 
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.nanoframework.commons.util.Charsets.UTF_8;
-
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpOptions;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.util.EntityUtils;
-import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.commons.exception.UnsupportedAccessException;
+import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 
 import com.google.inject.Singleton;
 
@@ -54,334 +41,429 @@ import com.google.inject.Singleton;
  * @since 1.3.3
  */
 @Singleton
-public class HttpClientImpl implements HttpClient {
-    public static final String TIME_TO_LIVE = "context.httpclient.time.to.live";
-    public static final String TIME_UNIT = "context.httpclient.timeunit";
-    public static final String MAX_TOTAL = "context.httpclient.max.total";
-    public static final String MAX_PER_ROUTE = "context.httpclient.default.max.per.route";
-    
-    protected final String DEFAULT_TIME_TO_LIVE = "-1";
-    protected final String DEFAULT_TIME_UNIT = "MILLISECONDS";
-    protected final String DEFAULT_MAX_TOTAL = "20";
-    protected final String DEFAULT_MAX_PER_ROUTE = "2";
-    
-    private long timeToLive;
-    private TimeUnit tunit;
-    private int maxTotal;
-    private int maxPerRoute;
-    private static PoolingHttpClientConnectionManager pool;
-
+public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     public HttpClientImpl() {
-        this(false);
-    }
-    
-    public HttpClientImpl(boolean force) {
-        if(pool == null || force) {
-            this.timeToLive = Long.parseLong(System.getProperty(TIME_TO_LIVE, DEFAULT_TIME_TO_LIVE));
-            this.tunit = TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT));
-            this.maxTotal = Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL));
-            this.maxPerRoute = Integer.parseInt(System.getProperty(MAX_PER_ROUTE, DEFAULT_MAX_PER_ROUTE));
-            initHttpClientPool(timeToLive, tunit, maxTotal, maxPerRoute);
-        }
-    }
-    
-    public HttpClientImpl(boolean force, long timeToLive, TimeUnit tunit, int maxTotal, int maxPerRoute) {
-        if(pool == null || force) {
-            this.timeToLive = timeToLive;
-            this.tunit = tunit;
-            this.maxTotal = maxTotal;
-            this.maxPerRoute = maxPerRoute;
-            initHttpClientPool(timeToLive, tunit, maxTotal, maxPerRoute);
-        }
-    }
-    
-    protected void initHttpClientPool(long timeToLive, TimeUnit tunit, int maxTotal, int maxPerRoute) {
-        PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, tunit);
-        manager.setMaxTotal(maxTotal);
-        manager.setDefaultMaxPerRoute(maxPerRoute);
-        pool = manager;
-    }
-    
-    @Override
-    public HttpResponse get(String url) throws IOException {
-        return getResult(new HttpGet(url));
+        super();
     }
 
-    @Override
-    public HttpResponse get(String url, Map<String, String> params) throws URISyntaxException, IOException {
-        URIBuilder builder = new URIBuilder();
-        builder.setPath(url);
-
-        List<NameValuePair> pairs = covertParams2NVPS(params);
-        builder.setParameters(pairs);
-
-        HttpGet httpGet = new HttpGet(builder.build());
-        return getResult(httpGet);
+    public HttpClientImpl(final boolean force) {
+        super(force);
     }
 
-    @Override
-    public HttpResponse get(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException {
-        URIBuilder builder = new URIBuilder();
-        builder.setPath(url);
-
-        List<NameValuePair> pairs = covertParams2NVPS(params);
-        builder.setParameters(pairs);
-
-        HttpGet httpGet = new HttpGet(builder.build());
-        if (!CollectionUtils.isEmpty(headers)) {
-            headers.forEach((key, value) -> httpGet.addHeader(key, value));
-        }
-
-        return getResult(httpGet);
-    }
-
-    @Override
-    public HttpResponse post(String url) throws IOException {
-        return getResult(new HttpPost(url));
-    }
-
-    @Override
-    public HttpResponse post(String url, Map<String, String> params) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        List<NameValuePair> pairs = covertParams2NVPS(params);
-        httpPost.setEntity(new UrlEncodedFormEntity(pairs, UTF_8));
-        return getResult(httpPost);
-    }
-
-    @Override
-    public HttpResponse post(String url, String json) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(new StringEntity(json, APPLICATION_JSON));
-        return getResult(httpPost);
-    }
-
-    @Override
-    public HttpResponse post(String url, String stream, ContentType contentType) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        httpPost.setEntity(new StringEntity(stream, contentType));
-        return getResult(httpPost);
-    }
-
-    @Override
-    public HttpResponse post(String url, Map<String, String> headers, String json) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        if (!CollectionUtils.isEmpty(headers)) {
-            headers.forEach((key, value) -> httpPost.addHeader(key, value));
-        }
-
-        httpPost.setEntity(new StringEntity(json, APPLICATION_JSON));
-        return getResult(httpPost);
-    }
-
-    @Override
-    public HttpResponse post(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        if (!CollectionUtils.isEmpty(headers)) {
-            headers.forEach((key, value) -> httpPost.addHeader(key, value));
-        }
-
-        httpPost.setEntity(new StringEntity(stream, contentType));
-        return getResult(httpPost);
-    }
-
-    @Override
-    public HttpResponse post(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
-        HttpPost httpPost = new HttpPost(url);
-        if (!CollectionUtils.isEmpty(headers)) {
-            headers.forEach((key, value) -> httpPost.addHeader(key, value));
-        }
-
-        List<NameValuePair> pairs = covertParams2NVPS(params);
-        httpPost.setEntity(new UrlEncodedFormEntity(pairs, UTF_8));
-        return getResult(httpPost);
-    }
-
-    @Override
-    public HttpResponse put(String url) throws IOException {
-        return getResult(new HttpPut(url));
-    }
-
-    @Override
-    public HttpResponse put(String url, Map<String, String> params) throws IOException {
-        HttpPut httpPut = new HttpPut(url);
-        List<NameValuePair> pairs = covertParams2NVPS(params);
-        httpPut.setEntity(new UrlEncodedFormEntity(pairs, UTF_8));
-        return getResult(httpPut);
-    }
-
-    @Override
-    public HttpResponse put(String url, String json) throws IOException {
-        HttpPut httpPut = new HttpPut(url);
-        httpPut.setEntity(new StringEntity(json, APPLICATION_JSON));
-        return getResult(httpPut);
-    }
-
-    @Override
-    public HttpResponse put(String url, Map<String, String> headers, String json) throws IOException {
-        HttpPut httpPut = new HttpPut(url);
-        if (!CollectionUtils.isEmpty(headers)) {
-            headers.forEach((key, value) -> httpPut.addHeader(key, value));
-        }
-
-        httpPut.setEntity(new StringEntity(json, APPLICATION_JSON));
-        return getResult(httpPut);
-    }
-
-    @Override
-    public HttpResponse put(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
-        HttpPut httpPut = new HttpPut(url);
-        if (!CollectionUtils.isEmpty(headers)) {
-            headers.forEach((key, value) -> httpPut.addHeader(key, value));
-        }
-
-        List<NameValuePair> pairs = covertParams2NVPS(params);
-        httpPut.setEntity(new UrlEncodedFormEntity(pairs, UTF_8));
-        return getResult(httpPut);
-    }
-
-    @Override
-    public HttpResponse delete(String url) throws IOException {
-        return getResult(new HttpDelete(url));
-    }
-
-    @Override
-    public HttpResponse delete(String url, Map<String, String> headers) throws IOException {
-        HttpDelete httpDelete = new HttpDelete(url);
-        if (!CollectionUtils.isEmpty(headers)) {
-            headers.forEach((key, value) -> httpDelete.addHeader(key, value));
-        }
-        
-        return getResult(httpDelete);
-    }
-    
-    protected List<NameValuePair> covertParams2NVPS(Map<String, String> params) {
-        if (CollectionUtils.isEmpty(params)) {
-            return Collections.emptyList();
-        }
-
-        List<NameValuePair> pairs = new ArrayList<>();
-        params.forEach((key, value) -> pairs.add(new BasicNameValuePair(key, value)));
-        return pairs;
+    public HttpClientImpl(final boolean force, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute,
+            final Charset charset) {
+        super(force, timeToLive, tunit, maxTotal, maxPerRoute, charset);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpGetRequest(String url) throws IOException {
+    public HttpResponse httpGetRequest(final String url) throws IOException {
         return get(url);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpGetRequest(String url, Map<String, String> params) throws URISyntaxException, IOException {
+    public HttpResponse httpGetRequest(final String url, final Map<String, String> params) throws URISyntaxException, IOException {
         return get(url, params);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpGetRequest(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException {
+    public HttpResponse httpGetRequest(final String url, final Map<String, String> headers, final Map<String, String> params) throws URISyntaxException, IOException {
         return get(url, headers, params);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPostRequest(String url) throws IOException {
+    public HttpResponse httpPostRequest(final String url) throws IOException {
         return post(url);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPostRequest(String url, Map<String, String> params) throws IOException {
+    public HttpResponse httpPostRequest(final String url, final Map<String, String> params) throws IOException {
         return post(url, params);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPostRequest(String url, String json) throws IOException {
+    public HttpResponse httpPostRequest(final String url, final String json) throws IOException {
         return post(url, json);
     }
-    
+
     @Deprecated
     @Override
-    public HttpResponse httpPostRequest(String url, String stream, ContentType contentType) throws IOException {
+    public HttpResponse httpPostRequest(final String url, final String stream, final ContentType contentType) throws IOException {
         return post(url, stream, contentType);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPostRequest(String url, Map<String, String> headers, String json) throws IOException {
+    public HttpResponse httpPostRequest(final String url, final Map<String, String> headers, final String json) throws IOException {
         return post(url, headers, json);
     }
-    
+
     @Deprecated
     @Override
-    public HttpResponse httpPostRequest(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException {
+    public HttpResponse httpPostRequest(final String url, final Map<String, String> headers, final String stream, final ContentType contentType) throws IOException {
         return post(url, headers, stream, contentType);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPostRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
+    public HttpResponse httpPostRequest(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
         return post(url, headers, params);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPutRequest(String url) throws IOException {
+    public HttpResponse httpPutRequest(final String url) throws IOException {
         return put(url);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPutRequest(String url, Map<String, String> params) throws IOException {
+    public HttpResponse httpPutRequest(final String url, final Map<String, String> params) throws IOException {
         return put(url, params);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPutRequest(String url, String json) throws IOException {
+    public HttpResponse httpPutRequest(final String url, final String json) throws IOException {
         return put(url, json);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPutRequest(String url, Map<String, String> headers, String json) throws IOException {
+    public HttpResponse httpPutRequest(final String url, final Map<String, String> headers, final String json) throws IOException {
         return put(url, headers, json);
     }
 
     @Deprecated
     @Override
-    public HttpResponse httpPutRequest(String url, Map<String, String> headers, Map<String, String> params) throws IOException {
+    public HttpResponse httpPutRequest(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
         return put(url, headers, params);
     }
-    
+
     @Deprecated
     @Override
-    public HttpResponse httpDeleteRequest(String url) throws IOException {
+    public HttpResponse httpDeleteRequest(final String url) throws IOException {
         return delete(url);
     }
-    
+
     @Deprecated
     @Override
-    public HttpResponse httpDeleteRequest(String url, Map<String, String> headers) throws IOException {
+    public HttpResponse httpDeleteRequest(final String url, final Map<String, String> headers) throws IOException {
         return delete(url, headers);
     }
 
-    /**
-     * 处理Http请求
-     * 
-     * @param request
-     * @return
-     */
-    protected HttpResponse getResult(HttpRequestBase request) throws IOException {
-        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(pool).build();
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                StatusLine status = response.getStatusLine();
-                return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(), EntityUtils.toString(entity));
-            }
-        }
-
-        return HttpResponse.EMPTY;
+    @Override
+    public HttpResponse get(final String url) throws IOException {
+        return getResult(new HttpGet(url));
     }
+
+    @Override
+    public HttpResponse get(final String url, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpGet.class, url, params));
+    }
+
+    @Override
+    public HttpResponse get(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpGet.class, url, headers, params));
+    }
+
+    @Override
+    public HttpResponse post(final String url) throws IOException {
+        return getResult(new HttpPost(url));
+    }
+
+    @Override
+    public HttpResponse post(final String url, final Map<String, String> params) throws IOException {
+        return getResult(createEntityBase(HttpPost.class, url, params));
+    }
+
+    @Override
+    public HttpResponse post(final String url, final String json) throws IOException {
+        return getResult(createEntityBase(HttpPost.class, url, json));
+    }
+
+    @Override
+    public HttpResponse post(final String url, final String stream, final ContentType contentType) throws IOException {
+        return getResult(createEntityBase(HttpPost.class, url, stream, contentType));
+    }
+
+    @Override
+    public HttpResponse post(final String url, final Map<String, String> headers, final String json) throws IOException {
+        return getResult(createEntityBase(HttpPost.class, url, headers, json));
+    }
+
+    @Override
+    public HttpResponse post(final String url, final Map<String, String> headers, final String stream, final ContentType contentType) throws IOException {
+        return getResult(createEntityBase(HttpPost.class, url, headers, stream, contentType));
+    }
+
+    @Override
+    public HttpResponse post(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        return getResult(createEntityBase(HttpPost.class, url, headers, params));
+    }
+
+    @Override
+    public HttpResponse put(final String url) throws IOException {
+        return getResult(new HttpPut(url));
+    }
+
+    @Override
+    public HttpResponse put(final String url, final Map<String, String> params) throws IOException {
+        return getResult(createEntityBase(HttpPut.class, url, params));
+    }
+
+    @Override
+    public HttpResponse put(final String url, final String json) throws IOException {
+        return getResult(createEntityBase(HttpPut.class, url, json));
+    }
+
+    @Override
+    public HttpResponse put(final String url, final String stream, final ContentType contentType) throws IOException {
+        return getResult(createEntityBase(HttpPut.class, url, stream, contentType));
+    }
+
+    @Override
+    public HttpResponse put(final String url, final Map<String, String> headers, final String stream, final ContentType contentType) throws IOException {
+        return getResult(createEntityBase(HttpPut.class, url, headers, stream, contentType));
+    }
+
+    @Override
+    public HttpResponse put(final String url, final Map<String, String> headers, final String json) throws IOException {
+        return getResult(createEntityBase(HttpPut.class, url, headers, json));
+    }
+
+    @Override
+    public HttpResponse put(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        return getResult(createEntityBase(HttpPut.class, url, headers, params));
+    }
+
+    @Override
+    public HttpResponse delete(final String url) throws IOException {
+        return getResult(new HttpDelete(url));
+    }
+
+    @Override
+    public HttpResponse delete(final String url, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpDelete.class, url, params));
+    }
+
+    @Override
+    public HttpResponse delete(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpDelete.class, url, headers, params));
+    }
+
+    @Override
+    public HttpResponse patch(final String url) throws IOException {
+        return getResult(new HttpPatch(url));
+    }
+
+    @Override
+    public HttpResponse patch(final String url, final Map<String, String> params) throws IOException {
+        return getResult(createEntityBase(HttpPatch.class, url, params));
+    }
+
+    @Override
+    public HttpResponse patch(final String url, final String json) throws IOException {
+        return getResult(createEntityBase(HttpPatch.class, url, json));
+    }
+
+    @Override
+    public HttpResponse patch(final String url, final String stream, final ContentType contentType) throws IOException {
+        return getResult(createEntityBase(HttpPatch.class, url, stream, contentType));
+    }
+
+    @Override
+    public HttpResponse patch(final String url, final Map<String, String> headers, final String json) throws IOException {
+        return getResult(createEntityBase(HttpPatch.class, url, headers, json));
+    }
+
+    @Override
+    public HttpResponse patch(final String url, final Map<String, String> headers, final String stream, final ContentType contentType) throws IOException {
+        return getResult(createEntityBase(HttpPatch.class, url, headers, stream, contentType));
+    }
+
+    @Override
+    public HttpResponse patch(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        return getResult(createEntityBase(HttpPatch.class, url, headers, params));
+    }
+
+    @Override
+    public HttpResponse head(final String url) throws IOException {
+        return getResult(new HttpHead(url));
+    }
+
+    @Override
+    public HttpResponse head(final String url, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpHead.class, url, params));
+    }
+
+    @Override
+    public HttpResponse head(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpHead.class, url, headers, params));
+    }
+
+    @Override
+    public HttpResponse options(final String url) throws IOException {
+        return getResult(new HttpOptions(url));
+    }
+
+    @Override
+    public HttpResponse options(final String url, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpOptions.class, url, params));
+    }
+
+    @Override
+    public HttpResponse options(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpOptions.class, url, headers, params));
+    }
+
+    @Override
+    public HttpResponse trace(final String url) throws IOException {
+        return getResult(new HttpTrace(url));
+    }
+
+    @Override
+    public HttpResponse trace(final String url, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpTrace.class, url, params));
+    }
+
+    @Override
+    public HttpResponse trace(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        return getResult(createBase(HttpTrace.class, url, headers, params));
+    }
+
+    @Override
+    public HttpResponse execute(final RequestMethod requestMethod, final String url) throws IOException {
+        switch (requestMethod) {
+            case GET:
+                return get(url);
+            case POST:
+                return post(url);
+            case PUT:
+                return put(url);
+            case DELETE:
+                return delete(url);
+            case PATCH:
+                return patch(url);
+            case HEAD:
+                return head(url);
+            case OPTIONS:
+                return options(url);
+            case TRACE:
+                return trace(url);
+            default:
+                throw new UnsupportedAccessException();
+        }
+    }
+
+    @Override
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> params) throws IOException {
+        switch (requestMethod) {
+            case GET:
+                return get(url, params);
+            case POST:
+                return post(url, params);
+            case PUT:
+                return put(url, params);
+            case DELETE:
+                return delete(url, params);
+            case PATCH:
+                return patch(url, params);
+            case HEAD:
+                return head(url, params);
+            case OPTIONS:
+                return options(url, params);
+            case TRACE:
+                return trace(url, params);
+            default:
+                throw new UnsupportedAccessException();
+        }
+    }
+
+    @Override
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final String json) throws IOException {
+        switch (requestMethod) {
+            case POST:
+                return post(url, json);
+            case PUT:
+                return put(url, json);
+            case PATCH:
+                return patch(url, json);
+            default:
+                throw new UnsupportedAccessException();
+        }
+    }
+
+    @Override
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+        switch (requestMethod) {
+            case GET:
+                return get(url, headers, params);
+            case POST:
+                return post(url, headers, params);
+            case PUT:
+                return put(url, headers, params);
+            case DELETE:
+                return delete(url, headers, params);
+            case PATCH:
+                return patch(url, headers, params);
+            case HEAD:
+                return head(url, headers, params);
+            case OPTIONS:
+                return options(url, headers, params);
+            case TRACE:
+                return trace(url, headers, params);
+            default:
+                throw new UnsupportedAccessException();
+        }
+    }
+
+    @Override
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final String json) throws IOException {
+        switch (requestMethod) {
+            case POST:
+                return post(url, headers, json);
+            case PUT:
+                return put(url, headers, json);
+            case PATCH:
+                return patch(url, headers, json);
+            default:
+                throw new UnsupportedAccessException();
+        }
+    }
+
+    @Override
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final String stream, final ContentType contentType) throws IOException {
+        switch (requestMethod) {
+            case POST:
+                return post(url, stream, contentType);
+            case PUT:
+                return put(url, stream, contentType);
+            case PATCH:
+                return patch(url, stream, contentType);
+            default:
+                throw new UnsupportedAccessException();
+        }
+    }
+
+    @Override
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final String stream, final ContentType contentType)
+            throws IOException {
+        switch (requestMethod) {
+            case POST:
+                return post(url, headers, stream, contentType);
+            case PUT:
+                return put(url, headers, stream, contentType);
+            case PATCH:
+                return patch(url, headers, stream, contentType);
+            default:
+                throw new UnsupportedAccessException();
+        }
+    }
+
 }

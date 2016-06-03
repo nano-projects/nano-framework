@@ -80,5 +80,9 @@ public class JdbcRealm extends org.apache.shiro.realm.jdbc.JdbcRealm {
             authenticationQuery = DEFAULT_SALTED_AUTHENTICATION_QUERY;
         }
     }
-	
+
+	@Override
+	public AuthorizationInfo getAuthorizationInfo(PrincipalCollection principals) {
+	    return super.getAuthorizationInfo(principals);
+	}
 }

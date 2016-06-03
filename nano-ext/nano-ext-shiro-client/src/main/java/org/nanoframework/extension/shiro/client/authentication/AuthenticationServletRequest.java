@@ -21,7 +21,8 @@ import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpSession;
 
 import org.apache.shiro.session.Session;
-import org.apache.shiro.web.servlet.ShiroHttpSession;
+import org.nanoframework.extension.httpclient.HttpClient;
+import org.nanoframework.extension.shiro.client.session.ShiroClientHttpSession;
 
 /**
  *
@@ -29,13 +30,19 @@ import org.apache.shiro.web.servlet.ShiroHttpSession;
  * @since 1.3.7
  */
 public class AuthenticationServletRequest extends HttpServletRequestWrapper {
-    protected ServletContext servletContext;
-    protected Session session;
+    protected final ServletContext servletContext;
+    protected final Session session;
+    protected final HttpClient httpClient;
+    protected final int retry;
+    protected final String sessionURL;
     
-    public AuthenticationServletRequest(final HttpServletRequest wrapped, final ServletContext servletContext, final Session session) {
+    public AuthenticationServletRequest(final HttpServletRequest wrapped, final ServletContext servletContext, final Session session, final HttpClient httpClient, final int retry, final String sessionURL) {
         super(wrapped);
         this.servletContext = servletContext;
         this.session = session;
+        this.httpClient = httpClient;
+        this.retry = retry;
+        this.sessionURL = sessionURL;
     }
     
     @Override
@@ -46,7 +53,7 @@ public class AuthenticationServletRequest extends HttpServletRequestWrapper {
     @Override
     public HttpSession getSession(boolean create) {
         if(this.session != null) {
-            return new ShiroHttpSession(this.session, this, this.servletContext);
+            return new ShiroClientHttpSession(session, this, this.getServletContext(), httpClient, retry, sessionURL);
         }
         
         HttpSession session = super.getSession(false);

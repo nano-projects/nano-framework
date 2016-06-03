@@ -30,5 +30,9 @@
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-commons</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.nanoframework</groupId>
+            <artifactId>nano-core</artifactId>
+        </dependency>
 	</dependencies>
 </project>

@@ -42,6 +42,12 @@ public interface SSOComponent {
     @RequestMapping(value = "/session/{clientSessionId}", method = RequestMethod.POST)
     String registrySession(@PathVariable("clientSessionId") String clientSessionId, @RequestParam("ticket") String serverEncryptSessionId);
 
+    @RequestMapping(value = "/session/{clientSessionId}/attribute", method = RequestMethod.POST)
+    ResultMap syncSessionAttribute(@PathVariable("clientSessionId") String clientSessionId, @RequestParam("attribute") String serialAttribute);
+    
+    @RequestMapping(value = "/session/{clientSessionId}/max.inactive.internal", method = RequestMethod.POST)
+    ResultMap syncSessionMaxInactiveInternal(@PathVariable("clientSessionid") String clientSessionId, @RequestParam("max.inactive.internal") Integer maxInactiveInternal);
+    
     @RequestMapping(value = "/session/bind", method = RequestMethod.GET)
     View bindSession(@RequestParam("service") String service, @RequestParam("sessionId") String clientSessionId);
 

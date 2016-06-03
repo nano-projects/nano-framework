@@ -111,12 +111,12 @@ public abstract class AbstractFilter implements Filter {
 			response.setContentType(ContentType.APPLICATION_JSON);
 			out = response.getWriter();
 			/** 跨域JSONP的Ajax请求支持 */
-			Object callback;
-			if(!ObjectUtils.isEmpty(callback = urlContext.getParameter().get(Constants.CALLBACK)))
+			final Object callback;
+			if(!ObjectUtils.isEmpty(callback = urlContext.getParameter().get(Constants.CALLBACK))) {
 				out.write(callback + "(" + JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat) + ")");
-			else 
+			} else { 
 				out.write(JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat));
-			
+			}
 		} else {
 			response.setContentType(ContentType.APPLICATION_JSON);
 			out = response.getWriter();

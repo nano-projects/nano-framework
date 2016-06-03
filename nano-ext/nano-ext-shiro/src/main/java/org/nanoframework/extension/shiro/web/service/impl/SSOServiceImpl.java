@@ -27,11 +27,14 @@ import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.nanoframework.extension.shiro.web.service.SSOService;
 
+import com.google.inject.Singleton;
+
 /**
  *
  * @author yanghe
  * @since 1.3.7
  */
+@Singleton
 public class SSOServiceImpl implements SSOService {
 
     @Override
@@ -71,4 +74,5 @@ public class SSOServiceImpl implements SSOService {
         
         return null;
     }
+    
 }

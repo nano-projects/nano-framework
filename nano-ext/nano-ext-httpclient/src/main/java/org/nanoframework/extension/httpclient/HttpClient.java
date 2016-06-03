@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 
 import org.apache.http.entity.ContentType;
+import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 
 import com.google.inject.ImplementedBy;
 
@@ -375,6 +376,29 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse put(String url, String json) throws IOException;
+    
+    /**
+     * Http 'PUT' request.
+     * 
+     * @param url
+     * @param stream
+     * @param contentType
+     * @return
+     * @throws IOException
+     */
+    HttpResponse put(String url, String stream, ContentType contentType) throws IOException;
+    
+    /**
+     * Http 'PUT' request.
+     * 
+     * @param url
+     * @param headers
+     * @param stream
+     * @param contentType
+     * @return
+     * @throws IOException
+     */
+    HttpResponse put(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
 
     /**
      * Http 'PUT' request.
@@ -411,9 +435,198 @@ public interface HttpClient {
      * Http 'DELETE' request.
      * 
      * @param url request url
-     * @param headers request headers map
+     * @param headers request params map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
      */
-    HttpResponse delete(String url, Map<String, String> headers) throws IOException;
+    HttpResponse delete(String url, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'DELETE' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @param params the params
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse delete(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'PATCH' request.
+     * 
+     * @param url request url
+     * @return HttpResponse
+     * @throws IOException IOException if I/O errors occur
+     */
+    HttpResponse patch(String url) throws IOException;
+    
+    /**
+     * Http 'PATCH' request.
+     * 
+     * @param url request url
+     * @param params request parameter map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse patch(String url, Map<String, String> params) throws IOException;
+
+    /**
+     * Http 'PATCH' request.
+     * 
+     * @param url request url
+     * @param json request json string
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse patch(String url, String json) throws IOException;
+    
+    /**
+     * Http 'PATCH' request.
+     * 
+     * @param url request url
+     * @param stream stream string
+     * @param contentType httpclient ContentType
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse patch(String url, String stream, ContentType contentType) throws IOException;
+
+    /**
+     * Http 'PATCH' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @param json json string
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse patch(String url, Map<String, String> headers, String json) throws IOException;
+    
+    /**
+     * Http 'PATCH' request.
+     * 
+     * @param url request url
+     * @param headers request hreaders map
+     * @param stream stream string
+     * @param contentType httpclient ContentType
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse patch(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
+    
+    /**
+     * Http 'PATCH' request.
+     * 
+     * @param url request url
+     * @param headers request hreaders map
+     * @param params request parameter map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse patch(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'HEAD' request.
+     * 
+     * @param url request url
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse head(String url) throws IOException;
+    
+    /**
+     * Http 'HEAD' request.
+     * 
+     * @param url request url
+     * @param headers request params map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse head(String url, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'HEAD' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @param params the params
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse head(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'OPTIONS' request.
+     * 
+     * @param url request url
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse options(String url) throws IOException;
+    
+    /**
+     * Http 'OPTIONS' request.
+     * 
+     * @param url request url
+     * @param headers request params map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse options(String url, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'OPTIONS' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @param params the params
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse options(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'TRACE' request.
+     * 
+     * @param url request url
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse trace(String url) throws IOException;
+    
+    /**
+     * Http 'TRACE' request.
+     * 
+     * @param url request url
+     * @param headers request params map
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse trace(String url, Map<String, String> params) throws IOException;
+    
+    /**
+     * Http 'TRACE' request.
+     * 
+     * @param url request url
+     * @param headers request headers map
+     * @param params the params
+     * @return HttpResponse
+     * @throws IOException if I/O errors occur
+     */
+    HttpResponse trace(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    
+    HttpResponse execute(RequestMethod requestMethod, String url) throws IOException;
+    
+    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> params) throws IOException;
+    
+    HttpResponse execute(RequestMethod requestMethod, String url, String json) throws IOException;
+    
+    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    
+    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, String json) throws IOException;
+    
+    HttpResponse execute(RequestMethod requestMethod, String url, String stream, ContentType contentType) throws IOException;
+    
+    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
 }

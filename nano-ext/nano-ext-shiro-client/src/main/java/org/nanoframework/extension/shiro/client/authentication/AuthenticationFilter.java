@@ -30,9 +30,6 @@ import org.nanoframework.extension.httpclient.HttpClient;
 import org.nanoframework.extension.httpclient.HttpResponse;
 import org.nanoframework.extension.shiro.client.AbstractShiroClientFilter;
 import org.nanoframework.extension.shiro.client.AuthenticationException;
-import org.nanoframework.extension.shiro.client.util.ServiceUtils;
-import org.nanoframework.web.server.mvc.View;
-import org.nanoframework.web.server.mvc.support.RedirectView;
 
 /**
  *
@@ -53,7 +50,7 @@ public class AuthenticationFilter extends AbstractShiroClientFilter {
             chain.doFilter(request, response);
             return;
         }
-        
+
         final String ticket = retrieveTicketFromRequest(request);
         if (StringUtils.isNotBlank(ticket)) {
             chain.doFilter(request, response);
@@ -64,10 +61,7 @@ public class AuthenticationFilter extends AbstractShiroClientFilter {
             final HttpServletRequest requestWrapper = requestWrapper(request);
             chain.doFilter(requestWrapper, response);
         } catch (final AuthenticationException e) {
-            final String service = constructServiceUrl(request, response);
-            final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroSessionBindURL, getProtocol().getServiceParameterName(), service, "sessionId", localSessionId(request));
-            View view = new RedirectView(shiroServer);
-            view.redirect(null, (HttpServletRequest) request, (HttpServletResponse) response);
+            responseFailure(request, response);
         }
     }
 
@@ -75,7 +69,7 @@ public class AuthenticationFilter extends AbstractShiroClientFilter {
         final HttpResponse response = findSession(request);
         return requestWrapper0(request, response);
     }
-    
+
     protected HttpResponse findSession(final HttpServletRequest request) {
         final HttpClient httpClient = httpClient();
 
@@ -94,5 +88,5 @@ public class AuthenticationFilter extends AbstractShiroClientFilter {
             throw new AuthenticationException();
         }
     }
-    
+
 }
