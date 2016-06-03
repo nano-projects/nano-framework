@@ -244,7 +244,7 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
         final String ajaxRequest = request.getParameter(AJAX_REQUEST);
         if(StringUtils.isNotBlank(ajaxRequest) && Boolean.parseBoolean(ajaxRequest)) {
             final Map<String, Object> map = HttpStatus.UNAUTHORIZED.to()._getBeanToMap();
-            map.put(getProtocol().getServiceParameterName(), shiroServer);
+            map.put("__SERVICE", shiroServer);
             write(request, response, map);
         } else {
             final View view = new RedirectView(shiroServer);
