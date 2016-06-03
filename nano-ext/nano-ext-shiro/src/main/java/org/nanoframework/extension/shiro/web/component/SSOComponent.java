@@ -56,11 +56,11 @@ public interface SSOComponent {
             @RequestParam(value = "service", required = false) String service);
     
     @RequestMapping(value = "/remote/login", method = RequestMethod.POST)
-    Map<String, Object> login(@RequestParam("token") UsernamePasswordToken token);
+    Map<String, Object> login(@RequestParam("token") UsernamePasswordToken token, @RequestParam(value = "service", required = false) String service);
 
     @RequestMapping(value = "/remote/logout", method = RequestMethod.GET)
     ResultMap logout();
     
     @RequestMapping(value = "/remote/logined", method = RequestMethod.GET)
-    Map<String, Object> isLogined();
+    Map<String, Object> isLogined(@RequestParam(value = "service", required = false) String service);
 }

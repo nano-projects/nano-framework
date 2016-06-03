@@ -36,6 +36,7 @@ import org.nanoframework.extension.shiro.web.service.SSOService;
 import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
+import org.nanoframework.web.server.mvc.support.AngularRedirectView;
 import org.nanoframework.web.server.mvc.support.ForwardView;
 import org.nanoframework.web.server.mvc.support.RedirectView;
 
@@ -55,6 +56,7 @@ public abstract class AbstractSSOComponent implements SSOComponent {
     protected static final String DEFAULT_IS_BIND_SESSION_FORWARD = "true";
     protected static final String DEFAULT_BIND_SESSION_FORWARD_URL = "/pages/login.jsp";
     protected static final String DEFAULT_BIND_SESSION_REDIRECT_URL = EMPTY;
+    protected static final String DEFAULT_IS_ANGULAR_REDIRECT_VIEW = "false";
     
     protected static final String SHIRO_SESSION_PREFIX_PROPERTY = "context.sso.shiro.session.prefix";
     protected static final String SHIRO_CLIENT_EXPIRE_TIME_PROPERTY = "context.sso.shiro.client.expire.time";
@@ -62,6 +64,7 @@ public abstract class AbstractSSOComponent implements SSOComponent {
     protected static final String IS_BIND_SESSION_FORWARD_PROPERTY = "context.sso.is.bind.session.forward";
     protected static final String BIND_SESSION_FORWARD_URL_PROPERTY = "context.sso.bind.session.forward.url";
     protected static final String BIND_SESSION_REDIRECT_URL_PROPERTY = "context.sso.bind.session.redirect.url";
+    protected static final String IS_ANGULAR_REDIRECT_VIEW_PROPERTY = "context.sso.is.angular.redirect.view";
     
     protected static final String SHIRO_SESSION_PREFIX = System.getProperty(SHIRO_SESSION_PREFIX_PROPERTY, DEFAULT_SHIRO_SESSION_PREFIX);
     protected static final int SHIRO_CLIENT_EXPIRE_TIME = Integer.parseInt(System.getProperty(SHIRO_CLIENT_EXPIRE_TIME_PROPERTY, DEFAULT_SHIRO_CLIENT_EXPIRE_TIME));
@@ -69,6 +72,7 @@ public abstract class AbstractSSOComponent implements SSOComponent {
     protected static final boolean IS_BIND_SESSION_FORWARD = Boolean.parseBoolean(System.getProperty(IS_BIND_SESSION_FORWARD_PROPERTY, DEFAULT_IS_BIND_SESSION_FORWARD));
     protected static final String BIND_SESSION_FORWARD_URL = System.getProperty(BIND_SESSION_FORWARD_URL_PROPERTY, DEFAULT_BIND_SESSION_FORWARD_URL);
     protected static final String BIND_SESSION_REDIRECT_URL = System.getProperty(BIND_SESSION_REDIRECT_URL_PROPERTY, DEFAULT_BIND_SESSION_REDIRECT_URL);
+    protected static final boolean IS_ANGULAR_REDIRECT_VIEW = Boolean.parseBoolean(System.getProperty(IS_ANGULAR_REDIRECT_VIEW_PROPERTY, DEFAULT_IS_ANGULAR_REDIRECT_VIEW));
     
     protected static final String AUTHENTICATED_SESSION_KEY = "AUTHENTICATED_SESSION_KEY";
     protected static final String PRINCIPALS_SESSION_KEY = "PRINCIPALS_SESSION_KEY";
@@ -222,7 +226,11 @@ public abstract class AbstractSSOComponent implements SSOComponent {
         if(IS_BIND_SESSION_FORWARD) {
             return new ForwardView(BIND_SESSION_FORWARD_URL, true);
         } else {
-            return new RedirectView(BIND_SESSION_REDIRECT_URL);
+            if(IS_ANGULAR_REDIRECT_VIEW) {
+                return new AngularRedirectView(BIND_SESSION_REDIRECT_URL);
+            } else {
+                return new RedirectView(BIND_SESSION_REDIRECT_URL);
+            }
         }
     }
 }

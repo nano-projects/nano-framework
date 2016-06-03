@@ -9,6 +9,8 @@ import static org.nanoframework.extension.shiro.web.component.Status.PASSWORD_ER
 import static org.nanoframework.extension.shiro.web.component.Status.UNAUTH;
 import static org.nanoframework.extension.shiro.web.component.Status.UNLOGIN;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -29,6 +31,7 @@ import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 
+import com.google.common.base.Charsets;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -126,7 +129,7 @@ public class SSOComponentImpl extends AbstractSSOComponent {
 	}
 	
 	@Override
-	public Map<String, Object> login(UsernamePasswordToken token) {
+	public Map<String, Object> login(final UsernamePasswordToken token, final String service) {
 	    if (StringUtils.isBlank(token.getUsername()) || ArrayUtils.isEmpty(token.getPassword())) {
             return INVALID_USER_PASS._getBeanToMap();
         }
@@ -134,12 +137,12 @@ public class SSOComponentImpl extends AbstractSSOComponent {
         Subject subject = SecurityUtils.getSubject();
         try {
             if (subject.isAuthenticated()) {
-                return createOKResult();
+                return createOKResult(service);
             }
 
             subject.login(token);
             if (subject.isAuthenticated()) {
-                return createOKResult();
+                return createOKResult(service);
             } else {
                 return INVALID_AUTH._getBeanToMap();
             }
@@ -182,16 +185,16 @@ public class SSOComponentImpl extends AbstractSSOComponent {
 	}
 	
 	@Override
-    public Map<String, Object> isLogined() {
+    public Map<String, Object> isLogined(final String service) {
 	    try {
 	        final Subject subject = SecurityUtils.getSubject();
 	        if(subject.isAuthenticated() || subject.isRemembered()) {
-                return createOKResult();
+                return createOKResult(service);
 	        } else {
 	            return UNLOGIN._getBeanToMap();
 	        }
 	    } catch (final Throwable e) {
-	        LOGGER.debug("登陆校验异常: {}", e.getMessage());
+	        LOGGER.error("登陆校验异常: {}", e.getMessage());
 	        return INTERNAL_SERVER_ERROR._getBeanToMap();
 	    }
     }
@@ -200,6 +203,19 @@ public class SSOComponentImpl extends AbstractSSOComponent {
         Map<String, Object> ok = OK._getBeanToMap();
         String username = helper.getCurrentUsername();
         ok.put("username", username);
+        return ok;
+    }
+	
+	protected Map<String, Object> createOKResult(final String service) {
+        Map<String, Object> ok = createOKResult();
+        if(StringUtils.isNotBlank(service)) {
+            try {
+                ok.put("service", URLDecoder.decode(service, Charsets.UTF_8.name()));
+            } catch (UnsupportedEncodingException e) {
+                LOGGER.error("service url decode error: {}", e.getMessage());
+            }
+        }
+        
         return ok;
     }
 	

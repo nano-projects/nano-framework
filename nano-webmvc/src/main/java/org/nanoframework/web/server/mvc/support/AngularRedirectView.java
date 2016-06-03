@@ -1,11 +1,11 @@
-/**
- * Copyright 2015- the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,30 +16,29 @@
 package org.nanoframework.web.server.mvc.support;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.nanoframework.web.server.mvc.View;
-
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import org.nanoframework.commons.util.Charsets;
 
 /**
- * 视图实现
- * @author yanghe
- * @date 2015年6月23日 下午2:35:26 
  *
+ * @author yanghe
+ * @since 1.3.7
  */
-public class RedirectView implements View {
+public class AngularRedirectView extends RedirectView {
 
-    /** 跳转到前端的页面URI，主路径("/")为webRoot */
-    protected String page;
-
-    public RedirectView(String page) {
-        this.page = page;
+    /**
+     * 
+     * @param page the angular2 page url
+     */
+    public AngularRedirectView(String page) {
+        super(page);
     }
 
     @Override
@@ -50,14 +49,11 @@ public class RedirectView implements View {
 
         StringBuilder builder = new StringBuilder();
         if (model != null && model.size() > 0) {
-            if(!page.contains("?")) {
-                builder.append("?");
-            } else {
-                builder.append("&");
-            }
-            
-            builder.append("__version=").append(System.currentTimeMillis());
-            model.forEach((name, o) -> builder.append("&").append(name).append("=").append(toJSONString(o)));
+            model.forEach((name, o) -> {
+                try {
+                    builder.append(";").append(name).append("=").append(URLEncoder.encode(toJSONString(o), Charsets.UTF_8.name()));
+                } catch(final UnsupportedEncodingException e) { }
+            });
         }
 
         String encodedRedirectURL = response.encodeRedirectURL(page + builder.toString());
@@ -66,19 +62,4 @@ public class RedirectView implements View {
         response.sendRedirect(encodedRedirectURL);
     }
 
-    public String getPage() {
-        return page;
-    }
-
-    protected String toJSONString(Object value) {
-        if (value == null) {
-            return null;
-        }
-
-        if (value instanceof String) {
-            return (String) value;
-        }
-
-        return JSON.toJSONString(value, SerializerFeature.WriteDateUseDateFormat);
-    }
 }
