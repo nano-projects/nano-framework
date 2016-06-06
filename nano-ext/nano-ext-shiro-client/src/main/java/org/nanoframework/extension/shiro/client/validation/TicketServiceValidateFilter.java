@@ -71,9 +71,10 @@ public class TicketServiceValidateFilter extends AbstractShiroClientFilter {
         Throwable lastError = null;
         for (int retry = 0; retry < serviceInvokeRetry; retry++) {
             try {
-                return httpClient.post(shiroSessionURL + (shiroSessionURL.endsWith("/") ? "" : '/') + localSessionId(request),
+                final String sessionURL = sessionURL(request);
+                return httpClient.post(sessionURL,
                         MapBuilder.<String, String> create().put(getProtocol().getArtifactParameterName(), ticket).build());
-                
+
             } catch (final Throwable e) {
                 lastError = e;
             }

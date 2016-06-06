@@ -42,6 +42,9 @@ public interface SSOComponent {
     @RequestMapping(value = "/session/{clientSessionId}", method = RequestMethod.POST)
     String registrySession(@PathVariable("clientSessionId") String clientSessionId, @RequestParam("ticket") String serverEncryptSessionId);
 
+    @RequestMapping(value = "/session/{clientSessionId}", method = RequestMethod.DELETE)
+    ResultMap removeSession(@PathVariable("clientSessionId") String clientSessionId);
+    
     @RequestMapping(value = "/session/{clientSessionId}/attribute", method = RequestMethod.POST)
     ResultMap syncSessionAttribute(@PathVariable("clientSessionId") String clientSessionId, @RequestParam("attribute") String serialAttribute);
     
@@ -50,7 +53,7 @@ public interface SSOComponent {
     
     @RequestMapping(value = "/session/bind", method = RequestMethod.GET)
     View bindSession(@RequestParam("service") String service, @RequestParam("sessionId") String clientSessionId);
-
+    
     @RequestMapping("/login")
     View loginFailure(@RequestParam(value = "shiroLoginFailure", required = false) String shiroLoginFailure,
             @RequestParam(value = "service", required = false) String service);

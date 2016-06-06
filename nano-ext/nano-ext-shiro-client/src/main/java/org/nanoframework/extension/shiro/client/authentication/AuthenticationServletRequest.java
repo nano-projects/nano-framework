@@ -56,11 +56,6 @@ public class AuthenticationServletRequest extends HttpServletRequestWrapper {
             return new ShiroClientHttpSession(session, this, this.getServletContext(), httpClient, retry, sessionURL);
         }
         
-        HttpSession session = super.getSession(false);
-        if(session == null && create) {
-            return super.getSession(create);
-        } 
-
-        return session;
+        throw new UnknownSessionException("Not found remote session");
     }
 }

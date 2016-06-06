@@ -34,6 +34,8 @@ import org.nanoframework.extension.shiro.Protocol;
 import org.nanoframework.extension.shiro.web.component.SSOComponent;
 import org.nanoframework.extension.shiro.web.service.SSOService;
 import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
+import org.nanoframework.web.server.http.status.HttpStatus;
+import org.nanoframework.web.server.http.status.ResultMap;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.View;
 import org.nanoframework.web.server.mvc.support.AngularRedirectView;
@@ -174,6 +176,27 @@ public abstract class AbstractSSOComponent implements SSOComponent {
         }
         
         return EMPTY;
+    }
+    
+    @Override
+    public ResultMap removeSession(final String clientSessionId) {
+        try {
+            final String serverSessionId = SHIRO.get(SHIRO_CLIENT_SESSION_PREFIX + clientSessionId);
+            if(StringUtils.isNotBlank(serverSessionId)) {
+                final String sessionSerail = SHIRO.get(SHIRO_SESSION_PREFIX + serverSessionId);
+                if(StringUtils.isNotBlank(sessionSerail)) {
+                    final Session session = SerializableUtils.decode(sessionSerail);
+                    ssoService.delete(session);
+                    clearOldSession(clientSessionId);
+                    return HttpStatus.OK.to();
+                }
+            }
+        } catch(final Throwable e) {
+            LOGGER.error("Remove Session error: {}", e.getMessage());
+            return ResultMap.create(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        
+        return HttpStatus.BAD_REQUEST.to();
     }
     
     @Override

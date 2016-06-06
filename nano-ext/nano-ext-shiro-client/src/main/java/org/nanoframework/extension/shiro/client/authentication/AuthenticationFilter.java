@@ -72,11 +72,12 @@ public class AuthenticationFilter extends AbstractShiroClientFilter {
 
     protected HttpResponse findSession(final HttpServletRequest request) {
         final HttpClient httpClient = httpClient();
-
+        
         Throwable lastError = null;
         for (int retry = 0; retry < serviceInvokeRetry; retry++) {
             try {
-                return httpClient.get(shiroSessionURL + (shiroSessionURL.endsWith("/") ? "" : '/') + localSessionId(request));
+                final String sessionURL = sessionURL(request);
+                return httpClient.get(sessionURL);
             } catch (final Throwable e) {
                 lastError = e;
             }

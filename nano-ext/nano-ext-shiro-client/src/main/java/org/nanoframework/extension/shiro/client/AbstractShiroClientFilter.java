@@ -172,12 +172,12 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
             return sessionId;
         }
         
-        final HttpSession session = request.getSession(false);
+        final HttpSession session = request.getSession();
         if(session != null) {
             return session.getId();
         }
         
-        return request.getSession().getId();
+        throw new NullPointerException("Not found session id.");
     }
 
     protected HttpClient httpClient() {
@@ -207,7 +207,15 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
     
     protected HttpServletRequest requestWrapper0(final HttpServletRequest request, HttpResponse response) {
         final Session session = decodeSession(response);
+        bindAttributes(request);
         return new AuthenticationServletRequest(request, request.getServletContext(), session, httpClient(), serviceInvokeRetry, sessionURL(request));
+    }
+    
+    protected void bindAttributes(final HttpServletRequest request) {
+        request.setAttribute(ConfigurationKeys.SHIRO_SESSION_URL.getName(), shiroSessionURL);
+        request.setAttribute(ConfigurationKeys.SHIRO_SESSION_BIND_URL.getName(), shiroSessionBindURL);
+        request.setAttribute(ConfigurationKeys.SESSION_ID_NAME.getName(), sessionIdName);
+        request.setAttribute(ConfigurationKeys.SERVICE_INVOKE_RETRY.getName(), serviceInvokeRetry);
     }
     
     protected String sessionURL(final HttpServletRequest request, final String... tokens) {
@@ -237,16 +245,20 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
     }
     
     protected void responseFailure(final HttpServletRequest request, final HttpServletResponse response) throws IOException, ServletException {
-        final String service = constructServiceUrl(request, response);
-        final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroSessionBindURL, getProtocol().getServiceParameterName(), service,
-                "sessionId", localSessionId(request));
-        
         final String ajaxRequest = request.getParameter(AJAX_REQUEST);
         if(StringUtils.isNotBlank(ajaxRequest) && Boolean.parseBoolean(ajaxRequest)) {
+            final String service = this.serverName;
+            final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroSessionBindURL, getProtocol().getServiceParameterName(), service,
+                    "sessionId", localSessionId(request));
+            
             final Map<String, Object> map = HttpStatus.UNAUTHORIZED.to()._getBeanToMap();
             map.put("__SERVICE", shiroServer);
             write(request, response, map);
         } else {
+            final String service = constructServiceUrl(request, response);
+            final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroSessionBindURL, getProtocol().getServiceParameterName(), service,
+                    "sessionId", localSessionId(request));
+            
             final View view = new RedirectView(shiroServer);
             view.redirect(null, (HttpServletRequest) request, (HttpServletResponse) response);
         }
