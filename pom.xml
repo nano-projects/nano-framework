@@ -75,7 +75,6 @@
 		<module>nano-server</module>
 		<module>nano-jmx</module>
 		<module>nano-ext</module>
-		<module>nano-examples</module>
 	</modules>
 
 	<scm>

@@ -80,11 +80,13 @@ public class RedisClientImpl implements RedisClient, Closeable {
 	 * @see com.alibaba.fastjson.JSON#toJSONString(Object, SerializerFeature...)
 	 */
 	private String toJSONString(Object value) {
-		if(value == null)
+		if(value == null) {
 			return null;
+		}
 		
-		if(value instanceof String)
+		if(value instanceof String) {
 			return (String) value;
+		}
 		
 		return JSON.toJSONString(value, SerializerFeature.WriteDateUseDateFormat);
 	}
@@ -96,8 +98,9 @@ public class RedisClientImpl implements RedisClient, Closeable {
 		List<String> newValues = new ArrayList<>();
 		for(Object value : values) {
 			String jsonValue;
-			if((jsonValue = toJSONString(value)) != null) 
+			if((jsonValue = toJSONString(value)) != null) {
 				newValues.add(jsonValue);
+			}
 		}
 		
 		return newValues.toArray(new String[newValues.size()]);
@@ -115,11 +118,13 @@ public class RedisClientImpl implements RedisClient, Closeable {
 	 */
 	@SuppressWarnings("unchecked")
 	private <T> T parseObject(String value, TypeReference<T> type) {
-		if(StringUtils.isEmpty(value))
+		if(StringUtils.isEmpty(value)) {
 			return null;
+		}
 		
-		if(type.getType() == String.class)
+		if(type.getType() == String.class) {
 			return (T) value;
+		}
 		
 		return JSON.parseObject(value, type);
 	}
@@ -134,8 +139,9 @@ public class RedisClientImpl implements RedisClient, Closeable {
 	
 	@Override
 	public ShardedJedisPipeline pipeline() {
-		if(transactional.get() != null) 
+		if(transactional.get() != null) {
 			throw new RedisClientException("The current thread already open pipeline");
+		}
 		
 		ShardedJedis jedis = null;
 		try{
@@ -395,20 +401,19 @@ public class RedisClientImpl implements RedisClient, Closeable {
 			String value = jedis.get(key);
 			
 			if(StringUtils.isBlank(value)) {
-				if(String.class.getName().equals(type.getType().getTypeName()))
+				if(String.class.getName().equals(type.getType().getTypeName())) {
 					return (T) value;
+				}
 				
 				return null;
 			}
 			
 			return parseObject(value, type);
-			
 		} catch(Exception e) {
 			throw new RedisClientException(e.getMessage());
 			
 		} finally {
 			POOL.close(jedis);
-			
 		}
 	}
 
@@ -760,8 +765,9 @@ public class RedisClientImpl implements RedisClient, Closeable {
 		Assert.notNull(type);
 		
 		Map<String, String> map = hmget(key, fields);
-		if(map == null || map.isEmpty())
-			return null;
+		if(map == null || map.isEmpty()) {
+			return Collections.emptyMap();
+		}
 		
 		Map<String, T> values = new HashMap<>();
 		for(Entry<String, String> entry : map.entrySet()) {
@@ -794,8 +800,9 @@ public class RedisClientImpl implements RedisClient, Closeable {
 		Assert.notNull(type);
 		
 		Map<String, String> map = hgetAll(key);
-		if(map == null || map.isEmpty())
-			return null;
+		if(map == null || map.isEmpty()) {
+			return Collections.emptyMap();
+		}
 		
 		Map<String, T> values = new HashMap<>();
 		for(Entry<String, String> entry : map.entrySet()) {
