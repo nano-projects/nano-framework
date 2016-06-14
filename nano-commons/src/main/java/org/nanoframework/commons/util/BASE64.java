@@ -35,11 +35,9 @@ public class BASE64 extends BASE64Encoder {
 	}
 	
 	public static final BASE64 getInstance() {
-		if(base == null) {
-			synchronized (lock) {
-				if(base == null) {
-					base = new BASE64();
-				}
+		synchronized (lock) {
+			if(base == null) {
+				base = new BASE64();
 			}
 		}
 		

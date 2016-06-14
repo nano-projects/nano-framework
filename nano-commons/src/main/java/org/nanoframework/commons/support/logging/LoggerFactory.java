@@ -42,7 +42,7 @@ public class LoggerFactory {
     }
 
     @SuppressWarnings("unchecked")
-    private static void tryImplementation(String testClassName, String implClassName) {
+    private static synchronized void tryImplementation(String testClassName, String implClassName) {
         if (logConstructor != null) {
             return;
         }
