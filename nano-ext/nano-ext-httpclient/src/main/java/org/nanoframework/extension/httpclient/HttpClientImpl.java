@@ -16,7 +16,6 @@
 package org.nanoframework.extension.httpclient;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -53,108 +52,6 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     public HttpClientImpl(final boolean force, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute,
             final Charset charset) {
         super(force, timeToLive, tunit, maxTotal, maxPerRoute, charset);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpGetRequest(final String url) throws IOException {
-        return get(url);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpGetRequest(final String url, final Map<String, String> params) throws URISyntaxException, IOException {
-        return get(url, params);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpGetRequest(final String url, final Map<String, String> headers, final Map<String, String> params) throws URISyntaxException, IOException {
-        return get(url, headers, params);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPostRequest(final String url) throws IOException {
-        return post(url);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPostRequest(final String url, final Map<String, String> params) throws IOException {
-        return post(url, params);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPostRequest(final String url, final String json) throws IOException {
-        return post(url, json);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPostRequest(final String url, final String stream, final ContentType contentType) throws IOException {
-        return post(url, stream, contentType);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPostRequest(final String url, final Map<String, String> headers, final String json) throws IOException {
-        return post(url, headers, json);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPostRequest(final String url, final Map<String, String> headers, final String stream, final ContentType contentType) throws IOException {
-        return post(url, headers, stream, contentType);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPostRequest(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return post(url, headers, params);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPutRequest(final String url) throws IOException {
-        return put(url);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPutRequest(final String url, final Map<String, String> params) throws IOException {
-        return put(url, params);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPutRequest(final String url, final String json) throws IOException {
-        return put(url, json);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPutRequest(final String url, final Map<String, String> headers, final String json) throws IOException {
-        return put(url, headers, json);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpPutRequest(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return put(url, headers, params);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpDeleteRequest(final String url) throws IOException {
-        return delete(url);
-    }
-
-    @Deprecated
-    @Override
-    public HttpResponse httpDeleteRequest(final String url, final Map<String, String> headers) throws IOException {
-        return delete(url, headers);
     }
 
     @Override
