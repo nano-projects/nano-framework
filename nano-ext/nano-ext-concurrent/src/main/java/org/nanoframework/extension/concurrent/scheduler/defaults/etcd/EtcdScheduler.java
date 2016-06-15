@@ -70,7 +70,7 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 	
 	
 	public static final String ROOT_RESOURCE = "/machairodus/" + System.getProperty(ETCD_USER, "");
-	public static final String DIR = ROOT_RESOURCE + "/" + SYSTEM_ID;
+	public static final String DIR = ROOT_RESOURCE + '/' + SYSTEM_ID;
 	public static final String CLS_KEY = DIR + "/Scheduler.class";
 	public static final String INSTANCE_KEY = DIR + "/Scheduler.list";
 	public static final String INFO_KEY = DIR + "/App.info";
@@ -99,16 +99,16 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 //		try { config.setCron(new CronExpression("0 * * * * ?")); } catch(ParseException e) {}
 		config.setInterval(60_000L);
 		config.setTotal(1);
-		config.setDaemon(true);
-		config.setBeforeAfterOnly(true);
-		config.setLazy(true);
+		config.setDaemon(Boolean.TRUE);
+		config.setBeforeAfterOnly(Boolean.TRUE);
+		config.setLazy(Boolean.TRUE);
 		setConfig(config);
 		setClose(false);
 		
 		initEtcdClient();
-		if(etcd == null)
+		if(etcd == null) {
 			throw new SchedulerException("Can not init Etcd Client");
-		
+		}
 	}
 	
 	@Override
@@ -201,12 +201,13 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 					String index;
 					EtcdKeysResponse response;
 					if((index = clsIndex.get(cls)) != null) {
-						response = etcd.put(CLS_KEY + "/" + index, cls.getName()).prevExist(true).send().get();
+						response = etcd.put(CLS_KEY + '/' + index, cls.getName()).prevExist(true).send().get();
 					} else {
 						response = etcd.post(CLS_KEY, cls.getName()).send().get();
 						if(response.node != null) {
-							if((index = response.node.key.substring(response.node.key.lastIndexOf("/"))) != null)
+							if((index = response.node.key.substring(response.node.key.lastIndexOf('/'))) != null) {
 								clsIndex.put(cls, index);
+							}
 						}
 					}
 					
@@ -281,12 +282,13 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 			EtcdKeysResponse response;
 			String value = CryptUtil.encrypt(status.toString(), SYSTEM_ID);
 			if((index = indexMap.get(status.getId())) != null) {
-				response = etcd.put(key + "/" + index, value).prevExist(true).send().get();
+				response = etcd.put(key + '/' + index, value).prevExist(true).send().get();
 			} else {
 				response = etcd.post(key, value).send().get();
 				if(response.node != null) {
-					if((index = response.node.key.substring(response.node.key.lastIndexOf("/"))) != null)
+					if((index = response.node.key.substring(response.node.key.lastIndexOf('/'))) != null) {
 						indexMap.put(status.getId(), index);
+					}
 				}
 			}
 			
@@ -303,7 +305,7 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 			String index;
 			EtcdKeysResponse response = null;
 			if((index = indexMap.get(status.getId())) != null) {
-				response = etcd.delete(key + "/" + index).send().get();
+				response = etcd.delete(key + '/' + index).send().get();
 				indexMap.remove(status.getId());
 			} 
 			

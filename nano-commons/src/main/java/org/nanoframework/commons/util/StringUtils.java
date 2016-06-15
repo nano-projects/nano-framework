@@ -55,6 +55,8 @@ import java.util.TimeZone;
 public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 
 	private static final String FOLDER_SEPARATOR = "/";
+	
+	private static final char FOLDER_SEPARATOR_CHAR = '/';
 
 	private static final String WINDOWS_FOLDER_SEPARATOR = "\\";
 
@@ -454,7 +456,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 	 * or {@code null} if the input was {@code null}
 	 */
 	public static String quote(String str) {
-		return (str != null ? "'" + str + "'" : null);
+		return (str != null ? '\'' + str + '\'' : null);
 	}
 
 	/**
@@ -536,7 +538,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 		if (path == null) {
 			return null;
 		}
-		int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+		int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR_CHAR);
 		return (separatorIndex != -1 ? path.substring(separatorIndex + 1) : path);
 	}
 
@@ -554,7 +556,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 		if (extIndex == -1) {
 			return null;
 		}
-		int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+		int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR_CHAR);
 		if (folderIndex > extIndex) {
 			return null;
 		}
@@ -576,7 +578,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 		if (extIndex == -1) {
 			return path;
 		}
-		int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+		int folderIndex = path.lastIndexOf(FOLDER_SEPARATOR_CHAR);
 		if (folderIndex > extIndex) {
 			return path;
 		}
@@ -592,11 +594,11 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 	 * @return the full file path that results from applying the relative path
 	 */
 	public static String applyRelativePath(String path, String relativePath) {
-		int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR);
+		int separatorIndex = path.lastIndexOf(FOLDER_SEPARATOR_CHAR);
 		if (separatorIndex != -1) {
 			String newPath = path.substring(0, separatorIndex);
 			if (!relativePath.startsWith(FOLDER_SEPARATOR)) {
-				newPath += FOLDER_SEPARATOR;
+				newPath += FOLDER_SEPARATOR_CHAR;
 			}
 			return newPath + relativePath;
 		}
@@ -623,7 +625,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 		// first path element. This is necessary to correctly parse paths like
 		// "file:core/../core/io/Resource.class", where the ".." should just
 		// strip the first "core" directory while keeping the "file:" prefix.
-		int prefixIndex = pathToUse.indexOf(":");
+		int prefixIndex = pathToUse.indexOf(':');
 		String prefix = "";
 		if (prefixIndex != -1) {
 			prefix = pathToUse.substring(0, prefixIndex + 1);
@@ -635,7 +637,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 			}
 		}
 		if (pathToUse.startsWith(FOLDER_SEPARATOR)) {
-			prefix = prefix + FOLDER_SEPARATOR;
+			prefix = prefix + FOLDER_SEPARATOR_CHAR;
 			pathToUse = pathToUse.substring(1);
 		}
 
@@ -728,7 +730,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 	 * @return the RFC 3066 compliant language tag as {@code String}
 	 */
 	public static String toLanguageTag(Locale locale) {
-		return locale.getLanguage() + (hasText(locale.getCountry()) ? "-" + locale.getCountry() : "");
+		return locale.getLanguage() + (hasText(locale.getCountry()) ? '-' + locale.getCountry() : "");
 	}
 
 	/**
@@ -742,7 +744,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 		TimeZone timeZone = TimeZone.getTimeZone(timeZoneString);
 		if ("GMT".equals(timeZone.getID()) && !timeZoneString.startsWith("GMT")) {
 			// We don't want that GMT fallback...
-			throw new IllegalArgumentException("Invalid time zone specification '" + timeZoneString + "'");
+			throw new IllegalArgumentException("Invalid time zone specification '" + timeZoneString + '\'');
 		}
 		return timeZone;
 	}

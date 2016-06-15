@@ -27,19 +27,20 @@ import org.nanoframework.extension.concurrent.exception.SchedulerException;
  */
 public class SchedulerConfig extends BaseEntity {
 	private static final long serialVersionUID = 5426844475306359870L;
-	
+	private static final Integer ZERO_INT = Integer.valueOf(0);
+	private static final Long ZERO_LONG = Long.valueOf(0);
 	private String id;
 	private String name;
 	private String group;
 	private ThreadPoolExecutor service;
-	private Boolean beforeAfterOnly = false;
-	private Integer runNumberOfTimes = 0;
-	private Long interval = 0L;
-	private Integer num = 0;
-	private Integer total = 0;
+	private Boolean beforeAfterOnly = Boolean.FALSE;
+	private Integer runNumberOfTimes = ZERO_INT;
+	private Long interval = ZERO_LONG;
+	private Integer num = ZERO_INT;
+	private Integer total = ZERO_INT;
 	private CronExpression cron;
-	private Boolean daemon = false;
-	private Boolean lazy = false;
+	private Boolean daemon = Boolean.FALSE;
+	private Boolean lazy = Boolean.FALSE;
 	private String[] defined = {};
 	
 	public String getId() {
@@ -142,11 +143,11 @@ public class SchedulerConfig extends BaseEntity {
 	}
 
 	public String[] getDefined() {
-		return defined;
+        return defined;
 	}
 
 	public void setDefined(String[] defined) {
-		this.defined = defined;
+        this.defined = defined;
 	}
 	
 }

@@ -82,7 +82,7 @@ public class JBoss6VFS extends VFS {
   protected static synchronized void initialize() {
     if (valid == null) {
       // Assume valid. It will get flipped later if something goes wrong.
-      valid = true;
+      valid = Boolean.TRUE;
 
       // Look up and verify required classes
       VFS.VFS = checkNotNull(getClass("org.jboss.vfs.VFS"));
@@ -124,7 +124,7 @@ public class JBoss6VFS extends VFS {
    */
   protected static void checkReturnType(Method method, Class<?> expected) {
     if (method != null && !expected.isAssignableFrom(method.getReturnType())) {
-      log.error("Method " + method.getClass().getName() + "." + method.getName()
+      log.error("Method " + method.getClass().getName() + '.' + method.getName()
           + "(..) should return " + expected.getName() + " but returns " //
           + method.getReturnType().getName() + " instead.");
       setInvalid();
@@ -135,7 +135,7 @@ public class JBoss6VFS extends VFS {
   protected static void setInvalid() {
     if (JBoss6VFS.valid != null && JBoss6VFS.valid) {
       log.debug("JBoss 6 VFS API is not available in this environment.");
-      JBoss6VFS.valid = false;
+      JBoss6VFS.valid = Boolean.FALSE;
     }
   }
 
@@ -156,7 +156,7 @@ public class JBoss6VFS extends VFS {
       return Collections.emptyList();
 
     if (!path.endsWith("/"))
-      path += "/";
+      path += '/';
 
     List<VirtualFile> children = directory.getChildren();
     List<String> names = new ArrayList<String>(children.size());

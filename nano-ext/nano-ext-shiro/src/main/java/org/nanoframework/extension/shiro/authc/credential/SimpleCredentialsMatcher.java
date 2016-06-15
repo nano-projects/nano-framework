@@ -94,9 +94,8 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      */
     protected boolean equals(Object tokenCredentials, Object accountCredentials) {
         if (log.isDebugEnabled()) {
-            log.debug("Performing credentials equality check for tokenCredentials of type [" +
-                    tokenCredentials.getClass().getName() + " and accountCredentials of type [" +
-                    accountCredentials.getClass().getName() + "]");
+            log.debug("Performing credentials equality check for tokenCredentials of type [{}] and accountCredentials of type [{}]", 
+                    tokenCredentials.getClass().getName(), accountCredentials.getClass().getName());
         }
         if (isByteSource(tokenCredentials) && isByteSource(accountCredentials)) {
             if (log.isDebugEnabled()) {

@@ -35,7 +35,7 @@ public class EtcdUtil {
     String headerValue = headers.get(key);
     if (headerValue != null) {
       try {
-        return Long.parseLong(headerValue);
+        return Long.valueOf(headerValue);
       } catch (Exception e) {
         LOGGER.warn("could not parse " + key + " header", e);
       }

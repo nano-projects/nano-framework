@@ -16,8 +16,10 @@
 package org.nanoframework.core.component.stereotype.bind;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -43,7 +45,8 @@ public class MapperNode extends BaseEntity {
     private RequestMapper parentMapper;
     private ConcurrentMap<String, MapperNode> leafNodes = new ConcurrentHashMap<>();
 
-    public static final String SLASH = "/";
+    public static final char SLASH = '/';
+    
     public static final MapperNode ROOT = new MapperNode() {
         private static final long serialVersionUID = 5928454777545648552L; 
         {
@@ -52,7 +55,7 @@ public class MapperNode extends BaseEntity {
                 throw new IllegalArgumentException("无效的/无法获取context.root属性");
             }
             
-            if (context.startsWith(SLASH)) {
+            if (context.startsWith("/")) {
                 context = context.substring(1);
             } else {
                 throw new IllegalArgumentException("context.root属性必须以'/'开头");
@@ -70,7 +73,7 @@ public class MapperNode extends BaseEntity {
         Assert.hasLength(uri);
         Assert.notNull(mapper);
         MapperNode root = ROOT;
-        String[] tokens = uri.split(SLASH);
+        String[] tokens = uri.split("/");
         StringBuilder builder = new StringBuilder();
         for (int idx = 1; idx < tokens.length; idx++) {
             String token = tokens[idx].trim();
@@ -122,7 +125,7 @@ public class MapperNode extends BaseEntity {
         Assert.hasLength(uri);
         Assert.notNull(requestMethod);
         MapperNode nowNode = ROOT;
-        String[] tokens = uri.split(SLASH);
+        String[] tokens = uri.split("/");
         StringBuilder builder = new StringBuilder();
         Map<String, String> param = new HashMap<>();
         for (int idx = 1; idx < tokens.length; idx++) {
@@ -201,13 +204,14 @@ public class MapperNode extends BaseEntity {
 
     public void putMapper(Map<RequestMethod, RequestMapper> mapper, String uri) {
         Assert.notNull(mapper);
-        Set<RequestMethod> requestMethods = mapper.keySet();
-        for (RequestMethod method : requestMethods) {
+        for (Iterator<Entry<RequestMethod, RequestMapper>> iter = mapper.entrySet().iterator(); iter.hasNext(); ) {
+            final Entry<RequestMethod, RequestMapper> entry = iter.next();
+            final RequestMethod method = entry.getKey();
             if (this.mapper.containsKey(method)) {
                 throw new ComponentServiceRepeatException("MapperNode.putMapper(RequestMapper, String): 重复的Restful风格URI定义: " + uri + ", method: " + method.name());
             }
             
-            this.mapper.put(method, mapper.get(method));
+            this.mapper.put(method, entry.getValue());
         }
     }
 

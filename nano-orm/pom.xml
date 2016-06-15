@@ -16,7 +16,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
-		
+		<cs.dir>${project.parent.basedir}</cs.dir>
 	</properties>
 
 	<modules>

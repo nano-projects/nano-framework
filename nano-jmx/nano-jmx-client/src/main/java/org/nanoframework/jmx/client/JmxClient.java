@@ -107,7 +107,7 @@ public class JmxClient {
 		this.content = content;
 		
 		try {
-			jmxServiceUrl = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ":" + port + "/" + content);
+			jmxServiceUrl = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://" + host + ':' + port + '/' + content);
 		} catch(IOException e) {
 			throw new MXBeanException(e.getMessage(), e);
 		}

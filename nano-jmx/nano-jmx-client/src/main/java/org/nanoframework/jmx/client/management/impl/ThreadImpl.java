@@ -18,6 +18,7 @@ package org.nanoframework.jmx.client.management.impl;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
 
@@ -57,8 +58,8 @@ public class ThreadImpl extends AbstractMXBean implements ThreadMXBean {
 	public static final String SYNCHRONIZER_USAGE_SUPPORTED = "SynchronizerUsageSupported";
 	public static final String DUMP_ALL_THREADS = "dumpAllThreads";
 	
-	public ThreadImpl(JmxClient client) {
-		init(client, OBJECT_NAME);
+	public ThreadImpl(JmxClient client) throws MalformedObjectNameException {
+        this(client, new ObjectName(OBJECT_NAME));
 	}
 	
 	public ThreadImpl(JmxClient client, ObjectName objectName) {
@@ -97,22 +98,28 @@ public class ThreadImpl extends AbstractMXBean implements ThreadMXBean {
 
 	@Override
 	public ThreadInfo getThreadInfo(long id) {
-		return ThreadInfo.from(invoke(GET_THREAD_INFO, new Object[] { id }, new String[] { long.class.getName() }));
+	    final String longName = long.class.getName();
+		return ThreadInfo.from(invoke(GET_THREAD_INFO, new Object[] { id }, new String[] { longName }));
 	}
 
 	@Override
 	public ThreadInfo[] getThreadInfo(long[] ids) {
-		return from(invoke(GET_THREAD_INFO, new Object[] { ids }, new String[] { long[].class.getName() }));
+	    final String longArrayName = long[].class.getName();
+		return from(invoke(GET_THREAD_INFO, new Object[] { ids }, new String[] { longArrayName }));
 	}
 
 	@Override
 	public ThreadInfo getThreadInfo(long id, int maxDepth) {
-		return ThreadInfo.from(invoke(GET_THREAD_INFO, new Object[] { id, maxDepth }, new String[] { long.class.getName(), int.class.getName() }));
+	    final String longName = long.class.getName();
+	    final String intName = int.class.getName();
+		return ThreadInfo.from(invoke(GET_THREAD_INFO, new Object[] { id, maxDepth }, new String[] { longName, intName }));
 	}
 
 	@Override
 	public ThreadInfo[] getThreadInfo(long[] ids, int maxDepth) {
-		return from(invoke(GET_THREAD_INFO, new Object[] { ids, maxDepth }, new String[] { long[].class.getName(), int.class.getName() }));
+	    final String longArrayName = long[].class.getName();
+	    final String intName = int.class.getName();
+		return from(invoke(GET_THREAD_INFO, new Object[] { ids, maxDepth }, new String[] { longArrayName, intName }));
 	}
 
 	@Override
@@ -142,12 +149,14 @@ public class ThreadImpl extends AbstractMXBean implements ThreadMXBean {
 
 	@Override
 	public long getThreadCpuTime(long id) {
-		return invoke(GET_THREAD_CPU_TIME, new Object[] { id }, new String[] { long.class.getName() });
+	    final String longName = long.class.getName();
+		return invoke(GET_THREAD_CPU_TIME, new Object[] { id }, new String[] { longName });
 	}
 
 	@Override
 	public long getThreadUserTime(long id) {
-		return invoke(GET_THREAD_USER_TIME, new Object[] { id }, new String[] { long.class.getName() });
+	    final String longName = long.class.getName();
+		return invoke(GET_THREAD_USER_TIME, new Object[] { id }, new String[] { longName });
 	}
 
 	@Override
@@ -197,12 +206,15 @@ public class ThreadImpl extends AbstractMXBean implements ThreadMXBean {
 
 	@Override
 	public ThreadInfo[] getThreadInfo(long[] ids, boolean lockedMonitors, boolean lockedSynchronizers) {
-		return from(invoke(GET_THREAD_INFO, new Object[] { ids, lockedMonitors, lockedSynchronizers }, new String[] { long[].class.getName(), boolean.class.getName(), boolean.class.getName() }));
+	    final String longArrayName = long[].class.getName();
+	    final String booleanName = boolean.class.getName();
+		return from(invoke(GET_THREAD_INFO, new Object[] { ids, lockedMonitors, lockedSynchronizers }, new String[] {  longArrayName, booleanName, booleanName }));
 	}
 
 	@Override
 	public ThreadInfo[] dumpAllThreads(boolean lockedMonitors, boolean lockedSynchronizers) {
-		return from(invoke(DUMP_ALL_THREADS, new Object[] { lockedMonitors, lockedSynchronizers }, new String[] { boolean.class.getName(), boolean.class.getName() }));
+	    final String booleanName = boolean.class.getName();
+		return from(invoke(DUMP_ALL_THREADS, new Object[] { lockedMonitors, lockedSynchronizers }, new String[] { booleanName, booleanName }));
 	}
 	
 	private ThreadInfo[] from(CompositeData[] datas) {

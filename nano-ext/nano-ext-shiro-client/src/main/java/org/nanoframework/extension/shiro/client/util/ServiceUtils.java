@@ -131,8 +131,8 @@ public class ServiceUtils {
             return true;
         }
 
-        final int schemeIndex = serverName.indexOf(":");
-        final int portIndex = serverName.lastIndexOf(":");
+        final int schemeIndex = serverName.indexOf(':');
+        final int portIndex = serverName.lastIndexOf(':');
         return schemeIndex != portIndex;
     }
 

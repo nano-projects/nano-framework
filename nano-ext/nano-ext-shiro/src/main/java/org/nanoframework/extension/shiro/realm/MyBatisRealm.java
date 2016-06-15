@@ -99,7 +99,7 @@ public class MyBatisRealm extends JdbcRealm {
             }
 
             if (password == null) {
-                throw new UnknownAccountException("No account found for user [" + username + "]");
+                throw new UnknownAccountException("No account found for user [" + username + ']');
             }
 
             info = new SimpleAuthenticationInfo(username, password.toCharArray(), getName());
@@ -109,7 +109,7 @@ public class MyBatisRealm extends JdbcRealm {
             }
 
         } catch (SQLException e) {
-            final String message = "There was a SQL error while authenticating user [" + username + "]";
+            final String message = "There was a SQL error while authenticating user [" + username + ']';
         	LOGGER.error(message, e);
 
             // Rethrow any SQL errors as an authentication exception
@@ -203,7 +203,7 @@ public class MyBatisRealm extends JdbcRealm {
             }
 
         } catch (SQLException e) {
-            final String message = "There was a SQL error while authorizing user [" + username + "]";
+            final String message = "There was a SQL error while authorizing user [" + username + ']';
             LOGGER.error(message, e);
 
             // Rethrow any SQL errors as an authorization exception

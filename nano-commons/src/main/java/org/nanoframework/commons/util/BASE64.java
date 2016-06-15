@@ -102,12 +102,11 @@ public class BASE64 extends BASE64Encoder {
 			builder.append("==");
 
 		} else if (nn == 4) {
-			builder.append("=");
+			builder.append('=');
 
 		}
 		
 		return builder.toString();
-
 	}
 	
 }

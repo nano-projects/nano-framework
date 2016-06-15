@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +20,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+
+import com.google.common.collect.Sets;
 
 public class CrossOriginFilter implements Filter {
 	private static final Logger LOG = LoggerFactory.getLogger(CrossOriginFilter.class);
@@ -40,7 +43,7 @@ public class CrossOriginFilter implements Filter {
 	public static final String OLD_CHAIN_PREFLIGHT_PARAM = "forwardPreflight";
 	public static final String CHAIN_PREFLIGHT_PARAM = "chainPreflight";
 	private static final String ANY_ORIGIN = "*";
-	private static final List<String> SIMPLE_HTTP_METHODS = Arrays.asList(new String[] { "GET", "POST", "HEAD" });
+	private static final Set<String> SIMPLE_HTTP_METHODS = Sets.newHashSet("GET", "POST", "HEAD");
 	private boolean anyOriginAllowed;
 	private List<String> allowedOrigins = new ArrayList<>();
 	private List<String> allowedMethods = new ArrayList<>();
@@ -120,8 +123,8 @@ public class CrossOriginFilter implements Filter {
 					.append(allowedMethodsConfig).append(", ").append(ALLOWED_HEADERS_PARAM).append(" = ")
 					.append(allowedHeadersConfig).append(", ").append(PREFLIGHT_MAX_AGE_PARAM).append(" = ")
 					.append(preflightMaxAgeConfig).append(", ").append(ALLOW_CREDENTIALS_PARAM).append(" = ")
-					.append(allowedCredentialsConfig).append(",").append(EXPOSED_HEADERS_PARAM).append(" = ")
-					.append(exposedHeadersConfig).append(",").append(CHAIN_PREFLIGHT_PARAM).append(" = ")
+					.append(allowedCredentialsConfig).append(", ").append(EXPOSED_HEADERS_PARAM).append(" = ")
+					.append(exposedHeadersConfig).append(", ").append(CHAIN_PREFLIGHT_PARAM).append(" = ")
 					.append(chainPreflightConfig).toString(), new Object[0]);
 		}
 	}
@@ -270,8 +273,9 @@ public class CrossOriginFilter implements Filter {
 		String accessControlRequestMethod = request.getHeader(ACCESS_CONTROL_REQUEST_METHOD_HEADER);
 		LOG.debug("{} is {}", new Object[] { ACCESS_CONTROL_REQUEST_METHOD_HEADER, accessControlRequestMethod });
 		boolean result = false;
-		if (accessControlRequestMethod != null)
+		if (accessControlRequestMethod != null) {
 			result = this.allowedMethods.contains(accessControlRequestMethod);
+		}
 		
 		LOG.debug(new StringBuilder().append("Method {} is").append(result ? "" : " not").append(" among allowed methods {}").toString(), new Object[] { accessControlRequestMethod, this.allowedMethods });
 		return result;
@@ -307,7 +311,7 @@ public class CrossOriginFilter implements Filter {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < strings.size(); i++) {
 			if (i > 0)
-				builder.append(",");
+				builder.append(',');
 			
 			String string = (String) strings.get(i);
 			builder.append(string);

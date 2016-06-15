@@ -19,7 +19,10 @@ import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
 import static com.google.inject.matcher.Matchers.not;
 
+import java.lang.reflect.AnnotatedElement;
+
 import com.google.inject.AbstractModule;
+import com.google.inject.matcher.Matcher;
 
 /**
  * 
@@ -32,8 +35,9 @@ public class MultiTransactionalModule extends AbstractModule {
 	protected void configure() {
         MultiTransactionalMethodInterceptor interceptor = new MultiTransactionalMethodInterceptor();
         requestInjection(interceptor);
-        bindInterceptor(any(), annotatedWith(MultiTransactional.class), interceptor);
-        bindInterceptor(annotatedWith(MultiTransactional.class), not(annotatedWith(MultiTransactional.class)), interceptor);
+        Matcher<AnnotatedElement> annotatedElement = annotatedWith(MultiTransactional.class);
+        bindInterceptor(any(), annotatedElement, interceptor);
+        bindInterceptor(annotatedElement, not(annotatedElement), interceptor);
 	}
 
 }

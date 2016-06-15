@@ -153,17 +153,17 @@ public final class URIBuilder {
             } else if (this.host != null) {
                 sb.append("//");
                 if (this.encodedUserInfo != null) {
-                    sb.append(this.encodedUserInfo).append("@");
+                    sb.append(this.encodedUserInfo).append('@');
                 } else if (this.userInfo != null) {
-                    sb.append(encodeUserInfo(this.userInfo)).append("@");
+                    sb.append(encodeUserInfo(this.userInfo)).append('@');
                 }
                 if (isIPv6Address(this.host)) {
-                    sb.append("[").append(this.host).append("]");
+                    sb.append('[').append(this.host).append(']');
                 } else {
                     sb.append(this.host);
                 }
                 if (this.port >= 0) {
-                    sb.append(":").append(this.port);
+                    sb.append(':').append(this.port);
                 }
             }
             if (this.encodedPath != null) {
@@ -172,17 +172,17 @@ public final class URIBuilder {
                 sb.append(encodePath(normalizePath(this.path)));
             }
             if (this.encodedQuery != null) {
-                sb.append("?").append(this.encodedQuery);
+                sb.append('?').append(this.encodedQuery);
             } else if (this.queryParams != null && !this.queryParams.isEmpty()) {
-                sb.append("?").append(encodeUrlForm(this.queryParams));
+                sb.append('?').append(encodeUrlForm(this.queryParams));
             } else if (this.query != null) {
-                sb.append("?").append(encodeUric(this.query));
+                sb.append('?').append(encodeUric(this.query));
             }
         }
         if (this.encodedFragment != null) {
-            sb.append("#").append(this.encodedFragment);
+            sb.append('#').append(this.encodedFragment);
         } else if (this.fragment != null) {
-            sb.append("#").append(encodeUric(this.fragment));
+            sb.append('#').append(encodeUric(this.fragment));
         }
         return sb.toString();
     }
@@ -219,11 +219,11 @@ public final class URIBuilder {
             final String encodedValue = this.encode ? ServiceUtils.urlEncode(parameter.getValue()) : parameter.getValue();
 
             if (result.length() > 0) {
-                result.append("&");
+                result.append('&');
             }
             result.append(encodedName);
             if (encodedValue != null) {
-                result.append("=");
+                result.append('=');
                 result.append(encodedValue);
             }
         }
@@ -624,7 +624,7 @@ public final class URIBuilder {
             final int len = this.name.length() + 1 + this.value.length();
             final StringBuilder buffer = new StringBuilder(len);
             buffer.append(this.name);
-            buffer.append("=");
+            buffer.append('=');
             buffer.append(this.value);
             return buffer.toString();
         }

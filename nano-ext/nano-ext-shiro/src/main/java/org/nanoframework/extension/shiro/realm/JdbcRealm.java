@@ -71,7 +71,7 @@ public class JdbcRealm extends org.apache.shiro.realm.jdbc.JdbcRealm {
 	
 	@Override
     protected String getSaltForUser(String username) {
-    	return "Nano Framework Extension Shiro Salt for user: [" + username + "]";
+    	return "Nano Framework Extension Shiro Salt for user: [" + username + ']';
     }
 	
 	public void setSaltStyle(String saltStyle) {

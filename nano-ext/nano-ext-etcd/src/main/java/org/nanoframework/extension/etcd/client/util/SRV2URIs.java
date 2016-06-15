@@ -73,7 +73,7 @@ public final class SRV2URIs {
         if (host.endsWith(".")) {
           host = host.substring(0, host.length() - 1);
         }
-        URI uri = URI.create("http://" + host + ":" + port);
+        URI uri = URI.create("http://" + host + ':' + port);
         uris.add(uri);
       }
     }

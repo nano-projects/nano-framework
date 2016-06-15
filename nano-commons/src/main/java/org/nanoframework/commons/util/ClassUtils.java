@@ -231,7 +231,7 @@ public abstract class ClassUtils {
 			return forName(className, classLoader);
 		}
 		catch (ClassNotFoundException ex) {
-			IllegalArgumentException iae = new IllegalArgumentException("Cannot find class [" + className + "]");
+			IllegalArgumentException iae = new IllegalArgumentException("Cannot find class [" + className + ']');
 			iae.initCause(ex);
 			throw iae;
 		}
@@ -453,7 +453,7 @@ public abstract class ClassUtils {
 	 */
 	public static String getQualifiedMethodName(Method method) {
 		Assert.notNull(method, "Method must not be null");
-		return method.getDeclaringClass().getName() + "." + method.getName();
+		return method.getDeclaringClass().getName() + '.' + method.getName();
 	}
 
 	/**
@@ -774,7 +774,7 @@ public abstract class ClassUtils {
 	public static String addResourcePathToPackagePath(Class clazz, String resourceName) {
 		Assert.notNull(resourceName, "Resource name must not be null");
 		if (!resourceName.startsWith("/")) {
-			return classPackageAsResourcePath(clazz) + "/" + resourceName;
+			return classPackageAsResourcePath(clazz) + '/' + resourceName;
 		}
 		return classPackageAsResourcePath(clazz) + resourceName;
 	}
@@ -832,7 +832,7 @@ public abstract class ClassUtils {
 		if (CollectionUtils.isEmpty(classes)) {
 			return "[]";
 		}
-		StringBuffer sb = new StringBuffer("[");
+		StringBuffer sb = new StringBuffer('[');
 		for (Iterator it = classes.iterator(); it.hasNext(); ) {
 			Class clazz = (Class) it.next();
 			sb.append(clazz.getName());
@@ -840,7 +840,7 @@ public abstract class ClassUtils {
 				sb.append(", ");
 			}
 		}
-		sb.append("]");
+		sb.append(']');
 		return sb.toString();
 	}
 
@@ -883,10 +883,10 @@ public abstract class ClassUtils {
 		}
 		List interfaces = new ArrayList();
 		while (clazz != null) {
-			for (int i = 0; i < clazz.getInterfaces().length; i++) {
-				Class ifc = clazz.getInterfaces()[i];
-				if (!interfaces.contains(ifc) &&
-						(classLoader == null || isVisible(ifc, classLoader))) {
+		    final Class[] itfs = clazz.getInterfaces();
+			for (int i = 0; i < itfs.length; i++) {
+				Class ifc = itfs[i];
+				if (!interfaces.contains(ifc) && (classLoader == null || isVisible(ifc, classLoader))) {
 					interfaces.add(ifc);
 				}
 			}
@@ -933,8 +933,9 @@ public abstract class ClassUtils {
 		}
 		Set interfaces = new LinkedHashSet();
 		while (clazz != null) {
-			for (int i = 0; i < clazz.getInterfaces().length; i++) {
-				Class ifc = clazz.getInterfaces()[i];
+		    Class[] itfs = clazz.getInterfaces();
+			for (int i = 0; i < itfs.length; i++) {
+				Class ifc = itfs[i];
 				if (classLoader == null || isVisible(ifc, classLoader)) {
 					interfaces.add(ifc);
 				}

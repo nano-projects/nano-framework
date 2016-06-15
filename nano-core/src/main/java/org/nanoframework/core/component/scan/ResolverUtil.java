@@ -247,14 +247,14 @@ public class ResolverUtil<T> {
     try {
       String externalName = fqn.substring(0, fqn.indexOf('.')).replace('/', '.');
       ClassLoader loader = getClassLoader();
-      log.debug("Checking to see if class " + externalName + " matches criteria [" + test + "]");
+      log.debug("Checking to see if class " + externalName + " matches criteria [" + test + ']');
 
       Class<?> type = loader.loadClass(externalName);
       if (test.matches(type)) {
         matches.add((Class<T>) type);
       }
     } catch (Throwable t) {
-      log.warn("Could not examine class '" + fqn + "'" + " due to a " +
+      log.warn("Could not examine class '" + fqn + '\'' + " due to a " +
           t.getClass().getName() + " with message: " + t.getMessage());
     }
   }

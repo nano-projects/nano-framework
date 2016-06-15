@@ -223,11 +223,12 @@ public class Components {
                     throw (ComponentInvokeException) e;
                 } else {
                     Throwable tmp = e;
-                    while (tmp.getCause() != null) {
-                        if (tmp.getCause() instanceof ComponentInvokeException) {
-                            throw (ComponentInvokeException) tmp.getCause();
+                    Throwable cause;
+                    while ((cause = tmp.getCause()) != null) {
+                        if (cause instanceof ComponentInvokeException) {
+                            throw (ComponentInvokeException) cause;
                         } else {
-                            tmp = tmp.getCause();
+                            tmp = cause;
                         }
                     }
 

@@ -52,7 +52,7 @@ public class JndiConfigurationStrategyImpl extends BaseConfigurationStrategy {
         }
 
         final String propertyName = configurationKey.getName();
-        final String filterValue = loadFromContext(context, this.environmentPrefix + this.simpleFilterName + "/" + propertyName);
+        final String filterValue = loadFromContext(context, this.environmentPrefix + this.simpleFilterName + '/' + propertyName);
 
         if (StringUtils.isNotBlank(filterValue)) {
             logger.info("Property [{}] loaded from JNDI Filter Specific Property with value [{}]", propertyName, filterValue);

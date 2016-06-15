@@ -195,9 +195,9 @@ public final class CronExpression implements Serializable, Cloneable {
     protected static final Integer ALL_SPEC = ALL_SPEC_INT;
     protected static final Integer NO_SPEC = NO_SPEC_INT;
     
-    protected static final Map<String, Integer> monthMap = new HashMap<String, Integer>(20);
-    protected static final Map<String, Integer> dayMap = new HashMap<String, Integer>(60);
-    static {
+    protected final Map<String, Integer> monthMap = new HashMap<String, Integer>(20);
+    protected final Map<String, Integer> dayMap = new HashMap<String, Integer>(60);
+    {
         monthMap.put("JAN", 0);
         monthMap.put("FEB", 1);
         monthMap.put("MAR", 2);
@@ -278,8 +278,10 @@ public final class CronExpression implements Serializable, Cloneable {
         } catch (ParseException ex) {
             throw new AssertionError();
         }
-        if (expression.getTimeZone() != null) {
-            setTimeZone((TimeZone) expression.getTimeZone().clone());
+        
+        final TimeZone timeZone;
+        if ((timeZone = expression.getTimeZone()) != null) {
+            setTimeZone((TimeZone) timeZone.clone());
         }
     }
 
@@ -499,7 +501,7 @@ public final class CronExpression implements Serializable, Cloneable {
             throw pe;
         } catch (Exception e) {
             throw new ParseException("Illegal cron expression format ("
-                    + e.toString() + ")", 0);
+                    + e.toString() + ')', 0);
         }
     }
 
@@ -519,7 +521,7 @@ public final class CronExpression implements Serializable, Cloneable {
             if (type == MONTH) {
                 sval = getMonthNumber(sub) + 1;
                 if (sval <= 0) {
-                    throw new ParseException("Invalid Month value: '" + sub + "'", i);
+                    throw new ParseException("Invalid Month value: '" + sub + '\'', i);
                 }
                 if (s.length() > i + 3) {
                     c = s.charAt(i + 3);
@@ -528,7 +530,7 @@ public final class CronExpression implements Serializable, Cloneable {
                         sub = s.substring(i, i + 3);
                         eval = getMonthNumber(sub) + 1;
                         if (eval <= 0) {
-                            throw new ParseException("Invalid Month value: '" + sub + "'", i);
+                            throw new ParseException("Invalid Month value: '" + sub + '\'', i);
                         }
                     }
                 }
@@ -536,7 +538,7 @@ public final class CronExpression implements Serializable, Cloneable {
                 sval = getDayOfWeekNumber(sub);
                 if (sval < 0) {
                     throw new ParseException("Invalid Day-of-Week value: '"
-                                + sub + "'", i);
+                                + sub + '\'', i);
                 }
                 if (s.length() > i + 3) {
                     c = s.charAt(i + 3);
@@ -547,7 +549,7 @@ public final class CronExpression implements Serializable, Cloneable {
                         if (eval < 0) {
                             throw new ParseException(
                                     "Invalid Day-of-Week value: '" + sub
-                                        + "'", i);
+                                        + '\'', i);
                         }
                     } else if (c == '#') {
                         try {
@@ -569,7 +571,7 @@ public final class CronExpression implements Serializable, Cloneable {
 
             } else {
                 throw new ParseException(
-                        "Illegal characters for this position: '" + sub + "'",
+                        "Illegal characters for this position: '" + sub + '\'',
                         i);
             }
             if (eval != -1) {
@@ -712,7 +714,7 @@ public final class CronExpression implements Serializable, Cloneable {
                     throw new ParseException("Day-of-Week values must be between 1 and 7", -1);
                 lastdayOfWeek = true;
             } else {
-                throw new ParseException("'L' option is not valid here. (pos=" + i + ")", i);
+                throw new ParseException("'L' option is not valid here. (pos=" + i + ')', i);
             }
             TreeSet<Integer> set = getSet(type);
             set.add(val);
@@ -724,7 +726,7 @@ public final class CronExpression implements Serializable, Cloneable {
             if (type == DAY_OF_MONTH) {
                 nearestWeekday = true;
             } else {
-                throw new ParseException("'W' option is not valid here. (pos=" + i + ")", i);
+                throw new ParseException("'W' option is not valid here. (pos=" + i + ')', i);
             }
             if(val > 31)
                 throw new ParseException("The 'W' option does not make sense with values larger than 31 (max number of days in a month)", i); 
@@ -736,7 +738,7 @@ public final class CronExpression implements Serializable, Cloneable {
 
         if (c == '#') {
             if (type != DAY_OF_WEEK) {
-                throw new ParseException("'#' option is not valid here. (pos=" + i + ")", i);
+                throw new ParseException("'#' option is not valid here. (pos=" + i + ')', i);
             }
             i++;
             try {
@@ -833,37 +835,37 @@ public final class CronExpression implements Serializable, Cloneable {
 
         buf.append("seconds: ");
         buf.append(getExpressionSetSummary(seconds));
-        buf.append("\n");
+        buf.append('\n');
         buf.append("minutes: ");
         buf.append(getExpressionSetSummary(minutes));
-        buf.append("\n");
+        buf.append('\n');
         buf.append("hours: ");
         buf.append(getExpressionSetSummary(hours));
-        buf.append("\n");
+        buf.append('\n');
         buf.append("daysOfMonth: ");
         buf.append(getExpressionSetSummary(daysOfMonth));
-        buf.append("\n");
+        buf.append('\n');
         buf.append("months: ");
         buf.append(getExpressionSetSummary(months));
-        buf.append("\n");
+        buf.append('\n');
         buf.append("daysOfWeek: ");
         buf.append(getExpressionSetSummary(daysOfWeek));
-        buf.append("\n");
+        buf.append('\n');
         buf.append("lastdayOfWeek: ");
         buf.append(lastdayOfWeek);
-        buf.append("\n");
+        buf.append('\n');
         buf.append("nearestWeekday: ");
         buf.append(nearestWeekday);
-        buf.append("\n");
+        buf.append('\n');
         buf.append("NthDayOfWeek: ");
         buf.append(nthdayOfWeek);
-        buf.append("\n");
+        buf.append('\n');
         buf.append("lastdayOfMonth: ");
         buf.append(lastdayOfMonth);
-        buf.append("\n");
+        buf.append('\n');
         buf.append("years: ");
         buf.append(getExpressionSetSummary(years));
-        buf.append("\n");
+        buf.append('\n');
 
         return buf.toString();
     }
@@ -885,7 +887,7 @@ public final class CronExpression implements Serializable, Cloneable {
             Integer iVal = itr.next();
             String val = iVal.toString();
             if (!first) {
-                buf.append(",");
+                buf.append(',');
             }
             buf.append(val);
             first = false;
@@ -911,7 +913,7 @@ public final class CronExpression implements Serializable, Cloneable {
             Integer iVal = itr.next();
             String val = iVal.toString();
             if (!first) {
-                buf.append(",");
+                buf.append(',');
             }
             buf.append(val);
             first = false;

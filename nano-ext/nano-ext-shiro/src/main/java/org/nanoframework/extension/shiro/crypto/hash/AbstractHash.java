@@ -343,7 +343,7 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
                     return -1;
                 }
                 try {
-                    times = Integer.valueOf(args[i + 1]);
+                    times = Integer.parseInt(args[i + 1]);
                 } catch (NumberFormatException e) {
                     String msg = "Times argument must be followed by an integer value.";
                     System.out.println(msg);

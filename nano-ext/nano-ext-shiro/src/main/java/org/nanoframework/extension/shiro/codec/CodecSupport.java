@@ -99,7 +99,7 @@ public abstract class CodecSupport {
             return source.getBytes(encoding);
         } catch (UnsupportedEncodingException e) {
             String msg = "Unable to convert source [" + source + "] to byte array using " +
-                    "encoding '" + encoding + "'";
+                    "encoding '" + encoding + '\'';
             throw new CodecException(msg, e);
         }
     }
@@ -255,7 +255,7 @@ public abstract class CodecSupport {
         try {
             return toBytes(new FileInputStream(file));
         } catch (FileNotFoundException e) {
-            String msg = "Unable to acquire InputStream for file [" + file + "]";
+            String msg = "Unable to acquire InputStream for file [" + file + ']';
             throw new CodecException(msg, e);
         }
     }

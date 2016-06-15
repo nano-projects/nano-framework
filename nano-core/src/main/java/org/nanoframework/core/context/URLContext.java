@@ -71,11 +71,11 @@ public class URLContext {
 	 * @return the special
 	 */
 	public String[] getSpecial() {
-		return special;
+        return special;
 	}
 	
 	public URLContext setSpecial(final String[] special) {
-		this.special = special;
+        this.special = special;
 		return this;
 	}
 

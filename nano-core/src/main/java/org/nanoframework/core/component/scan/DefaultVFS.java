@@ -94,7 +94,7 @@ public class DefaultVFS extends VFS {
             for (String line; (line = reader.readLine()) != null;) {
               log.debug("Reader entry: " + line);
               lines.add(line);
-              if (getResources(path + "/" + line).isEmpty()) {
+              if (getResources(path + '/' + line).isEmpty()) {
                 lines.clear();
                 break;
               }
@@ -128,11 +128,11 @@ public class DefaultVFS extends VFS {
         // The URL prefix to use when recursively listing child resources
         String prefix = url.toExternalForm();
         if (!prefix.endsWith("/"))
-          prefix = prefix + "/";
+          prefix = prefix + '/';
 
         // Iterate over immediate children, adding files and recursing into directories
         for (String child : children) {
-          String resourcePath = path + "/" + child;
+          String resourcePath = path + '/' + child;
           resources.add(resourcePath);
           URL childUrl = new URL(prefix + child);
           resources.addAll(list(childUrl, resourcePath));
@@ -161,9 +161,9 @@ public class DefaultVFS extends VFS {
   protected List<String> listResources(JarInputStream jar, String path) throws IOException {
     // Include the leading and trailing slash when matching names
     if (!path.startsWith("/"))
-      path = "/" + path;
+      path = '/' + path;
     if (!path.endsWith("/"))
-      path = path + "/";
+      path = path + '/';
 
     // Iterate over the entries and collect those that begin with the requested path
     List<String> resources = new ArrayList<String>();
@@ -172,7 +172,7 @@ public class DefaultVFS extends VFS {
         // Add leading slash if it's missing
         String name = entry.getName();
         if (!name.startsWith("/"))
-          name = "/" + name;
+          name = '/' + name;
 
         // Check file name
         if (name.startsWith(path)) {

@@ -55,7 +55,7 @@ public final class PropertiesConfigurationStrategyImpl extends BaseConfiguration
     @Override
     protected String get(final ConfigurationKey<?> configurationKey) {
         final String property = configurationKey.getName();
-        final String filterSpecificProperty = this.simpleFilterName + "." + property;
+        final String filterSpecificProperty = this.simpleFilterName + '.' + property;
 
         final String filterSpecificValue = this.properties.getProperty(filterSpecificProperty);
 

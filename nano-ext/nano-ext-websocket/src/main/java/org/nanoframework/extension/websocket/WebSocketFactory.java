@@ -81,32 +81,37 @@ public class WebSocketFactory {
 					for(Properties properties : PropertiesLoader.PROPERTIES.values()) {
 						if(StringUtils.isNotBlank(websocket.hostProperty())) {
 							String _host = properties.getProperty(websocket.hostProperty());
-							if(StringUtils.isNotBlank(_host))
+							if(StringUtils.isNotBlank(_host)) {
 								host = _host;
-							
+							}
 						}
+						
 						if(StringUtils.isNotBlank(websocket.portProperty())) {
 							String _port = properties.getProperty(websocket.portProperty());
-							if(StringUtils.isNotBlank(_port)) 
-								port = Integer.parseInt(_port);
+							if(StringUtils.isNotBlank(_port)) {
+								port = Integer.valueOf(_port);
+							}
 						}
 						
 						if(StringUtils.isNotBlank(websocket.proxyPortProperty())) {
 							String _proxyPort = properties.getProperty(websocket.proxyPortProperty());
-							if(StringUtils.isNotBlank(_proxyPort))
-								proxyPort = Integer.parseInt(_proxyPort);
+							if(StringUtils.isNotBlank(_proxyPort)) {
+								proxyPort = Integer.valueOf(_proxyPort);
+							}
 						}
 						
 						if(StringUtils.isNotBlank(websocket.sslProperty())) {
 							String _ssl = properties.getProperty(websocket.sslProperty());
-							if(StringUtils.isNotBlank(_ssl)) 
-								ssl = Boolean.parseBoolean(_ssl);
+							if(StringUtils.isNotBlank(_ssl)) {
+								ssl = Boolean.valueOf(_ssl);
+							}
 						}
 						
 						if(StringUtils.isNotBlank(websocket.locationProperty())) {
 							String _location = properties.getProperty(websocket.locationProperty());
-							if(StringUtils.isNotBlank(_location))
+							if(StringUtils.isNotBlank(_location)) {
 								location = _location;
+							}
 						}
 					}
 					

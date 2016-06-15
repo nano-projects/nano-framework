@@ -206,7 +206,7 @@ public abstract class Assert {
 	 */
 	public static void doesNotContain(String textToSearch, String substring) {
 		doesNotContain(textToSearch, substring,
-				"[Assertion failed] - this String argument must not contain the substring [" + substring + "]");
+				"[Assertion failed] - this String argument must not contain the substring [" + substring + ']');
 	}
 
 	/**
@@ -342,7 +342,7 @@ public abstract class Assert {
 		notNull(type, "Type to check against must not be null");
 		if (!type.isInstance(obj)) {
 			throw new IllegalArgumentException(
-					(StringUtils.hasLength(message) ? message + " " : "") +
+					(StringUtils.hasLength(message) ? message + ' ' : "") +
 					"Object of class [" + (obj != null ? obj.getClass().getName() : "null") +
 					"] must be an instance of " + type);
 		}
@@ -373,7 +373,7 @@ public abstract class Assert {
 	public static void isAssignable(Class<?> superType, Class<?> subType, String message) {
 		notNull(superType, "Type to check against must not be null");
 		if (subType == null || !superType.isAssignableFrom(subType)) {
-			throw new IllegalArgumentException((StringUtils.hasLength(message) ? message + " " : "")
+			throw new IllegalArgumentException((StringUtils.hasLength(message) ? message + ' ' : "")
 				+ subType + " is not assignable to " + superType);
 		}
 	}

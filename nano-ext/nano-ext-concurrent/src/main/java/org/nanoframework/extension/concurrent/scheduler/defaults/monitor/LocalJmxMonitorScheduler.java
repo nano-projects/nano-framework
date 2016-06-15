@@ -62,8 +62,8 @@ public class LocalJmxMonitorScheduler extends BaseScheduler {
 		threadFactory.setBaseScheduler(this);
 		config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
 		config.setTotal(1);
-		config.setDaemon(true);
-		config.setBeforeAfterOnly(true);
+		config.setDaemon(Boolean.TRUE);
+		config.setBeforeAfterOnly(Boolean.TRUE);
 		setConfig(config);
 		setClose(false);
 	}

@@ -65,7 +65,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
 				RedisClient client = item.getValue();
 				return SerializableUtils.decode(client.hget(cacheName, SerializableUtils.encode(key)));
 			} catch(Exception e) {
-				LOG.error("读取Cache异常[get()]["+item.getKey()+"]: " + e.getMessage());
+				LOG.error("读取Cache异常[get()][{}]: {}", item.getKey(), e.getMessage());
 			}
 		}
 		
@@ -106,9 +106,10 @@ public class RedisCache<K, V> implements Cache<K, V> {
 		for(Entry<String, RedisClient> item : sessions.entrySet()) {
 			try {
 				RedisClient client = item.getValue();
-				return Long.valueOf(client.hlen(cacheName)).intValue();
+				Long len = Long.valueOf(client.hlen(cacheName));
+				return len.intValue();
 			} catch(Exception e) {
-				LOG.error("读取Cache异常[size()]["+item.getKey()+"]: " + e.getMessage());
+				LOG.error("读取Cache异常[size()][{}]: {}", item.getKey(), e.getMessage());
 			}
 		}
 		

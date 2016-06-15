@@ -59,7 +59,7 @@ public class AtomicInteger extends Number implements java.io.Serializable {
 		Assert.hasText(key, "The key must be not empty.");
 		this.redisClient = redisClient;
 		this.key = key;
-		this.lockKey = redisClient.toString() + "@" + key;
+		this.lockKey = redisClient.toString() + '@' + key;
 		LOCK.putIfAbsent(this.lockKey, new ReentrantLock());
 	}
 	

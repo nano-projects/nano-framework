@@ -87,7 +87,7 @@ public class ComponentScan {
 				return true;
 			else {
 				if(LOG.isDebugEnabled())
-					LOG.debug("无效的URI Mapper定义: " + obj.getClass().getName() + "." + method.getName() + ":" + (componentURI + mapping.value()));
+					LOG.debug("无效的URI Mapper定义: " + obj.getClass().getName() + '.' + method.getName() + ':' + (componentURI + mapping.value()));
 				
 				return false;
 			}
@@ -96,10 +96,14 @@ public class ComponentScan {
 			RequestMapping mapping = method.getAnnotation(annotationClass);
 			RequestMapper mapper = RequestMapper.create().setObject(obj).setClz(obj.getClass()).setMethod(method).setRequestMethods(mapping.method());
 			Map<RequestMethod, RequestMapper> mappers = new HashMap<>();
-			for(RequestMethod _method : mapper.getRequestMethods()) mappers.put(_method, mapper);
+			final RequestMethod[] mths = mapper.getRequestMethods();
+			for(RequestMethod _method : mths) {
+			    mappers.put(_method, mapper);
+			}
+			
 			methodMap.put((componentURI + mapping.value()).toLowerCase(), mappers);
 			if(LOG.isDebugEnabled())
-				LOG.debug("URI Mapper定义: " + obj.getClass().getName() + "." + method.getName() + ":" + (componentURI + mapping.value()));
+				LOG.debug("URI Mapper定义: " + obj.getClass().getName() + '.' + method.getName() + ':' + (componentURI + mapping.value()));
 			
 			return methodMap;
 		}).iterator(); iter.hasNext();) {

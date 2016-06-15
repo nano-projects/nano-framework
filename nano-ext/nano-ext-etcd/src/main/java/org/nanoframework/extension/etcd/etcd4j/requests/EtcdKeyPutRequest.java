@@ -56,7 +56,7 @@ public class EtcdKeyPutRequest extends EtcdKeyRequest {
    * @return Itself for chaining
    */
   public EtcdKeyPutRequest ttl(Integer ttl) {
-    this.requestParams.put("ttl", (ttl == null) ? "" : ttl + "");
+    this.requestParams.put("ttl", (ttl == null) ? "" : String.valueOf(ttl));
     return this;
   }
 
@@ -100,7 +100,7 @@ public class EtcdKeyPutRequest extends EtcdKeyRequest {
    * @return Itself for chaining
    */
   public EtcdKeyPutRequest prevIndex(long prevIndex) {
-    this.requestParams.put("prevIndex", prevIndex + "");
+    this.requestParams.put("prevIndex", String.valueOf(prevIndex));
     return this;
   }
 

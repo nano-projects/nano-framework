@@ -82,9 +82,9 @@ public class RedisClientPool {
 					RedisConfig config = RedisConfig.newInstance();
 					for(String name : config._getAttributeNames()) {
 						if(RedisConfig.REDIS_TYPE.equals(name))
-							Assert.hasLength(_redis.getProperty(RedisConfig.REDIS + idx + "." + name));
+							Assert.hasLength(_redis.getProperty(RedisConfig.REDIS + idx + '.' + name));
 						
-						config._setAttributeValue(name, _redis.getProperty(RedisConfig.REDIS + idx + "." + name));
+						config._setAttributeValue(name, _redis.getProperty(RedisConfig.REDIS + idx + '.' + name));
 					}
 					
 					configs.put(config.getRedisType(), config);

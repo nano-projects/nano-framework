@@ -47,24 +47,23 @@ import org.nanoframework.server.exception.ReadXMLException;
  *
  */
 public class JettyCustomServer extends Server {
-
-	private static Logger LOG = LoggerFactory.getLogger(JettyCustomServer.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(JettyCustomServer.class);
 	
 	private static Properties CONTEXT;
-	public static String DEFAULT_RESOURCE_BASE = "./webRoot";
+	private static String DEFAULT_RESOURCE_BASE = "./webRoot";
 	
 	static {
 		try {
 			CONTEXT = PropertiesLoader.load(Constants.MAIN_CONTEXT);
-			LOG.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
+			LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
 		} catch(LoaderException e) { }
 	}
 	
-	public static String DEFAULT_WEB_XML_PATH = DEFAULT_RESOURCE_BASE + "/WEB-INF/web.xml";
+	private static String DEFAULT_WEB_XML_PATH = DEFAULT_RESOURCE_BASE + "/WEB-INF/web.xml";
 	
-	public static String WEB_DEFAULT = DEFAULT_RESOURCE_BASE + "/WEB-INF/webdefault.xml";
+	private static String WEB_DEFAULT = DEFAULT_RESOURCE_BASE + "/WEB-INF/webdefault.xml";
 	
-	public static String DEFAULT_JETTY_CONFIG = DEFAULT_RESOURCE_BASE + "/WEB-INF/jetty.xml";
+	private static String DEFAULT_JETTY_CONFIG = DEFAULT_RESOURCE_BASE + "/WEB-INF/jetty.xml";
 	
 	public static JettyCustomServer DEFAULT;
 	static {
@@ -75,7 +74,7 @@ public class JettyCustomServer extends Server {
 	
 	private static final String JETTY_PID_FILE = "jetty.pid";
 	
-	public static final String[] cmd = new String[] {
+	static final String[] CMD = new String[] {
 		"start", 
 		"stop"
 	};
@@ -88,7 +87,7 @@ public class JettyCustomServer extends Server {
 		Assert.hasLength(mainContext, "未设置CONTEXT属性文件路径");
 		try {
 			CONTEXT = PropertiesLoader.load(mainContext);
-			LOG.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
+			LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
 		} catch(LoaderException e) { 
 			throw new JettyServerException(e.getMessage(), e);
 		}
@@ -158,7 +157,7 @@ public class JettyCustomServer extends Server {
 		try {
 			writePID2File();
 			super.start();
-			LOG.info("Current thread: {} | Idle thread: {}", super.getThreadPool().getThreads(), super.getThreadPool().getIdleThreads());
+			LOGGER.info("Current thread: {} | Idle thread: {}", super.getThreadPool().getThreads(), super.getThreadPool().getIdleThreads());
 			super.join();
 		} catch (Throwable e) {
 			throw new JettyServerException(e.getMessage(), e);
@@ -248,10 +247,10 @@ public class JettyCustomServer extends Server {
 	
 	public final void bootstrap(String[] args) {
 		if(args.length > 0) {
-			if(StringUtils.equals(args[0], cmd[0])) {
+			if(StringUtils.equals(args[0], CMD[0])) {
 				startServerDaemon();
 				
-			} else if(StringUtils.equals(args[0], cmd[1])) {
+			} else if(StringUtils.equals(args[0], CMD[1])) {
 				stopServer();
 				
 			} else {

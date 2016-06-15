@@ -51,18 +51,18 @@ import org.nanoframework.commons.util.CollectionUtils;
  * @author yanghe
  * @since 1.3.7
  */
-public abstract class AbstractHttpClient {
+abstract class AbstractHttpClient {
     public static final String TIME_TO_LIVE = "context.httpclient.time.to.live";
     public static final String TIME_UNIT = "context.httpclient.timeunit";
     public static final String MAX_TOTAL = "context.httpclient.max.total";
     public static final String MAX_PER_ROUTE = "context.httpclient.default.max.per.route";
     public static final String CHARSET = "context.httpclient.charset";
     
-    protected final String DEFAULT_TIME_TO_LIVE = "-1";
-    protected final String DEFAULT_TIME_UNIT = "MILLISECONDS";
-    protected final String DEFAULT_MAX_TOTAL = "20";
-    protected final String DEFAULT_MAX_PER_ROUTE = "2";
-    protected final String DEFAULT_CHARSET = "UTF-8";
+    protected static final String DEFAULT_TIME_TO_LIVE = "-1";
+    protected static final String DEFAULT_TIME_UNIT = "MILLISECONDS";
+    protected static final String DEFAULT_MAX_TOTAL = "20";
+    protected static final String DEFAULT_MAX_PER_ROUTE = "2";
+    protected static final String DEFAULT_CHARSET = "UTF-8";
     
     protected long timeToLive;
     protected TimeUnit tunit;

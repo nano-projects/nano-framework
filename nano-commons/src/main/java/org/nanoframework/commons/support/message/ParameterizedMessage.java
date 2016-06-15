@@ -55,7 +55,7 @@ public class ParameterizedMessage implements Message {
     /**
      * Separator for error messages.
      */
-    public static final String ERROR_MSG_SEPARATOR = ":";
+    public static final char ERROR_MSG_SEPARATOR = ':';
     /**
      * Suffix for errors.
      */
@@ -193,6 +193,7 @@ public class ParameterizedMessage implements Message {
         if (argArray != null) {
             return argArray;
         }
+        
         return stringArgs;
     }
 

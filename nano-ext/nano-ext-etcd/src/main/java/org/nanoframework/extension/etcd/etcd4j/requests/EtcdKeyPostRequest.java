@@ -56,7 +56,7 @@ public class EtcdKeyPostRequest extends EtcdKeyRequest {
    * @return Itself for chaining
    */
   public EtcdKeyPostRequest ttl(Integer ttl) {
-    this.requestParams.put("ttl", (ttl == null) ? "" : ttl + "");
+    this.requestParams.put("ttl", (ttl == null) ? "" : String.valueOf(ttl));
     return this;
   }
 

@@ -137,7 +137,7 @@ public class MD5Utils {
 	    String s = Integer.toHexString(value & 0xff); 
 	    if (s.length() < minlength) { 
 	        for (int i = 0; i < (minlength - s.length()); i++) 
-	            s = "0" + s; 
+	            s = '0' + s; 
 	    } 
 	    return s; 
 	} 

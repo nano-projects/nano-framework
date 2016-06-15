@@ -310,7 +310,7 @@ public class SchedulerFactory {
 			int total = config.getTotal();
 			config.setTotal(total + 1);
 			config.setNum(total);
-			config.setId(groupName + "-" + scheduler.getIndex(groupName));
+			config.setId(groupName + '-' + scheduler.getIndex(groupName));
 			config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + config.getId());
 			BaseScheduler _new = scheduler.clone();
 			_new.setClose(true);
@@ -421,7 +421,7 @@ public class SchedulerFactory {
 	
 	public final BaseScheduler find(String id) {
 		Assert.hasLength(id, "id must be not empty.");
-		String groupName = id.substring(0, id.lastIndexOf("-"));
+		String groupName = id.substring(0, id.lastIndexOf('-'));
 		Set<BaseScheduler> groupScheduler = group.get(groupName);
 		if(!CollectionUtils.isEmpty(groupScheduler)) {
 			for(BaseScheduler scheduler : groupScheduler) {
@@ -549,7 +549,7 @@ public class SchedulerFactory {
 					for(int p = 0; p < parallel; p ++) {
 						BaseScheduler baseScheduler = (BaseScheduler) Globals.get(Injector.class).getInstance(clz);
 						SchedulerConfig config = new SchedulerConfig();
-						config.setId(clz.getSimpleName() + "-" + baseScheduler.getIndex(clz.getSimpleName()));
+						config.setId(clz.getSimpleName() + '-' + baseScheduler.getIndex(clz.getSimpleName()));
 						config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + config.getId());
 						config.setGroup(clz.getSimpleName());
 						config.setService(service);
@@ -648,7 +648,7 @@ public class SchedulerFactory {
 			config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
 			try { config.setCron(new CronExpression("* * * * * ?")); } catch(ParseException e) {}
 			config.setTotal(1);
-			config.setDaemon(true);
+			config.setDaemon(Boolean.TRUE);
 			setConfig(config);
 			setClose(false);
 			closed = new ConcurrentHashMap<>();

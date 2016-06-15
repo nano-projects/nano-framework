@@ -52,9 +52,9 @@ public abstract class ObjectUtils {
 
 	private static final String EMPTY_STRING = "";
 	private static final String NULL_STRING = "null";
-	private static final String ARRAY_START = "{";
-	private static final String ARRAY_END = "}";
-	private static final String EMPTY_ARRAY = ARRAY_START + ARRAY_END;
+	private static final char ARRAY_START = '{';
+	private static final char ARRAY_END = '}';
+	private static final String EMPTY_ARRAY = "" + ARRAY_START + ARRAY_END;
 	private static final String ARRAY_ELEMENT_SEPARATOR = ", ";
 
 
@@ -569,7 +569,7 @@ public abstract class ObjectUtils {
 		if (obj == null) {
 			return EMPTY_STRING;
 		}
-		return obj.getClass().getName() + "@" + getIdentityHexString(obj);
+		return obj.getClass().getName() + '@' + getIdentityHexString(obj);
 	}
 
 	/**
@@ -771,7 +771,7 @@ public abstract class ObjectUtils {
 			else {
 				sb.append(ARRAY_ELEMENT_SEPARATOR);
 			}
-			sb.append("'").append(array[i]).append("'");
+			sb.append('\'').append(array[i]).append('\'');
 		}
 		sb.append(ARRAY_END);
 		return sb.toString();

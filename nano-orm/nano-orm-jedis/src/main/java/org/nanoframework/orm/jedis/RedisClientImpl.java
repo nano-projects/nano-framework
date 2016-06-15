@@ -288,8 +288,8 @@ public class RedisClientImpl implements RedisClient, Closeable {
 		}
 		*/
 		
-		long time = (timestamp - System.currentTimeMillis()) / 1000;
-		return expire(key, ((Long) time).intValue());
+		Long time = (timestamp - System.currentTimeMillis()) / 1000;
+		return expire(key, time.intValue());
 	}
 	
 	@Override
@@ -1348,9 +1348,10 @@ public class RedisClientImpl implements RedisClient, Closeable {
 		
 		ShardedJedis jedis = null;
 		try{
-			long len = llen(key);
-			if(count > len)
-				count = ((Long) len).intValue();
+			Long len = llen(key);
+			if(count > len) {
+				count = len.intValue();
+			}
 			
 			jedis = POOL.getJedis(config.getRedisType());
 			ShardedJedisPipeline pipeline = jedis.pipelined();

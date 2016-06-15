@@ -32,7 +32,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
  * 
  * @author Ben Gunter
  */
-public abstract class VFS {
+abstract class VFS {
   private static final Logger log = LoggerFactory.getLogger(ResolverUtil.class);
 
   /** The built-in implementations. */
@@ -117,10 +117,10 @@ public abstract class VFS {
       else
         return clazz.getMethod(methodName, parameterTypes);
     } catch (SecurityException e) {
-      log.error("Security exception looking for method " + clazz.getName() + "." + methodName + ".  Cause: " + e);
+      log.error("Security exception looking for method " + clazz.getName() + '.' + methodName + ".  Cause: " + e);
       return null;
     } catch (NoSuchMethodException e) {
-      log.error("Method not found " + clazz.getName() + "." + methodName + "." + methodName + ".  Cause: " + e);
+      log.error("Method not found " + clazz.getName() + '.' + methodName + '.' + methodName + ".  Cause: " + e);
       return null;
     }
   }

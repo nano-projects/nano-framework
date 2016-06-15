@@ -100,7 +100,7 @@ public class RedisConfig extends BaseEntity {
 	}
 
 	public Integer getExpireTime() {
-		return expireTime == null ? 0 : expireTime;
+		return expireTime == null ? Integer.valueOf(0) : expireTime;
 	}
 
 	public void setExpireTime(Integer expireTime) {

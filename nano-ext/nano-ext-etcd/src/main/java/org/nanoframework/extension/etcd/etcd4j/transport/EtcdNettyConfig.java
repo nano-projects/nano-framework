@@ -49,15 +49,17 @@ public class EtcdNettyConfig implements Cloneable {
    */
   public EtcdNettyConfig() {
     String connectTimeout = System.getProperty(CONNECT_TIMEOUT);
-    if(connectTimeout != null && !connectTimeout.trim().isEmpty()) {
-      logger.warn("Setting context.scheduler.etcd.connect.timeout to " + connectTimeout.trim());
-      this.connectTimeout = Integer.parseInt(connectTimeout.trim());
+    final String connectTimeoutTrim;
+    if(connectTimeout != null && !(connectTimeoutTrim = connectTimeout.trim()).isEmpty()) {
+      logger.warn("Setting context.scheduler.etcd.connect.timeout to {}", connectTimeoutTrim);
+      this.connectTimeout = Integer.parseInt(connectTimeoutTrim);
     }
     
     String frameSize = System.getProperty(FRAME_SIZE);
-    if (frameSize != null && !frameSize.trim().isEmpty()) {
-      logger.warn("Setting context.scheduler.etcd.max.frame.size to " + frameSize.trim());
-      maxFrameSize = Integer.parseInt(frameSize.trim());
+    final String frameSizeTrim;
+    if (frameSize != null && !(frameSizeTrim = frameSize.trim()).isEmpty()) {
+      logger.warn("Setting context.scheduler.etcd.max.frame.size to {}", frameSizeTrim);
+      maxFrameSize = Integer.parseInt(frameSizeTrim);
     }
     
   }

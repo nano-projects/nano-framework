@@ -160,7 +160,7 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
 
         final StringBuffer urlBuffer = request.getRequestURL();
         if (request.getQueryString() != null) {
-            urlBuffer.append("?").append(request.getQueryString());
+            urlBuffer.append('?').append(request.getQueryString());
         }
         final String requestUri = urlBuffer.toString();
         return this.ignoreUrlPatternMatcherStrategyClass.matches(requestUri);
@@ -236,9 +236,9 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
     protected void write(final HttpServletRequest request, final HttpServletResponse response, final Object result, final String contentType) throws IOException {
         response.setContentType(contentType);
         final Writer out = response.getWriter();
-        final Object callback;
+        final String callback;
         if(!ObjectUtils.isEmpty(callback = request.getParameter(Constants.CALLBACK))) {
-            out.write(callback + "(" + JSON.toJSONString(result, SerializerFeature.WriteDateUseDateFormat) + ")");
+            out.write(callback + '(' + JSON.toJSONString(result, SerializerFeature.WriteDateUseDateFormat) + ')');
         } else { 
             out.write(JSON.toJSONString(result, SerializerFeature.WriteDateUseDateFormat));
         }

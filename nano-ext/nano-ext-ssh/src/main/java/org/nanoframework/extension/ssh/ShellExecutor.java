@@ -44,8 +44,8 @@ public final class ShellExecutor extends SSHExecutor {
 		if(!cmd.startsWith("/") || !cmd.endsWith(".sh") || cmd.contains(" ") || cmd.contains(";"))
 			throw new SSHException("无效的脚本文件路径");
 		
-		String path = cmd.substring(0, cmd.lastIndexOf("/"));
-		String file = "." + cmd.substring(path.length(), cmd.length());
+		String path = cmd.substring(0, cmd.lastIndexOf('/'));
+		String file = '.' + cmd.substring(path.length(), cmd.length());
 		
 		offer(TYPE, "source " + source + "; cd " + path + "; sh " + file);
 	}

@@ -45,7 +45,7 @@ public class DataSourceConfig extends BaseEntity {
 		Assert.notNull(jdbc);
 		Assert.hasLength(this.envId = jdbc.getProperty(DataSourceLoader.MYBATIS_ENVIRONMENT_ID));
 		Assert.notNull(poolType);
-		this.mapperPackageName = mapperPackageName;
+	    this.mapperPackageName = mapperPackageName;
 		this.jdbc = jdbc;
 		this.poolType = poolType;
 
@@ -54,11 +54,11 @@ public class DataSourceConfig extends BaseEntity {
 	}
 
 	public String[] getMapperPackageName() {
-		return mapperPackageName;
+        return mapperPackageName;
 	}
 
 	public void setMapperPackageName(String[] mapperPackageName) {
-		this.mapperPackageName = mapperPackageName;
+        this.mapperPackageName = mapperPackageName;
 	}
 
 	public Properties getJdbc() {

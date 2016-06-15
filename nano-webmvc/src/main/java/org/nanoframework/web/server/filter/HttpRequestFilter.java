@@ -103,8 +103,9 @@ public class HttpRequestFilter extends AbstractFilter {
 	public static class HttpContext {
 	    private static ThreadLocal<Map<Class<?>, Object>> CONTEXT = new ThreadLocal<>();
 	    protected static void set(Map<Class<?>, Object> context) {
-	        if(CONTEXT.get() != null) {
-	            CONTEXT.get().clear();
+	        Map<Class<?>, Object> ctx;
+	        if((ctx = CONTEXT.get()) != null) {
+	            ctx.clear();
 	            CONTEXT.remove();
 	        }
 	        

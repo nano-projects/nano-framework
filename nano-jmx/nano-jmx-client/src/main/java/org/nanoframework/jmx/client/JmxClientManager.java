@@ -42,12 +42,12 @@ public class JmxClientManager {
 	public static final JmxClient get(String address, String content) {
 		Assert.hasLength(address);
 		Assert.hasLength(content);
-		JmxClient client = jmxClientMap.get(address + "/" + content);
+		JmxClient client = jmxClientMap.get(address + '/' + content);
 		if(client == null) {
 			String[] addr = address.split(":");
 			if(addr.length != 2) throw new MXBeanException("无效的Key");
 			try {
-				put(address, content, client = new JmxClient(addr[0], Integer.parseInt(addr[1]), content));
+				put(address, content, client = new JmxClient(addr[0], Integer.valueOf(addr[1]), content));
 			} catch(NumberFormatException e) {
 				throw new MXBeanException("无效的Key");
 			}
@@ -61,12 +61,12 @@ public class JmxClientManager {
 	public static final JmxClient get(String address, String content, long timeout) {
 		Assert.hasLength(address);
 		Assert.hasLength(content);
-		JmxClient client = jmxClientMap.get(address + "/" + content);
+		JmxClient client = jmxClientMap.get(address + '/' + content);
 		if(client == null) {
 			String[] addr = address.split(":");
 			if(addr.length != 2) throw new MXBeanException("无效的Key");
 			try {
-				put(address, content, client = new JmxClient(addr[0], Integer.parseInt(addr[1]), content, timeout));
+				put(address, content, client = new JmxClient(addr[0], Integer.valueOf(addr[1]), content, timeout));
 			} catch(NumberFormatException e) {
 				throw new MXBeanException("无效的Key");
 			}
@@ -81,14 +81,14 @@ public class JmxClientManager {
 		Assert.hasLength(address);
 		Assert.hasLength(content);
 		Assert.notNull(jmxClient);
-		return jmxClientMap.put(address + "/" + content, jmxClient);
+		return jmxClientMap.put(address + '/' + content, jmxClient);
 	}
 	
 	public static final JmxClient putIfAbsent(String address, String content, JmxClient jmxClient) {
 		Assert.hasLength(address);
 		Assert.hasLength(content);
 		Assert.notNull(jmxClient);
-		return jmxClientMap.putIfAbsent(address + "/" + content, jmxClient);
+		return jmxClientMap.putIfAbsent(address + '/' + content, jmxClient);
 	}
 	
 	public static final JmxClient put(String address, JmxClient jmxClient) {
@@ -102,7 +102,7 @@ public class JmxClientManager {
 	public static final JmxClient remove(String address, String content) {
 		Assert.hasLength(address);
 		Assert.hasLength(content);
-		return jmxClientMap.remove(address + "/" + content);
+		return jmxClientMap.remove(address + '/' + content);
 	}
 	
 	public static final JmxClient remove(String address) {
@@ -113,7 +113,7 @@ public class JmxClientManager {
 		Assert.hasLength(address);
 		Assert.hasLength(content);
 		Assert.notNull(jmxClient);
-		return jmxClientMap.remove(address + "/" + content, jmxClient);
+		return jmxClientMap.remove(address + '/' + content, jmxClient);
 	}
 	
 	public static final boolean remove(String address, JmxClient jmxClient) {

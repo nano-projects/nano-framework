@@ -29,34 +29,38 @@ import org.nanoframework.commons.entity.BaseEntity;
 public class JmxMonitor extends BaseEntity {
 	private static final long serialVersionUID = 743543178402183287L;
 
+	private static final Integer ZERO_INT = Integer.valueOf(0);
+	private static final Long ZERO_LONG = Long.valueOf(0);
+	private static final Double ZERO_DOUBLE = Double.valueOf(0);
+	
 	/** ClassLoading */
-	private Integer loadedClassCount = 0;
-	private Long unloadedClassCount = 0L;
-	private Long totalLoadedClassCount = 0L;
+	private Integer loadedClassCount = ZERO_INT;
+	private Long unloadedClassCount = ZERO_LONG;
+	private Long totalLoadedClassCount = ZERO_LONG;
 
 	/** Memory */
 	private Map<MemoryUsage, Long> heapMemoryUsage = DEFAULT_MEMORY_STATUS;
 
 	/** OS */
-	private Double cpuRatio = 0D;
-	private Double totalCpuRatio = 0D;
+	private Double cpuRatio = ZERO_DOUBLE;
+	private Double totalCpuRatio = ZERO_DOUBLE;
 
 	/** Thread */
-	private Long totalStartedThreadCount = 0L;
-	private Integer threadCount = 0;
-	private Integer daemonThreadCount = 0;
-	private Integer peakThreadCount = 0;
+	private Long totalStartedThreadCount = ZERO_LONG;
+	private Integer threadCount = ZERO_INT;
+	private Integer daemonThreadCount = ZERO_INT;
+	private Integer peakThreadCount = ZERO_INT;
 	
 	/** User defined */
 	private List<Pointer> tps;
 
 	private static final Map<MemoryUsage, Long> DEFAULT_MEMORY_STATUS = new HashMap<MemoryUsage, Long>() {
 		private static final long serialVersionUID = -3324580956350564994L; {
-			put(MemoryUsage.MAX, 0L);
-			put(MemoryUsage.USED, 0L);
-			put(MemoryUsage.INIT, 0L);
-			put(MemoryUsage.COMMITTED, 0L);
-			put(MemoryUsage.FREE, 0L);
+			put(MemoryUsage.MAX, ZERO_LONG);
+			put(MemoryUsage.USED, ZERO_LONG);
+			put(MemoryUsage.INIT, ZERO_LONG);
+			put(MemoryUsage.COMMITTED, ZERO_LONG);
+			put(MemoryUsage.FREE, ZERO_LONG);
 		}
 	};
 

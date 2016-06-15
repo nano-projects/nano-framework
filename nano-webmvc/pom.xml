@@ -13,7 +13,7 @@
 	<url>http://maven.apache.org</url>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
+        <cs.dir>${project.parent.basedir}</cs.dir>
 	</properties>
 	<dependencies>
 		<dependency>

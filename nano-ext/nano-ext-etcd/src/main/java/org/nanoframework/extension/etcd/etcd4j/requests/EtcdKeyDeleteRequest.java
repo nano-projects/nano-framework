@@ -56,7 +56,7 @@ public class EtcdKeyDeleteRequest extends EtcdKeyRequest {
    * @return Itself for chaining
    */
   public EtcdKeyDeleteRequest prevIndex(long prevIndex) {
-    this.requestParams.put("prevIndex", prevIndex + "");
+    this.requestParams.put("prevIndex", String.valueOf(prevIndex));
     return this;
   }
 

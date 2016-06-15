@@ -108,9 +108,8 @@ public class RuntimeUtil {
 			return false;
 
 		Process process = null;
-		Boolean exsits = false;
+		boolean exsits = false;
 		String result = null;
-
 		if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
 			String[] cmds = new String[] { "/bin/sh", "-c", "ps -f -p " + PID };
 			process = Runtime.getRuntime().exec(cmds);
@@ -119,7 +118,7 @@ public class RuntimeUtil {
 			BufferedReader input = new BufferedReader(new InputStreamReader(in));
 
 			while ((result = input.readLine()) != null) {
-				if (result != null && !"".equals(result) && result.indexOf(PID) > -1) {
+				if (StringUtils.isNotEmpty(result) && result.indexOf(PID) > -1) {
 					exsits = true;
 				}
 			}
@@ -131,7 +130,7 @@ public class RuntimeUtil {
 			BufferedReader input = new BufferedReader(new InputStreamReader(in));
 
 			while ((result = input.readLine()) != null) {
-				if (result != null && !"".equals(result) && result.indexOf("No Instance(s) Available") < 0) {
+				if (StringUtils.isNotEmpty(result) && result.indexOf("No Instance(s) Available") < 0) {
 					exsits = true;
 				}
 			}
@@ -161,12 +160,12 @@ public class RuntimeUtil {
 	 */
 	public static String getPath(Class<?> clz) {
 		String runJarPath = clz.getProtectionDomain().getCodeSource().getLocation().getPath();
-		String tmpPath = runJarPath.substring(0, runJarPath.lastIndexOf("/"));
-		if(tmpPath.endsWith("/lib"))
+		String tmpPath = runJarPath.substring(0, runJarPath.lastIndexOf('/'));
+		if(tmpPath.endsWith("/lib")) {
 			tmpPath = tmpPath.replace("/lib", "");
+		}
 		
-		return tmpPath.substring(isWindows() ? 1 : 0, tmpPath.lastIndexOf("/")) + "/";
-
+		return tmpPath.substring(isWindows() ? 1 : 0, tmpPath.lastIndexOf('/')) + '/';
 	}
 	
 	/**

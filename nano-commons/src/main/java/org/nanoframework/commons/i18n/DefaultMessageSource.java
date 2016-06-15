@@ -52,7 +52,7 @@ public class DefaultMessageSource implements MessageSource {
 		if((properties = MESSAGE.get(locale)) == null) {
 			synchronized (LOCK) {
 				if((properties = MESSAGE.get(locale)) == null) {
-					properties = PropertiesLoader.load(DEFAULT_PREFIX_MESSAGE + (StringUtils.isEmpty(locale.getLanguage()) ? "" : "_" + locale.getLanguage()) + (StringUtils.isEmpty(locale.getCountry()) ? "" : "_" + locale.getCountry()) + PROPERITES_SUFFIX);
+					properties = PropertiesLoader.load(DEFAULT_PREFIX_MESSAGE + (StringUtils.isEmpty(locale.getLanguage()) ? "" : '_' + locale.getLanguage()) + (StringUtils.isEmpty(locale.getCountry()) ? "" : '_' + locale.getCountry()) + PROPERITES_SUFFIX);
 					MESSAGE.put(locale, properties);
 				}
 			}

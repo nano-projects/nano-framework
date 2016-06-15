@@ -68,7 +68,7 @@ public class EtcdKeyGetRequest extends EtcdKeyRequest {
    */
   public EtcdKeyGetRequest waitForChange(long waitIndex) {
     this.waitForChange();
-    this.requestParams.put("waitIndex", waitIndex + "");
+    this.requestParams.put("waitIndex", String.valueOf(waitIndex));
     return this;
   }
 

@@ -51,13 +51,13 @@ public class RedirectView implements View {
         StringBuilder builder = new StringBuilder();
         if (model != null && model.size() > 0) {
             if(!page.contains("?")) {
-                builder.append("?");
+                builder.append('?');
             } else {
-                builder.append("&");
+                builder.append('&');
             }
             
             builder.append("__version=").append(System.currentTimeMillis());
-            model.forEach((name, o) -> builder.append("&").append(name).append("=").append(toJSONString(o)));
+            model.forEach((name, o) -> builder.append('&').append(name).append('=').append(toJSONString(o)));
         }
 
         String encodedRedirectURL = response.encodeRedirectURL(page + builder.toString());

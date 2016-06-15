@@ -51,7 +51,7 @@ public class AngularRedirectView extends RedirectView {
         if (model != null && model.size() > 0) {
             model.forEach((name, o) -> {
                 try {
-                    builder.append(";").append(name).append("=").append(URLEncoder.encode(toJSONString(o), Charsets.UTF_8.name()));
+                    builder.append(';').append(name).append('=').append(URLEncoder.encode(toJSONString(o), Charsets.UTF_8.name()));
                 } catch(final UnsupportedEncodingException e) { }
             });
         }

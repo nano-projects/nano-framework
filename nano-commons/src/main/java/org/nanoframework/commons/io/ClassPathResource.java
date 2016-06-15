@@ -213,7 +213,7 @@ public class ClassPathResource extends AbstractResource {
 	 * This implementation returns a description that includes the class path location.
 	 */
 	public String getDescription() {
-		return "class path resource [" + this.path + "]";
+		return "class path resource [" + this.path + ']';
 	}
 
 

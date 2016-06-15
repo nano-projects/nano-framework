@@ -90,7 +90,7 @@ public abstract class AbstractFilter implements Filter {
 		if(!mapper.hasMethod(RequestMethod.valueOf(_method))) {
 			response.setContentType(ContentType.APPLICATION_JSON);
 			out = response.getWriter();
-			ResultMap resultMap = ResultMap.create(UNSUPPORT_REQUEST_METHOD_CODE, "不支持此请求类型("+_method+")，仅支持类型("+StringUtils.join(mapper.getRequestMethodStrs(), " / ")+")", UNSUPPORT_REQUEST_METHOD_DESC);
+			ResultMap resultMap = ResultMap.create(UNSUPPORT_REQUEST_METHOD_CODE, "不支持此请求类型("+_method+")，仅支持类型("+StringUtils.join(mapper.getRequestMethodStrs(), " / ") + ')', UNSUPPORT_REQUEST_METHOD_DESC);
 			out.write(JSON.toJSONString(resultMap));
 			return false;
 		}
@@ -111,9 +111,9 @@ public abstract class AbstractFilter implements Filter {
 			response.setContentType(ContentType.APPLICATION_JSON);
 			out = response.getWriter();
 			/** 跨域JSONP的Ajax请求支持 */
-			final Object callback;
-			if(!ObjectUtils.isEmpty(callback = urlContext.getParameter().get(Constants.CALLBACK))) {
-				out.write(callback + "(" + JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat) + ")");
+			final String callback;
+			if(!ObjectUtils.isEmpty(callback = (String) urlContext.getParameter().get(Constants.CALLBACK))) {
+				out.write(callback + '(' + JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat) + ')');
 			} else { 
 				out.write(JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat));
 			}
@@ -160,7 +160,7 @@ public abstract class AbstractFilter implements Filter {
 		String uri = URLDecoder.decode(((HttpServletRequest) request).getRequestURI(), Charsets.UTF_8.name());
 		URLContext urlContext;
 		if(StringUtils.isNotBlank(paramString)) {
-			uri += "?" + paramString;
+			uri += '?' + paramString;
 			urlContext = URLContext.formatURL(uri);
 			urlContext.getParameter().putAll(parameter);
 		} else 

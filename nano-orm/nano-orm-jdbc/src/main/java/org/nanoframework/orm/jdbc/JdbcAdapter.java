@@ -226,7 +226,7 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		} finally{
 			close(stmt);
 			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Update/Insert SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + "]");
+				logger.debug("[ Execute Update/Insert SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + ']');
 			}
 		}
 		
@@ -254,7 +254,7 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		} finally{
 			close(rs , preStmt);
 			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Query SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + "]");
+				logger.debug("[ Execute Query SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + ']');
 				logger.debug("[ Execute Parameter ]: " + JSON.toJSONString(values, SerializerFeature.WriteDateUseDateFormat));
 			}
 		}
@@ -283,7 +283,7 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		} finally{
 			close(preStmt);
 			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Update/Insert SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + "]");
+				logger.debug("[ Execute Update/Insert SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + ']');
 				logger.debug("[ Execute Parameter ]: " + JSON.toJSONString(values, SerializerFeature.WriteDateUseDateFormat));
 			}
 		}
@@ -316,7 +316,7 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		} finally{
 			close(preStmt);
 			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Update/Insert SQL ] : " + sql + " [cost " + (System.currentTimeMillis() - start) + "]");
+				logger.debug("[ Execute Update/Insert SQL ] : " + sql + " [cost " + (System.currentTimeMillis() - start) + ']');
 				logger.debug("[ Execute Parameter ]: " + JSON.toJSONString(batchValues, SerializerFeature.WriteDateUseDateFormat));
 			}
 		}
@@ -350,8 +350,7 @@ public class JdbcAdapter implements DefaultSqlExecutor {
             } else if (values.get(i) instanceof Timestamp) {
                 preStmt.setTimestamp(i + 1, (Timestamp) values.get(i));
             } else if (values.get(i) instanceof java.util.Date) {
-                java.util.Date tempDate = new java.util.Date();
-                tempDate = (java.util.Date) values.get(i);
+                java.util.Date tempDate = (java.util.Date) values.get(i);
                 preStmt.setDate(i + 1, new Date(tempDate.getTime()));
             } else {
                 preStmt.setObject(i + 1, values.get(i));

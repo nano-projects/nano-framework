@@ -60,10 +60,11 @@ public final class FindProcessExecutor extends CallableSSHExecutor<Boolean> {
             reader = new BufferedReader(new InputStreamReader(stdout, Charsets.UTF_8));
     		String line;
             while(!close && (line = reader.readLine()) != null) {
-            	if(LOG.isDebugEnabled())
+            	if(LOG.isDebugEnabled()) {
             		LOG.debug(line);
+            	}
             	
-            	return true;
+            	return Boolean.TRUE;
             }
               
             LOG.info("Exit");
@@ -71,16 +72,18 @@ public final class FindProcessExecutor extends CallableSSHExecutor<Boolean> {
 			throw new SSHException(e);
 			
 		} finally {
-			if(reader != null) 
+			if(reader != null) {
 				try { reader.close(); } catch(Exception e) { }
+			}
 			
-			if(stdout != null)
+			if(stdout != null) {
 				try { stdout.close(); } catch(Exception e) { }
+			}
 			
 			disconnect();
 		}
 		
-		return false;
+		return Boolean.FALSE;
 	}
 
 	@Override
@@ -124,7 +127,7 @@ public final class FindProcessExecutor extends CallableSSHExecutor<Boolean> {
 			}
 		}
 		
-		return false;
+		return Boolean.FALSE;
 	}
 
 }

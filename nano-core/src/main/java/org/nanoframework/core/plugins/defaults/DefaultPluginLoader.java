@@ -24,7 +24,6 @@ import org.nanoframework.core.plugins.defaults.module.AOPModule;
 import org.nanoframework.core.plugins.defaults.module.DataSourceModule;
 import org.nanoframework.core.plugins.defaults.plugin.JedisPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.Log4j2Plugin;
-import org.nanoframework.core.plugins.defaults.plugin.QuartzPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.SchedulerPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
 
@@ -33,7 +32,6 @@ import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
  * @author yanghe
  * @date 2015年10月30日 下午10:51:07
  */
-@SuppressWarnings("deprecation")
 public class DefaultPluginLoader extends PluginLoader {
 
 	@Override
@@ -51,7 +49,6 @@ public class DefaultPluginLoader extends PluginLoader {
 	protected void configPlugin(Configure<Plugin> plugins) {
 		plugins.add(new Log4j2Plugin());
 		plugins.add(new JedisPlugin());
-		plugins.add(new QuartzPlugin());
 		plugins.add(new SchedulerPlugin());
 		plugins.add(new WebSocketPlugin());
 		

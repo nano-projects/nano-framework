@@ -88,7 +88,7 @@ public class CryptUtil {
     private static String encrypt0(final byte[] result) {
         String encodeStr = new String(Base64.getEncoder().encode(parseByte2HexStr(result).getBytes()));
         final int idx;
-        if ((idx = encodeStr.indexOf("=")) > -1) {
+        if ((idx = encodeStr.indexOf('=')) > -1) {
             final String tmp = encodeStr.substring(0, idx);
             final int len = encodeStr.substring(idx).length();
             encodeStr = tmp + len;

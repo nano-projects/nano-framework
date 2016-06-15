@@ -19,6 +19,7 @@ import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
 import static com.google.inject.matcher.Matchers.not;
 
+import java.lang.reflect.AnnotatedElement;
 import java.util.Collections;
 import java.util.Map;
 
@@ -28,6 +29,7 @@ import org.nanoframework.orm.jdbc.binding.JdbcTransactionalMethodInterceptor;
 import org.nanoframework.orm.jdbc.config.JdbcConfig;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.matcher.Matcher;
 
 /**
  * 
@@ -50,8 +52,9 @@ public class JdbcModule extends AbstractModule {
 		
 		JdbcTransactionalMethodInterceptor interceptor = new JdbcTransactionalMethodInterceptor();
         requestInjection(interceptor);
-        bindInterceptor(any(), annotatedWith(JdbcTransactional.class), interceptor);
-        bindInterceptor(annotatedWith(JdbcTransactional.class), not(annotatedWith(JdbcTransactional.class)), interceptor);
+        Matcher<AnnotatedElement> annotatedElement = annotatedWith(JdbcTransactional.class);
+        bindInterceptor(any(), annotatedElement, interceptor);
+        bindInterceptor(annotatedElement, not(annotatedElement), interceptor);
         
 	}
 
