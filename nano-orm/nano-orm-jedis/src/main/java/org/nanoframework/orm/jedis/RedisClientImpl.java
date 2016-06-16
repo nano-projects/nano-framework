@@ -458,7 +458,7 @@ public class RedisClientImpl implements RedisClient, Closeable {
 		
 		Map<String, T> newValues = new HashMap<>();
 		for(Entry<String, String> entry : values.entrySet()) {
-			newValues.put(entry.getValue(), parseObject(entry.getValue(), type));
+			newValues.put(entry.getKey(), parseObject(entry.getValue(), type));
 		}
 		
 		return newValues;
