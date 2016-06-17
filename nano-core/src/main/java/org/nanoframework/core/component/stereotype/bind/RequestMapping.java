@@ -71,7 +71,7 @@ public @interface RequestMapping {
 	 * gets checked before the handler method is even resolved).
 	 * <p>Supported for Servlet environments as well as Portlet 2.0 environments.
 	 */
-	RequestMethod[] method() default {};
+	RequestMethod[] method() default {RequestMethod.GET, RequestMethod.POST};
 
 	/**
 	 * The parameters of the mapped request, narrowing the primary mapping.
