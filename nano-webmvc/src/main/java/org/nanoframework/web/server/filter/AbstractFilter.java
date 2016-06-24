@@ -23,9 +23,7 @@ import static org.nanoframework.web.server.http.status.ComponentStatus.UNKNOWN;
 import static org.nanoframework.web.server.http.status.ComponentStatus.UNSUPPORT_REQUEST_METHOD_CODE;
 import static org.nanoframework.web.server.http.status.ComponentStatus.UNSUPPORT_REQUEST_METHOD_DESC;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.HashMap;
@@ -64,133 +62,107 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
  */
 public abstract class AbstractFilter implements Filter {
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		
-	}
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-		request.setCharacterEncoding(Charsets.UTF_8.name());
-		response.setCharacterEncoding(Charsets.UTF_8.name());
-		
-		if(invoke((HttpServletRequest) request, (HttpServletResponse) response)) {
-			chain.doFilter(request, response);
-		}
-	}
-	
-	protected abstract boolean invoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
-	
-	@Override
-	public void destroy() {
+    }
 
-	}
-	
-	protected boolean validRequestMethod(ServletResponse response, Writer out, RequestMapper mapper, String _method) throws IOException {
-		if(!mapper.hasMethod(RequestMethod.valueOf(_method))) {
-			response.setContentType(ContentType.APPLICATION_JSON);
-			out = response.getWriter();
-			ResultMap resultMap = ResultMap.create(UNSUPPORT_REQUEST_METHOD_CODE, "不支持此请求类型("+_method+")，仅支持类型("+StringUtils.join(mapper.getRequestMethodStrs(), " / ") + ')', UNSUPPORT_REQUEST_METHOD_DESC);
-			out.write(JSON.toJSONString(resultMap));
-			return false;
-		}
-		
-		return true;
-	}
-	
-	protected void process(ServletRequest request, ServletResponse response, Writer out, URLContext urlContext, Object ret, Model model) throws IOException, ServletException {
-		if(ret instanceof View) {
-			((View) ret).redirect(model.get(), (HttpServletRequest) request, (HttpServletResponse) response);
-		} else if(ret instanceof String) {
-			response.setContentType(ContentType.APPLICATION_JSON);
-			out = response.getWriter();
-			out.write((String) ret);
-		} else if(ret instanceof Response && ret == Response.EMPTY) {
-			return ;
-		} else if(ret != null) {
-			response.setContentType(ContentType.APPLICATION_JSON);
-			out = response.getWriter();
-			/** 跨域JSONP的Ajax请求支持 */
-			final String callback;
-			if(!ObjectUtils.isEmpty(callback = (String) urlContext.getParameter().get(Constants.CALLBACK))) {
-				out.write(callback + '(' + JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat) + ')');
-			} else { 
-				out.write(JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat));
-			}
-		} else {
-			response.setContentType(ContentType.APPLICATION_JSON);
-			out = response.getWriter();
-			out.write(JSON.toJSONString(UNKNOWN));
-		}
-	}
-	
-	protected URLContext create(HttpServletRequest request) throws IOException {
-		Map<String, Object> parameter = new HashMap<>();
-		request.getParameterMap().forEach((key, value) -> { 
-			if(value.length > 0) {
-				if(key.endsWith("[]"))
-					parameter.put(key.toLowerCase(), value);
-				else 
-					parameter.put(key.toLowerCase(), value[0]);
-				
-			}
-		});
-		
-		/** 增加容器对其他Http请求类型获取参数的支持 */
-		String paramString = "";
-		switch(RequestMethod.valueOf(request.getMethod())) {
-			case PUT:
-			case DELETE:
-			case HEAD:
-			case OPTIONS:
-			case TRACE:
-			case PATCH:
-				StringBuilder builder = new StringBuilder();
-				BufferedReader reader = new BufferedReader(new InputStreamReader(request.getInputStream()));
-				String line;
-				while ((line = reader.readLine()) != null) 
-					builder.append(line);
-				
-				paramString = builder.toString();
-				break;
-			default:
-				break;
-		}
-		
-		String uri = URLDecoder.decode(((HttpServletRequest) request).getRequestURI(), Charsets.UTF_8.name());
-		URLContext urlContext;
-		if(StringUtils.isNotBlank(paramString)) {
-			uri += '?' + paramString;
-			urlContext = URLContext.formatURL(uri);
-			urlContext.getParameter().putAll(parameter);
-		} else 
-			urlContext = URLContext.create().setContext(uri).setParameter(parameter);
-		
-		String[] uris = uri.split(";");
-		if(uris.length > 1) {
-			urlContext.setContext(uris[0]);
-			String[] specials = new String[uris.length - 1];
-			System.arraycopy(uris, 1, specials, 0, specials.length);
-			urlContext.setSpecial(specials);
-		}
-		
-		return urlContext;
-	}
-	
-	protected ResultMap error(Throwable e) {
-		ResultMap error = null;
-		if(e instanceof ComponentInvokeException) {
-			error = ResultMap.create(INVOKE_ERROR_CODE, e.getMessage(), "ComponentInvokeException");
-		} else if(e instanceof BindRequestParamException) {
-			error = ResultMap.create(BIND_PARAM_EXCEPTION_CODE, e.getMessage(), "BindRequestParamException");
-		} else if(e instanceof IOException) {
-			error = ResultMap.create(IO_EXCEPTION_CODE, e.getMessage(), "IOException");
-		} else if(e instanceof ServletException) {
-			error = ResultMap.create(SERVLET_EXCEPTION, e.getMessage(), "ServletException");
-		} else 
-			error = UNKNOWN;
-		
-		return error;
-	}
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        request.setCharacterEncoding(Charsets.UTF_8.name());
+        response.setCharacterEncoding(Charsets.UTF_8.name());
+
+        if (invoke((HttpServletRequest) request, (HttpServletResponse) response)) {
+            chain.doFilter(request, response);
+        }
+    }
+
+    protected abstract boolean invoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException;
+
+    @Override
+    public void destroy() {
+
+    }
+
+    protected boolean validRequestMethod(ServletResponse response, Writer out, RequestMapper mapper, String _method) throws IOException {
+        if (!mapper.hasMethod(RequestMethod.valueOf(_method))) {
+            response.setContentType(ContentType.APPLICATION_JSON);
+            out = response.getWriter();
+            ResultMap resultMap = ResultMap.create(UNSUPPORT_REQUEST_METHOD_CODE,
+                    "不支持此请求类型(" + _method + ")，仅支持类型(" + StringUtils.join(mapper.getRequestMethodStrs(), " / ") + ')', UNSUPPORT_REQUEST_METHOD_DESC);
+            out.write(JSON.toJSONString(resultMap));
+            return false;
+        }
+
+        return true;
+    }
+
+    protected void process(ServletRequest request, ServletResponse response, Writer out, URLContext urlContext, Object ret, Model model)
+            throws IOException, ServletException {
+        if (ret instanceof View) {
+            ((View) ret).redirect(model.get(), (HttpServletRequest) request, (HttpServletResponse) response);
+        } else if (ret instanceof String) {
+            response.setContentType(ContentType.APPLICATION_JSON);
+            out = response.getWriter();
+            out.write((String) ret);
+        } else if (ret instanceof Response && ret == Response.EMPTY) {
+            return;
+        } else if (ret != null) {
+            response.setContentType(ContentType.APPLICATION_JSON);
+            out = response.getWriter();
+            /** 跨域JSONP的Ajax请求支持 */
+            final String callback;
+            if (!ObjectUtils.isEmpty(callback = (String) urlContext.getParameter().get(Constants.CALLBACK))) {
+                out.write(callback + '(' + JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat) + ')');
+            } else {
+                out.write(JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat));
+            }
+        } else {
+            response.setContentType(ContentType.APPLICATION_JSON);
+            out = response.getWriter();
+            out.write(JSON.toJSONString(UNKNOWN));
+        }
+    }
+
+    protected URLContext create(HttpServletRequest request) throws IOException {
+        final Map<String, Object> parameter = new HashMap<>();
+        request.getParameterMap().forEach((key, value) -> {
+            if (value.length > 0) {
+                if (key.endsWith("[]"))
+                    parameter.put(key.toLowerCase(), value);
+                else
+                    parameter.put(key.toLowerCase(), value[0]);
+
+            }
+        });
+
+        final String uri = URLDecoder.decode(((HttpServletRequest) request).getRequestURI(), Charsets.UTF_8.name());
+        final URLContext urlContext = URLContext.create().setContext(uri).setParameter(parameter);
+        final String[] uris = uri.split(";");
+        if (uris.length > 1) {
+            urlContext.setContext(uris[0]);
+            String[] specials = new String[uris.length - 1];
+            System.arraycopy(uris, 1, specials, 0, specials.length);
+            urlContext.setSpecial(specials);
+        }
+
+        return urlContext;
+    }
+
+    protected ResultMap error(Throwable e) {
+        ResultMap error = null;
+        if (e instanceof ComponentInvokeException) {
+            error = ResultMap.create(INVOKE_ERROR_CODE, e.getMessage(), "ComponentInvokeException");
+        } else if (e instanceof BindRequestParamException) {
+            error = ResultMap.create(BIND_PARAM_EXCEPTION_CODE, e.getMessage(), "BindRequestParamException");
+        } else if (e instanceof IOException) {
+            error = ResultMap.create(IO_EXCEPTION_CODE, e.getMessage(), "IOException");
+        } else if (e instanceof ServletException) {
+            error = ResultMap.create(SERVLET_EXCEPTION, e.getMessage(), "ServletException");
+        } else
+            error = UNKNOWN;
+
+        return error;
+    }
 
 }
