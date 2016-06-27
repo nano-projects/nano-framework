@@ -15,8 +15,6 @@
  */
 package org.nanoframework.orm.jedis;
 
-import org.nanoframework.commons.exception.ExtensionRuntimeException;
-
 /**
  * Jedis操作异常处理类
  * 
@@ -24,7 +22,7 @@ import org.nanoframework.commons.exception.ExtensionRuntimeException;
  * @date 2015年7月27日 下午10:13:16 
  *
  */
-public class RedisClientException extends ExtensionRuntimeException {
+public class RedisClientException extends RuntimeException {
 	private static final long serialVersionUID = -6151365904901655741L;
 
 	public RedisClientException() {
@@ -33,16 +31,18 @@ public class RedisClientException extends ExtensionRuntimeException {
 	
 	public RedisClientException(String message) {
 		super(message);
-		
 	}
 	
 	public RedisClientException(String message, Throwable cause) {
 		super(message, cause);
-		
 	}
+	
+	public RedisClientException(Throwable cause) {
+        super(cause);
+    }
 	
 	@Override
 	public String getMessage() {
-		return "RedisClient操作异常: " + super.getMessage();
+		return super.getMessage();
 	}
 }

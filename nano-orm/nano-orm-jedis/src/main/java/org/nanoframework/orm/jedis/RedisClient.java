@@ -23,8 +23,6 @@ import java.util.Set;
 import com.alibaba.fastjson.TypeReference;
 import com.google.inject.ImplementedBy;
 
-import redis.clients.jedis.ShardedJedisPipeline;
-
 
 /**
  * 针对Jedis池的使用而基础的封装，主要针对Sharding模式进行接口API的定义<br>
@@ -75,10 +73,6 @@ public interface RedisClient {
 	
 	final String INF0 = "-inf";
 	final String INF1 = "+inf";
-	
-	ShardedJedisPipeline pipeline();
-	
-	void sync();
 	
 	/**
 	 * 删除给定的一个或多个 key 。
