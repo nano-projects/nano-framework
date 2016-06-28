@@ -16,6 +16,7 @@
 package org.nanoframework.orm.jedis;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.nanoframework.commons.util.CollectionUtils;
@@ -28,7 +29,7 @@ import com.google.common.collect.Sets;
  * @author yanghe
  * @since 1.3.10
  */
-public class RedisClientExtImpl extends RedisClientImpl {
+public class RedisClientExtImpl extends RedisClientImpl implements RedisClientExt {
     private final String specSource = config.getExtendProperties().getProperty("redis.specSource");
     
     public RedisClientExtImpl(String type) {
@@ -73,4 +74,9 @@ public class RedisClientExtImpl extends RedisClientImpl {
         return success && getSpecSource().push(key, values, push);
     }
     
+    @Override
+    public boolean sets(Map<String, Object> values) {
+        super.set(values);
+        return true;
+    }
 }

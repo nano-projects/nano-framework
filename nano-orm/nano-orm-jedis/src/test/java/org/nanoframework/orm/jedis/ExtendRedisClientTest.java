@@ -21,13 +21,13 @@ import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.orm.jedis.RedisClient.Mark;
 
 import com.alibaba.fastjson.JSON;
@@ -41,14 +41,14 @@ import com.alibaba.fastjson.JSON;
 public class ExtendRedisClientTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisClientTest.class);
 
-    private RedisClient redisClient;
+    private RedisClientExt redisClient;
 
     @Before
     public void before() throws LoaderException, IOException {
         if (redisClient == null) {
             Properties prop = PropertiesLoader.load("/redis-test.properties");
             RedisClientPool.POOL.initRedisConfig(prop).createJedis();
-            redisClient = GlobalRedisClient.get("test");
+            redisClient = (RedisClientExt) GlobalRedisClient.get("test");
         }
     }
     
@@ -64,10 +64,15 @@ public class ExtendRedisClientTest {
         LOGGER.debug("RANGE: {}", JSON.toJSONString(redisClient.lrange("MORE_PUSH")));
     }
     
-    @Ignore
     @Test
     public void spec3Test() {
         List<String> values = redisClient.lrange("MORE_PUSH");
         values.forEach(value -> LOGGER.debug("REM: {}", redisClient.lrem("MORE_PUSH", value)));
+    }
+    
+    @Test
+    public void spec4Test() {
+        redisClient.sets(MapBuilder.<String, Object>create().put("test", "override").build());
+        
     }
 }
