@@ -18,9 +18,7 @@ package org.nanoframework.extension.httpclient;
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
@@ -45,6 +42,7 @@ import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.commons.util.ReflectUtils;
 
 /**
  *
@@ -58,25 +56,31 @@ abstract class AbstractHttpClient {
     public static final String MAX_PER_ROUTE = "context.httpclient.default.max.per.route";
     public static final String CHARSET = "context.httpclient.charset";
     
-    protected static final String DEFAULT_TIME_TO_LIVE = "-1";
+    /** 超时时间. */
+    protected static final String DEFAULT_TIME_TO_LIVE = "30000";
+    /** 超时时间单位. */
     protected static final String DEFAULT_TIME_UNIT = "MILLISECONDS";
-    protected static final String DEFAULT_MAX_TOTAL = "20";
-    protected static final String DEFAULT_MAX_PER_ROUTE = "2";
+    /** 最大连接数 */
+    protected static final String DEFAULT_MAX_TOTAL = "1000";
+    /** 最大并发连接数. */
+    protected static final String DEFAULT_MAX_PER_ROUTE = "500";
+    /** 字符集. */
     protected static final String DEFAULT_CHARSET = "UTF-8";
+    
+    protected static CloseableHttpClient HTTP_CLIENT;
     
     protected long timeToLive;
     protected TimeUnit tunit;
     protected int maxTotal;
     protected int maxPerRoute;
     protected Charset charset;
-    protected static PoolingHttpClientConnectionManager pool;
     
     public AbstractHttpClient() {
         this(false);
     }
     
     public AbstractHttpClient(boolean force) {
-        if(pool == null || force) {
+        if(HTTP_CLIENT == null || force) {
             this.timeToLive = Long.parseLong(System.getProperty(TIME_TO_LIVE, DEFAULT_TIME_TO_LIVE));
             this.tunit = TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT));
             this.maxTotal = Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL));
@@ -87,7 +91,7 @@ abstract class AbstractHttpClient {
     }
     
     public AbstractHttpClient(final boolean force, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
-        if(pool == null || force) {
+        if(HTTP_CLIENT == null || force) {
             this.timeToLive = timeToLive;
             this.tunit = tunit;
             this.maxTotal = maxTotal;
@@ -101,7 +105,7 @@ abstract class AbstractHttpClient {
         final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, tunit);
         manager.setMaxTotal(maxTotal);
         manager.setDefaultMaxPerRoute(maxPerRoute);
-        pool = manager;
+        HTTP_CLIENT = HttpClients.custom().setConnectionManager(manager).build();
     }
     
     protected HttpRequestBase createBase(final Class<? extends HttpRequestBase> cls, final String url, final Map<String, String> params) {
@@ -113,8 +117,8 @@ abstract class AbstractHttpClient {
         
         try {
             final URI uri = builder.build();
-            return ConstructorUtils.invokeConstructor(cls, uri);
-        } catch(final URISyntaxException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+            return ReflectUtils.newInstance(cls, uri);
+        } catch(final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
@@ -128,79 +132,79 @@ abstract class AbstractHttpClient {
         
         try {
             final URI uri = builder.build();
-            final HttpRequestBase base = ConstructorUtils.invokeConstructor(cls, uri);
+            final HttpRequestBase base = ReflectUtils.newInstance(cls, uri);
             if (!CollectionUtils.isEmpty(headers)) {
                 headers.forEach((key, value) -> base.addHeader(key, value));
             }
             
             return base;
-        } catch(final URISyntaxException | IllegalAccessException | InstantiationException | NoSuchMethodException | InvocationTargetException e) {
+        } catch(final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
     
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final Map<String, String> params) {
         try {
-            final HttpEntityEnclosingRequestBase entityBase = ConstructorUtils.invokeConstructor(cls, url);
+            final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             final List<NameValuePair> pairs = covertParams2NVPS(params);
             entityBase.setEntity(new UrlEncodedFormEntity(pairs, charset));
             return entityBase;
-        } catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch(final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
     
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final String json) {
         try {
-            final HttpEntityEnclosingRequestBase entityBase = ConstructorUtils.invokeConstructor(cls, url);
+            final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             entityBase.setEntity(new StringEntity(json, APPLICATION_JSON));
             return entityBase;
-        } catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch(final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
     
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final String stream, ContentType contentType) {
         try {
-            final HttpEntityEnclosingRequestBase entityBase = ConstructorUtils.invokeConstructor(cls, url);
+            final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             entityBase.setEntity(new StringEntity(stream, contentType));
             return entityBase;
-        } catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch(final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
     
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final Map<String, String> headers, final String json) {
         try {
-            final HttpEntityEnclosingRequestBase entityBase = ConstructorUtils.invokeConstructor(cls, url);
+            final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {
                 headers.forEach((key, value) -> entityBase.addHeader(key, value));
             }
 
             entityBase.setEntity(new StringEntity(json, APPLICATION_JSON));
             return entityBase;
-        } catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch(final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
     
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final Map<String, String> headers, final String stream, final ContentType contentType) {
         try {
-            final HttpEntityEnclosingRequestBase entityBase = ConstructorUtils.invokeConstructor(cls, url);
+            final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {
                 headers.forEach((key, value) -> entityBase.addHeader(key, value));
             }
 
             entityBase.setEntity(new StringEntity(stream, contentType));
             return entityBase;
-        } catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch(final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
     
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final Map<String, String> headers, final Map<String, String> params) {
         try {
-            final HttpEntityEnclosingRequestBase entityBase = ConstructorUtils.invokeConstructor(cls, url);
+            final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {
                 headers.forEach((key, value) -> entityBase.addHeader(key, value));
             }
@@ -208,7 +212,7 @@ abstract class AbstractHttpClient {
             final List<NameValuePair> pairs = covertParams2NVPS(params);
             entityBase.setEntity(new UrlEncodedFormEntity(pairs, charset));
             return entityBase;
-        } catch(final NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+        } catch(final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
@@ -230,8 +234,7 @@ abstract class AbstractHttpClient {
      * @return
      */
     protected HttpResponse getResult(HttpRequestBase request) throws IOException {
-        CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(pool).build();
-        try (CloseableHttpResponse response = httpClient.execute(request)) {
+        try (CloseableHttpResponse response = HTTP_CLIENT.execute(request)) {
             HttpEntity entity = response.getEntity();
             if (entity != null) {
                 StatusLine status = response.getStatusLine();

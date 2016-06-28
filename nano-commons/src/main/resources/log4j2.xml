@@ -26,6 +26,18 @@
   		<appender-ref ref="OUT"/>
   		<appender-ref ref="ERROR"/>
   	</logger>
+    
+    <logger name="org.apache.ibatis.transaction.jdbc" level="error" additivity="false">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    
+    <logger name="com.alibaba.druid.support.logging" level="error" additivity="false">
+        <appender-ref ref="ERROR"/>
+    </logger>
+    
+    <logger name="org.apache.http" level="error" additivity="false">
+        <appender-ref ref="ERROR"/>
+    </logger>
   	
     <root level="debug">  
       	<appender-ref ref="OUT"/>
