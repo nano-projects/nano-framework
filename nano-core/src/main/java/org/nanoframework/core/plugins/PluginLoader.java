@@ -42,7 +42,7 @@ public abstract class PluginLoader {
     private Configure<Plugin> plugins = new Configure<>();
     private Configure<Module> modules = new Configure<>();
 
-    private ServletConfig config;
+    protected ServletConfig config;
 
     public void init(final ServletConfig config) {
         Assert.notNull(config);

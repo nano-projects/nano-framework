@@ -27,9 +27,6 @@ import com.alibaba.fastjson.JSON;
  *
  */
 public class Constants {
-	public static final String PLUGIN_LOADER = "pluginLoader";
-	public static final String MAIN_CONTEXT = "/context.properties";
-	
 	public static final String SERVER_SSL = "server.ssl";
 	public static final String SERVER_PORT = "server.port";
 	public static final String SERVER_SSL_PORT = "server.ssl.port";

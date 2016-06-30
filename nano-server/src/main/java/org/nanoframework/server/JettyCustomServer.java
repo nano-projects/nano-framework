@@ -32,7 +32,6 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.context.ApplicationContext;
@@ -54,7 +53,7 @@ public class JettyCustomServer extends Server {
 	
 	static {
 		try {
-			CONTEXT = PropertiesLoader.load(Constants.MAIN_CONTEXT);
+			CONTEXT = PropertiesLoader.load(ApplicationContext.MAIN_CONTEXT);
 			LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
 		} catch(LoaderException e) { }
 	}

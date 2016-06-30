@@ -16,12 +16,11 @@
 package org.nanoframework.core;
 
 import org.apache.commons.codec.binary.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-
-import junit.framework.Assert;
 
 /**
  * @author yanghe

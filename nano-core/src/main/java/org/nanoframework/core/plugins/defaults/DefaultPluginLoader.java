@@ -15,7 +15,8 @@
  */
 package org.nanoframework.core.plugins.defaults;
 
-import org.nanoframework.commons.util.Constants;
+import org.nanoframework.commons.util.StringUtils;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.plugins.Configure;
 import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.plugins.Plugin;
@@ -36,7 +37,12 @@ public class DefaultPluginLoader extends PluginLoader {
 
 	@Override
 	protected void configProperties(Configure<String> properties) {
-		properties.add(Constants.MAIN_CONTEXT);
+	    final String context = config.getInitParameter(ApplicationContext.CONTEXT);
+	    if(StringUtils.isNotBlank(context)) {
+	        properties.add(context);
+	    } else {
+	        properties.add(ApplicationContext.MAIN_CONTEXT);
+	    }
 	}
 
 	@Override

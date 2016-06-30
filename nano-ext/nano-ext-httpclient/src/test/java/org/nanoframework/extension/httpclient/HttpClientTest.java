@@ -18,12 +18,11 @@ package org.nanoframework.extension.httpclient;
 import java.io.IOException;
 
 import org.apache.http.HttpStatus;
+import org.junit.Assert;
 import org.junit.Test;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 
 import com.google.inject.Guice;
-
-import junit.framework.Assert;
 
 /**
  *
@@ -31,7 +30,7 @@ import junit.framework.Assert;
  * @since
  */
 public class HttpClientTest {
-    
+
     @Test
     public void httpGetTest() throws IOException {
         HttpClient httpClient = Guice.createInjector().getInstance(HttpClient.class);

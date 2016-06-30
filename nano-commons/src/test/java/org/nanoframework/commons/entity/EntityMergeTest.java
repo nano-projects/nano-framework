@@ -15,9 +15,8 @@
  */
 package org.nanoframework.commons.entity;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 /**
  * @author yanghe

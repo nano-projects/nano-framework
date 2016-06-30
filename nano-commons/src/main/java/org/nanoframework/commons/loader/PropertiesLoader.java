@@ -151,12 +151,14 @@ public class PropertiesLoader {
 				String[] ctxs = context.split(";");
 				if(ctxs.length > 0) {
 					for (String ctx : ctxs) {
-						Properties properties = load(ctx);
-						if(properties != null) {
-							PROPERTIES.put(ctx, properties);
-						} else {
-							LOGGER.error(ctx + ": 无法加载此属性文件!");
-						}
+					    if(StringUtils.isNotBlank(ctx)) {
+    						Properties properties = load(ctx);
+    						if(properties != null) {
+    							PROPERTIES.put(ctx, properties);
+    						} else {
+    							LOGGER.error(ctx + ": 无法加载此属性文件!");
+    						}
+					    }
 					}
 				}
 			}

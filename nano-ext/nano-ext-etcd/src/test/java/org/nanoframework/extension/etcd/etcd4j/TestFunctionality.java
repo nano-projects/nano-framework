@@ -264,7 +264,8 @@ public class TestFunctionality {
   public void testWaitTimeout() throws IOException, EtcdException, EtcdAuthenticationException, InterruptedException, TimeoutException {
     EtcdResponsePromise<EtcdKeysResponse> p = etcd.get("etcd4j_test/test").waitForChange().timeout(10, TimeUnit.MILLISECONDS).send();
 
-    EtcdKeysResponse r = p.get();
+//    EtcdKeysResponse r = p.get();
+    p.get();
     // get should have thrown TimeoutException
     fail();
   }

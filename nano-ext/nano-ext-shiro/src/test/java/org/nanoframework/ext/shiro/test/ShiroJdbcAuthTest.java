@@ -26,6 +26,7 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.subject.Subject;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -37,8 +38,6 @@ import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoader;
 import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
 import org.nanoframework.core.plugins.defaults.plugin.ShiroPlugin;
-
-import junit.framework.Assert;
 
 /**
  * @author yanghe

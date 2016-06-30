@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServlet;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.commons.util.Constants;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.plugins.PluginLoader;
 import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
 
@@ -33,7 +33,7 @@ public class DispatcherServlet extends HttpServlet {
 	public void init() throws ServletException {
 		super.init();
 		try {
-			String pluginLoader = this.getInitParameter(Constants.PLUGIN_LOADER);
+			String pluginLoader = this.getInitParameter(ApplicationContext.PLUGIN_LOADER);
 			if(StringUtils.isBlank(pluginLoader)) {
 				if(LOG.isDebugEnabled())
 					LOG.debug("使用默认的插件加载器: " + DefaultPluginLoader.class.getName());

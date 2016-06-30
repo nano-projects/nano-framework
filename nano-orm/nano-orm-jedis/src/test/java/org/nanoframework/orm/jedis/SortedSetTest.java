@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,8 +30,6 @@ import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 
 import com.alibaba.fastjson.TypeReference;
-
-import junit.framework.Assert;
 
 /**
  * @author yanghe

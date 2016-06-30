@@ -19,48 +19,57 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 @Ignore
 public class EtcdNettyClientTest {
 
-  @Test
-  public void testConfig() throws Exception {
-    NioEventLoopGroup evl = new NioEventLoopGroup();
+    @Test
+    public void testConfig() throws Exception {
+        NioEventLoopGroup evl = new NioEventLoopGroup();
 
-    URI uri = URI.create("http://192.168.180.204:2379");
+        URI uri = URI.create("http://192.168.180.204:2379");
 
-    EtcdNettyConfig config = new EtcdNettyConfig()
-        .setConnectTimeout(100)
-        .setSocketChannelClass(NioSocketChannel.class)
-        .setMaxFrameSize(1024 * 1024)
-        .setEventLoopGroup(evl)
-        .setHostName("etcd-infra2");
+        EtcdNettyConfig config = new EtcdNettyConfig().setConnectTimeout(100).setSocketChannelClass(NioSocketChannel.class)
+                .setMaxFrameSize(1024 * 1024).setEventLoopGroup(evl).setHostName("etcd-infra2");
 
-    EtcdNettyClient client = new EtcdNettyClient(config, uri);
-    Bootstrap bootstrap = client.getBootstrap();
+        EtcdNettyClient client = null;
+        try {
+            client = new EtcdNettyClient(config, uri);
+            Bootstrap bootstrap = client.getBootstrap();
 
-    assertEquals(evl, bootstrap.group());
+            assertEquals(evl, bootstrap.group());
 
-    Channel channel = bootstrap.connect(uri.getHost(), uri.getPort()).sync().channel();
+            Channel channel = bootstrap.connect(uri.getHost(), uri.getPort()).sync().channel();
 
-    assertEquals(100, channel.config().getOption(ChannelOption.CONNECT_TIMEOUT_MILLIS).intValue());
-  }
+            assertEquals(100, channel.config().getOption(ChannelOption.CONNECT_TIMEOUT_MILLIS).intValue());
+        } finally {
+            if (client != null) {
+                client.close();
+            }
+        }
+    }
 
-  @Ignore
-  @Test
-  public void testAuth() throws Exception {
-    EtcdClient client = new EtcdClient(
-      "test",
-      "test",
-      URI.create("http://192.168.180.204:2379"));
+    @Ignore
+    @Test
+    public void testAuth() throws Exception {
+        EtcdClient client = null;
+        try {
+            client = new EtcdClient("test", "test", URI.create("http://192.168.180.204:2379"));
+            assertNotNull(client.get("/test/messages").send().get());
+        } finally {
+            if(client != null) {
+                client.close();
+            }
+        }
+    }
 
-    assertNotNull(client.get("/test/messages").send().get());
-  }
-
-  @Ignore
-  @Test(expected = EtcdAuthenticationException.class)
-  public void testAuthFailure() throws Exception {
-    EtcdClient client = new EtcdClient(
-      "test",
-      "test_",
-      URI.create("http://192.168.180.204:2379"));
-
-    client.get("/test/messages").send().get();
-  }
+    @Ignore
+    @Test(expected = EtcdAuthenticationException.class)
+    public void testAuthFailure() throws Exception {
+        EtcdClient client = null;
+        try {
+            client = new EtcdClient("test", "test_", URI.create("http://192.168.180.204:2379"));
+            client.get("/test/messages").send().get();
+        } finally {
+            if(client != null) {
+                client.close();
+            }
+        }
+    }
 }

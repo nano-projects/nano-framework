@@ -23,6 +23,7 @@ import static org.nanoframework.extension.mail.AbstractMailSenderFactory.PORT;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.USERNAME;
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.VALIDATE;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -31,8 +32,6 @@ import org.nanoframework.commons.format.Pattern;
 import org.nanoframework.extension.mail.defaults.DefaultMailSenderFactory;
 
 import com.google.inject.Guice;
-
-import junit.framework.Assert;
 
 /**
  *

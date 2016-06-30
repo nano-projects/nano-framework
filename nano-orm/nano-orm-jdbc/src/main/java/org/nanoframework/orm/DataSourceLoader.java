@@ -47,7 +47,7 @@ public abstract class DataSourceLoader {
 	public static final String JDBC_POOL_TYPE = "JDBC.pool.type";
 	
 	protected List<Module> modules = new ArrayList<>();
-	protected Map<String, Properties> newLoadProperties = new HashMap<>();;
+	protected Map<String, Properties> newLoadProperties = new HashMap<>();
 	
 	public abstract void load();
 	public abstract void toConfig(Properties properties);

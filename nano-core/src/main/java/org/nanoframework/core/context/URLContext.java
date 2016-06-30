@@ -93,7 +93,7 @@ public class URLContext {
 	/** 过滤URI. */
 	public static final boolean filterURI(final String uri) {
 		if(!uri.startsWith(System.getProperty(ApplicationContext.CONTEXT_ROOT)) || 
-		        ObjectCompare.isInList(uri, System.getProperty(ApplicationContext.CONTEXT_FILTER).split(";"))) {
+		        ObjectCompare.isInListByRegEx(uri, System.getProperty(ApplicationContext.CONTEXT_FILTER).split(";"))) {
 			return false;
 		}
 		
