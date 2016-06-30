@@ -61,9 +61,9 @@ abstract class AbstractHttpClient {
     /** 超时时间单位. */
     protected static final String DEFAULT_TIME_UNIT = "MILLISECONDS";
     /** 最大连接数 */
-    protected static final String DEFAULT_MAX_TOTAL = "1000";
+    protected static final String DEFAULT_MAX_TOTAL = "1024";
     /** 最大并发连接数. */
-    protected static final String DEFAULT_MAX_PER_ROUTE = "500";
+    protected static final String DEFAULT_MAX_PER_ROUTE = "512";
     /** 字符集. */
     protected static final String DEFAULT_CHARSET = "UTF-8";
     
