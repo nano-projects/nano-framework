@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.nanoframework.orm.jedis.sharded.RedisClientImpl;
+
 import com.alibaba.fastjson.TypeReference;
 import com.google.inject.ImplementedBy;
 
@@ -61,18 +63,6 @@ public interface RedisClient {
 		/** PUSH列表时的策略，以VALUE为基准 */
 		VALUE;
 	}
-	
-	/** 默认分隔符 */
-	final String DEFAULT_SEPARATOR = ",";
-	
-	/** 部分操作的返回结果，表示操作成功 */
-	final String OK = "OK";
-	
-	/** 部分操作的返回结果，表示操作成功 */
-	final long SUCCESS = 1;
-	
-	final String INF0 = "-inf";
-	final String INF1 = "+inf";
 	
 	/**
 	 * 删除给定的一个或多个 key 。
@@ -280,28 +270,27 @@ public interface RedisClient {
 	 * 
 	 * @param key 散列Key
 	 * @param value 散列值
-	 * @return 设置成功，返回 1 。设置失败，返回 0 。
+	 * @return 设置成功，返回 true 。设置失败，返回 false。
 	 */
-	long setByNX(String key, String value);
+	boolean setByNX(String key, String value);
 	
 	/**
 	 * 将对象 value 关联到 key, 当且仅当给定 key 不存在时.
 	 * 
 	 * @param key 散列Key
 	 * @param value 散列值
-	 * @return 设置成功，返回 1 。设置失败，返回 0 。
+	 * @return 设置成功，返回 true。设置失败，返回 false。
 	 */
-	long setByNX(String key, Object value);
+	boolean setByNX(String key, Object value);
 	
 	/**
-	 * 同时设置一个或多个 key-value 对, 当且仅当所有给定 key 都不存在。
-	 * 即使只有一个给定 key 已存在， MSETNX 也会拒绝执行所有给定 key 的设置操作。
-	 * 
+	 * 同时设置一个或多个 key-value 对, 当且仅当所有给定 key 都不存在.
+	 * 即使只有一个给定 key 已存在， MSETNX 也会拒绝执行所有给定 key 的设置操作.
+	 * 在Cluster模式下，存在一个给定的key时，剩下不存在的key也会被设置成功.
 	 * @param map 散列Key-Value映射表
-	 * @return 设置成功，返回 1 。设置失败，返回 0 。返回Key与结果对应的映射表
-	 * 
+	 * @return 设置成功，返回 true。设置失败，返回 false。返回Key与结果对应的映射表
 	 */
-	Map<String, Long> setByNX(Map<String, Object> map);
+	Map<String, Boolean> setByNX(Map<String, Object> map);
 	
 	/**
 	 * 将字符串值 value 关联到 key, 使用默认的时间进行生命周期的设置。
@@ -510,7 +499,7 @@ public interface RedisClient {
 	 * 同时将多个 field-value (域-值)对设置到哈希表 key 中 ，当且仅当域 field 不存在。<br>
 	 * 若域 field 已经存在，该操作无效。<br>
 	 * 如果 key 不存在，一个新哈希表被创建并执行 HSETNX 命令。<br>
-	 * 
+	 * 在Cluster模式下，即使存在一个给定的field，其他field也将写入成功.
 	 * @param key
 	 * @param map
 	 * @return 设置成功，返回 true 。如果给定域已经存在且没有操作被执行，返回 false 。
@@ -662,9 +651,9 @@ public interface RedisClient {
 	
 	/**
 	 * 
-	 * @param source
-	 * @param destination
-	 * @param timeout
+	 * @param source 源列表
+	 * @param destination 目标列表
+	 * @param timeout 超时时间(秒)
 	 * @param type
 	 * @return
 	 * 
@@ -859,36 +848,36 @@ public interface RedisClient {
 	Map<String, Boolean> push(String key, Map<String, Object> scanMap, Mark push, Mark policy);
 	
 	/**
-	 * 
+	 * 将一个或多个值插入到已存在的列表头部/尾部，列表不存在时操作无效.
 	 * @param key
 	 * @param values
 	 * @param push
 	 */
-	void pushx(String key, String[] values, Mark push);
+	long pushx(String key, String[] values, Mark push);
 	
 	/**
-	 * 
+	 * 将一个或多个值插入到已存在的列表头部/尾部，列表不存在时操作无效.
 	 * @param key
 	 * @param value
 	 * @param push
 	 */
-	void pushx(String key, String value, Mark push);
+	long pushx(String key, String value, Mark push);
 	
 	/**
-	 * 
+	 * 将一个或多个值插入到已存在的列表头部/尾部，列表不存在时操作无效.
 	 * @param key
 	 * @param values
 	 * @param push
 	 */
-	void pushx(String key, Object[] values, Mark push);
+	long pushx(String key, Object[] values, Mark push);
 	
 	/**
-	 * 
+	 * 将一个或多个值插入到已存在的列表头部/尾部，列表不存在时操作无效.
 	 * @param key
 	 * @param value
 	 * @param push
 	 */
-	void pushx(String key, Object value, Mark push);
+	long pushx(String key, Object value, Mark push);
 	
 	/**
 	 * 返回列表 key 中指定区间内的元素，区间以偏移量 start 和 end 指定。<br>
@@ -1023,7 +1012,7 @@ public interface RedisClient {
 	 * @param value
 	 * @return 
 	 */
-	String lset(String key, int index, String value);
+	boolean lset(String key, int index, String value);
 	
 	/**
 	 * 
@@ -1034,17 +1023,17 @@ public interface RedisClient {
 	 * 
 	 * @see #lset(String, int, String)
 	 */
-	<T> T lset(String key, int index, T value, TypeReference<T> type);
+	boolean lset(String key, int index, Object value);
 	
 	/**
 	 * 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
 	 * 
 	 * @param key
 	 * @param start
-	 * @param stop
+	 * @param end
 	 * @return 
 	 */
-	String ltrim(String key, int start, int stop);
+	boolean ltrim(String key, int start, int end);
 	
 	/**
 	 * 将一个或多个 member 元素加入到集合 key 当中，已经存在于集合的 member 元素将被忽略。<br>
@@ -1413,10 +1402,15 @@ public interface RedisClient {
 	 */
 	long zadd(String key, double score, String member);
 	
-	<T> long zadd(String key, double score, T member);
+	long zadd(String key, double score, Object member);
 	
-	<T> long zadd(String key, Map<T, Double> values);
+	long zadd(String key, Map<Object, Double> values);
 	
+	/**
+	 * key存在的时候，返回有序集的元素个数，否则返回0.
+	 * @param key
+	 * @return
+	 */
 	long zcard(String key);
 	
 	/**
@@ -1561,7 +1555,7 @@ public interface RedisClient {
 	 */
 	long zremrangeByScore(String key, double min, double max);
 	
-	long zremrangeByScore(String key, String min, String max);
+	long zremrangeByScore(String key, String start, String end);
 	
 	Set<String> zrevrange(String key, long start, long end);
 	

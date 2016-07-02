@@ -40,7 +40,7 @@
         <tomcat-jdbc-version>8.0.33</tomcat-jdbc-version>
         <netty-version>4.1.0.Beta8</netty-version>
         <sso-version>2.0</sso-version>
-        <jedis-version>2.7.2</jedis-version>
+        <jedis-version>2.8.1</jedis-version>
         <servlet-api-version>3.0.1</servlet-api-version>
         <servlet-jsp-api-version>2.2.1</servlet-jsp-api-version>
         <servlet-jsp-jstl-api-version>1.2.1</servlet-jsp-jstl-api-version>

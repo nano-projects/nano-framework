@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.orm.jedis.sharded.RedisClientImpl;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -30,7 +31,7 @@ import com.google.common.collect.Sets;
  * @since 1.3.10
  */
 public class RedisClientExtImpl extends RedisClientImpl implements RedisClientExt {
-    private final String specSource = config.getExtendProperties().getProperty("redis.specSource");
+    private final String specSource = config.getExtendProperties().getProperty(config.getRedisType());
     
     public RedisClientExtImpl(String type) {
         super(type);

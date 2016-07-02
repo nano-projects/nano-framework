@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -40,15 +40,18 @@ public class JedisPlugin implements Plugin {
 	@Override
 	public boolean load() throws Throwable {
 		try {
-			Class<?> redisClientPool = Class.forName("org.nanoframework.orm.jedis.RedisClientPool");
-			long time = System.currentTimeMillis();
-			Object pool = redisClientPool.getField("POOL").get(redisClientPool);
+			final Class<?> redisClientPool = Class.forName("org.nanoframework.orm.jedis.RedisClientPool");
+			final long time = System.currentTimeMillis();
+			final Object pool = redisClientPool.getField("POOL").get(redisClientPool);
 			pool.getClass().getMethod("initRedisConfig", List.class).invoke(pool, properties);
 			pool.getClass().getMethod("createJedis").invoke(pool);
+			pool.getClass().getMethod("createJedisCluster").invoke(pool);
+			pool.getClass().getMethod("bindGlobal").invoke(pool);
 			LOG.info("加载Redis配置, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-		} catch(Throwable e) {
-			if(!(e instanceof ClassNotFoundException))
+		} catch(final Throwable e) {
+			if(!(e instanceof ClassNotFoundException)) {
 				throw new PluginLoaderException(e.getMessage(), e);
+			}
 			
 			return false;
 		}
@@ -57,11 +60,11 @@ public class JedisPlugin implements Plugin {
 	}
 
 	@Override
-	public void config(ServletConfig config) throws Throwable {
-		String redis = config.getInitParameter(DEFAULT_REDIS_PARAMETER_NAME);
+	public void config(final ServletConfig config) throws Throwable {
+		final String redis = config.getInitParameter(DEFAULT_REDIS_PARAMETER_NAME);
 		if(StringUtils.isNotBlank(redis)) {
 			properties = new ArrayList<>();
-			String[] paths = redis.split(";");
+			final String[] paths = redis.split(";");
 			for(String path : paths) {
 				properties.add(PropertiesLoader.load(path));
 			}

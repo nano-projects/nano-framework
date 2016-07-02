@@ -20,6 +20,7 @@ import java.util.Properties;
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.util.StringUtils;
+import org.nanoframework.orm.jedis.exception.NotFoundExtendException;
 
 /**
  * RedisClient的连接配置.
@@ -27,12 +28,29 @@ import org.nanoframework.commons.util.StringUtils;
  * @date 2015年7月27日 下午10:13:55 
  */
 public class RedisConfig extends BaseEntity {
+    public static final String REDIS = "redis.";
+    public static final String ROOT = "redis.root";
+    public static final String REDIS_TYPE = "redisType";
+    public static final String HOST_NAMES = "hostNames";
+    public static final String MAX_TOTAL = "maxTotal";
+    public static final String MAX_IDLE = "maxIdle";
+    public static final String MIN_IDLE = "minIdle";
+    public static final String TIME_OUT = "timeOut";
+    public static final String TEST_ON_BORROW = "testOnBorrow";
+    public static final String EXPIRE_TIME = "expireTime";
+    public static final String EXTEND = "extend";
+    public static final String EXTEND_RESOURCE = "extendResource";
+    public static final String EXTEND_PROPERTIES = "extendProperties";
+    public static final String CLUSTER = "cluster";
+    public static final String MAX_REDIRECTIONS = "maxRedirections";
+    
     private static final long serialVersionUID = -6765559689700998419L;
 
     private String redisType;
     private String hostNames;
     private Integer maxTotal;
     private Integer maxIdle;
+    private Integer minIdle;
     private Integer timeOut;
     private Boolean testOnBorrow;
     private Integer expireTime;
@@ -54,19 +72,18 @@ public class RedisConfig extends BaseEntity {
      * @since 1.3.10
      */
     private Properties extendProperties;
-
-    public static final String REDIS = "redis.";
-    public static final String ROOT = "redis.root";
-    public static final String REDIS_TYPE = "redisType";
-    public static final String HOST_NAMES = "hostNames";
-    public static final String MAX_TOTAL = "maxTotal";
-    public static final String MAX_IDLE = "maxIdle";
-    public static final String TIME_OUT = "timeOut";
-    public static final String TEST_ON_BORROW = "testOnBorrow";
-    public static final String EXPIRE_TIME = "expireTime";
-    public static final String EXTEND = "extend";
-    public static final String EXTEND_RESOURCE = "extendResource";
-    public static final String EXTEND_PROPERTIES = "extendProperties";
+    
+    /**
+     * JedisCluster模式.
+     * @since 1.3.12
+     */
+    private Boolean cluster;
+    
+    /**
+     * 
+     * @since 1.3.12
+     */
+    private Integer maxRedirections;
 
     private RedisConfig() {
     }
@@ -107,11 +124,19 @@ public class RedisConfig extends BaseEntity {
         this.maxIdle = maxIdle;
     }
 
+    public Integer getMinIdle() {
+        return minIdle;
+    }
+
+    public void setMinIdle(final Integer minIdle) {
+        this.minIdle = minIdle;
+    }
+
     public Integer getTimeOut() {
         return timeOut;
     }
 
-    public void setTimeOut(Integer timeOut) {
+    public void setTimeOut(final Integer timeOut) {
         this.timeOut = timeOut;
     }
 
@@ -135,7 +160,7 @@ public class RedisConfig extends BaseEntity {
         return extend;
     }
     
-    public void setExtend(String extend) {
+    public void setExtend(final String extend) {
         if(StringUtils.isNotBlank(extend)) {
             try {
                 Class.forName(extend);
@@ -169,7 +194,24 @@ public class RedisConfig extends BaseEntity {
         return extendProperties;
     }
     
-    public void setExtendProperties(Properties extendProperties) {
+    public void setExtendProperties(final Properties extendProperties) {
         this.extendProperties = extendProperties;
     }
+
+    public Boolean getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(final Boolean cluster) {
+        this.cluster = cluster;
+    }
+
+    public Integer getMaxRedirections() {
+        return maxRedirections;
+    }
+
+    public void setMaxRedirections(final Integer maxRedirections) {
+        this.maxRedirections = maxRedirections;
+    }
+    
 }

@@ -90,7 +90,12 @@ public class URLContext {
 		return this;
 	}
 	
-	/** 过滤URI. */
+	/**
+	 * 过滤URI.
+	 * @param uri Http request URI
+	 * @return
+	 */
+	@Deprecated
 	public static final boolean filterURI(final String uri) {
 		if(!uri.startsWith(System.getProperty(ApplicationContext.CONTEXT_ROOT)) || 
 		        ObjectCompare.isInListByRegEx(uri, System.getProperty(ApplicationContext.CONTEXT_FILTER).split(";"))) {
