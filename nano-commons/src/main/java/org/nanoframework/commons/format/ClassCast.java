@@ -22,6 +22,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.ObjectCompare;
 import org.nanoframework.commons.util.ObjectUtils;
 
@@ -292,13 +293,21 @@ public final class ClassCast {
                         return objs;
                     } else if (value instanceof String) {
                         final Class<?> cls = Class.forName(typeName);
+                        if (cls == String.class) {
+                            return value;
+                        }
+                        
                         final TypeReference<Object> type = new TypeReference<Object>() {
                             public Type getType() {
                                 return cls;
                             };
                         };
                         
-                        return JSON.parseObject((String) value, type);
+                        try {
+                            return JSON.parseObject((String) value, type);
+                        } catch (final Throwable e) {
+                            LoggerFactory.getLogger(ClassCast.class).error("ClassCast value error: " + value, e);
+                        }
                     }
 
                     return value;
