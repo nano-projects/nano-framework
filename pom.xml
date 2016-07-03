@@ -23,7 +23,7 @@
         <maven-findbugs-contrib-plugin.version>6.2.1</maven-findbugs-contrib-plugin.version>
         <maven-findbugs-security-plugin.version>1.4.1</maven-findbugs-security-plugin.version>
         <coveralls-maven-plugin.version>4.2.0</coveralls-maven-plugin.version>
-        <cobertura-maven-plugin.version>2.7.0</cobertura-maven-plugin.version>
+        <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
 
         <junit-version>4.12</junit-version>
         <slf4j-version>1.7.7</slf4j-version>
@@ -537,7 +537,7 @@
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>${coveralls-maven-plugin.version}</version>
                 <configuration>
-                    <repoToken>NPDKffpjRjdTvbnq1pZ76uJGPmjJOkIL2</repoToken>
+                    <repoToken>yourcoverallsprojectrepositorytoken</repoToken>
                 </configuration>
             </plugin>
             <plugin>

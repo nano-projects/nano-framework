@@ -67,7 +67,7 @@ public class RedisClientPool {
     private static final int DEFAULT_MAX_TOTAL = 100;
     private static final int DEFAULT_MAX_IDLE = 30;
     private static final int DEFAULT_MIN_IDLE = 10;
-    private static final boolean DEFAULT_TEST_ON_BORROW = false;
+    private static final Boolean DEFAULT_TEST_ON_BORROW = Boolean.FALSE;
     
     // REDIS连接池，可以对应的是操作类型
     private Map<String, ShardedJedisPool> jedisPool = Maps.newHashMap();
@@ -183,7 +183,7 @@ public class RedisClientPool {
                     if(RedisClientImpl.class.isAssignableFrom(cls)) {
                         redisClient = ReflectUtils.newInstance(extend, conf.getRedisType());
                     } else {
-                        throw new RedisClientException("The extend class must inherit <" + RedisClientImpl.class + ">");
+                        throw new RedisClientException("The extend class must inherit <" + RedisClientImpl.class.getName() + '>');
                     }
                 } catch(final ClassNotFoundException e) {
                     throw new RedisClientException(e);
@@ -198,7 +198,7 @@ public class RedisClientPool {
                     if(RedisClusterClientImpl.class.isAssignableFrom(cls)) {
                         redisClient = ReflectUtils.newInstance(extend, conf.getRedisType());
                     } else {
-                        throw new RedisClientException("The extend class must inherit <" + RedisClusterClientImpl.class + ">");
+                        throw new RedisClientException("The extend class must inherit <" + RedisClusterClientImpl.class.getName() + '>');
                     }
                 } catch(final ClassNotFoundException e) {
                     throw new RedisClientException(e);
