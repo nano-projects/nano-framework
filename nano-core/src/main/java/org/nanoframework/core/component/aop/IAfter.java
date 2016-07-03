@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,5 +22,5 @@ import org.aopalliance.intercept.MethodInvocation;
  * @date 2015年11月26日 上午11:14:28
  */
 public interface IAfter {
-	void after(MethodInvocation invocation, Object result);
+    void after(MethodInvocation invocation, Object result);
 }

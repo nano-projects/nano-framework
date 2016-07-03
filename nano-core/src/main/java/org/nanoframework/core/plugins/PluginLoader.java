@@ -82,7 +82,7 @@ public abstract class PluginLoader {
             if (logger.isInfoEnabled()) {
                 logger.info("加载Module: " + module.getClass().getName());
             }
-            
+
             module.config(config);
             loadedModules.addAll(module.load());
         }

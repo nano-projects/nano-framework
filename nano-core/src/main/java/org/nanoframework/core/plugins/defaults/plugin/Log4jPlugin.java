@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,35 +29,35 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  * @date 2015年11月17日 上午9:06:59
  */
 public class Log4jPlugin implements Plugin {
-	public static final String DEFAULT_LOG4J_PARAMETER_NAME = "log4j";
-	private String log4j;
-	
-	@Override
-	public boolean load() throws Throwable {
-		if(StringUtils.isNotBlank(log4j)) {
-			URL url = this.getClass().getResource(log4j);
-			if (url != null) {
-				try {
-					Class<?> cls = Class.forName("org.apache.log4j.xml.DOMConfigurator");
-					Method method = cls.getMethod("configure", URL.class);
-					method.invoke(cls, url);
-				} catch(Exception e) {
-					if(!(e instanceof ClassNotFoundException))
-						throw new PluginLoaderException(e.getMessage(), e);
-					
-					return false;
-				}
-			}
-		} else {
-			return false;
-		}
-		
-		return true;
-	}
+    public static final String DEFAULT_LOG4J_PARAMETER_NAME = "log4j";
+    private String log4j;
 
-	@Override
-	public void config(ServletConfig config) throws Throwable {
-		log4j = config.getInitParameter(DEFAULT_LOG4J_PARAMETER_NAME);
-	}
+    @Override
+    public boolean load() throws Throwable {
+        if (StringUtils.isNotBlank(log4j)) {
+            URL url = this.getClass().getResource(log4j);
+            if (url != null) {
+                try {
+                    Class<?> cls = Class.forName("org.apache.log4j.xml.DOMConfigurator");
+                    Method method = cls.getMethod("configure", URL.class);
+                    method.invoke(cls, url);
+                } catch (Exception e) {
+                    if (!(e instanceof ClassNotFoundException))
+                        throw new PluginLoaderException(e.getMessage(), e);
+
+                    return false;
+                }
+            }
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void config(ServletConfig config) throws Throwable {
+        log4j = config.getInitParameter(DEFAULT_LOG4J_PARAMETER_NAME);
+    }
 
 }

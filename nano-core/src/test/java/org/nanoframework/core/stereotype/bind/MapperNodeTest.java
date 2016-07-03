@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -33,19 +33,19 @@ import org.nanoframework.core.context.ApplicationContext;
  */
 public class MapperNodeTest {
 
-	@Test
-	public void addNodeTest() {
-		System.setProperty(ApplicationContext.CONTEXT_ROOT, "/jetty");
-		Map<RequestMethod, RequestMapper> mapper = new HashMap<>();
-		mapper.put(RequestMethod.GET, RequestMapper.create().setObject(this).setClz(this.getClass()));
-		MapperNode.addLeaf("/jetty/test/{hello}/get", mapper);
-		MapperNode.addLeaf("/jetty/test/{hello}", mapper);
-		MapperNode.addLeaf("/jetty/test/{hello}/save", mapper);
-		MapperNode.addLeaf("/jetty/test/{hello}/put", mapper);
-		MapperNode.addLeaf("/jetty/test/{hello}/put/{id}", mapper);
-		MapperNode.addLeaf("/jetty/test/hello/put/{id}", mapper);
-		RequestMapper _mapper = MapperNode.get("/jetty/test/hello/put/123qweasdzxc", RequestMethod.GET);
-		assertNotNull(_mapper);
-		assertEquals("123qweasdzxc", _mapper.getParam().get("id"));
-	}
+    @Test
+    public void addNodeTest() {
+        System.setProperty(ApplicationContext.CONTEXT_ROOT, "/jetty");
+        Map<RequestMethod, RequestMapper> mapper = new HashMap<>();
+        mapper.put(RequestMethod.GET, RequestMapper.create().setObject(this).setClz(this.getClass()));
+        MapperNode.addLeaf("/jetty/test/{hello}/get", mapper);
+        MapperNode.addLeaf("/jetty/test/{hello}", mapper);
+        MapperNode.addLeaf("/jetty/test/{hello}/save", mapper);
+        MapperNode.addLeaf("/jetty/test/{hello}/put", mapper);
+        MapperNode.addLeaf("/jetty/test/{hello}/put/{id}", mapper);
+        MapperNode.addLeaf("/jetty/test/hello/put/{id}", mapper);
+        RequestMapper _mapper = MapperNode.get("/jetty/test/hello/put/123qweasdzxc", RequestMethod.GET);
+        assertNotNull(_mapper);
+        assertEquals("123qweasdzxc", _mapper.getParam().get("id"));
+    }
 }

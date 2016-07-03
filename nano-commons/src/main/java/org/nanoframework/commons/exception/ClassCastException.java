@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,25 +16,25 @@
 package org.nanoframework.commons.exception;
 
 public class ClassCastException extends ExtensionRuntimeException {
-	private static final long serialVersionUID = 3778728285493433413L;
-	
-	public ClassCastException() {
+    private static final long serialVersionUID = 3778728285493433413L;
 
-	}
-	
-	public ClassCastException(String message) {
-		super(message);
-		
-	}
-	
-	public ClassCastException(String message, Throwable cause) {
-		super(message, cause);
-		
-	}
-	
-	@Override
-	public String getMessage() {
-		return "加载异常: " + super.getMessage();
-	}
-	
+    public ClassCastException() {
+
+    }
+
+    public ClassCastException(String message) {
+        super(message);
+
+    }
+
+    public ClassCastException(String message, Throwable cause) {
+        super(message, cause);
+
+    }
+
+    @Override
+    public String getMessage() {
+        return "加载异常: " + super.getMessage();
+    }
+
 }

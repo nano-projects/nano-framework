@@ -1,11 +1,11 @@
-/**
- * Copyright 2015- the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -17,7 +17,6 @@ package org.nanoframework.core.component.exception;
 
 import org.nanoframework.commons.exception.ExtensionRuntimeException;
 
-
 /**
  * 绑定参数异常类
  * 
@@ -26,25 +25,25 @@ import org.nanoframework.commons.exception.ExtensionRuntimeException;
  *
  */
 public class BindRequestParamException extends ExtensionRuntimeException {
-	private static final long serialVersionUID = 2491490102693997402L;
+    private static final long serialVersionUID = 2491490102693997402L;
 
-	public BindRequestParamException() {
+    public BindRequestParamException() {
 
-	}
+    }
 
-	public BindRequestParamException(String message) {
-		super(message);
+    public BindRequestParamException(String message) {
+        super(message);
 
-	}
+    }
 
-	public BindRequestParamException(String message, Throwable cause) {
-		super(message, cause);
+    public BindRequestParamException(String message, Throwable cause) {
+        super(message, cause);
 
-	}
-	
-	@Override
-	public String getMessage() {
-		return "绑定参数异常: " + super.getMessage();
-	}
-	
+    }
+
+    @Override
+    public String getMessage() {
+        return "绑定参数异常: " + super.getMessage();
+    }
+
 }

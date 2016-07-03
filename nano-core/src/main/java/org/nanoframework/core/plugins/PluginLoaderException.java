@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,22 +20,22 @@ package org.nanoframework.core.plugins;
  * @date 2015年10月30日 下午11:00:03
  */
 public class PluginLoaderException extends RuntimeException {
-	private static final long serialVersionUID = -3388677411268525198L;
+    private static final long serialVersionUID = -3388677411268525198L;
 
-	public PluginLoaderException() {
-		super();
-	}
+    public PluginLoaderException() {
+        super();
+    }
 
-	public PluginLoaderException(String message) {
-		super(message);
-	}
+    public PluginLoaderException(String message) {
+        super(message);
+    }
 
-	public PluginLoaderException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public PluginLoaderException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public PluginLoaderException(Throwable cause) {
-		super(cause);
-	}
+    public PluginLoaderException(Throwable cause) {
+        super(cause);
+    }
 
 }

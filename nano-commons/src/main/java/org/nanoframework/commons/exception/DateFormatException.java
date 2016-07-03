@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,26 +16,26 @@
 package org.nanoframework.commons.exception;
 
 public class DateFormatException extends RuntimeException {
-	private static final long serialVersionUID = 4883777612565681931L;
+    private static final long serialVersionUID = 4883777612565681931L;
 
-	public DateFormatException() {
-		super();
-	}
+    public DateFormatException() {
+        super();
+    }
 
-	public DateFormatException(String message) {
-		super(message);
-	}
+    public DateFormatException(String message) {
+        super(message);
+    }
 
-	public DateFormatException(Throwable cause) {
-		super(cause);
-	}
+    public DateFormatException(Throwable cause) {
+        super(cause);
+    }
 
-	public DateFormatException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public DateFormatException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	@Override
-	public String getMessage() {
-		return "时间转换异常: " + super.getMessage();
-	}
+    @Override
+    public String getMessage() {
+        return "时间转换异常: " + super.getMessage();
+    }
 }

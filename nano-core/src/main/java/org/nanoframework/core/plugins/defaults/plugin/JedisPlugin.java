@@ -33,41 +33,41 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  * @date 2015年10月30日 下午11:23:52
  */
 public class JedisPlugin implements Plugin {
-	private Logger LOG = LoggerFactory.getLogger(JedisPlugin.class);
-	public static final String DEFAULT_REDIS_PARAMETER_NAME = "redis";
-	private List<Properties> properties;
-	
-	@Override
-	public boolean load() throws Throwable {
-		try {
-			final Class<?> redisClientPool = Class.forName("org.nanoframework.orm.jedis.RedisClientPool");
-			final long time = System.currentTimeMillis();
-			final Object pool = redisClientPool.getField("POOL").get(redisClientPool);
-			pool.getClass().getMethod("initRedisConfig", List.class).invoke(pool, properties);
-			pool.getClass().getMethod("createJedis").invoke(pool);
-			pool.getClass().getMethod("createJedisCluster").invoke(pool);
-			pool.getClass().getMethod("bindGlobal").invoke(pool);
-			LOG.info("加载Redis配置, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-		} catch(final Throwable e) {
-			if(!(e instanceof ClassNotFoundException)) {
-				throw new PluginLoaderException(e.getMessage(), e);
-			}
-			
-			return false;
-		}
-		
-		return true;
-	}
+    private Logger LOG = LoggerFactory.getLogger(JedisPlugin.class);
+    public static final String DEFAULT_REDIS_PARAMETER_NAME = "redis";
+    private List<Properties> properties;
 
-	@Override
-	public void config(final ServletConfig config) throws Throwable {
-		final String redis = config.getInitParameter(DEFAULT_REDIS_PARAMETER_NAME);
-		if(StringUtils.isNotBlank(redis)) {
-			properties = new ArrayList<>();
-			final String[] paths = redis.split(";");
-			for(String path : paths) {
-				properties.add(PropertiesLoader.load(path));
-			}
-		}
-	}
+    @Override
+    public boolean load() throws Throwable {
+        try {
+            final Class<?> redisClientPool = Class.forName("org.nanoframework.orm.jedis.RedisClientPool");
+            final long time = System.currentTimeMillis();
+            final Object pool = redisClientPool.getField("POOL").get(redisClientPool);
+            pool.getClass().getMethod("initRedisConfig", List.class).invoke(pool, properties);
+            pool.getClass().getMethod("createJedis").invoke(pool);
+            pool.getClass().getMethod("createJedisCluster").invoke(pool);
+            pool.getClass().getMethod("bindGlobal").invoke(pool);
+            LOG.info("加载Redis配置, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+        } catch (final Throwable e) {
+            if (!(e instanceof ClassNotFoundException)) {
+                throw new PluginLoaderException(e.getMessage(), e);
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void config(final ServletConfig config) throws Throwable {
+        final String redis = config.getInitParameter(DEFAULT_REDIS_PARAMETER_NAME);
+        if (StringUtils.isNotBlank(redis)) {
+            properties = new ArrayList<>();
+            final String[] paths = redis.split(";");
+            for (String path : paths) {
+                properties.add(PropertiesLoader.load(path));
+            }
+        }
+    }
 }

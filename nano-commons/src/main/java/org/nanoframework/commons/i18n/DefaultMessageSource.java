@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 		http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -30,110 +30,112 @@ import org.nanoframework.commons.util.StringUtils;
  * @date 2016年3月5日 下午3:13:10
  */
 public class DefaultMessageSource implements MessageSource {
-	private static final ConcurrentMap<Locale, Properties> MESSAGE = new ConcurrentHashMap<>();
-	public static final String DEFAULT_PREFIX_MESSAGE = "/messages/messages";
-	public static final String PROPERITES_SUFFIX = ".properties";
-	private final Object LOCK = new Object();
-	private final MessageFactory messageFactory;
-	private Locale locale;
-	
-	protected DefaultMessageSource() {
-	    this(Locale.getDefault());
-	}
-	
-	protected DefaultMessageSource(Locale locale) {
-		this.locale = locale == null ? Locale.ROOT : locale;
-		messageFactory = ParameterizedMessageFactory.INSTANCE;
-		load(this.locale);
-	}
-	
-	protected Properties load(final Locale locale) {
-		Properties properties;
-		if((properties = MESSAGE.get(locale)) == null) {
-			synchronized (LOCK) {
-				if((properties = MESSAGE.get(locale)) == null) {
-					properties = PropertiesLoader.load(DEFAULT_PREFIX_MESSAGE + (StringUtils.isEmpty(locale.getLanguage()) ? "" : '_' + locale.getLanguage()) + (StringUtils.isEmpty(locale.getCountry()) ? "" : '_' + locale.getCountry()) + PROPERITES_SUFFIX);
-					MESSAGE.put(locale, properties);
-				}
-			}
-		}
-		
-		return properties;
-	}
-	
-	@Override
-	public String getMessage(String code, String defaultMessage) {
-		try {
-			return formatter(MESSAGE.get(locale).getProperty(code));
-		} catch(Throwable e) {
-			return defaultMessage;
-		}
-	}
+    private static final ConcurrentMap<Locale, Properties> MESSAGE = new ConcurrentHashMap<>();
+    public static final String DEFAULT_PREFIX_MESSAGE = "/messages/messages";
+    public static final String PROPERITES_SUFFIX = ".properties";
+    private final Object LOCK = new Object();
+    private final MessageFactory messageFactory;
+    private Locale locale;
 
-	@Override
-	public String getMessage(String code, String defaultMessage, Locale locale) {
-		try {
-			return formatter(load(locale).getProperty(code));
-		} catch(Throwable e) {
-			return defaultMessage;
-		}
-	}
-	
-	@Override
-	public String getMessage(String code, Object[] args, String defaultMessage) {
-		try {
-			return formatter(MESSAGE.get(locale).getProperty(code), args);
-		} catch(Throwable e) {
-			return defaultMessage;
-		}
-	}
+    protected DefaultMessageSource() {
+        this(Locale.getDefault());
+    }
 
-	@Override
-	public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
-		try {
-			return formatter(load(locale).getProperty(code), args);
-		} catch(Throwable e) {
-			return defaultMessage;
-		}
-	}
+    protected DefaultMessageSource(Locale locale) {
+        this.locale = locale == null ? Locale.ROOT : locale;
+        messageFactory = ParameterizedMessageFactory.INSTANCE;
+        load(this.locale);
+    }
 
-	@Override
-	public String getMessage(String code) throws NoSuchMessageException {
-		try {
-			return formatter(MESSAGE.get(locale).getProperty(code));
-		} catch(Throwable e) {
-			throw new NoSuchMessageException(code);
-		}
-	}
-	
-	@Override
-	public String getMessage(String code, Object[] args) throws NoSuchMessageException {
-		try {
-			return formatter(MESSAGE.get(locale).getProperty(code), args);
-		} catch(Throwable e) {
-			throw new NoSuchMessageException(code);
-		}
-	}
+    protected Properties load(final Locale locale) {
+        Properties properties;
+        if ((properties = MESSAGE.get(locale)) == null) {
+            synchronized (LOCK) {
+                if ((properties = MESSAGE.get(locale)) == null) {
+                    properties = PropertiesLoader
+                            .load(DEFAULT_PREFIX_MESSAGE + (StringUtils.isEmpty(locale.getLanguage()) ? "" : '_' + locale.getLanguage())
+                                    + (StringUtils.isEmpty(locale.getCountry()) ? "" : '_' + locale.getCountry()) + PROPERITES_SUFFIX);
+                    MESSAGE.put(locale, properties);
+                }
+            }
+        }
 
-	@Override
-	public String getMessage(String code, Locale locale) throws NoSuchMessageException {
-		try {
-			return formatter(load(locale).getProperty(code));
-		} catch(Throwable e) {
-			throw new NoSuchMessageException(code);
-		}
-	}
+        return properties;
+    }
 
-	@Override
-	public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
-		try {
-			return formatter(load(locale).getProperty(code), args);
-		} catch(Throwable e) {
-			throw new NoSuchMessageException(code);
-		}
-	}
+    @Override
+    public String getMessage(String code, String defaultMessage) {
+        try {
+            return formatter(MESSAGE.get(locale).getProperty(code));
+        } catch (Throwable e) {
+            return defaultMessage;
+        }
+    }
 
-	protected String formatter(final String message, Object... args) {
-	    return messageFactory.newMessage(message, args).getFormattedMessage();
-	}
+    @Override
+    public String getMessage(String code, String defaultMessage, Locale locale) {
+        try {
+            return formatter(load(locale).getProperty(code));
+        } catch (Throwable e) {
+            return defaultMessage;
+        }
+    }
+
+    @Override
+    public String getMessage(String code, Object[] args, String defaultMessage) {
+        try {
+            return formatter(MESSAGE.get(locale).getProperty(code), args);
+        } catch (Throwable e) {
+            return defaultMessage;
+        }
+    }
+
+    @Override
+    public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+        try {
+            return formatter(load(locale).getProperty(code), args);
+        } catch (Throwable e) {
+            return defaultMessage;
+        }
+    }
+
+    @Override
+    public String getMessage(String code) throws NoSuchMessageException {
+        try {
+            return formatter(MESSAGE.get(locale).getProperty(code));
+        } catch (Throwable e) {
+            throw new NoSuchMessageException(code);
+        }
+    }
+
+    @Override
+    public String getMessage(String code, Object[] args) throws NoSuchMessageException {
+        try {
+            return formatter(MESSAGE.get(locale).getProperty(code), args);
+        } catch (Throwable e) {
+            throw new NoSuchMessageException(code);
+        }
+    }
+
+    @Override
+    public String getMessage(String code, Locale locale) throws NoSuchMessageException {
+        try {
+            return formatter(load(locale).getProperty(code));
+        } catch (Throwable e) {
+            throw new NoSuchMessageException(code);
+        }
+    }
+
+    @Override
+    public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
+        try {
+            return formatter(load(locale).getProperty(code), args);
+        } catch (Throwable e) {
+            throw new NoSuchMessageException(code);
+        }
+    }
+
+    protected String formatter(final String message, Object... args) {
+        return messageFactory.newMessage(message, args).getFormattedMessage();
+    }
 }

@@ -91,7 +91,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse post(String url, String json) throws IOException;
-    
+
     /**
      * Http 'POST' request.
      * 
@@ -113,7 +113,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse post(String url, Map<String, String> headers, String json) throws IOException;
-    
+
     /**
      * Http 'POST' request.
      * 
@@ -165,7 +165,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse put(String url, String json) throws IOException;
-    
+
     /**
      * Http 'PUT' request.
      * 
@@ -176,7 +176,7 @@ public interface HttpClient {
      * @throws IOException
      */
     HttpResponse put(String url, String stream, ContentType contentType) throws IOException;
-    
+
     /**
      * Http 'PUT' request.
      * 
@@ -210,7 +210,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse put(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'DELETE' request.
      * 
@@ -219,7 +219,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse delete(String url) throws IOException;
-    
+
     /**
      * Http 'DELETE' request.
      * 
@@ -229,7 +229,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse delete(String url, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'DELETE' request.
      * 
@@ -240,7 +240,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse delete(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'PATCH' request.
      * 
@@ -249,7 +249,7 @@ public interface HttpClient {
      * @throws IOException IOException if I/O errors occur
      */
     HttpResponse patch(String url) throws IOException;
-    
+
     /**
      * Http 'PATCH' request.
      * 
@@ -269,7 +269,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse patch(String url, String json) throws IOException;
-    
+
     /**
      * Http 'PATCH' request.
      * 
@@ -291,7 +291,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse patch(String url, Map<String, String> headers, String json) throws IOException;
-    
+
     /**
      * Http 'PATCH' request.
      * 
@@ -303,7 +303,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse patch(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
-    
+
     /**
      * Http 'PATCH' request.
      * 
@@ -314,7 +314,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse patch(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'HEAD' request.
      * 
@@ -323,7 +323,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse head(String url) throws IOException;
-    
+
     /**
      * Http 'HEAD' request.
      * 
@@ -333,7 +333,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse head(String url, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'HEAD' request.
      * 
@@ -344,7 +344,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse head(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'OPTIONS' request.
      * 
@@ -353,7 +353,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse options(String url) throws IOException;
-    
+
     /**
      * Http 'OPTIONS' request.
      * 
@@ -363,7 +363,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse options(String url, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'OPTIONS' request.
      * 
@@ -374,7 +374,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse options(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'TRACE' request.
      * 
@@ -383,7 +383,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse trace(String url) throws IOException;
-    
+
     /**
      * Http 'TRACE' request.
      * 
@@ -393,7 +393,7 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse trace(String url, Map<String, String> params) throws IOException;
-    
+
     /**
      * Http 'TRACE' request.
      * 
@@ -404,18 +404,19 @@ public interface HttpClient {
      * @throws IOException if I/O errors occur
      */
     HttpResponse trace(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
-    
+
     HttpResponse execute(RequestMethod requestMethod, String url) throws IOException;
-    
+
     HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> params) throws IOException;
-    
+
     HttpResponse execute(RequestMethod requestMethod, String url, String json) throws IOException;
-    
+
     HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, Map<String, String> params) throws IOException;
-    
+
     HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, String json) throws IOException;
-    
+
     HttpResponse execute(RequestMethod requestMethod, String url, String stream, ContentType contentType) throws IOException;
-    
-    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
+
+    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, String stream, ContentType contentType)
+            throws IOException;
 }

@@ -69,22 +69,22 @@ public class CryptUtil {
             final SecureRandom random = SecureRandom.getInstance(SHA_MODE);
             random.setSeed(password.getBytes(Charsets.UTF_8));
             kgen.init(CRYPT_KEY_SIZE, random);
-            
+
             final SecretKey secretKey = kgen.generateKey();
             final byte[] enCodeFormat = secretKey.getEncoded();
             final SecretKeySpec key = new SecretKeySpec(enCodeFormat, CRYPT_MODE);
-            
+
             final Cipher cipher = Cipher.getInstance(CRYPT_MODE);// 创建密码器
             final byte[] byteContent = (content).getBytes(Charsets.UTF_8);
             cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化
             final byte[] result = cipher.doFinal(byteContent);//加密
-            
+
             return encrypt0(result);
         } catch (final Exception e) {
             throw new EncryptException(e.getMessage(), e);
         }
     }
-    
+
     private static String encrypt0(final byte[] result) {
         String encodeStr = new String(Base64.getEncoder().encode(parseByte2HexStr(result).getBytes()));
         final int idx;
@@ -95,7 +95,7 @@ public class CryptUtil {
         } else {
             encodeStr += '0';
         }
-        
+
         return encodeStr;
     }
 

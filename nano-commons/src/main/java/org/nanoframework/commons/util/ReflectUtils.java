@@ -30,7 +30,7 @@ import java.lang.reflect.InvocationTargetException;
 public final class ReflectUtils {
 
     private ReflectUtils() {
-        
+
     }
 
     /**
@@ -46,7 +46,7 @@ public final class ReflectUtils {
             throw new IllegalArgumentException(className + " class not found.");
         }
     }
-    
+
     @SuppressWarnings("unchecked")
     public static <T> Class<T> convert(final Class<?> cls) {
         return (Class<T>) cls;
@@ -136,8 +136,7 @@ public final class ReflectUtils {
      * @param target Target JavaBean on which to set property.
      * @param info BeanInfo describing the target JavaBean.
      */
-    public static void setProperty(final String propertyName, final Object value, final Object target,
-            final BeanInfo info) {
+    public static void setProperty(final String propertyName, final Object value, final Object target, final BeanInfo info) {
         try {
             final PropertyDescriptor pd = getPropertyDescriptor(info, propertyName);
             pd.getWriteMethod().invoke(target, value);

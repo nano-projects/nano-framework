@@ -1,11 +1,11 @@
 /*
- * Copyright 1999-2101 Alibaba Group Holding Ltd.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -22,6 +22,11 @@ import org.apache.log4j.Priority;
 import org.nanoframework.commons.support.message.MessageFactory;
 import org.nanoframework.commons.support.message.ParameterizedMessageFactory;
 
+/**
+ *
+ * @author yanghe
+ * @since 1.0
+ */
 public class Log4jImpl extends Category implements org.nanoframework.commons.support.logging.Logger {
 
     private static final String FQCN = Log4jImpl.class.getName();
@@ -32,7 +37,7 @@ public class Log4jImpl extends Category implements org.nanoframework.commons.sup
     private int warnCount;
     private int infoCount;
     private int debugCount;
-    
+
     private MessageFactory messageFactory = ParameterizedMessageFactory.INSTANCE;
 
     /**

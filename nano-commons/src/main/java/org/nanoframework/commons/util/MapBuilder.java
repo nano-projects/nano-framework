@@ -25,28 +25,28 @@ import java.util.Map;
  */
 public class MapBuilder<K, V> {
     private Map<K, V> map;
-    
+
     private MapBuilder() {
-        
+
     }
-    
+
     public static <K, V> MapBuilder<K, V> create() {
         MapBuilder<K, V> build = new MapBuilder<>();
         build.map = new HashMap<>();
         return build;
     }
-    
+
     public static <K, V> MapBuilder<K, V> create(Class<? extends Map<K, V>> cls, Object... params) {
         MapBuilder<K, V> build = new MapBuilder<>();
         build.map = ReflectUtils.newInstance(cls, params);
         return build;
     }
-    
+
     public MapBuilder<K, V> put(K key, V value) {
         map.put(key, value);
         return this;
     }
-    
+
     public Map<K, V> build() {
         return map;
     }

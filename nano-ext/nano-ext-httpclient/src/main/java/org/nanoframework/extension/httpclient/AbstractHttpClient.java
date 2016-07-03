@@ -55,7 +55,7 @@ abstract class AbstractHttpClient {
     public static final String MAX_TOTAL = "context.httpclient.max.total";
     public static final String MAX_PER_ROUTE = "context.httpclient.default.max.per.route";
     public static final String CHARSET = "context.httpclient.charset";
-    
+
     /** 超时时间. */
     protected static final String DEFAULT_TIME_TO_LIVE = "30000";
     /** 超时时间单位. */
@@ -66,21 +66,21 @@ abstract class AbstractHttpClient {
     protected static final String DEFAULT_MAX_PER_ROUTE = "512";
     /** 字符集. */
     protected static final String DEFAULT_CHARSET = "UTF-8";
-    
+
     protected static CloseableHttpClient HTTP_CLIENT;
-    
+
     protected long timeToLive;
     protected TimeUnit tunit;
     protected int maxTotal;
     protected int maxPerRoute;
     protected Charset charset;
-    
+
     public AbstractHttpClient() {
         this(false);
     }
-    
+
     public AbstractHttpClient(boolean force) {
-        if(HTTP_CLIENT == null || force) {
+        if (HTTP_CLIENT == null || force) {
             this.timeToLive = Long.parseLong(System.getProperty(TIME_TO_LIVE, DEFAULT_TIME_TO_LIVE));
             this.tunit = TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT));
             this.maxTotal = Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL));
@@ -89,9 +89,10 @@ abstract class AbstractHttpClient {
             initHttpClientPool(timeToLive, tunit, maxTotal, maxPerRoute);
         }
     }
-    
-    public AbstractHttpClient(final boolean force, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
-        if(HTTP_CLIENT == null || force) {
+
+    public AbstractHttpClient(final boolean force, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute,
+            final Charset charset) {
+        if (HTTP_CLIENT == null || force) {
             this.timeToLive = timeToLive;
             this.tunit = tunit;
             this.maxTotal = maxTotal;
@@ -100,81 +101,86 @@ abstract class AbstractHttpClient {
             initHttpClientPool(timeToLive, tunit, maxTotal, maxPerRoute);
         }
     }
-    
+
     protected void initHttpClientPool(long timeToLive, TimeUnit tunit, int maxTotal, int maxPerRoute) {
         final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, tunit);
         manager.setMaxTotal(maxTotal);
         manager.setDefaultMaxPerRoute(maxPerRoute);
         HTTP_CLIENT = HttpClients.custom().setConnectionManager(manager).build();
     }
-    
+
     protected HttpRequestBase createBase(final Class<? extends HttpRequestBase> cls, final String url, final Map<String, String> params) {
         final URIBuilder builder = new URIBuilder();
         builder.setPath(url);
 
         final List<NameValuePair> pairs = covertParams2NVPS(params);
         builder.setParameters(pairs);
-        
+
         try {
             final URI uri = builder.build();
             return ReflectUtils.newInstance(cls, uri);
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
-    
-    protected HttpRequestBase createBase(final Class<? extends HttpRequestBase> cls, final String url, final Map<String, String> headers, Map<String, String> params) {
+
+    protected HttpRequestBase createBase(final Class<? extends HttpRequestBase> cls, final String url, final Map<String, String> headers,
+            Map<String, String> params) {
         final URIBuilder builder = new URIBuilder();
         builder.setPath(url);
 
         final List<NameValuePair> pairs = covertParams2NVPS(params);
         builder.setParameters(pairs);
-        
+
         try {
             final URI uri = builder.build();
             final HttpRequestBase base = ReflectUtils.newInstance(cls, uri);
             if (!CollectionUtils.isEmpty(headers)) {
                 headers.forEach((key, value) -> base.addHeader(key, value));
             }
-            
+
             return base;
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
-    
-    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final Map<String, String> params) {
+
+    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
+            final Map<String, String> params) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             final List<NameValuePair> pairs = covertParams2NVPS(params);
             entityBase.setEntity(new UrlEncodedFormEntity(pairs, charset));
             return entityBase;
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
-    
-    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final String json) {
+
+    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
+            final String json) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             entityBase.setEntity(new StringEntity(json, APPLICATION_JSON));
             return entityBase;
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
-    
-    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final String stream, ContentType contentType) {
+
+    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
+            final String stream, ContentType contentType) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             entityBase.setEntity(new StringEntity(stream, contentType));
             return entityBase;
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
-    
-    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final Map<String, String> headers, final String json) {
+
+    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
+            final Map<String, String> headers, final String json) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {
@@ -183,12 +189,13 @@ abstract class AbstractHttpClient {
 
             entityBase.setEntity(new StringEntity(json, APPLICATION_JSON));
             return entityBase;
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
-    
-    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final Map<String, String> headers, final String stream, final ContentType contentType) {
+
+    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
+            final Map<String, String> headers, final String stream, final ContentType contentType) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {
@@ -197,12 +204,13 @@ abstract class AbstractHttpClient {
 
             entityBase.setEntity(new StringEntity(stream, contentType));
             return entityBase;
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
-    
-    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url, final Map<String, String> headers, final Map<String, String> params) {
+
+    protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
+            final Map<String, String> headers, final Map<String, String> params) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {
@@ -212,11 +220,11 @@ abstract class AbstractHttpClient {
             final List<NameValuePair> pairs = covertParams2NVPS(params);
             entityBase.setEntity(new UrlEncodedFormEntity(pairs, charset));
             return entityBase;
-        } catch(final Throwable e) {
+        } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
-    
+
     protected List<NameValuePair> covertParams2NVPS(Map<String, String> params) {
         if (CollectionUtils.isEmpty(params)) {
             return Collections.emptyList();

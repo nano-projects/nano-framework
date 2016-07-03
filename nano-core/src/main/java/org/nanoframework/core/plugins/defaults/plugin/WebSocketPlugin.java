@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,29 +29,30 @@ import org.nanoframework.core.plugins.Plugin;
  */
 public class WebSocketPlugin implements Plugin {
 
-	private Logger LOG = LoggerFactory.getLogger(WebSocketPlugin.class);
-	
-	@Override
-	public boolean load() throws Throwable {
-		try {
-			Class<?> websocket = Class.forName("org.nanoframework.extension.websocket.WebSocketFactory");
-			long time = System.currentTimeMillis();
-			LOG.info("开始加载WebSocket服务");
-			websocket.getMethod("load").invoke(websocket);
-			LOG.info("加载WebSocket服务完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-		} catch(ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-			if(!(e instanceof ClassNotFoundException))
-				throw new RuntimeException(e);
-			
-			return false;
-		}
-		
-		return true;
-	}
+    private Logger LOG = LoggerFactory.getLogger(WebSocketPlugin.class);
 
-	@Override
-	public void config(ServletConfig config) throws Throwable {
+    @Override
+    public boolean load() throws Throwable {
+        try {
+            Class<?> websocket = Class.forName("org.nanoframework.extension.websocket.WebSocketFactory");
+            long time = System.currentTimeMillis();
+            LOG.info("开始加载WebSocket服务");
+            websocket.getMethod("load").invoke(websocket);
+            LOG.info("加载WebSocket服务完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+                | SecurityException e) {
+            if (!(e instanceof ClassNotFoundException))
+                throw new RuntimeException(e);
 
-	}
+            return false;
+        }
+
+        return true;
+    }
+
+    @Override
+    public void config(ServletConfig config) throws Throwable {
+
+    }
 
 }

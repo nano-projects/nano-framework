@@ -1,11 +1,11 @@
 /*
- * Copyright 1999-2101 Alibaba Group Holding Ltd.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -15,15 +15,20 @@
  */
 package org.nanoframework.commons.support.logging;
 
+/**
+ *
+ * @author yanghe
+ * @since 1.0
+ */
 public class NoLoggingImpl implements Logger {
 
-    private int    infoCount;
-    private int    errorCount;
-    private int    warnCount;
-    private int    debugCount;
+    private int infoCount;
+    private int errorCount;
+    private int warnCount;
+    private int debugCount;
     private String loggerName;
 
-    public NoLoggingImpl(String loggerName){
+    public NoLoggingImpl(String loggerName) {
         this.loggerName = loggerName;
     }
 
@@ -107,48 +112,48 @@ public class NoLoggingImpl implements Logger {
         return debugCount;
     }
 
-	@Override
-	public void warn(String paramString, Object... paramArrayOfObject) {
-		warnCount ++;
-	}
+    @Override
+    public void warn(String paramString, Object... paramArrayOfObject) {
+        warnCount++;
+    }
 
-	@Override
-	public void warn(Throwable paramThrowable) {
-		warnCount ++;
-	}
+    @Override
+    public void warn(Throwable paramThrowable) {
+        warnCount++;
+    }
 
-	@Override
-	public void info(String paramString, Object... paramArrayOfObject) {
-		infoCount ++;
-	}
+    @Override
+    public void info(String paramString, Object... paramArrayOfObject) {
+        infoCount++;
+    }
 
-	@Override
-	public void info(Throwable paramThrowable) {
-		infoCount ++;
-	}
+    @Override
+    public void info(Throwable paramThrowable) {
+        infoCount++;
+    }
 
-	@Override
-	public void info(String paramString, Throwable paramThrowable) {
-		infoCount ++;
-	}
+    @Override
+    public void info(String paramString, Throwable paramThrowable) {
+        infoCount++;
+    }
 
-	@Override
-	public void debug(String paramString, Object... paramArrayOfObject) {
-		debugCount ++;
-	}
+    @Override
+    public void debug(String paramString, Object... paramArrayOfObject) {
+        debugCount++;
+    }
 
-	@Override
-	public void debug(Throwable paramThrowable) {
-		debugCount ++;
-	}
+    @Override
+    public void debug(Throwable paramThrowable) {
+        debugCount++;
+    }
 
-	@Override
-	public void error(String paramString, Object... paramArrayOfObject) {
-		errorCount ++;
-	}
-	
-	@Override
-	public void error(Throwable paramThrowable) {
-		errorCount ++;
-	}
+    @Override
+    public void error(String paramString, Object... paramArrayOfObject) {
+        errorCount++;
+    }
+
+    @Override
+    public void error(Throwable paramThrowable) {
+        errorCount++;
+    }
 }

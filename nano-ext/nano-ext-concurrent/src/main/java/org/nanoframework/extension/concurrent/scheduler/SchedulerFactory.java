@@ -358,7 +358,7 @@ public class SchedulerFactory {
         if (groupScheduler == null) {
             groupScheduler = Sets.newLinkedHashSet();
         }
-        
+
         groupScheduler.add(scheduler);
         group.put(scheduler.getConfig().getGroup(), groupScheduler);
 
@@ -384,7 +384,7 @@ public class SchedulerFactory {
         } else {
             close(scheduler.getConfig().getId());
         }
-        
+
         rebalance(scheduler.getConfig().getGroup());
         return groupScheduler.size();
     }
@@ -406,7 +406,7 @@ public class SchedulerFactory {
         while (removeScheduler(groupName) > 1) {
             ;
         }
-        
+
         closeGroup(groupName);
     }
 
@@ -516,7 +516,7 @@ public class SchedulerFactory {
             if (includes.isEmpty()) {
                 includes.add(".");
             }
-            
+
             for (Class<?> clz : componentClasses) {
                 if (BaseScheduler.class.isAssignableFrom(clz)) {
                     LOGGER.info("Inject Scheduler Class: " + clz.getName());
@@ -551,11 +551,11 @@ public class SchedulerFactory {
                     if (parallel < 0) {
                         parallel = 0;
                     }
-                    
+
                     if (StringUtils.isBlank(cron)) {
                         cron = scheduler.cron();
                     }
-                    
+
                     for (int p = 0; p < parallel; p++) {
                         BaseScheduler baseScheduler = (BaseScheduler) Globals.get(Injector.class).getInstance(clz);
                         SchedulerConfig config = new SchedulerConfig();
@@ -575,14 +575,15 @@ public class SchedulerFactory {
                                 throw new SchedulerException(e.getMessage(), e);
                             }
                         }
-                        
+
                         config.setDaemon(scheduler.daemon());
                         config.setLazy(scheduler.lazy());
                         config.setDefined(scheduler.defined());
                         baseScheduler.setConfig(config);
 
                         if (getInstance().stoppedScheduler.containsKey(config.getId())) {
-                            throw new SchedulerException("\n\t任务调度重复: " + config.getId() + ", 组件类: {'" + clz.getName() + "', '" + getInstance().stoppedScheduler.get(config.getId()).getClass().getName() + "'}");
+                            throw new SchedulerException("\n\t任务调度重复: " + config.getId() + ", 组件类: {'" + clz.getName() + "', '"
+                                    + getInstance().stoppedScheduler.get(config.getId()).getClass().getName() + "'}");
                         }
 
                         getInstance().stoppedScheduler.put(config.getId(), baseScheduler);
@@ -646,7 +647,7 @@ public class SchedulerFactory {
                     // ignore
                 }
             }
-            
+
             LOGGER.info("所有任务已经全部关闭");
 
             try {
@@ -694,7 +695,7 @@ public class SchedulerFactory {
                 if (!scheduler.isRemove()) {
                     stoppedScheduler.put(id, scheduler);
                 }
-                
+
                 stoppingScheduler.remove(id, scheduler);
 
                 /** Sync to Etcd by stopped method */

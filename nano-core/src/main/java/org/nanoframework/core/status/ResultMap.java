@@ -1,11 +1,11 @@
-/**
- * Copyright 2015- the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -24,46 +24,46 @@ import org.nanoframework.commons.entity.BaseEntity;
  */
 @Deprecated
 public class ResultMap extends BaseEntity {
-	private static final long serialVersionUID = -4525859189036534494L;
-	
-	/** 描述 */
-	private String info;
-	/** 状态码 */
-	private int status;
-	/** 消息内容 */
-	private String message;
-	
-	public static final String INFO = "info";
-	public static final String STATUS = "status";
-	public static final String MESSAGE = "message";
-	
-	private ResultMap(int status, String message, String info) {
-		this.status = status;
-		this.message = message;
-		this.info = info;
-	}
-	
-	/**
-	 * 创建消息对象 
-	 * @param status 状态码
-	 * @param message 消息内容
-	 * @param info 描述
-	 * @return
-	 */
-	public static ResultMap create(int status, String message, String info) {
-		return new ResultMap(status, message, info);
-	}
-	
-	public String getInfo() {
-		return info;
-	}
+    private static final long serialVersionUID = -4525859189036534494L;
 
-	public int getStatus() {
-		return status;
-	}
+    /** 描述 */
+    private String info;
+    /** 状态码 */
+    private int status;
+    /** 消息内容 */
+    private String message;
 
-	public String getMessage() {
-		return message;
-	}
-	
+    public static final String INFO = "info";
+    public static final String STATUS = "status";
+    public static final String MESSAGE = "message";
+
+    private ResultMap(int status, String message, String info) {
+        this.status = status;
+        this.message = message;
+        this.info = info;
+    }
+
+    /**
+     * 创建消息对象 
+     * @param status 状态码
+     * @param message 消息内容
+     * @param info 描述
+     * @return
+     */
+    public static ResultMap create(int status, String message, String info) {
+        return new ResultMap(status, message, info);
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -123,7 +123,7 @@ public class ParameterizedMessage implements Message {
      * @param arg The parameter.
      */
     public ParameterizedMessage(final String messagePattern, final Object arg) {
-        this(messagePattern, new Object[]{arg});
+        this(messagePattern, new Object[] { arg });
     }
 
     /**
@@ -133,7 +133,7 @@ public class ParameterizedMessage implements Message {
      * @param arg2 The second parameter.
      */
     public ParameterizedMessage(final String messagePattern, final Object arg1, final Object arg2) {
-        this(messagePattern, new Object[]{arg1, arg2});
+        this(messagePattern, new Object[] { arg1, arg2 });
     }
 
     private String[] argumentsToStrings(final Object[] arguments) {
@@ -193,7 +193,7 @@ public class ParameterizedMessage implements Message {
         if (argArray != null) {
             return argArray;
         }
-        
+
         return stringArgs;
     }
 
@@ -284,8 +284,7 @@ public class ParameterizedMessage implements Message {
     // 33 bytes (allows immediate JVM inlining: < 35 bytes) LOG4J2-1096
     static String formatStringArgs(final String messagePattern, final String[] arguments) {
         int len = 0;
-        if (messagePattern == null || (len = messagePattern.length()) == 0 || arguments == null
-                || arguments.length == 0) {
+        if (messagePattern == null || (len = messagePattern.length()) == 0 || arguments == null || arguments.length == 0) {
             return messagePattern;
         }
 
@@ -359,8 +358,7 @@ public class ParameterizedMessage implements Message {
      */
     // Profiling showed this method is important to log4j performance. Modify with care!
     // 28 bytes (allows immediate JVM inlining: < 35 bytes) LOG4J2-1096
-    private static int handleRemainingCharIfAny(final String messagePattern, final int len, final char[] result,
-            int pos, int escapeCounter, int i) {
+    private static int handleRemainingCharIfAny(final String messagePattern, final int len, final char[] result, int pos, int escapeCounter, int i) {
         if (i == len - 1) {
             final char curChar = messagePattern.charAt(i);
             pos = handleLastChar(result, pos, escapeCounter, curChar);
@@ -447,8 +445,7 @@ public class ParameterizedMessage implements Message {
      */
     // Profiling showed this method is important to log4j performance. Modify with care!
     // 25 bytes (allows immediate JVM inlining: < 35 bytes) LOG4J2-1096
-    private static int writeArgOrDelimPair(final String[] arguments, final int currentArgument, final char[] result,
-            int pos) {
+    private static int writeArgOrDelimPair(final String[] arguments, final int currentArgument, final char[] result, int pos) {
         if (currentArgument < arguments.length) {
             pos = writeArgAt0(arguments, currentArgument, result, pos);
         } else {
@@ -463,8 +460,7 @@ public class ParameterizedMessage implements Message {
      */
     // Profiling showed this method is important to log4j performance. Modify with care!
     // 30 bytes (allows immediate JVM inlining: < 35 bytes) LOG4J2-1096
-    private static int writeArgAt0(final String[] arguments, final int currentArgument, final char[] result,
-            final int pos) {
+    private static int writeArgAt0(final String[] arguments, final int currentArgument, final char[] result, final int pos) {
         final String arg = String.valueOf(arguments[currentArgument]);
         int argLen = arg.length();
         arg.getChars(0, argLen, result, pos);
@@ -603,8 +599,7 @@ public class ParameterizedMessage implements Message {
         return o.getClass().isArray() || o instanceof Map || o instanceof Collection;
     }
 
-    private static void appendPotentiallyRecursiveValue(final Object o, final StringBuilder str,
-            final Set<String> dejaVu) {
+    private static void appendPotentiallyRecursiveValue(final Object o, final StringBuilder str, final Set<String> dejaVu) {
         final Class<?> oClass = o.getClass();
         if (oClass.isArray()) {
             appendArray(o, str, dejaVu, oClass);
@@ -615,8 +610,7 @@ public class ParameterizedMessage implements Message {
         }
     }
 
-    private static void appendArray(final Object o, final StringBuilder str, final Set<String> dejaVu,
-            final Class<?> oClass) {
+    private static void appendArray(final Object o, final StringBuilder str, final Set<String> dejaVu, final Class<?> oClass) {
         if (oClass == byte[].class) {
             str.append(Arrays.toString((byte[]) o));
         } else if (oClass == short[].class) {
@@ -758,6 +752,7 @@ public class ParameterizedMessage implements Message {
 
     @Override
     public String toString() {
-        return "ParameterizedMessage[messagePattern=" + messagePattern + ", stringArgs=" + Arrays.toString(stringArgs) + ", throwable=" + throwable + ']';
+        return "ParameterizedMessage[messagePattern=" + messagePattern + ", stringArgs=" + Arrays.toString(stringArgs) + ", throwable=" + throwable
+                + ']';
     }
 }

@@ -95,7 +95,8 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse post(final String url, final Map<String, String> headers, final String stream, final ContentType contentType) throws IOException {
+    public HttpResponse post(final String url, final Map<String, String> headers, final String stream, final ContentType contentType)
+            throws IOException {
         return getResult(createEntityBase(HttpPost.class, url, headers, stream, contentType));
     }
 
@@ -125,7 +126,8 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse put(final String url, final Map<String, String> headers, final String stream, final ContentType contentType) throws IOException {
+    public HttpResponse put(final String url, final Map<String, String> headers, final String stream, final ContentType contentType)
+            throws IOException {
         return getResult(createEntityBase(HttpPut.class, url, headers, stream, contentType));
     }
 
@@ -180,7 +182,8 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse patch(final String url, final Map<String, String> headers, final String stream, final ContentType contentType) throws IOException {
+    public HttpResponse patch(final String url, final Map<String, String> headers, final String stream, final ContentType contentType)
+            throws IOException {
         return getResult(createEntityBase(HttpPatch.class, url, headers, stream, contentType));
     }
 
@@ -297,7 +300,8 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers,
+            final Map<String, String> params) throws IOException {
         switch (requestMethod) {
             case GET:
                 return get(url, headers, params);
@@ -321,7 +325,8 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final String json) throws IOException {
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final String json)
+            throws IOException {
         switch (requestMethod) {
             case POST:
                 return post(url, headers, json);
@@ -335,7 +340,8 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse execute(final RequestMethod requestMethod, final String url, final String stream, final ContentType contentType) throws IOException {
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final String stream, final ContentType contentType)
+            throws IOException {
         switch (requestMethod) {
             case POST:
                 return post(url, stream, contentType);
@@ -349,8 +355,8 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final String stream, final ContentType contentType)
-            throws IOException {
+    public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final String stream,
+            final ContentType contentType) throws IOException {
         switch (requestMethod) {
             case POST:
                 return post(url, headers, stream, contentType);

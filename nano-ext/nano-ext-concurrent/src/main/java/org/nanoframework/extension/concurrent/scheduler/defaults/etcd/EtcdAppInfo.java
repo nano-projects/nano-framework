@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,97 +23,97 @@ import org.nanoframework.commons.entity.BaseEntity;
  * @date 2016年3月22日 下午5:13:14
  */
 public class EtcdAppInfo extends BaseEntity {
-	private static final long serialVersionUID = -5412741101794352940L;
+    private static final long serialVersionUID = -5412741101794352940L;
 
-	private String systemId;
-	private String appName;
-	private String ip;
-	private Long startTime;
-	private Long uptime;
-	private String hostName;
-	private String pid;
-	private Integer availableProcessors;
-	private Boolean jmxEnable;
-	private Integer jmxRate;
+    private String systemId;
+    private String appName;
+    private String ip;
+    private Long startTime;
+    private Long uptime;
+    private String hostName;
+    private String pid;
+    private Integer availableProcessors;
+    private Boolean jmxEnable;
+    private Integer jmxRate;
 
-	public String getSystemId() {
-		return systemId;
-	}
+    public String getSystemId() {
+        return systemId;
+    }
 
-	public void setSystemId(String systemId) {
-		this.systemId = systemId;
-	}
+    public void setSystemId(String systemId) {
+        this.systemId = systemId;
+    }
 
-	public String getAppName() {
-		return appName;
-	}
+    public String getAppName() {
+        return appName;
+    }
 
-	public void setAppName(String appName) {
-		this.appName = appName;
-	}
+    public void setAppName(String appName) {
+        this.appName = appName;
+    }
 
-	public String getIp() {
-		return ip;
-	}
+    public String getIp() {
+        return ip;
+    }
 
-	public void setIp(String ip) {
-		this.ip = ip;
-	}
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
 
-	public Long getStartTime() {
-		return startTime;
-	}
+    public Long getStartTime() {
+        return startTime;
+    }
 
-	public void setStartTime(Long startTime) {
-		this.startTime = startTime;
-	}
+    public void setStartTime(Long startTime) {
+        this.startTime = startTime;
+    }
 
-	public Long getUptime() {
-		return uptime;
-	}
+    public Long getUptime() {
+        return uptime;
+    }
 
-	public void setUptime(Long uptime) {
-		this.uptime = uptime;
-	}
+    public void setUptime(Long uptime) {
+        this.uptime = uptime;
+    }
 
-	public String getHostName() {
-		return hostName;
-	}
+    public String getHostName() {
+        return hostName;
+    }
 
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
-	}
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
+    }
 
-	public String getPid() {
-		return pid;
-	}
+    public String getPid() {
+        return pid;
+    }
 
-	public void setPid(String pid) {
-		this.pid = pid;
-	}
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
 
-	public Integer getAvailableProcessors() {
-		return availableProcessors;
-	}
+    public Integer getAvailableProcessors() {
+        return availableProcessors;
+    }
 
-	public void setAvailableProcessors(Integer availableProcessors) {
-		this.availableProcessors = availableProcessors;
-	}
+    public void setAvailableProcessors(Integer availableProcessors) {
+        this.availableProcessors = availableProcessors;
+    }
 
-	public Boolean getJmxEnable() {
-		return jmxEnable;
-	}
+    public Boolean getJmxEnable() {
+        return jmxEnable;
+    }
 
-	public void setJmxEnable(Boolean jmxEnable) {
-		this.jmxEnable = jmxEnable;
-	}
+    public void setJmxEnable(Boolean jmxEnable) {
+        this.jmxEnable = jmxEnable;
+    }
 
-	public Integer getJmxRate() {
-		return jmxRate;
-	}
+    public Integer getJmxRate() {
+        return jmxRate;
+    }
 
-	public void setJmxRate(Integer jmxRate) {
-		this.jmxRate = jmxRate;
-	}
+    public void setJmxRate(Integer jmxRate) {
+        this.jmxRate = jmxRate;
+    }
 
 }

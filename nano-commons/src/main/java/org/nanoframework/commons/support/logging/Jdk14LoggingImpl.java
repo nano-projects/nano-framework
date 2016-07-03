@@ -1,11 +1,11 @@
 /*
- * Copyright 1999-2101 Alibaba Group Holding Ltd.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -18,18 +18,23 @@ package org.nanoframework.commons.support.logging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ *
+ * @author yanghe
+ * @since 1.0
+ */
 public class Jdk14LoggingImpl implements org.nanoframework.commons.support.logging.Logger {
 
     private Logger log;
 
-    private int    errorCount;
-    private int    warnCount;
-    private int    infoCount;
-    private int    debugCount;
+    private int errorCount;
+    private int warnCount;
+    private int infoCount;
+    private int debugCount;
 
     private String loggerName;
 
-    public Jdk14LoggingImpl(String loggerName){
+    public Jdk14LoggingImpl(String loggerName) {
         this.loggerName = loggerName;
         log = Logger.getLogger(loggerName);
     }
@@ -111,57 +116,57 @@ public class Jdk14LoggingImpl implements org.nanoframework.commons.support.loggi
         return debugCount;
     }
 
-	@Override
-	public void warn(String paramString, Object... paramArrayOfObject) {
-		log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
+    @Override
+    public void warn(String paramString, Object... paramArrayOfObject) {
+        log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
         warnCount++;
-	}
+    }
 
-	@Override
-	public void warn(Throwable paramThrowable) {
-		log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
+    @Override
+    public void warn(Throwable paramThrowable) {
+        log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
         warnCount++;
-	}
+    }
 
-	@Override
-	public void info(String paramString, Object... paramArrayOfObject) {
-		log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
-		infoCount++;
-	}
+    @Override
+    public void info(String paramString, Object... paramArrayOfObject) {
+        log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
+        infoCount++;
+    }
 
-	@Override
-	public void info(Throwable paramThrowable) {
-		log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
-		infoCount++;
-	}
+    @Override
+    public void info(Throwable paramThrowable) {
+        log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
+        infoCount++;
+    }
 
-	@Override
-	public void info(String paramString, Throwable paramThrowable) {
-		log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramThrowable);
-		infoCount++;
-	}
+    @Override
+    public void info(String paramString, Throwable paramThrowable) {
+        log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramThrowable);
+        infoCount++;
+    }
 
-	@Override
-	public void debug(String paramString, Object... paramArrayOfObject) {
-		log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
-		debugCount++;
-	}
+    @Override
+    public void debug(String paramString, Object... paramArrayOfObject) {
+        log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
+        debugCount++;
+    }
 
-	@Override
-	public void debug(Throwable paramThrowable) {
-		log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
-		debugCount++;
-	}
+    @Override
+    public void debug(Throwable paramThrowable) {
+        log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
+        debugCount++;
+    }
 
-	@Override
-	public void error(String paramString, Object... paramArrayOfObject) {
-		log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
-		errorCount++;
-	}
-	
-	@Override
-	public void error(Throwable paramThrowable) {
-		log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
-		errorCount++;
-	}
+    @Override
+    public void error(String paramString, Object... paramArrayOfObject) {
+        log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
+        errorCount++;
+    }
+
+    @Override
+    public void error(Throwable paramThrowable) {
+        log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
+        errorCount++;
+    }
 }

@@ -1,11 +1,11 @@
-/**
- * Copyright 2015- the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -37,159 +37,160 @@ import org.nanoframework.commons.crypt.CryptUtil;
  */
 public class RuntimeUtil {
 
-	public static final String PID = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
-	public static final String OSNAME = System.getProperty("os.name");
-	public static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors() + 1;
-	public static final String TOKEN = MD5Utils.getMD5String(CryptUtil.encrypt("nanoframework.TOKEN::encrypt:org.nanoframework.commons.util.RuntimeUtil", null));
-	
-	/**
-	 * 杀死当前系统进行
-	 * 
-	 * @throws IOException IO异常
-	 */
-	public static void killProcess() throws IOException {
-		if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
-			String[] cmds = new String[] { "/bin/sh", "-c", "kill -9 " + PID };
-			Runtime.getRuntime().exec(cmds);
-			
-		} else if (OSNAME.indexOf("Windows") > -1) {
-			Runtime.getRuntime().exec("cmd /c taskkill /pid " + PID + " /f ");
+    public static final String PID = ManagementFactory.getRuntimeMXBean().getName().split("@")[0];
+    public static final String OSNAME = System.getProperty("os.name");
+    public static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors() + 1;
+    public static final String TOKEN = MD5Utils
+            .getMD5String(CryptUtil.encrypt("nanoframework.TOKEN::encrypt:org.nanoframework.commons.util.RuntimeUtil", null));
 
-		}
+    /**
+     * 杀死当前系统进行
+     * 
+     * @throws IOException IO异常
+     */
+    public static void killProcess() throws IOException {
+        if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
+            String[] cmds = new String[] { "/bin/sh", "-c", "kill -9 " + PID };
+            Runtime.getRuntime().exec(cmds);
 
-	}
+        } else if (OSNAME.indexOf("Windows") > -1) {
+            Runtime.getRuntime().exec("cmd /c taskkill /pid " + PID + " /f ");
 
-	/**
-	 * 根据进程号杀死对应的进程
-	 * 
-	 * @param PID 进程号
-	 * @throws IOException IO异常
-	 */
-	public static void killProcess(String PID) throws IOException {
-		if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
-			String[] cmds = new String[] { "/bin/sh", "-c", "kill -9 " + PID };
-			Runtime.getRuntime().exec(cmds);
+        }
 
-		} else if (OSNAME.indexOf("Windows") > -1) {
-			Runtime.getRuntime().exec("cmd /c taskkill /pid " + PID + " /f ");
+    }
 
-		}
+    /**
+     * 根据进程号杀死对应的进程
+     * 
+     * @param PID 进程号
+     * @throws IOException IO异常
+     */
+    public static void killProcess(String PID) throws IOException {
+        if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
+            String[] cmds = new String[] { "/bin/sh", "-c", "kill -9 " + PID };
+            Runtime.getRuntime().exec(cmds);
 
-	}
-	
-	/**
-	 * 根据进程号优雅退出进程
-	 * 
-	 * @param PID 进程号
-	 * @throws IOException IO异常
-	 */
-	public static void exitProcess(String PID) throws IOException {
-		if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
-			String[] cmds = new String[] { "/bin/sh", "-c", "kill -15 " + PID };
-			Runtime.getRuntime().exec(cmds);
+        } else if (OSNAME.indexOf("Windows") > -1) {
+            Runtime.getRuntime().exec("cmd /c taskkill /pid " + PID + " /f ");
 
-		} else if (OSNAME.indexOf("Windows") > -1) {
-			Runtime.getRuntime().exec("cmd /c taskkill /pid " + PID + " /f ");
+        }
 
-		}
+    }
 
-	}
+    /**
+     * 根据进程号优雅退出进程
+     * 
+     * @param PID 进程号
+     * @throws IOException IO异常
+     */
+    public static void exitProcess(String PID) throws IOException {
+        if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
+            String[] cmds = new String[] { "/bin/sh", "-c", "kill -15 " + PID };
+            Runtime.getRuntime().exec(cmds);
 
-	/**
-	 * 根据进程号查询该进程是否存在
-	 * 
-	 * @param PID 进程号
-	 * @return 查询结果
-	 * @throws IOException IO异常
-	 */
-	public static boolean exsitsProcess(String PID) throws IOException {
+        } else if (OSNAME.indexOf("Windows") > -1) {
+            Runtime.getRuntime().exec("cmd /c taskkill /pid " + PID + " /f ");
 
-		if (PID == null || "".equals(PID))
-			return false;
+        }
 
-		Process process = null;
-		boolean exsits = false;
-		String result = null;
-		if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
-			String[] cmds = new String[] { "/bin/sh", "-c", "ps -f -p " + PID };
-			process = Runtime.getRuntime().exec(cmds);
+    }
 
-			InputStream in = process.getInputStream();
-			BufferedReader input = new BufferedReader(new InputStreamReader(in));
+    /**
+     * 根据进程号查询该进程是否存在
+     * 
+     * @param PID 进程号
+     * @return 查询结果
+     * @throws IOException IO异常
+     */
+    public static boolean exsitsProcess(String PID) throws IOException {
 
-			while ((result = input.readLine()) != null) {
-				if (StringUtils.isNotEmpty(result) && result.indexOf(PID) > -1) {
-					exsits = true;
-				}
-			}
+        if (PID == null || "".equals(PID))
+            return false;
 
-		} else if (OSNAME.indexOf("Windows") > -1) {
-			process = Runtime.getRuntime().exec("cmd /c Wmic Process where ProcessId=\"" + PID + "\" get ExecutablePath ");
+        Process process = null;
+        boolean exsits = false;
+        String result = null;
+        if (OSNAME.indexOf("Mac") > -1 || OSNAME.indexOf("Linux") > -1) {
+            String[] cmds = new String[] { "/bin/sh", "-c", "ps -f -p " + PID };
+            process = Runtime.getRuntime().exec(cmds);
 
-			InputStream in = process.getInputStream();
-			BufferedReader input = new BufferedReader(new InputStreamReader(in));
+            InputStream in = process.getInputStream();
+            BufferedReader input = new BufferedReader(new InputStreamReader(in));
 
-			while ((result = input.readLine()) != null) {
-				if (StringUtils.isNotEmpty(result) && result.indexOf("No Instance(s) Available") < 0) {
-					exsits = true;
-				}
-			}
+            while ((result = input.readLine()) != null) {
+                if (StringUtils.isNotEmpty(result) && result.indexOf(PID) > -1) {
+                    exsits = true;
+                }
+            }
 
-		}
+        } else if (OSNAME.indexOf("Windows") > -1) {
+            process = Runtime.getRuntime().exec("cmd /c Wmic Process where ProcessId=\"" + PID + "\" get ExecutablePath ");
 
-		return exsits;
-	}
-	
-	/**
-	 * 判断当前运行的系统是否是Windows
-	 * 
-	 * @return
-	 */
-	public static boolean isWindows() {
-		if(OSNAME.contains("Windows"))
-			return true;
-		else 
-			return false;
-	}
-	
-	/**
-	 * 根据Class获取该Class所在的磁盘路径
-	 * 
-	 * @param clz 查询的类
-	 * @return 返回该类的所在位置
-	 */
-	public static String getPath(Class<?> clz) {
-		String runJarPath = clz.getProtectionDomain().getCodeSource().getLocation().getPath();
-		String tmpPath = runJarPath.substring(0, runJarPath.lastIndexOf('/'));
-		if(tmpPath.endsWith("/lib")) {
-			tmpPath = tmpPath.replace("/lib", "");
-		}
-		
-		return tmpPath.substring(isWindows() ? 1 : 0, tmpPath.lastIndexOf('/')) + '/';
-	}
-	
-	/**
-	 * 获取运行时中的所有Jar文件
-	 * @return List
-	 * @throws IOException
-	 */
-	public static List<JarFile> classPaths() throws IOException {
-		String[] classPaths = System.getProperty("java.class.path").split(":");
-		if(classPaths.length > 0) {
-			List<JarFile> jars = new ArrayList<>(classPaths.length);
-			for(final String classPath : classPaths) {
-				if(!classPath.endsWith("jar"))
-					continue ;
-				
-				JarFile jar = new JarFile(new File(classPath));
-				jars.add(jar);
-				
-			}
-			
-			return jars;
-		}
-		
-		return Collections.emptyList();
-	}
-	
+            InputStream in = process.getInputStream();
+            BufferedReader input = new BufferedReader(new InputStreamReader(in));
+
+            while ((result = input.readLine()) != null) {
+                if (StringUtils.isNotEmpty(result) && result.indexOf("No Instance(s) Available") < 0) {
+                    exsits = true;
+                }
+            }
+
+        }
+
+        return exsits;
+    }
+
+    /**
+     * 判断当前运行的系统是否是Windows
+     * 
+     * @return
+     */
+    public static boolean isWindows() {
+        if (OSNAME.contains("Windows"))
+            return true;
+        else
+            return false;
+    }
+
+    /**
+     * 根据Class获取该Class所在的磁盘路径
+     * 
+     * @param clz 查询的类
+     * @return 返回该类的所在位置
+     */
+    public static String getPath(Class<?> clz) {
+        String runJarPath = clz.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String tmpPath = runJarPath.substring(0, runJarPath.lastIndexOf('/'));
+        if (tmpPath.endsWith("/lib")) {
+            tmpPath = tmpPath.replace("/lib", "");
+        }
+
+        return tmpPath.substring(isWindows() ? 1 : 0, tmpPath.lastIndexOf('/')) + '/';
+    }
+
+    /**
+     * 获取运行时中的所有Jar文件
+     * @return List
+     * @throws IOException
+     */
+    public static List<JarFile> classPaths() throws IOException {
+        String[] classPaths = System.getProperty("java.class.path").split(":");
+        if (classPaths.length > 0) {
+            List<JarFile> jars = new ArrayList<>(classPaths.length);
+            for (final String classPath : classPaths) {
+                if (!classPath.endsWith("jar"))
+                    continue;
+
+                JarFile jar = new JarFile(new File(classPath));
+                jars.add(jar);
+
+            }
+
+            return jars;
+        }
+
+        return Collections.emptyList();
+    }
+
 }

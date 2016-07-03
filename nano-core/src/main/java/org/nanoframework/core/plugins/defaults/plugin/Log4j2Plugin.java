@@ -39,25 +39,25 @@ public class Log4j2Plugin implements Plugin {
     public boolean load() throws Throwable {
         if (StringUtils.isNotBlank(log4j2)) {
             final URL url = this.getClass().getResource(log4j2);
-            if(url != null && load0(url.toURI())) {
+            if (url != null && load0(url.toURI())) {
                 return true;
             }
-            
+
             final File file = ResourceUtils.getFile(log4j2);
-            if(file != null && load0(file.toURI())) {
+            if (file != null && load0(file.toURI())) {
                 return true;
             }
-            
+
             final URI uri = ResourceUtils.getURL(log4j2).toURI();
-            if(uri != null && load0(uri)) {
+            if (uri != null && load0(uri)) {
                 return true;
             }
-            
+
         }
 
         return false;
     }
-    
+
     protected boolean load0(URI resource) {
         if (resource != null) {
             try {
@@ -75,7 +75,7 @@ public class Log4j2Plugin implements Plugin {
                 return false;
             }
         }
-        
+
         return false;
     }
 

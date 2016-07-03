@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 		http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,48 +23,48 @@ import org.nanoframework.commons.entity.BaseEntity;
  * @date 2016年3月22日 下午5:14:53
  */
 public class Pointer extends BaseEntity {
-	private static final long serialVersionUID = 7350989467756362845L;
+    private static final long serialVersionUID = 7350989467756362845L;
 
-	private String scene;
-	private Long time;
-	private Long tps;
+    private String scene;
+    private Long time;
+    private Long tps;
 
-	public Pointer() {
+    public Pointer() {
 
-	}
+    }
 
-	private Pointer(String scene, long time, long tps) {
-		this.scene = scene;
-		this.time = time;
-		this.tps = tps;
-	}
+    private Pointer(String scene, long time, long tps) {
+        this.scene = scene;
+        this.time = time;
+        this.tps = tps;
+    }
 
-	public static final Pointer create(String scene, long time, long tps) {
-		return new Pointer(scene, time, tps);
-	}
+    public static final Pointer create(String scene, long time, long tps) {
+        return new Pointer(scene, time, tps);
+    }
 
-	public String getScene() {
-		return scene;
-	}
+    public String getScene() {
+        return scene;
+    }
 
-	public void setScene(String scene) {
-		this.scene = scene;
-	}
+    public void setScene(String scene) {
+        this.scene = scene;
+    }
 
-	public Long getTime() {
-		return time;
-	}
+    public Long getTime() {
+        return time;
+    }
 
-	public void setTime(Long time) {
-		this.time = time;
-	}
+    public void setTime(Long time) {
+        this.time = time;
+    }
 
-	public Long getTps() {
-		return tps;
-	}
+    public Long getTps() {
+        return tps;
+    }
 
-	public void setTps(Long tps) {
-		this.tps = tps;
-	}
+    public void setTps(Long tps) {
+        this.tps = tps;
+    }
 
 }

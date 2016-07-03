@@ -1,6 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+
+    Copyright 2015-2016 the original author or authors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+        http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
+    </parent>
 
     <groupId>org.nanoframework</groupId>
     <artifactId>nano</artifactId>
@@ -24,6 +47,7 @@
         <maven-findbugs-security-plugin.version>1.4.1</maven-findbugs-security-plugin.version>
         <coveralls-maven-plugin.version>4.2.0</coveralls-maven-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
+        <license-maven-plugin.version>2.11</license-maven-plugin.version>
 
         <junit-version>4.12</junit-version>
         <slf4j-version>1.7.7</slf4j-version>
@@ -56,6 +80,7 @@
         <validation-api-version>1.1.0.Final</validation-api-version>
     </properties>
 
+    <!-- 
     <distributionManagement>
         <repository>
             <id>nano-releases</id>
@@ -68,7 +93,8 @@
             <url>http://10.1.195.225:8081/nexus/content/repositories/nano-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
-
+    -->
+    
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/nano-projects/nano-framework/issues</url>
@@ -90,6 +116,21 @@
         <url>https://github.com/nano-projects/nano-framework</url>
         <tag>HEAD</tag>
     </scm>
+    
+    <developers>
+        <developer>
+            <id>yanghe</id>
+            <name>yanghe</name>
+            <email>comicme_yanghe@icloud.com</email>
+        </developer>
+    </developers>
+    
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
+        </license>
+    </licenses>
 
     <dependencyManagement>
         <dependencies>
@@ -263,8 +304,13 @@
             </dependency>
 
             <!-- Jetty Webapp -->
-            <!-- <dependency> <groupId>org.eclipse.jetty</groupId> <artifactId>jetty-webapp</artifactId> 
-                <version>${jetty-version}</version> </dependency> -->
+            <!-- 
+            <dependency> 
+                <groupId>org.eclipse.jetty</groupId> 
+                <artifactId>jetty-webapp</artifactId> 
+                <version>${jetty-version}</version> 
+            </dependency> 
+            -->
 
             <!-- JSP Support -->
             <dependency>
@@ -422,16 +468,6 @@
 
         <pluginManagement>
             <plugins>
-                <plugin>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>maven-jetty-plugin</artifactId>
-                    <version>${jetty-version}</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.tomcat.maven</groupId>
-                    <artifactId>tomcat7-maven-plugin</artifactId>
-                    <version>${tomcat-version}</version>
-                </plugin>
                 <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
                 <plugin>
                     <groupId>org.eclipse.m2e</groupId>
@@ -450,6 +486,36 @@
                                         </artifactId>
                                         <versionRange>
                                             [3.0.1,)
+                                        </versionRange>
+                                        <goals>
+                                            <goal>check</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore></ignore>
+                                    </action>
+                                </pluginExecution>
+                                <pluginExecution>  
+                                    <pluginExecutionFilter>  
+                                        <groupId>org.apache.maven.plugins</groupId>  
+                                        <artifactId>maven-enforcer-plugin</artifactId>  
+                                        <versionRange>[1.0.0,)</versionRange>  
+                                        <goals>  
+                                            <goal>enforce</goal>  
+                                        </goals>  
+                                    </pluginExecutionFilter>  
+                                    <action>  
+                                        <ignore />  
+                                    </action>  
+                                </pluginExecution>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>com.mycila</groupId>
+                                        <artifactId>
+                                            license-maven-plugin
+                                        </artifactId>
+                                        <versionRange>
+                                            [2.11,)
                                         </versionRange>
                                         <goals>
                                             <goal>check</goal>
@@ -488,14 +554,32 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
-                <version>${maven-javadoc-plugin-version}</version> <executions> <execution> 
-                <id>attach-javadocs</id> <goals> <goal>jar</goal> </goals> </execution> </executions> 
-                </plugin> -->
+            <plugin> 
+                <groupId>org.apache.maven.plugins</groupId> 
+                <artifactId>maven-javadoc-plugin</artifactId> 
+                <version>${maven-javadoc-plugin-version}</version> 
+                <executions> 
+                    <execution> 
+                        <id>attach-javadocs</id> 
+                        <goals> 
+                            <goal>jar</goal> 
+                        </goals> 
+                    </execution> 
+                </executions> 
+                <configuration>
+                    <skip>true</skip>
+                    <show>public</show>
+                    <charset>UTF-8</charset>
+                    <encoding>UTF-8</encoding>
+                    <docencoding>UTF-8</docencoding>
+                    <links>
+                        <link>http://docs.oracle.com/javase/8/docs/api</link>
+                    </links>
+                </configuration>
+            </plugin> 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.2</version>
                 <configuration>
                     <tagBase>https://github.com/nano-projects/nano-framework/tags</tagBase>
                     <useReleaseProfile>false</useReleaseProfile>
@@ -537,7 +621,7 @@
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>${coveralls-maven-plugin.version}</version>
                 <configuration>
-                    <repoToken>yourcoverallsprojectrepositorytoken</repoToken>
+                    <repoToken>NPDKffpjRjdTvbnq1pZ76uJGPmjJOkIL2</repoToken>
                 </configuration>
             </plugin>
             <plugin>
@@ -557,6 +641,83 @@
                     </instrumentation>
                 </configuration>
             </plugin>
+            <plugin>
+                    <groupId>com.mycila</groupId>
+                    <artifactId>license-maven-plugin</artifactId>
+                    <version>${license-maven-plugin.version}</version>
+                    <configuration>
+                        <header>${cs.dir}/src/licensing/header.txt</header>
+                        <skipExistingHeaders>true</skipExistingHeaders>
+                        <strictCheck>true</strictCheck>
+                        <headerDefinitions>
+                            <headerDefinition>${cs.dir}/src/licensing/header-definitions.xml</headerDefinition>
+                        </headerDefinitions>
+                        <aggregate>true</aggregate>
+                        <mapping>
+                            <schema>SCRIPT_STYLE</schema>
+                            <ldif>SCRIPT_STYLE</ldif>
+                            <yml>SCRIPT_STYLE</yml>
+                            <ini>SCRIPT_STYLE</ini>
+                            <conf>JAVADOC_STYLE</conf>
+                            <less>JAVADOC_STYLE</less>
+                            <ts>JAVADOC_STYLE</ts>
+                        </mapping>
+                        <excludes>
+                            <exclude>**/bin/**</exclude>
+                            <exclude>**/build/**</exclude>
+                            <exclude>**/.gradle/**</exclude>
+                            <exclude>LICENSE</exclude>
+                            <exclude>**/INSTALL*</exclude>
+                            <exclude>**/NOTICE*</exclude>
+                            <exclude>**/README*</exclude>
+                            <exclude>**/readme*</exclude>
+                            <exclude>**/*.log</exclude>
+                            <exclude>**/*.license</exclude>
+                            <exclude>**/*.donotdelete</exclude>
+                            <exclude>**/*.orig</exclude>
+                            <exclude>**/*.txt</exclude>
+                            <exclude>**/*.crt</exclude>
+                            <exclude>**/*.cer</exclude>
+                            <exclude>**/*.jks</exclude>
+                            <exclude>**/*.crl</exclude>
+                            <exclude>**/*.key</exclude>
+                            <exclude>**/*.json</exclude>
+                            <exclude>**/*.checkstyle</exclude>
+                            <exclude>**/*.properties</exclude>
+                            <exclude>**/.gitignore</exclude>
+                            <exclude>**/overlays/**</exclude>
+                            <exclude>src/licensing/**</exclude>
+                            <exclude>**/testCA/**</exclude>
+                            <exclude>**/.idea/**</exclude>
+                            <exclude>**/*.keystore</exclude>
+                            <exclude>**/*.example</exclude>
+                            <exclude>**/*.jmx</exclude>
+                            <exclude>**/*.pandoc</exclude>
+                            <exclude>**/*.sample</exclude>
+                            <exclude>**/*.doc</exclude>
+                            <exclude>**/*.md</exclude>
+                            <exclude>**/*.pdf</exclude>
+                            <exclude>**/*.pem</exclude>
+                            <exclude>**/*.p8</exclude>
+                            <exclude>**/*.bin</exclude>
+                            <exclude>**/*.idx</exclude>
+                            <exclude>**/jetty.pid</exclude>
+                            <exclude>**/.gitkeep</exclude>
+                            <exclude>**/.fbIncludeFilterFile</exclude>
+                            <exclude>**/node_modules/**</exclude>
+                            <exclude>**/typings/**</exclude>
+                            <xclude>**/docs/**</xclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>compile</phase>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
         </plugins>
     </build>
 </project>

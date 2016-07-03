@@ -91,9 +91,7 @@ public class UnsupportedAccessException extends RuntimeException {
      *
      * @since 1.7
      */
-    protected UnsupportedAccessException(String message, Throwable cause,
-                               boolean enableSuppression,
-                               boolean writableStackTrace) {
+    protected UnsupportedAccessException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

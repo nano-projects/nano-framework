@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,25 +20,25 @@ package org.nanoframework.core.chain.exception;
  * @date 2015年12月3日 下午1:53:10
  */
 public class ChainStepException extends ChainException {
-	private static final long serialVersionUID = -5737419285297498105L;
+    private static final long serialVersionUID = -5737419285297498105L;
 
-	public ChainStepException() {
-		super();
-	}
+    public ChainStepException() {
+        super();
+    }
 
-	public ChainStepException(String message) {
-		super(message);
-	}
+    public ChainStepException(String message) {
+        super(message);
+    }
 
-	public ChainStepException(String message, Throwable cause) {
-		super(message, cause);
-	}
+    public ChainStepException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	public ChainStepException(Throwable cause) {
-		super(cause);
-	}
+    public ChainStepException(Throwable cause) {
+        super(cause);
+    }
 
-	protected ChainStepException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
+    protected ChainStepException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
+    }
 }

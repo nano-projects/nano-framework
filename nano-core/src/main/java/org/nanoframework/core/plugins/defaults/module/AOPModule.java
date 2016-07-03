@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -41,26 +41,26 @@ import com.google.inject.matcher.Matchers;
  */
 public class AOPModule extends Module {
 
-	@Override
-	protected void configure() {
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new BeforeInterceptor());
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(After.class), new AfterInterceptor());
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfter.class), new BeforeAndAfterInterceptor());
-		
-		// Interceptor More
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeMore.class), new BeforeMoreInterceptor());
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(AfterMore.class), new AfterMoreInterceptor());
-		bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfterMore.class), new BeforeAndAfterMoreInterceptor());
-	}
+    @Override
+    protected void configure() {
+        bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new BeforeInterceptor());
+        bindInterceptor(Matchers.any(), Matchers.annotatedWith(After.class), new AfterInterceptor());
+        bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfter.class), new BeforeAndAfterInterceptor());
 
-	@Override
-	public List<Module> load() throws Throwable {
-		modules.add(new AOPModule());
-		return modules;
-	}
+        // Interceptor More
+        bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeMore.class), new BeforeMoreInterceptor());
+        bindInterceptor(Matchers.any(), Matchers.annotatedWith(AfterMore.class), new AfterMoreInterceptor());
+        bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfterMore.class), new BeforeAndAfterMoreInterceptor());
+    }
 
-	@Override
-	public void config(ServletConfig config) throws Throwable {
-		
-	}
+    @Override
+    public List<Module> load() throws Throwable {
+        modules.add(new AOPModule());
+        return modules;
+    }
+
+    @Override
+    public void config(ServletConfig config) throws Throwable {
+
+    }
 }

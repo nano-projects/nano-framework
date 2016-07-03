@@ -46,21 +46,21 @@ public class MapperNode extends BaseEntity {
     private ConcurrentMap<String, MapperNode> leafNodes = new ConcurrentHashMap<>();
 
     public static final char SLASH = '/';
-    
+
     public static final MapperNode ROOT = new MapperNode() {
-        private static final long serialVersionUID = 5928454777545648552L; 
+        private static final long serialVersionUID = 5928454777545648552L;
         {
             String context = System.getProperty(ApplicationContext.CONTEXT_ROOT);
             if (StringUtils.isBlank(context)) {
                 throw new IllegalArgumentException("无效的/无法获取context.root属性");
             }
-            
+
             if (context.startsWith("/")) {
                 context = context.substring(1);
             } else {
                 throw new IllegalArgumentException("context.root属性必须以'/'开头");
             }
-            
+
             setToken(context);
             setUri(SLASH + context);
         }
@@ -80,7 +80,7 @@ public class MapperNode extends BaseEntity {
             if (StringUtils.isBlank(token)) {
                 throw new IllegalArgumentException("无效的URI: " + uri);
             }
-            
+
             Map<String, MapperNode> leafNodes = root.getLeafNodes();
             if (leafNodes.get(token) == null) {
                 validURI(uri, token, leafNodes.keySet());
@@ -204,13 +204,14 @@ public class MapperNode extends BaseEntity {
 
     public void putMapper(Map<RequestMethod, RequestMapper> mapper, String uri) {
         Assert.notNull(mapper);
-        for (Iterator<Entry<RequestMethod, RequestMapper>> iter = mapper.entrySet().iterator(); iter.hasNext(); ) {
+        for (Iterator<Entry<RequestMethod, RequestMapper>> iter = mapper.entrySet().iterator(); iter.hasNext();) {
             final Entry<RequestMethod, RequestMapper> entry = iter.next();
             final RequestMethod method = entry.getKey();
             if (this.mapper.containsKey(method)) {
-                throw new ComponentServiceRepeatException("MapperNode.putMapper(RequestMapper, String): 重复的Restful风格URI定义: " + uri + ", method: " + method.name());
+                throw new ComponentServiceRepeatException(
+                        "MapperNode.putMapper(RequestMapper, String): 重复的Restful风格URI定义: " + uri + ", method: " + method.name());
             }
-            
+
             this.mapper.put(method, entry.getValue());
         }
     }

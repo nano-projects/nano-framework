@@ -91,9 +91,7 @@ public class HttpClientInvokeException extends RuntimeException {
      *
      * @since 1.7
      */
-    protected HttpClientInvokeException(String message, Throwable cause,
-                               boolean enableSuppression,
-                               boolean writableStackTrace) {
+    protected HttpClientInvokeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

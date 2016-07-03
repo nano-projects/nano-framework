@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -23,24 +23,24 @@ import org.apache.shiro.realm.jdbc.JdbcRealm.SaltStyle;
  * @author yanghe
  * @date 2015年12月9日 下午3:25:08
  */
-@SuppressWarnings({ "rawtypes", "unchecked"})
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class EnumConverter extends AbstractConverter {
-	@Override
-	protected String convertToString(final Object value) throws Throwable {
-		return ((Enum) value).name();
-	}
+    @Override
+    protected String convertToString(final Object value) throws Throwable {
+        return ((Enum) value).name();
+    }
 
-	@Override
-	protected Object convertToType(final Class type, final Object value) throws Throwable {
-		return Enum.valueOf(type, value.toString());
-	}
+    @Override
+    protected Object convertToType(final Class type, final Object value) throws Throwable {
+        return Enum.valueOf(type, value.toString());
+    }
 
-	@Override
-	protected Class getDefaultType() {
-		return null;
-	}
+    @Override
+    protected Class getDefaultType() {
+        return null;
+    }
 
-	public static final void register() {
-		BeanUtilsBean.getInstance().getConvertUtils().register(new EnumConverter(), SaltStyle.class);
-	}
+    public static final void register() {
+        BeanUtilsBean.getInstance().getConvertUtils().register(new EnumConverter(), SaltStyle.class);
+    }
 }

@@ -25,28 +25,28 @@ import java.util.Collection;
  */
 public class CollectionBuilder<E> {
     private Collection<E> collection;
-    
+
     private CollectionBuilder() {
-        
+
     }
-    
+
     public static <E> CollectionBuilder<E> create() {
         CollectionBuilder<E> build = new CollectionBuilder<>();
         build.collection = new ArrayList<>();
         return build;
     }
-    
+
     public static <E> CollectionBuilder<E> create(Class<? extends Collection<E>> cls, Object... params) {
         CollectionBuilder<E> build = new CollectionBuilder<>();
         build.collection = ReflectUtils.newInstance(cls, params);
         return build;
     }
-    
+
     public CollectionBuilder<E> add(E element) {
         collection.add(element);
         return this;
     }
-    
+
     public Collection<E> build() {
         return collection;
     }

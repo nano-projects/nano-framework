@@ -97,7 +97,7 @@ public class RequestMapper extends BaseEntity {
         if (ArrayUtils.isNotEmpty(requestMethods)) {
             this.requestMethods = requestMethods;
         }
-        
+
         return this;
     }
 

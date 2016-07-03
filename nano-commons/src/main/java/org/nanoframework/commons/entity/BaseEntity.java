@@ -72,7 +72,7 @@ public abstract class BaseEntity implements Cloneable, Serializable {
         if (StringUtils.isEmpty(fieldName)) {
             throw new IllegalArgumentException("属性名不能为空");
         }
-        
+
         Class<?> cls = this.getClass();
         Method[] methods = _getParamMethods();
         Field[] fields = _getParamFields();

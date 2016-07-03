@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015-2016 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,9 +31,9 @@ public final class ParameterizedMessageFactory extends AbstractMessageFactory {
      * Instance of StringFormatterMessageFactory.
      */
     public static final ParameterizedMessageFactory INSTANCE = new ParameterizedMessageFactory();
-    
+
     private static final long serialVersionUID = 1L;
-    
+
     /**
      * Creates {@link ParameterizedMessage} instances.
      * @param message The message pattern.

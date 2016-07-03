@@ -1,11 +1,11 @@
-/**
- * Copyright 2015 the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,40 +31,40 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  */
 public class DataSourceModule extends Module {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Module> load() throws Throwable {
-		try {
-			Class<?> DataSourceLoader = Class.forName("org.nanoframework.orm.jdbc.JdbcDataSourceLoader");
-			Object dsl = DataSourceLoader.newInstance();
-			PropertiesLoader.PROPERTIES.putAll((Map<String, Properties>) DataSourceLoader.getMethod("getLoadProperties").invoke(dsl));
-			modules.addAll((List<Module>) DataSourceLoader.getMethod("getModules").invoke(dsl));
-		} catch(Exception e) {
-			if(!(e instanceof ClassNotFoundException))
-				throw new PluginLoaderException(e.getMessage(), e);
-		}
-		
-		try {
-			Class<?> DataSourceLoader = Class.forName("org.nanoframework.orm.mybatis.MybatisDataSourceLoader");
-			Object dsl = DataSourceLoader.newInstance();
-			PropertiesLoader.PROPERTIES.putAll((Map<String, Properties>) DataSourceLoader.getMethod("getLoadProperties").invoke(dsl));
-			modules.addAll((List<Module>) DataSourceLoader.getMethod("getModules").invoke(dsl));
-		} catch(Exception e) {
-			if(!(e instanceof ClassNotFoundException))
-				throw new PluginLoaderException(e.getMessage(), e);
-		}
-		
-		return modules;
-	}
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Module> load() throws Throwable {
+        try {
+            Class<?> DataSourceLoader = Class.forName("org.nanoframework.orm.jdbc.JdbcDataSourceLoader");
+            Object dsl = DataSourceLoader.newInstance();
+            PropertiesLoader.PROPERTIES.putAll((Map<String, Properties>) DataSourceLoader.getMethod("getLoadProperties").invoke(dsl));
+            modules.addAll((List<Module>) DataSourceLoader.getMethod("getModules").invoke(dsl));
+        } catch (Exception e) {
+            if (!(e instanceof ClassNotFoundException))
+                throw new PluginLoaderException(e.getMessage(), e);
+        }
 
-	@Override
-	public void config(ServletConfig config) throws Throwable {
+        try {
+            Class<?> DataSourceLoader = Class.forName("org.nanoframework.orm.mybatis.MybatisDataSourceLoader");
+            Object dsl = DataSourceLoader.newInstance();
+            PropertiesLoader.PROPERTIES.putAll((Map<String, Properties>) DataSourceLoader.getMethod("getLoadProperties").invoke(dsl));
+            modules.addAll((List<Module>) DataSourceLoader.getMethod("getModules").invoke(dsl));
+        } catch (Exception e) {
+            if (!(e instanceof ClassNotFoundException))
+                throw new PluginLoaderException(e.getMessage(), e);
+        }
 
-	}
+        return modules;
+    }
 
-	@Override
-	protected void configure() {
-		
-	}
+    @Override
+    public void config(ServletConfig config) throws Throwable {
+
+    }
+
+    @Override
+    protected void configure() {
+
+    }
 
 }

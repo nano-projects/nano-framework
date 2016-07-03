@@ -1,11 +1,11 @@
-/**
- * Copyright 2015- the original author or authors.
+/*
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 			http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -32,34 +32,34 @@ import java.lang.annotation.Target;
 @Documented
 public @interface RequestParam {
 
-	/**
-	 * The value of the request parameter to bind to.
-	 * @return parameter name value
-	 */
-	String value() default "";
-	
-	/**
-	 * The name of the request parameter to bind to.
-	 * 
-	 * The property name is too stupid,  Deprecated it.
-	 */
-	@Deprecated
-	String name() default "";
+    /**
+     * The value of the request parameter to bind to.
+     * @return parameter name value
+     */
+    String value() default "";
 
-	/**
-	 * Whether the parameter is required.
-	 * <p>Default is <code>true</code>, leading to an exception thrown in case
-	 * of the parameter missing in the request. Switch this to <code>false</code>
-	 * if you prefer a <code>null</value> in case of the parameter missing.
-	 * <p>Alternatively, provide a {@link #defaultValue() defaultValue},
-	 * which implicitly sets this flag to <code>false</code>.
-	 */
-	boolean required() default true;
+    /**
+     * The name of the request parameter to bind to.
+     * 
+     * The property name is too stupid,  Deprecated it.
+     */
+    @Deprecated
+    String name() default "";
 
-	/**
-	 * The default value to use as a fallback. Supplying a default value implicitly
-	 * sets {@link #required()} to false.
-	 */
-	String defaultValue() default ValueConstants.DEFAULT_NONE;
-	
+    /**
+     * Whether the parameter is required.
+     * <p>Default is <code>true</code>, leading to an exception thrown in case
+     * of the parameter missing in the request. Switch this to <code>false</code>
+     * if you prefer a <code>null</value> in case of the parameter missing.
+     * <p>Alternatively, provide a {@link #defaultValue() defaultValue},
+     * which implicitly sets this flag to <code>false</code>.
+     */
+    boolean required() default true;
+
+    /**
+     * The default value to use as a fallback. Supplying a default value implicitly
+     * sets {@link #required()} to false.
+     */
+    String defaultValue() default ValueConstants.DEFAULT_NONE;
+
 }

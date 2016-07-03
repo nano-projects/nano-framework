@@ -1,11 +1,11 @@
-/**
+/*
  * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- * 		http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -27,7 +27,6 @@ import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.nanoframework.extension.shiro.codec.CodecSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Simple CredentialsMatcher implementation.  Supports direct (plain) comparison for credentials of type
@@ -94,13 +93,12 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
      */
     protected boolean equals(Object tokenCredentials, Object accountCredentials) {
         if (log.isDebugEnabled()) {
-            log.debug("Performing credentials equality check for tokenCredentials of type [{}] and accountCredentials of type [{}]", 
+            log.debug("Performing credentials equality check for tokenCredentials of type [{}] and accountCredentials of type [{}]",
                     tokenCredentials.getClass().getName(), accountCredentials.getClass().getName());
         }
         if (isByteSource(tokenCredentials) && isByteSource(accountCredentials)) {
             if (log.isDebugEnabled()) {
-                log.debug("Both credentials arguments can be easily converted to byte arrays.  Performing " +
-                        "array equals comparison");
+                log.debug("Both credentials arguments can be easily converted to byte arrays.  Performing " + "array equals comparison");
             }
             byte[] tokenBytes = toBytes(tokenCredentials);
             byte[] accountBytes = toBytes(accountCredentials);

@@ -27,7 +27,7 @@ import com.google.inject.Guice;
 /**
  *
  * @author yanghe
- * @since
+ * @since 1.3.10
  */
 public class HttpClientTest {
 

@@ -1,11 +1,11 @@
 /*
- * Copyright 1999-2101 Alibaba Group Holding Ltd.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -20,6 +20,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.spi.ExtendedLogger;
 
+/**
+ *
+ * @author yanghe
+ * @since 1.0
+ */
 public class Log4j2Impl implements org.nanoframework.commons.support.logging.Logger {
 
     private ExtendedLogger log;
@@ -34,11 +39,11 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
      * @since 0.2.21
      * @param log
      */
-    public Log4j2Impl(Logger log){
+    public Log4j2Impl(Logger log) {
         this.log = (ExtendedLogger) log;
     }
 
-    public Log4j2Impl(String loggerName){
+    public Log4j2Impl(String loggerName) {
         log = (ExtendedLogger) LogManager.getLogger(loggerName);
     }
 
@@ -120,57 +125,57 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
         return log.toString();
     }
 
-	@Override
-	public void warn(String paramString, Object... paramArrayOfObject) {
-		warnCount++;
-		log.logIfEnabled(FQCN, Level.WARN, null, paramString, paramArrayOfObject);
-	}
+    @Override
+    public void warn(String paramString, Object... paramArrayOfObject) {
+        warnCount++;
+        log.logIfEnabled(FQCN, Level.WARN, null, paramString, paramArrayOfObject);
+    }
 
-	@Override
-	public void warn(Throwable paramThrowable) {
-		warnCount++;
-		log.logIfEnabled(FQCN, Level.WARN, null, "", paramThrowable);
-	}
+    @Override
+    public void warn(Throwable paramThrowable) {
+        warnCount++;
+        log.logIfEnabled(FQCN, Level.WARN, null, "", paramThrowable);
+    }
 
-	@Override
-	public void info(String paramString, Object... paramArrayOfObject) {
-		infoCount++;
-		log.logIfEnabled(FQCN, Level.INFO, null, paramString, paramArrayOfObject);
-	}
+    @Override
+    public void info(String paramString, Object... paramArrayOfObject) {
+        infoCount++;
+        log.logIfEnabled(FQCN, Level.INFO, null, paramString, paramArrayOfObject);
+    }
 
-	@Override
-	public void info(Throwable paramThrowable) {
-		infoCount++;
-		log.logIfEnabled(FQCN, Level.INFO, null, "", paramThrowable);		
-	}
+    @Override
+    public void info(Throwable paramThrowable) {
+        infoCount++;
+        log.logIfEnabled(FQCN, Level.INFO, null, "", paramThrowable);
+    }
 
-	@Override
-	public void info(String paramString, Throwable paramThrowable) {
-		infoCount++;
-		log.logIfEnabled(FQCN, Level.INFO, null, paramString, paramThrowable);
-	}
+    @Override
+    public void info(String paramString, Throwable paramThrowable) {
+        infoCount++;
+        log.logIfEnabled(FQCN, Level.INFO, null, paramString, paramThrowable);
+    }
 
-	@Override
-	public void debug(String paramString, Object... paramArrayOfObject) {
-		debugCount++;
-		log.logIfEnabled(FQCN, Level.DEBUG, null, paramString, paramArrayOfObject);
-	}
+    @Override
+    public void debug(String paramString, Object... paramArrayOfObject) {
+        debugCount++;
+        log.logIfEnabled(FQCN, Level.DEBUG, null, paramString, paramArrayOfObject);
+    }
 
-	@Override
-	public void debug(Throwable paramThrowable) {
-		debugCount++;
-		log.logIfEnabled(FQCN, Level.DEBUG, null, "", paramThrowable);
-	}
+    @Override
+    public void debug(Throwable paramThrowable) {
+        debugCount++;
+        log.logIfEnabled(FQCN, Level.DEBUG, null, "", paramThrowable);
+    }
 
-	@Override
-	public void error(String paramString, Object... paramArrayOfObject) {
-		errorCount++;
-		log.logIfEnabled(FQCN, Level.ERROR, null, paramString, paramArrayOfObject);
-	}
-	
-	@Override
-	public void error(Throwable paramThrowable) {
-		errorCount++;
-		log.logIfEnabled(FQCN, Level.ERROR, null, "", paramThrowable);
-	}
+    @Override
+    public void error(String paramString, Object... paramArrayOfObject) {
+        errorCount++;
+        log.logIfEnabled(FQCN, Level.ERROR, null, paramString, paramArrayOfObject);
+    }
+
+    @Override
+    public void error(Throwable paramThrowable) {
+        errorCount++;
+        log.logIfEnabled(FQCN, Level.ERROR, null, "", paramThrowable);
+    }
 }
