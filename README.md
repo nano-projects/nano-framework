@@ -1,5 +1,7 @@
 NanoFramework
 ====
+[![Coverage Status](https://coveralls.io/repos/github/nano-projects/nano-framework/badge.svg)](https://coveralls.io/github/nano-projects/nano-framework)
+[![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 	NanoFramework是一个用于快速开发Web及任务调度项目的框架，以极少量的配置即可搭建Web项目或任务调度项目。
 	
