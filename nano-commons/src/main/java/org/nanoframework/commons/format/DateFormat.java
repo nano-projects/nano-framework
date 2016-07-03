@@ -27,9 +27,13 @@ import org.nanoframework.commons.util.Assert;
  * @author yanghe
  * @date 2015年8月19日 上午8:58:41
  */
-public class DateFormat {
+public final class DateFormat {
     private static final ConcurrentMap<String, ThreadLocal<SimpleDateFormat>> FORMAT_MAP = new ConcurrentHashMap<>();
 
+    private DateFormat() {
+        
+    }
+    
     public static final SimpleDateFormat get(String pattern) {
         SimpleDateFormat format;
         ThreadLocal<SimpleDateFormat> formatLocal;

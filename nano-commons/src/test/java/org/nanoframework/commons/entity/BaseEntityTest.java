@@ -43,7 +43,9 @@ public class BaseEntityTest {
         };
 
         UseEntity entity = new UseEntity();
-        String[] attrs = entity._getAttributeNames();
+        final String[] attrs = entity._getAttributeNames();
+        final String[] attrs2 = entity._getAttributeNames();
+        assertEquals(attrs == attrs2, true);
         assertEquals(2, attrs.length);
         assertTrue(attrList.contains(attrs[0]));
         assertTrue(attrList.contains(attrs[1]));
@@ -54,6 +56,11 @@ public class BaseEntityTest {
         UseEntity entity = new UseEntity();
         entity.setId("1234567890");
         assertEquals("1234567890", entity._getAttributeValue("id"));
+        try {
+            entity._getAttributeValue("");
+        } catch (final Throwable e) {
+            assertEquals(e instanceof IllegalArgumentException, true);
+        }
     }
 
     @Test

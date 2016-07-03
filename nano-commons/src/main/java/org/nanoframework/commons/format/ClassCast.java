@@ -15,7 +15,6 @@
  */
 package org.nanoframework.commons.format;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -23,6 +22,7 @@ import java.text.ParseException;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringUtils;
+import org.nanoframework.commons.util.ObjectCompare;
 import org.nanoframework.commons.util.ObjectUtils;
 
 import com.alibaba.fastjson.JSON;
@@ -33,7 +33,7 @@ import com.alibaba.fastjson.TypeReference;
  * @author yanghe
  * @date 2015年6月5日 下午5:03:48 
  */
-public class ClassCast {
+public final class ClassCast {
 
     public static final String _Integer = "java.lang.Integer";
     public static final String _LInteger = "[Ljava.lang.Integer;";
@@ -61,15 +61,20 @@ public class ClassCast {
     public static final String _BigDecimal = "java.math.BigDecimal";
     public static final String _LBigDecimal = "[Ljava.math.BigDecimal;";
 
+    private ClassCast() {
+        
+    }
+    
     /**
      * 根据Class进行转换，转换简单数据类型
      * @param value 值
      * @param typeName 类型
      * @return 返回转换后的值
      */
-    public static final Object cast(String value, String typeName) {
-        if (value == null)
+    public static final Object cast(final String value, final String typeName) {
+        if (value == null) {
             return null;
+        }
 
         try {
             switch (typeName) {
@@ -84,13 +89,21 @@ public class ClassCast {
 
                 case _Float:
                     return Float.valueOf(value);
-
+                    
+                case _Boolean:
+                    if (ObjectCompare.isInList(value.toUpperCase(), "1", "YES", "Y", "TRUE")) {
+                        return Boolean.TRUE;
+                    } else if (ObjectCompare.isInList(value.toUpperCase(), "0", "NO", "N", "FALSE")) {
+                        return Boolean.FALSE;
+                    } else {
+                        return Boolean.valueOf(value);
+                    }
                 case _String:
                     return value;
 
                 case _Date_util:
                 case _Date_sql:
-                    return DateFormat.parse(value, Pattern.DATE);
+                    return DateFormat.parse(value, Pattern.DATETIME);
 
                 case _Timestamp:
                     long time = DateFormat.parse(value, Pattern.TIMESTAMP).getTime();
@@ -120,27 +133,23 @@ public class ClassCast {
      * @return 返回转换后的值
      */
     public static final Object cast(Object value, String typeName) {
-        if (StringUtils.isEmpty(typeName))
-            throw new IllegalArgumentException("类型名不能为空");
-
-        if (value == null)
+        if (value == null) {
             return null;
-
+        }
+        
+        if (StringUtils.isEmpty(typeName)) {
+            throw new IllegalArgumentException("类型名不能为空");
+        }
+        
         try {
             switch (typeName) {
                 case _Integer:
-                    if (value instanceof String) {
-                        if (StringUtils.isEmpty((String) value)) {
-                            return null;
-                        }
-
-                        return Integer.valueOf((String) value);
-                    } else if (value instanceof Integer) {
+                    if (value instanceof Integer) {
                         return value;
                     } else if (value instanceof BigDecimal) {
                         return ((BigDecimal) value).intValue();
                     } else {
-                        return Integer.valueOf(String.valueOf(value));
+                        return new BigDecimal(String.valueOf(value)).intValue();
                     }
                 case _LInteger:
                     Object[] values = ObjectUtils.toObjectArray(value);
@@ -149,24 +158,18 @@ public class ClassCast {
                         if (values[idx] == null || "".equals(values[idx])) {
                             ints[idx] = null;
                         } else {
-                            ints[idx] = Integer.valueOf(String.valueOf(values[idx]));
+                            ints[idx] = new BigDecimal(String.valueOf(values[idx])).intValue();
                         }
                     }
 
                     return ints;
                 case _Long:
-                    if (value instanceof String) {
-                        if (StringUtils.isEmpty((String) value)) {
-                            return null;
-                        }
-
-                        return Long.valueOf((String) value);
-                    } else if (value instanceof Long) {
+                    if (value instanceof Long) {
                         return value;
                     } else if (value instanceof BigDecimal) {
                         return ((BigDecimal) value).longValue();
                     } else {
-                        return Long.valueOf(String.valueOf(value));
+                        return new BigDecimal(String.valueOf(value)).longValue();
                     }
                 case _LLong:
                     values = ObjectUtils.toObjectArray(value);
@@ -175,24 +178,18 @@ public class ClassCast {
                         if (values[idx] == null || "".equals(values[idx])) {
                             longs[idx] = null;
                         } else {
-                            longs[idx] = Long.valueOf(String.valueOf(values[idx]));
+                            longs[idx] = new BigDecimal(String.valueOf(values[idx])).longValue();
                         }
                     }
 
                     return longs;
                 case _Double:
-                    if (value instanceof String) {
-                        if (StringUtils.isEmpty((String) value)) {
-                            return null;
-                        }
-
-                        return Double.valueOf((String) value);
-                    } else if (value instanceof Double) {
+                    if (value instanceof Double) {
                         return value;
                     } else if (value instanceof BigDecimal) {
                         return ((BigDecimal) value).doubleValue();
                     } else {
-                        return Double.valueOf(String.valueOf(value));
+                        return new BigDecimal(String.valueOf(value)).doubleValue();
                     }
                 case _LDouble:
                     values = ObjectUtils.toObjectArray(value);
@@ -201,24 +198,18 @@ public class ClassCast {
                         if (values[idx] == null || "".equals(values[idx])) {
                             doubles[idx] = null;
                         } else {
-                            doubles[idx] = Double.valueOf(String.valueOf(values[idx]));
+                            doubles[idx] = new BigDecimal(String.valueOf(values[idx])).doubleValue();
                         }
                     }
 
                     return doubles;
                 case _Float:
-                    if (value instanceof String) {
-                        if (StringUtils.isEmpty((String) value)) {
-                            return null;
-                        }
-
-                        return Float.valueOf((String) value);
-                    } else if (value instanceof Float) {
+                    if (value instanceof Float) {
                         return value;
                     } else if (value instanceof BigDecimal) {
                         return ((BigDecimal) value).floatValue();
                     } else {
-                        return Float.valueOf(String.valueOf(value));
+                        return new BigDecimal(String.valueOf(value)).floatValue();
                     }
                 case _LFloat:
                     values = ObjectUtils.toObjectArray(value);
@@ -227,19 +218,13 @@ public class ClassCast {
                         if (values[idx] == null || "".equals(values[idx])) {
                             floats[idx] = null;
                         } else {
-                            floats[idx] = Float.valueOf(String.valueOf(values[idx]));
+                            floats[idx] = new BigDecimal(String.valueOf(values[idx])).floatValue();
                         }
                     }
 
                     return floats;
                 case _Boolean:
-                    if (value instanceof String) {
-                        if (StringUtils.isEmpty((String) value)) {
-                            return null;
-                        }
-
-                        return Boolean.valueOf((String) value);
-                    } else if (value instanceof Boolean)
+                    if (value instanceof Boolean)
                         return value;
                     else {
                         return Boolean.valueOf(String.valueOf(value));
@@ -256,22 +241,18 @@ public class ClassCast {
                     }
 
                     return booleans;
-                case _String:
-                    return String.valueOf(value);
-
                 case _Date_util:
                 case _Date_sql:
-                case _Timestamp:
-                    if (value instanceof String) {
-                        if (StringUtils.isEmpty((String) value)) {
-                            return null;
-                        }
-
-                        return parseDate((String) value);
-                    } else if (value instanceof Date)
+                    if (value instanceof Date)
                         return value;
                     else {
                         return parseDate(String.valueOf(value));
+                    }
+                case _Timestamp:
+                    if (value instanceof Date)
+                        return new Timestamp(((Date) value).getTime());
+                    else {
+                        return new Timestamp(parseDate(String.valueOf(value)).getTime());
                     }
                 case _int:
                 case _long:
@@ -287,22 +268,16 @@ public class ClassCast {
                         newType = typeName;
                     }
 
-                    Class<?> cls = Class.forName(newType);
-                    TypeReference<Object> type = new TypeReference<Object>() {
-                        public Type getType() {
-                            return cls;
+                    if (value instanceof String[]) {
+                        final Class<?> cls = Class.forName(newType);
+                        final TypeReference<Object> type = new TypeReference<Object>() {
+                            public Type getType() {
+                                return cls;
+                            };
                         };
-                    };
-
-                    if (value instanceof String) {
-                        if (String.class == cls) {
-                            return value;
-                        }
-
-                        return JSON.parseObject((String) value, type);
-                    } else if (value instanceof String[]) {
+                        
                         String[] array = (String[]) value;
-                        Object[] objs = (Object[]) Array.newInstance(cls, array.length);
+                        Object[] objs = new Object[array.length];
                         int idx = 0;
                         for (String val : array) {
                             if (String.class == cls) {
@@ -315,13 +290,21 @@ public class ClassCast {
                         }
 
                         return objs;
+                    } else if (value instanceof String) {
+                        final Class<?> cls = Class.forName(typeName);
+                        final TypeReference<Object> type = new TypeReference<Object>() {
+                            public Type getType() {
+                                return cls;
+                            };
+                        };
+                        
+                        return JSON.parseObject((String) value, type);
                     }
 
                     return value;
             }
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             throw new org.nanoframework.commons.exception.ClassCastException(e.getMessage(), e);
-
         }
     }
 
@@ -347,19 +330,6 @@ public class ClassCast {
         }
 
         return DateFormat.parse(date, pattern);
-    }
-
-    /**
-     * 
-     * @param date
-     * @return date string
-     */
-    public static String fmtDate(Date date, String pattern) {
-        if (null == date) {
-            return null;
-        }
-
-        return DateFormat.format(date, pattern);
     }
 
 }

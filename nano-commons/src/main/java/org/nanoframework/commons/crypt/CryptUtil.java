@@ -32,13 +32,17 @@ import org.nanoframework.commons.util.StringUtils;
  * @since 1.0
  * @date 2015年8月19日 上午8:59:44
  */
-public class CryptUtil {
+public final class CryptUtil {
     private static final String DEFAULT_PASSWORD = "nano-framework";
     private static final String CRYPT_MODE = "AES";
     private static final String SHA_MODE = "SHA1PRNG";
     private static final int CRYPT_KEY_SIZE = 128;
     private static final int HEX = 16;
 
+    private CryptUtil() {
+        
+    }
+    
     /**
      * 使用默认密钥对明文进行AES加密，并返回密文内容.
      * 
@@ -166,15 +170,11 @@ public class CryptUtil {
         return builder.toString();
     }
 
-    private static byte[] parseHexStr2Byte(final String hexStr) {
-        if (hexStr.length() < 1) {
-            return null;
-        }
-
-        final byte[] result = new byte[hexStr.length() / 2];
-        for (int i = 0; i < hexStr.length() / 2; i++) {
-            final int high = Integer.parseInt(hexStr.substring(i * 2, i * 2 + 1), HEX);
-            final int low = Integer.parseInt(hexStr.substring(i * 2 + 1, i * 2 + 2), HEX);
+    private static byte[] parseHexStr2Byte(final String hex) {
+        final byte[] result = new byte[hex.length() / 2];
+        for (int i = 0; i < hex.length() / 2; i++) {
+            final int high = Integer.parseInt(hex.substring(i * 2, i * 2 + 1), HEX);
+            final int low = Integer.parseInt(hex.substring(i * 2 + 1, i * 2 + 2), HEX);
             result[i] = (byte) (high * HEX + low);
         }
 

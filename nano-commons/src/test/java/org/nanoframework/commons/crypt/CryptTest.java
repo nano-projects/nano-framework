@@ -41,4 +41,12 @@ public class CryptTest {
 		String decode = CryptUtil.decrypt(encode, "use passwd");
 		assertEquals(testString, decode);
 	}
+	
+	@Test
+    public void cryptByEmptyUsePasswdTest() {
+        String testString = "test crypt encrypt by use passwd";
+        String encode = CryptUtil.encrypt(testString, "");
+        String decode = CryptUtil.decrypt(encode, "");
+        assertEquals(testString, decode);
+    }
 }

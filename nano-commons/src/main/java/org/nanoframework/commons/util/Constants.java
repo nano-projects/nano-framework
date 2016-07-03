@@ -16,7 +16,6 @@
 package org.nanoframework.commons.util;
 
 import org.nanoframework.commons.exception.ExtensionRuntimeException;
-import org.nanoframework.commons.format.StringFormat;
 
 import com.alibaba.fastjson.JSON;
 
@@ -46,10 +45,10 @@ public class Constants {
     public static final String RESULT = "result";
 
     public static final byte[] createJsonErrorMessage(Object object) {
-        if (object == null)
+        if (object == null) {
             throw new ExtensionRuntimeException("消息对象不能为空!");
-
-        return StringFormat.toBytes(JSON.toJSONString(object), Charsets.UTF_8);
-
+        }
+        
+        return JSON.toJSONString(object).getBytes(Charsets.UTF_8);
     }
 }
