@@ -45,7 +45,6 @@ public class JedisPlugin implements Plugin {
             final Object pool = redisClientPool.getField("POOL").get(redisClientPool);
             pool.getClass().getMethod("initRedisConfig", List.class).invoke(pool, properties);
             pool.getClass().getMethod("createJedis").invoke(pool);
-            pool.getClass().getMethod("createJedisCluster").invoke(pool);
             pool.getClass().getMethod("bindGlobal").invoke(pool);
             LOG.info("加载Redis配置, 耗时: " + (System.currentTimeMillis() - time) + "ms");
         } catch (final Throwable e) {
