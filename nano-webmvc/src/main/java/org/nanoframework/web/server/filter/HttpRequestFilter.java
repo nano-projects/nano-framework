@@ -87,6 +87,8 @@ public class HttpRequestFilter extends AbstractFilter {
 					out.flush();
 					out.close();
 				}
+				
+				HttpContext.clear();
 			}
 			
 			return false;
@@ -103,13 +105,16 @@ public class HttpRequestFilter extends AbstractFilter {
 	public static class HttpContext {
 	    private static ThreadLocal<Map<Class<?>, Object>> CONTEXT = new ThreadLocal<>();
 	    protected static void set(Map<Class<?>, Object> context) {
+	        clear();
+	        CONTEXT.set(context);
+	    }
+	    
+	    protected static void clear() {
 	        Map<Class<?>, Object> ctx;
 	        if((ctx = CONTEXT.get()) != null) {
-	            ctx.clear();
-	            CONTEXT.remove();
-	        }
-	        
-	        CONTEXT.set(context);
+                ctx.clear();
+                CONTEXT.remove();
+            }
 	    }
 	    
 	    @SuppressWarnings("unchecked")
