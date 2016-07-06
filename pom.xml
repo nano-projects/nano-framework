@@ -81,21 +81,6 @@
         <validation-api-version>1.1.0.Final</validation-api-version>
     </properties>
 
-    <!-- 
-    <distributionManagement>
-        <repository>
-            <id>nano-releases</id>
-            <name>Nano Releases</name>
-            <url>http://10.1.195.225:8081/nexus/content/repositories/nano-releases</url>
-        </repository>
-        <snapshotRepository>
-            <id>nano-snapshots</id>
-            <name>Nano Snapshots</name>
-            <url>http://10.1.195.225:8081/nexus/content/repositories/nano-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
-    -->
-    
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/nano-projects/nano-framework/issues</url>

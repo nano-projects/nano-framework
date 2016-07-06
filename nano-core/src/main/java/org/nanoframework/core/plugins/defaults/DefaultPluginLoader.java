@@ -36,7 +36,7 @@ import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
 public class DefaultPluginLoader extends PluginLoader {
 
     @Override
-    protected void configProperties(Configure<String> properties) {
+    protected void configProperties(final Configure<String> properties) {
         final String context = config.getInitParameter(ApplicationContext.CONTEXT);
         if (StringUtils.isNotBlank(context)) {
             properties.add(context);
@@ -46,18 +46,17 @@ public class DefaultPluginLoader extends PluginLoader {
     }
 
     @Override
-    protected void configModules(Configure<Module> modules) {
+    protected void configModules(final Configure<Module> modules) {
         modules.add(new AOPModule());
         modules.add(new DataSourceModule());
     }
 
     @Override
-    protected void configPlugin(Configure<Plugin> plugins) {
+    protected void configPlugin(final Configure<Plugin> plugins) {
         plugins.add(new Log4j2Plugin());
         plugins.add(new JedisPlugin());
         plugins.add(new SchedulerPlugin());
         plugins.add(new WebSocketPlugin());
-
     }
 
 }
