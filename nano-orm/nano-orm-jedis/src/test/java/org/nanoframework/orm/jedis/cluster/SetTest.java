@@ -16,7 +16,6 @@
 package org.nanoframework.orm.jedis.cluster;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -31,6 +30,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
+import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
@@ -81,7 +81,7 @@ public class SetTest {
             
             Assert.assertEquals(redisClient.del("setTest"), 1);
         } catch (final Throwable e) {
-            if (!(e instanceof SocketTimeoutException)) {
+            if (!(e instanceof RedisClientException)) {
                 throw e;
             }
             

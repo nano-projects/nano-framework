@@ -16,7 +16,6 @@
 package org.nanoframework.orm.jedis;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Properties;
 
@@ -29,6 +28,7 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.orm.jedis.RedisClient.Mark;
+import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 import com.alibaba.fastjson.JSON;
 
@@ -60,7 +60,7 @@ public class ExtendRedisClientTest {
             redisClient.push("MORE_PUSH", random, Mark.RPUSH);
             LOGGER.debug("PUSH: {}", random);
         } catch (final Throwable e) {
-            if (!(e instanceof SocketTimeoutException)) {
+            if (!(e instanceof RedisClientException)) {
                 throw e;
             }
             
@@ -73,7 +73,7 @@ public class ExtendRedisClientTest {
         try {
             LOGGER.debug("RANGE: {}", JSON.toJSONString(redisClient.lrange("MORE_PUSH")));
         } catch (final Throwable e) {
-            if (!(e instanceof SocketTimeoutException)) {
+            if (!(e instanceof RedisClientException)) {
                 throw e;
             }
             
@@ -87,7 +87,7 @@ public class ExtendRedisClientTest {
             List<String> values = redisClient.lrange("MORE_PUSH");
             values.forEach(value -> LOGGER.debug("REM: {}", redisClient.lrem("MORE_PUSH", value)));
         } catch (final Throwable e) {
-            if (!(e instanceof SocketTimeoutException)) {
+            if (!(e instanceof RedisClientException)) {
                 throw e;
             }
             

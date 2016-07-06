@@ -16,7 +16,6 @@
 package org.nanoframework.orm.jedis.sharded;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -26,6 +25,7 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
 import org.nanoframework.orm.jedis.cluster.KeyTest;
+import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 /**
  *
@@ -51,7 +51,7 @@ public class ShardedKeyTest extends KeyTest {
         try {
             redisClient.keys("*");
         } catch (final Throwable e) {
-            if (!(e instanceof SocketTimeoutException)) {
+            if (!(e instanceof RedisClientException)) {
                 throw e;
             }
             
