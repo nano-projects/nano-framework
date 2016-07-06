@@ -16,6 +16,7 @@
 package org.nanoframework.orm.jedis.cluster;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -25,6 +26,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
@@ -38,6 +41,8 @@ import com.google.common.collect.Lists;
  * @since 0.0.1
  */
 public class SetTest {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SetTest.class);
+    
     protected RedisClient redisClient;
 
     @Before
@@ -52,27 +57,35 @@ public class SetTest {
     
     @Test
     public void setTest() {
-        final TypeReference<Integer> type = new TypeReference<Integer>(){ };
-        Assert.assertEquals(redisClient.sadd("setTest", 1, 2, 3), 3);
-        Assert.assertEquals(redisClient.sreplace("setTest", Lists.newArrayList(1, 2, 3), Lists.newArrayList(4, 5, 6)), 3);
-        Assert.assertEquals(redisClient.scard("setTest"), 3);
-        
-        Assert.assertEquals(redisClient.sismember("setTest", 5), true);
-        final Set<Integer> members = redisClient.smembers("setTest", type);
-        Assert.assertEquals(members.size(), 3);
-        
-        Integer member = redisClient.spop("setTest", type);
-        Assert.assertNotNull(member);
-        
-        Integer member2 = redisClient.srandmember("setTest", type);
-        Assert.assertNotNull(member2);
-        
-        List<Integer> member3 = redisClient.srandmember("setTest", 2, type);
-        Assert.assertEquals(member3.size(), 2);
-        
-        Assert.assertEquals(redisClient.sadd("setTest", 1, 2, 3), 3);
-        Assert.assertEquals(redisClient.srem("setTest", 2, 3), 2);
-        
-        Assert.assertEquals(redisClient.del("setTest"), 1);
+        try {
+            final TypeReference<Integer> type = new TypeReference<Integer>(){ };
+            Assert.assertEquals(redisClient.sadd("setTest", 1, 2, 3), 3);
+            Assert.assertEquals(redisClient.sreplace("setTest", Lists.newArrayList(1, 2, 3), Lists.newArrayList(4, 5, 6)), 3);
+            Assert.assertEquals(redisClient.scard("setTest"), 3);
+            
+            Assert.assertEquals(redisClient.sismember("setTest", 5), true);
+            final Set<Integer> members = redisClient.smembers("setTest", type);
+            Assert.assertEquals(members.size(), 3);
+            
+            Integer member = redisClient.spop("setTest", type);
+            Assert.assertNotNull(member);
+            
+            Integer member2 = redisClient.srandmember("setTest", type);
+            Assert.assertNotNull(member2);
+            
+            List<Integer> member3 = redisClient.srandmember("setTest", 2, type);
+            Assert.assertEquals(member3.size(), 2);
+            
+            Assert.assertEquals(redisClient.sadd("setTest", 1, 2, 3), 3);
+            Assert.assertEquals(redisClient.srem("setTest", 2, 3), 2);
+            
+            Assert.assertEquals(redisClient.del("setTest"), 1);
+        } catch (final Throwable e) {
+            if (!(e instanceof SocketTimeoutException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
 }

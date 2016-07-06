@@ -16,6 +16,7 @@
 package org.nanoframework.orm.jedis.sharded;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -50,52 +51,60 @@ public class ShardedSetTest extends SetTest {
     
     @Test
     public void setTest() {
-        final TypeReference<Integer> type = new TypeReference<Integer>(){ };
-        Assert.assertEquals(redisClient.sadd("setTest", 1, 2, 3), 3);
-        Assert.assertEquals(redisClient.sreplace("setTest", Lists.newArrayList(1, 2, 3), Lists.newArrayList(4, 5, 6)), 3);
-        Assert.assertEquals(redisClient.scard("setTest"), 3);
-        
-        Assert.assertEquals(redisClient.sadd("setTest-1", 3, 5, 7), 3);
-        final Set<Integer> diff = redisClient.sdiff(Lists.newArrayList("setTest", "setTest-1"), type);
-        Assert.assertEquals(diff.size(), 2);
-        Assert.assertEquals(diff.contains(4), true);
-        Assert.assertEquals(diff.contains(6), true);
-        
-        Assert.assertEquals(redisClient.sdiffstore("setTest-2", "setTest", "setTest-1"), 2);
-        final Set<Integer> diffstore = redisClient.smembers("setTest-2", type);
-        Assert.assertEquals(diffstore.size(), 2);
-        Assert.assertEquals(diffstore.contains(4), true);
-        Assert.assertEquals(diffstore.contains(6), true);
-        Assert.assertEquals(redisClient.del("setTest-2"), 1);
-        
-        final Set<Integer> inter = redisClient.sinter(Lists.newArrayList("setTest", "setTest-1"), type);
-        Assert.assertEquals(inter.size(), 1);
-        Assert.assertEquals(inter.contains(5), true);
-        
-        Assert.assertEquals(redisClient.sinterstore("setTest-3", "setTest", "setTest-1"), 1);
-        final Set<Integer> interstore = redisClient.smembers("setTest-3", type);
-        Assert.assertEquals(interstore.size(), 1);
-        Assert.assertEquals(interstore.contains(5), true);
-        Assert.assertEquals(redisClient.del("setTest-3"), 1);
-        
-        Assert.assertEquals(redisClient.sismember("setTest", 5), true);
-        final Set<Integer> members = redisClient.smembers("setTest", type);
-        Assert.assertEquals(members.size(), 3);
-        
-        Assert.assertEquals(redisClient.smove("setTest", "setTest-4", 6), true);
-        
-        Integer member = redisClient.spop("setTest", type);
-        Assert.assertNotNull(member);
-        
-        Integer member2 = redisClient.srandmember("setTest", type);
-        Assert.assertNotNull(member2);
-        
-        List<Integer> member3 = redisClient.srandmember("setTest", 2, type);
-        Assert.assertEquals(member3.size(), 1);
-        
-        Assert.assertEquals(redisClient.sadd("setTest", 1, 2, 3), 3);
-        Assert.assertEquals(redisClient.srem("setTest", 2, 3), 2);
-        
-        Assert.assertEquals(redisClient.del("setTest", "setTest-1", "setTest-4"), 3);
+        try {
+            final TypeReference<Integer> type = new TypeReference<Integer>(){ };
+            Assert.assertEquals(redisClient.sadd("setTest", 1, 2, 3), 3);
+            Assert.assertEquals(redisClient.sreplace("setTest", Lists.newArrayList(1, 2, 3), Lists.newArrayList(4, 5, 6)), 3);
+            Assert.assertEquals(redisClient.scard("setTest"), 3);
+            
+            Assert.assertEquals(redisClient.sadd("setTest-1", 3, 5, 7), 3);
+            final Set<Integer> diff = redisClient.sdiff(Lists.newArrayList("setTest", "setTest-1"), type);
+            Assert.assertEquals(diff.size(), 2);
+            Assert.assertEquals(diff.contains(4), true);
+            Assert.assertEquals(diff.contains(6), true);
+            
+            Assert.assertEquals(redisClient.sdiffstore("setTest-2", "setTest", "setTest-1"), 2);
+            final Set<Integer> diffstore = redisClient.smembers("setTest-2", type);
+            Assert.assertEquals(diffstore.size(), 2);
+            Assert.assertEquals(diffstore.contains(4), true);
+            Assert.assertEquals(diffstore.contains(6), true);
+            Assert.assertEquals(redisClient.del("setTest-2"), 1);
+            
+            final Set<Integer> inter = redisClient.sinter(Lists.newArrayList("setTest", "setTest-1"), type);
+            Assert.assertEquals(inter.size(), 1);
+            Assert.assertEquals(inter.contains(5), true);
+            
+            Assert.assertEquals(redisClient.sinterstore("setTest-3", "setTest", "setTest-1"), 1);
+            final Set<Integer> interstore = redisClient.smembers("setTest-3", type);
+            Assert.assertEquals(interstore.size(), 1);
+            Assert.assertEquals(interstore.contains(5), true);
+            Assert.assertEquals(redisClient.del("setTest-3"), 1);
+            
+            Assert.assertEquals(redisClient.sismember("setTest", 5), true);
+            final Set<Integer> members = redisClient.smembers("setTest", type);
+            Assert.assertEquals(members.size(), 3);
+            
+            Assert.assertEquals(redisClient.smove("setTest", "setTest-4", 6), true);
+            
+            Integer member = redisClient.spop("setTest", type);
+            Assert.assertNotNull(member);
+            
+            Integer member2 = redisClient.srandmember("setTest", type);
+            Assert.assertNotNull(member2);
+            
+            List<Integer> member3 = redisClient.srandmember("setTest", 2, type);
+            Assert.assertEquals(member3.size(), 1);
+            
+            Assert.assertEquals(redisClient.sadd("setTest", 1, 2, 3), 3);
+            Assert.assertEquals(redisClient.srem("setTest", 2, 3), 2);
+            
+            Assert.assertEquals(redisClient.del("setTest", "setTest-1", "setTest-4"), 3);
+        } catch (final Throwable e) {
+            if (!(e instanceof SocketTimeoutException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
 }

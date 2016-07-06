@@ -16,6 +16,7 @@
 package org.nanoframework.orm.jedis.cluster;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.Properties;
 
 import org.junit.Assert;
@@ -23,6 +24,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
@@ -34,6 +37,8 @@ import org.nanoframework.orm.jedis.RedisClientPool;
  * @since 0.0.1
  */
 public class SortedSetTest {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SortedSetTest.class);
+    
     protected RedisClient redisClient;
 
     @Before
@@ -48,16 +53,24 @@ public class SortedSetTest {
     
     @Test
     public void sortedTest() {
-        Assert.assertEquals(redisClient.zadd("sortedTest", MapBuilder.<Object, Double>create()
-                .put("1", 1D)
-                .put("2", 2D)
-                .put("3", 3D)
-                .build()), 3);
-        
-        Assert.assertEquals(redisClient.zcard("sortedTest"), 3);
-        
-        Assert.assertEquals(redisClient.zcount("sortedTest", 2, 3), 2);
-        
-        Assert.assertEquals(redisClient.del("sortedTest"), 1);
+        try {
+            Assert.assertEquals(redisClient.zadd("sortedTest", MapBuilder.<Object, Double>create()
+                    .put("1", 1D)
+                    .put("2", 2D)
+                    .put("3", 3D)
+                    .build()), 3);
+            
+            Assert.assertEquals(redisClient.zcard("sortedTest"), 3);
+            
+            Assert.assertEquals(redisClient.zcount("sortedTest", 2, 3), 2);
+            
+            Assert.assertEquals(redisClient.del("sortedTest"), 1);
+        } catch (final Throwable e) {
+            if (!(e instanceof SocketTimeoutException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
 }

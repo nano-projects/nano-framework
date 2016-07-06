@@ -16,6 +16,7 @@
 package org.nanoframework.orm.jedis;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.List;
 import java.util.Properties;
 
@@ -54,20 +55,44 @@ public class ExtendRedisClientTest {
     
     @Test
     public void spec1Test() {
-        final double random = Math.random();
-        redisClient.push("MORE_PUSH", random, Mark.RPUSH);
-        LOGGER.debug("PUSH: {}", random);
+        try {
+            final double random = Math.random();
+            redisClient.push("MORE_PUSH", random, Mark.RPUSH);
+            LOGGER.debug("PUSH: {}", random);
+        } catch (final Throwable e) {
+            if (!(e instanceof SocketTimeoutException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
     
     @Test
     public void spec2Test() {
-        LOGGER.debug("RANGE: {}", JSON.toJSONString(redisClient.lrange("MORE_PUSH")));
+        try {
+            LOGGER.debug("RANGE: {}", JSON.toJSONString(redisClient.lrange("MORE_PUSH")));
+        } catch (final Throwable e) {
+            if (!(e instanceof SocketTimeoutException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
     
     @Test
     public void spec3Test() {
-        List<String> values = redisClient.lrange("MORE_PUSH");
-        values.forEach(value -> LOGGER.debug("REM: {}", redisClient.lrem("MORE_PUSH", value)));
+        try {
+            List<String> values = redisClient.lrange("MORE_PUSH");
+            values.forEach(value -> LOGGER.debug("REM: {}", redisClient.lrem("MORE_PUSH", value)));
+        } catch (final Throwable e) {
+            if (!(e instanceof SocketTimeoutException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
     
 }

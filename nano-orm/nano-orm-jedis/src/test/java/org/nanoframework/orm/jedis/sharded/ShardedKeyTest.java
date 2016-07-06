@@ -16,6 +16,7 @@
 package org.nanoframework.orm.jedis.sharded;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.util.Properties;
 
 import org.junit.Before;
@@ -47,6 +48,14 @@ public class ShardedKeyTest extends KeyTest {
     @Test
     @Override
     public void keysTest() {
-        redisClient.keys("*");
+        try {
+            redisClient.keys("*");
+        } catch (final Throwable e) {
+            if (!(e instanceof SocketTimeoutException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
 }
