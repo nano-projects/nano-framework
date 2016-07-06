@@ -36,7 +36,6 @@ import ch.ethz.ssh2.StreamGobbler;
 
 /**
  * @author yanghe
- * @date 2015年8月20日 下午9:17:58
  * @since 1.1
  */
 abstract class CallableSSHExecutor<V> extends SSH implements Callable<V> {

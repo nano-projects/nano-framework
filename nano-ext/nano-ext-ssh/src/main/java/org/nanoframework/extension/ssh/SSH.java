@@ -28,7 +28,6 @@ import ch.ethz.ssh2.Connection;
 
 /**
  * @author yanghe
- * @date 2015年8月20日 下午1:22:06
  * @since 1.1
  */
 abstract class SSH {

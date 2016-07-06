@@ -27,7 +27,7 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
  * @author yanghe
- * @date 2015年10月31日 上午10:42:22
+ * @since 1.1
  */
 public class DataSourceModule extends Module {
 

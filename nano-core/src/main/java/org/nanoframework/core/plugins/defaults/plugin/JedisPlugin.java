@@ -30,7 +30,7 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
  * @author yanghe
- * @date 2015年10月30日 下午11:23:52
+ * @since 1.1
  */
 public class JedisPlugin implements Plugin {
     private Logger LOG = LoggerFactory.getLogger(JedisPlugin.class);

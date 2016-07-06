@@ -22,21 +22,23 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.nanoframework.commons.format.ClassCast;
+import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.StringUtils;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * 基础实体类，实体类功能扩展辅助类.
  * 
  * @author yanghe
  * @since 1.0
- * @date 2015年6月9日 上午8:46:12 
  */
 public abstract class BaseEntity implements Cloneable, Serializable {
     private static final long serialVersionUID = 3188627488044889912L;
@@ -47,12 +49,12 @@ public abstract class BaseEntity implements Cloneable, Serializable {
      * 获取所有属性名.
      * @return 返回属性数组
      */
-    public String[] _getAttributeNames() {
+    public String[] attributeNames() {
         if (names != null) {
             return names;
         }
 
-        Field[] fields = _getParamFields();
+        final Field[] fields = paramFields();
         names = new String[fields.length];
         for (int i = 0, len = fields.length; i < len; i++) {
             names[i] = fields[i].getName();
@@ -63,33 +65,33 @@ public abstract class BaseEntity implements Cloneable, Serializable {
 
     /**
      * 根据属性名获取该属性的值.
-     * 
+     * @param <T> 参数类型
      * @param fieldName 属性名
      * @return 返回该属性的值
      */
     @SuppressWarnings("unchecked")
-    public <T> T _getAttributeValue(final String fieldName) {
+    public <T> T attributeValue(final String fieldName) {
         if (StringUtils.isEmpty(fieldName)) {
             throw new IllegalArgumentException("属性名不能为空");
         }
 
-        Class<?> cls = this.getClass();
-        Method[] methods = _getParamMethods();
-        Field[] fields = _getParamFields();
+        final Class<?> cls = this.getClass();
+        final Method[] methods = paramMethods();
+        final Field[] fields = paramFields();
 
         try {
             for (Field field : fields) {
                 if (fieldName.equals(field.getName())) {
-                    String fieldGetName = parGetName(field.getName());
+                    final String fieldGetName = parGetName(field.getName());
                     if (!checkGetMet(methods, fieldGetName)) {
                         continue;
                     }
 
-                    Method fieldGetMet = cls.getMethod(fieldGetName);
+                    final Method fieldGetMet = cls.getMethod(fieldGetName);
                     return (T) fieldGetMet.invoke(this);
                 }
             }
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             throw new EntityException(e.getMessage(), e);
         }
 
@@ -98,88 +100,83 @@ public abstract class BaseEntity implements Cloneable, Serializable {
 
     /**
      * 根据属性名获取该属性的值.
-     * 
+     * @param <T> 参数类型
      * @param fieldName 属性名
-     * @Param defaultValue 默认值，当field获取的值为null时选用defaulValue的值
+     * @param defaultValue 默认值，当field获取的值为null时选用defaulValue的值
      * @return 返回该属性的值
      */
-    public <T> T _getAttributeValue(String fieldName, T defaultValue) {
-        final T value;
-        return (value = _getAttributeValue(fieldName)) == null ? (T) defaultValue : value;
+    public <T> T attributeValue(final String fieldName, final T defaultValue) {
+        final T value = attributeValue(fieldName);
+        return value == null ? (T) defaultValue : value;
     }
 
     /**
-     * 设置属性值, 默认不区分大小写
-     * 
+     * 设置属性值, 默认不区分大小写.
      * @param fieldName 属性名
      * @param value 属性值
-     * @throws SecurityException 
-     * @throws NoSuchMethodException 
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
      */
-    public void _setAttributeValue(String fieldName, Object value) {
-        _setAttributeValue(fieldName, value, false);
+    public void setAttributeValue(final String fieldName, final Object value) {
+        setAttributeValue(fieldName, value, false);
     }
 
     /**
-     * 设置属性值
-     * 
+     * 设置属性值.
      * @param fieldName 属性名
      * @param value 属性值
      * @param isCase 区分大小写，true时区分大小写，默认false
      */
-    public void _setAttributeValue(String fieldName, Object value, boolean isCase) {
-        if (StringUtils.isEmpty(fieldName))
+    public void setAttributeValue(final String fieldName, final Object value, final boolean isCase) {
+        if (StringUtils.isEmpty(fieldName)) {
             throw new IllegalArgumentException("属性名不能为空");
-
-        Class<?> cls = this.getClass();
-        Method[] methods = _getParamMethods();
-        Field[] fields = _getParamFields();
-
+        }
+        
+        final Class<?> cls = this.getClass();
+        final Method[] methods = paramMethods();
+        final Field[] fields = paramFields();
         try {
             for (Field field : fields) {
                 /** 设置不区分大小写 */
                 if ((!isCase && fieldName.toUpperCase().equals(field.getName().toUpperCase())) || (isCase && fieldName.equals(field.getName()))) {
-                    String fieldSetName = parSetName(field.getName());
-                    if (!checkSetMet(methods, fieldSetName))
+                    final String fieldSetName = parSetName(field.getName());
+                    if (!checkSetMet(methods, fieldSetName)) {
                         continue;
+                    }
 
-                    Method fieldSetMet = cls.getMethod(fieldSetName, field.getType());
-                    String typeName = field.getType().getName();
+                    final Method fieldSetMet = cls.getMethod(fieldSetName, field.getType());
+                    final String typeName = field.getType().getName();
                     fieldSetMet.invoke(this, ClassCast.cast(value, typeName));
                     break;
                 }
             }
-        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             throw new EntityException(e.getMessage(), e);
 
         }
     }
 
     /**
-     * 检查是否有set方法
+     * 检查是否有set方法.
      * @param methods 方法集
      * @param fieldSetMet 方法名
      * @return boolean
      */
-    private boolean checkSetMet(Method[] methods, String fieldSetMet) {
+    private boolean checkSetMet(final Method[] methods, final String fieldSetMet) {
         for (Method met : methods) {
-            if (fieldSetMet.equals(met.getName()))
+            if (fieldSetMet.equals(met.getName())) {
                 return true;
+            }
         }
 
         return false;
     }
 
     /**
-     * 检查是否有get方法
+     * 检查是否有get方法.
      * @param methods 方法集
      * @param fieldGetMet 方法名
      * @return boolean 
      */
-    private boolean checkGetMet(Method[] methods, String fieldGetMet) {
+    private boolean checkGetMet(final Method[] methods, final String fieldGetMet) {
         for (Method met : methods) {
             if (fieldGetMet.equals(met.getName())) {
                 return true;
@@ -190,90 +187,103 @@ public abstract class BaseEntity implements Cloneable, Serializable {
     }
 
     /**
-     * get+属性名
+     * get+属性名.
      * @param fieldName 属性名
      * @return String
      */
-    protected String parGetName(String fieldName) {
-        if (StringUtils.isEmpty(fieldName))
+    protected String parGetName(final String fieldName) {
+        if (StringUtils.isEmpty(fieldName)) {
             return null;
+        }
 
         return "get" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
     /**
-     * set+属性名
+     * set+属性名.
      * @param fieldName 属性名
      * @return String
      */
-    protected String parSetName(String fieldName) {
-        if (StringUtils.isEmpty(fieldName))
+    protected String parSetName(final String fieldName) {
+        if (StringUtils.isEmpty(fieldName)) {
             return null;
+        }
 
         return "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
     }
 
     /**
-     * 将实体类转换成Map
-     * @return Map<String, Object>
+     * 将实体类转换成Map.
+     * @return Map
      */
-    public Map<String, Object> _getBeanToMap() {
-        Map<String, Object> beanToMap = new HashMap<>();
-        for (String key : _getAttributeNames()) {
-            Object value = _getAttributeValue(key);
-            if (value != null)
+    public Map<String, Object> beanToMap() {
+        final Map<String, Object> beanToMap = Maps.newHashMap();
+        for (String key : attributeNames()) {
+            final Object value = attributeValue(key);
+            if (value != null) {
                 beanToMap.put(key, value);
+            }
         }
 
         return beanToMap;
     }
 
     /**
-     * 将Map对象转换成实体类对象
-     * 
-     * @param beanMap
-     * @param beanType
-     * @return
+     * 将Map对象转换成实体类对象.
+     * @param <T> 参数类型
+     * @param beanMap 符合实体规范的Map
+     * @param beanType 实体类
+     * @return 转换后的实体类
      */
-    public static <T extends BaseEntity> T _getMapToBean(Map<String, Object> beanMap, Class<T> beanType) {
-        if (beanType == null)
+    public static <T extends BaseEntity> T mapToBean(Map<String, Object> beanMap, Class<T> beanType) {
+        if (beanType == null) {
             throw new EntityException("beanType不能为空");
-
-        if (beanMap == null)
+        }
+        
+        if (beanMap == null) {
             return null;
+        }
 
         try {
-            T bean = beanType.newInstance();
-            beanMap.forEach((key, value) -> bean._setAttributeValue(key, value));
+            final T bean = beanType.newInstance();
+            beanMap.forEach((key, value) -> bean.setAttributeValue(key, value));
             return bean;
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (final InstantiationException | IllegalAccessException e) {
             throw new EntityException(e.getMessage(), e);
         }
     }
 
-    public static <T extends BaseEntity> List<T> _getMapToBeans(List<Map<String, Object>> beanMaps, Class<T> beanType) {
-        if (beanMaps == null || beanMaps.size() == 0)
-            return null;
+    /**
+     * 将Map对象集合转换成实体类对象集合.
+     * @param <T> 参数类型
+     * @param beanMaps 符合实体规范的Map集合
+     * @param beanType 实体类
+     * @return 转换后的实体类集合
+     */
+    public static <T extends BaseEntity> List<T> mapToBeans(final List<Map<String, Object>> beanMaps, final Class<T> beanType) {
+        if (CollectionUtils.isEmpty(beanMaps)) {
+            return Collections.emptyList();
+        }
 
-        List<T> beans = new ArrayList<>(beanMaps.size());
+        final List<T> beans = new ArrayList<>(beanMaps.size());
         for (Map<String, Object> beanMap : beanMaps) {
-            beans.add(_getMapToBean(beanMap, beanType));
+            beans.add(mapToBean(beanMap, beanType));
         }
 
         return beans;
     }
 
     /**
-     * 获取实体类的属性
-     * @return Field[]
+     * 获取实体类所有方法.
+     * @return 实体类方法列表
      */
-    protected Method[] _getParamMethods() {
-        List<Method> methods = _getAllMethods(new ArrayList<>(), this.getClass());
-
-        List<Method> methodList = new ArrayList<>();
+    protected Method[] paramMethods() {
+        final List<Method> methods = allMethods(Lists.newArrayList(), this.getClass());
+        final List<Method> methodList = Lists.newArrayList();
         for (Method method : methods) {
-            if (Modifier.isFinal(method.getModifiers()) || Modifier.isStatic(method.getModifiers()))
+            if (Modifier.isFinal(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
                 continue;
+            }
 
             methodList.add(method);
         }
@@ -281,29 +291,36 @@ public abstract class BaseEntity implements Cloneable, Serializable {
         return methodList.toArray(new Method[methodList.size()]);
     }
 
-    protected List<Method> _getAllMethods(List<Method> allMethods, Class<?> clazz) {
+    /**
+     * 递归获取当前类及父类中的所有方法.
+     * @param allMethods 实体类方法集合
+     * @param clazz 当前类或父类
+     * @return 新实体类方法集合
+     */
+    protected List<Method> allMethods(final List<Method> allMethods, final Class<?> clazz) {
         allMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
-
-        if (clazz.getSuperclass() == null)
+        if (clazz.getSuperclass() == null) {
             return allMethods;
+        }
 
-        return _getAllMethods(allMethods, clazz.getSuperclass());
+        return allMethods(allMethods, clazz.getSuperclass());
     }
 
     /**
-     * 获取实体类的属性
-     * @return Field[]
+     * 获取实体类的所有属性.
+     * @return 实体类属性列表
      */
-    protected Field[] _getParamFields() {
-        List<Field> fields = _getAllFields(new ArrayList<>(), this.getClass());
-
-        List<Field> filterList = new ArrayList<>();
+    protected Field[] paramFields() {
+        final List<Field> fields = allFields(Lists.newArrayList(), this.getClass());
+        final List<Field> filterList = Lists.newArrayList();
         for (Field field : fields) {
-            if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers()))
+            if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
                 continue;
+            }
 
-            if ("names".equals(field.getName()))
+            if ("names".equals(field.getName())) {
                 continue;
+            }
 
             filterList.add(field);
         }
@@ -311,20 +328,26 @@ public abstract class BaseEntity implements Cloneable, Serializable {
         return filterList.toArray(new Field[filterList.size()]);
     }
 
-    protected List<Field> _getAllFields(List<Field> allFields, Class<?> clazz) {
+    /**
+     * 递归获取当前类及父类中的所有属性.
+     * @param allFields 实体类属性集合
+     * @param clazz 当前类或父类
+     * @return 新实体类属性集合
+     */
+    protected List<Field> allFields(final List<Field> allFields, final Class<?> clazz) {
         allFields.addAll(Arrays.asList(clazz.getDeclaredFields()));
-
-        if (clazz.getSuperclass() == null)
+        if (clazz.getSuperclass() == null) {
             return allFields;
+        }
 
-        return _getAllFields(allFields, clazz.getSuperclass());
+        return allFields(allFields, clazz.getSuperclass());
     }
 
     @Override
     public BaseEntity clone() {
         try {
             return (BaseEntity) super.clone();
-        } catch (CloneNotSupportedException e) {
+        } catch (final CloneNotSupportedException e) {
             throw new EntityException("Clone Not Supported Exception: " + e.getMessage());
         }
     }
@@ -334,36 +357,4 @@ public abstract class BaseEntity implements Cloneable, Serializable {
         return JSON.toJSONString(this);
     }
 
-    /**
-     * 合并2个对象，如果当前对象的属性值非空，且传入对象的属性也非空时，则替换当前对象属性的值为传入对象属性对应的值
-     * @param entity 传入的对象
-     * @return 返回克隆合并后的新对象
-     * @since 1.2.2
-     */
-    public <T extends BaseEntity> T _merge(T entity) {
-        return _merge(entity, true);
-    }
-
-    /**
-     * 合并2个对象
-     * 
-     * @param entity 传入的对象
-     * @param replace false时不替换当前对象非空的属性值
-     * @return 返回克隆合并后的新对象
-     * @since 1.2.2
-     */
-    @SuppressWarnings("unchecked")
-    public <T extends BaseEntity> T _merge(T entity, boolean replace) {
-        BaseEntity thiz = this.clone();
-        String[] names = thiz._getAttributeNames();
-        for (String name : names) {
-            Object entityObj, obj;
-            if ((entityObj = entity._getAttributeValue(name)) != null) {
-                if (((obj = thiz._getAttributeValue(name)) != null && replace) || obj == null)
-                    thiz._setAttributeValue(name, entityObj);
-            }
-        }
-
-        return (T) thiz;
-    }
 }

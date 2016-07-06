@@ -22,7 +22,7 @@ import org.nanoframework.commons.util.Assert;
 
 /**
  * @author yanghe
- * @date 2015年10月31日 上午11:36:51
+ * @since 1.1
  */
 public class Configure<T> {
     protected List<T> configs = new LinkedList<>();

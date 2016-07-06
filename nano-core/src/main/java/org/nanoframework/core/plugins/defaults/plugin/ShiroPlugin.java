@@ -27,9 +27,7 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
  * 适用于非web工程的项目，如果是web项目请使用ShiroFilter进行相关配置.
- * 
  * @author yanghe
- * @date 2015年12月9日 上午8:59:49
  */
 public class ShiroPlugin implements Plugin {
     private Logger LOG = LoggerFactory.getLogger(ShiroPlugin.class);

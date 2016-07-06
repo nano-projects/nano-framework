@@ -17,7 +17,7 @@ package org.nanoframework.orm;
 
 /**
  * @author yanghe
- * @date 2015年10月13日 下午2:26:36
+ * @since 1.2
  */
 public class DataSourceLoaderException extends RuntimeException {
 	private static final long serialVersionUID = -2507126142998789661L;

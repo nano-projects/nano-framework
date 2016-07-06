@@ -28,7 +28,7 @@ import org.nanoframework.orm.jdbc.DataSourceException;
 
 /**
  * @author yanghe
- * @date 2015年9月30日 下午3:10:13
+ * @since 1.2
  */
 public abstract class JdbcConfig extends BaseEntity {
 	private static final long serialVersionUID = -5652080352809590470L;
@@ -62,14 +62,14 @@ public abstract class JdbcConfig extends BaseEntity {
 	private Integer defaultStatementTimeout = 30;
 	
 	protected void setProperties(Properties properties) {
-		List<Field> fields = _getAllFields(new ArrayList<>(), getClass());
+		List<Field> fields = allFields(new ArrayList<>(), getClass());
 		if(!CollectionUtils.isEmpty(fields)) {
 			for(Field field : fields) {
 				Property property;
 				if((property = field.getAnnotation(Property.class)) != null) {
 					String value = properties.getProperty(property.name());
 					if(StringUtils.isNotBlank(value)) {
-						_setAttributeValue(field.getName(), value);
+						setAttributeValue(field.getName(), value);
 					} else if(property.required()) {
 						throw new DataSourceException("属性 [" + property.name() + "] 设置为必选项，这里却获取了无效的属性值");
 					}

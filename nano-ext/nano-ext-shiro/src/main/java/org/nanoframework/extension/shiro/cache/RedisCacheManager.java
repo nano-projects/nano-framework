@@ -21,7 +21,7 @@ import org.apache.shiro.cache.CacheManager;
 
 /**
  * @author yanghe
- * @date 2015年12月10日 下午1:19:00
+ * @since 1.2
  */
 public class RedisCacheManager implements CacheManager {
 	protected static final String DEFAULT_REDIS_SOURCE_NAME = "shiro";

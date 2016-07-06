@@ -41,7 +41,7 @@ import io.netty.handler.ssl.util.SelfSignedCertificate;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:22:52
+ * @since 1.1
  */
 public final class WebSocketServer {
 	private Logger LOG = LoggerFactory.getLogger(WebSocketServer.class);

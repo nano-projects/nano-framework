@@ -26,7 +26,7 @@ import javax.servlet.FilterConfig;
 public interface ConfigurationStrategy {
 
     /**
-     * Retrieves the value for the provided {@param configurationKey}, falling back to the {@param configurationKey}'s {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
+     * Retrieves the value for the provided configurationKey, falling back to the configurationKey's {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
      *
      * @param configurationKey the configuration key.  MUST NOT BE NULL.
      * @return the configured value, or the default value.
@@ -34,7 +34,7 @@ public interface ConfigurationStrategy {
     boolean getBoolean(ConfigurationKey<Boolean> configurationKey);
 
     /**
-     * Retrieves the value for the provided {@param configurationKey}, falling back to the {@param configurationKey}'s {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
+     * Retrieves the value for the provided configurationKey, falling back to the configurationKey's {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
      *
      * @param configurationKey the configuration key.  MUST NOT BE NULL.
      * @return the configured value, or the default value.
@@ -42,7 +42,7 @@ public interface ConfigurationStrategy {
     String getString(ConfigurationKey<String> configurationKey);
 
     /**
-     * Retrieves the value for the provided {@param configurationKey}, falling back to the {@param configurationKey}'s {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
+     * Retrieves the value for the provided configurationKey, falling back to the configurationKey's {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
      *
      * @param configurationKey the configuration key.  MUST NOT BE NULL.
      * @return the configured value, or the default value.
@@ -50,7 +50,7 @@ public interface ConfigurationStrategy {
     long getLong(ConfigurationKey<Long> configurationKey);
 
     /**
-     * Retrieves the value for the provided {@param configurationKey}, falling back to the {@param configurationKey}'s {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
+     * Retrieves the value for the provided configurationKey, falling back to the configurationKey's {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
      *
      * @param configurationKey the configuration key.  MUST NOT BE NULL.
      * @return the configured value, or the default value.
@@ -58,8 +58,8 @@ public interface ConfigurationStrategy {
     int getInt(ConfigurationKey<Integer> configurationKey);
 
     /**
-     * Retrieves the value for the provided {@param configurationKey}, falling back to the {@param configurationKey}'s {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
-     *
+     * Retrieves the value for the provided configurationKey, falling back to the configurationKey's {@link ConfigurationKey#getDefaultValue()} if nothing can be found.
+     * @param <T> the configurationKey type
      * @param configurationKey the configuration key.  MUST NOT BE NULL.
      * @return the configured value, or the default value.
      */

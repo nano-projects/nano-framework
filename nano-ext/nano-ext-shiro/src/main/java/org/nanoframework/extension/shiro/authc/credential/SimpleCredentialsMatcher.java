@@ -29,12 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Simple CredentialsMatcher implementation.  Supports direct (plain) comparison for credentials of type
- * byte[], char[], and Strings, and if the arguments do not match these types, then reverts back to simple
- * <code>Object.equals</code> comparison.
- * <p/>
- * <p>Hashing comparisons (the most common technique used in secure applications) are not supported by this class, but
- * instead by the {@link org.apache.shiro.authc.credential.HashedCredentialsMatcher HashedCredentialsMatcher}.
  *
  * @see org.apache.shiro.authc.credential.HashedCredentialsMatcher
  * @since 0.9
@@ -44,12 +38,6 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     private static final Logger log = LoggerFactory.getLogger(SimpleCredentialsMatcher.class);
 
     /**
-     * Returns the {@code token}'s credentials.
-     * <p/>
-     * <p>This default implementation merely returns
-     * {@link AuthenticationToken#getCredentials() authenticationToken.getCredentials()} and exists as a template hook
-     * if subclasses wish to obtain the credentials in a different way or convert them to a different format before
-     * returning.
      *
      * @param token the {@code AuthenticationToken} submitted during the authentication attempt.
      * @return the {@code token}'s associated credentials.
@@ -59,13 +47,6 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     }
 
     /**
-     * Returns the {@code account}'s credentials.
-     * <p/>
-     * <p>This default implementation merely returns
-     * {@link AuthenticationInfo#getCredentials() account.getCredentials()} and exists as a template hook if subclasses
-     * wish to obtain the credentials in a different way or convert them to a different format before
-     * returning.
-     *
      * @param info the {@code AuthenticationInfo} stored in the data store to be compared against the submitted authentication
      *             token's credentials.
      * @return the {@code account}'s associated credentials.
@@ -75,17 +56,6 @@ public class SimpleCredentialsMatcher extends CodecSupport implements Credential
     }
 
     /**
-     * Returns {@code true} if the {@code tokenCredentials} argument is logically equal to the
-     * {@code accountCredentials} argument.
-     * <p/>
-     * <p>If both arguments are either a byte array (byte[]), char array (char[]) or String, they will be both be
-     * converted to raw byte arrays via the {@link #toBytes toBytes} method first, and then resulting byte arrays
-     * are compared via {@link Arrays#equals(byte[], byte[]) Arrays.equals(byte[],byte[])}.</p>
-     * <p/>
-     * <p>If either argument cannot be converted to a byte array as described, a simple Object <code>equals</code>
-     * comparison is made.</p>
-     * <p/>
-     * <p>Subclasses should override this method for more explicit equality checks.
      *
      * @param tokenCredentials   the {@code AuthenticationToken}'s associated credentials.
      * @param accountCredentials the {@code AuthenticationInfo}'s stored credentials.

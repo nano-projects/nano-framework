@@ -31,7 +31,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:03:20
+ * @since 1.0
  */
 public class MD5Utils {
 
@@ -132,6 +132,7 @@ public class MD5Utils {
      * 转换byte为Hex字符串 
      * @param value 要转换的byte数据 
      * @param minlength 生成hex的最小长度（长度不足时会在前面加0） 
+     * @return hex String
      */
     public static String byteToHex(byte value, int minlength) {
         String s = Integer.toHexString(value & 0xff);
@@ -144,6 +145,8 @@ public class MD5Utils {
 
     /** 
      * MD5加密字符串 
+     * @param value the value
+     * @return md5 byte array
      */
     public static byte[] MD5(byte[] value) {
         try {
@@ -154,11 +157,6 @@ public class MD5Utils {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public static void main(String[] args) throws IOException {
-        System.out.println(getMD5String("3d148b997d8af34bcd4c88d1492a6564"));
-
     }
 
 }

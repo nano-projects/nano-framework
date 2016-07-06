@@ -42,8 +42,6 @@ import java.util.Set;
  * @author Rob Harrop
  * @author Juergen Hoeller
  * @since 1.1
- * @see TypeUtils
- * @see ReflectionUtils
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class ClassUtils {
@@ -312,6 +310,7 @@ public abstract class ClassUtils {
      * i.e. whether it is loaded by the given ClassLoader or a parent of it.
      * @param clazz the class to analyze
      * @param classLoader the ClassLoader to potentially cache metadata in
+     * @return Check whether the given class is cache-safe in the given context
      */
     public static boolean isCacheSafe(Class clazz, ClassLoader classLoader) {
         Assert.notNull(clazz, "Class must not be null");
@@ -595,9 +594,9 @@ public abstract class ClassUtils {
      * if there is one. E.g. the method may be <code>IFoo.bar()</code> and the
      * target class may be <code>DefaultFoo</code>. In this case, the method may be
      * <code>DefaultFoo.bar()</code>. This enables attributes on that method to be found.
-     * <p><b>NOTE:</b> In contrast to {@link org.springframework.aop.support.AopUtils#getMostSpecificMethod},
+     * <p><b>NOTE:</b> In contrast to org.springframework.aop.support.AopUtils#getMostSpecificMethod,
      * this method does <i>not</i> resolve Java 5 bridge methods automatically.
-     * Call {@link org.springframework.core.BridgeMethodResolver#findBridgedMethod}
+     * Call org.springframework.core.BridgeMethodResolver#findBridgedMethod
      * if bridge method resolution is desirable (e.g. for obtaining metadata from
      * the original method definition).
      * @param method the method to be invoked, which may come from an interface
@@ -605,7 +604,6 @@ public abstract class ClassUtils {
      * May be <code>null</code> or may not even implement the method.
      * @return the specific target method, or the original method if the
      * <code>targetClass</code> doesn't implement it or is <code>null</code>
-     * @see org.springframework.aop.support.AopUtils#getMostSpecificMethod
      */
     public static Method getMostSpecificMethod(Method method, Class targetClass) {
         if (method != null && targetClass != null && !targetClass.equals(method.getDeclaringClass())) {
@@ -692,7 +690,6 @@ public abstract class ClassUtils {
      * @param lhsType the target type
      * @param rhsType	the value type that should be assigned to the target type
      * @return if the target type is assignable from the value type
-     * @see TypeUtils#isAssignable
      */
     public static boolean isAssignable(Class lhsType, Class rhsType) {
         Assert.notNull(lhsType, "Left-hand side type must not be null");
@@ -737,9 +734,9 @@ public abstract class ClassUtils {
      * slash ('/') to the return value. Built by taking the package of the specified
      * class file, converting all dots ('.') to slashes ('/'), adding a trailing slash
      * if necesssary, and concatenating the specified resource name to this.
-     * <br/>As such, this function may be used to build a path suitable for
+     * <br>As such, this function may be used to build a path suitable for
      * loading a resource file that is in the same package as a class file,
-     * although {@link org.springframework.core.io.ClassPathResource} is usually
+     * although org.springframework.core.io.ClassPathResource is usually
      * even more convenient.
      * @param clazz	the Class whose package will be used as the base
      * @param resourceName the resource name to append. A leading slash is optional.
@@ -940,6 +937,7 @@ public abstract class ClassUtils {
      * @param clazz the class to check (typically an interface)
      * @param classLoader the ClassLoader to check against (may be <code>null</code>,
      * in which case this method will always return <code>true</code>)
+     * @return Check whether the given class is visible in the given ClassLoader
      */
     public static boolean isVisible(Class clazz, ClassLoader classLoader) {
         if (classLoader == null) {

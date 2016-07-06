@@ -40,7 +40,6 @@ import org.nanoframework.jmx.client.exception.MXBeanException;
 /**
  * 
  * @author yanghe
- * @date 2015年8月18日 下午5:22:57 
  * @since 1.1
  */
 public class JmxClient {

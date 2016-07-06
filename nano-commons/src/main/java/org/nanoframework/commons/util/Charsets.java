@@ -21,7 +21,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 
 /**
  * @author yanghe
- * @date 2016年3月6日 下午1:03:10
+ * @since 1.2
  */
 public final class Charsets {
     /**

@@ -24,7 +24,7 @@ import java.lang.annotation.Target;
 /**
  * 任务调度注解
  * @author yanghe
- * @date 2016年3月22日 下午5:15:27
+ * @since 1.3
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
@@ -69,32 +69,32 @@ public @interface Scheduler {
 
     /**
      * Scheduler cron表达式
-     * @return
+     * @return String
      * @see org.nanoframework.extension.concurrent.scheduler.CronExpression
      */
     String cron() default "";
 
     /**
      * 通过属性文件设置cron表达式
-     * @return
+     * @return String
      */
     String cronProperty() default "";
 
     /**
      * 是否守护线程，默认为用户线程
-     * @return
+     * @return boolean
      */
     boolean daemon() default false;
 
     /**
      * 启动时进行延迟
-     * @return
+     * @return boolean
      */
     boolean lazy() default false;
 
     /**
      * 用户自定义属性
-     * @return
+     * @return String[]
      */
     String[] defined() default {};
 }

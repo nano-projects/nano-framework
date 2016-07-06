@@ -21,11 +21,18 @@ package org.nanoframework.commons.format;
  * @since 1.0
  */
 public enum Pattern {
-    DATE("yyyy-MM-dd"), TIME("HH:mm:ss"), DATETIME("yyyy-MM-dd HH:mm:ss"), TIMESTAMP("yyyy-MM-dd HH:mm:ss.SSS");
+    /** The 'Date' Pattern. */
+    DATE("yyyy-MM-dd"), 
+    /** The ‘Time’ Pattern. */
+    TIME("HH:mm:ss"), 
+    /** The 'DateTime' Pattern. */
+    DATETIME("yyyy-MM-dd HH:mm:ss"),
+    /** The 'Timestamp' Pattern. */
+    TIMESTAMP("yyyy-MM-dd HH:mm:ss.SSS");
 
     private String pattern;
 
-    private Pattern(String pattern) {
+    Pattern(final String pattern) {
         this.pattern = pattern;
     }
 

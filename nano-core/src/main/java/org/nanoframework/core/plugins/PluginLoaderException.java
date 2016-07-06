@@ -17,7 +17,7 @@ package org.nanoframework.core.plugins;
 
 /**
  * @author yanghe
- * @date 2015年10月30日 下午11:00:03
+ * @since 1.1
  */
 public class PluginLoaderException extends RuntimeException {
     private static final long serialVersionUID = -3388677411268525198L;

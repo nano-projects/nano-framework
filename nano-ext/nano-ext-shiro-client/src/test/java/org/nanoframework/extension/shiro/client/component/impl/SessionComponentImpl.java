@@ -50,12 +50,12 @@ public class SessionComponentImpl implements SessionComponent {
         try {
             final HttpServletRequest request = HttpContext.get(HttpServletRequest.class);
             final HttpSession session = request.getSession();
-            final Map<String, Object> map = HttpStatus.OK.to()._getBeanToMap();
+            final Map<String, Object> map = HttpStatus.OK.to().beanToMap();
             final Object value = session.getAttribute(key);
             map.put(key, value == null ? "" : value);
             return map;
         } catch(final Throwable e) {
-            return HttpStatus.INTERNAL_SERVER_ERROR.to()._getBeanToMap();
+            return HttpStatus.INTERNAL_SERVER_ERROR.to().beanToMap();
         }
     }
 }

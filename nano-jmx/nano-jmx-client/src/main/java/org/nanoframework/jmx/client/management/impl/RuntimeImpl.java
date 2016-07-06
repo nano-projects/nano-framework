@@ -30,7 +30,6 @@ import org.nanoframework.jmx.client.management.RuntimeMXBean;
  * 远程系统运行时信息监控
  * 
  * @author yanghe
- * @date 2015年8月18日 下午5:19:46 
  * @since 1.1
  */
 public class RuntimeImpl extends AbstractMXBean implements RuntimeMXBean {

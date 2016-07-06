@@ -23,7 +23,7 @@ import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdSchedu
 
 /**
  * @author yanghe
- * @date 2016年3月25日 上午10:07:40
+ * @since 1.3
  */
 public class SchedulerAnalysis {
     public static final String DISABLED = "未启用统计";

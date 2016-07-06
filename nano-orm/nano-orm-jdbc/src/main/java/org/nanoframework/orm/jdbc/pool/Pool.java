@@ -19,7 +19,7 @@ import javax.sql.DataSource;
 
 /**
  * @author yanghe
- * @date 2015年9月30日 下午4:17:20
+ * @since 1.2
  */
 public interface Pool {
 	public void closeAndClear();

@@ -30,7 +30,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 /**
  * 阻塞队列工厂类.
  * @author yanghe
- * @date 2015年6月8日 下午4:38:06 
+ * @since 1.0
  */
 public class BlockingQueueFactory {
 
@@ -177,7 +177,9 @@ public class BlockingQueueFactory {
 
     /**
      * 从队列中获取元素
+     * @param <T> the value type
      * @param key 队列key
+     * @return T
      */
     @SuppressWarnings("unchecked")
     public <T> T poll(String key) {
@@ -186,6 +188,7 @@ public class BlockingQueueFactory {
 
     /**
      * 在设定时间内从队列中获取元素，超时抛出中断异常
+     * @param <T> the value type
      * @param key 队列Key
      * @param time 超时时间
      * @param unit 时间类型

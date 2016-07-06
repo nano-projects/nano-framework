@@ -21,8 +21,7 @@ import static org.nanoframework.web.server.http.status.HttpStatusCode.*;
  * Http状态码
  * 
  * @author yanghe
- * @date 2015年7月25日 下午8:30:21 
- *
+ * @since 1.0
  */
 public enum HttpStatus {
 

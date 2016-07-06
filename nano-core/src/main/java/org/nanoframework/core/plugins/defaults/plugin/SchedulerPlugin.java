@@ -24,7 +24,7 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
  * @author yanghe
- * @date 2016年03月22日 下午16:52:09
+ * @since 1.3
  */
 public class SchedulerPlugin implements Plugin {
 

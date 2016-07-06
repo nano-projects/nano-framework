@@ -20,21 +20,16 @@ package org.nanoframework.commons.exception;
  * @author yanghe
  * @since 1.0
  */
-public class StringFormatException extends ExtensionRuntimeException {
+public class StringFormatException extends RuntimeException {
     private static final long serialVersionUID = 2104634926671632268L;
 
-    public StringFormatException() {
-
-    }
-
-    public StringFormatException(String message) {
-        super(message);
-
-    }
-
-    public StringFormatException(String message, Throwable cause) {
+    /**
+     * 
+     * @param message the message
+     * @param cause the cause
+     */
+    public StringFormatException(final String message, final Throwable cause) {
         super(message, cause);
-
     }
 
     @Override

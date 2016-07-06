@@ -15,27 +15,28 @@
  */
 package org.nanoframework.commons.loader;
 
-import org.nanoframework.commons.exception.ExtensionRuntimeException;
-
 /**
  * 加载异常处理类.
  * @author yanghe
  */
-public class LoaderException extends ExtensionRuntimeException {
+public class LoaderException extends RuntimeException {
     private static final long serialVersionUID = 6079958393741484203L;
 
-    public LoaderException() {
-
-    }
-
-    public LoaderException(String message) {
+    /**
+     * 
+     * @param message the message
+     */
+    public LoaderException(final String message) {
         super(message);
-
     }
 
-    public LoaderException(String message, Throwable cause) {
+    /**
+     * 
+     * @param message the message
+     * @param cause the cause
+     */
+    public LoaderException(final String message, final Throwable cause) {
         super(message, cause);
-
     }
 
     @Override

@@ -19,7 +19,7 @@ import org.aopalliance.intercept.MethodInvocation;
 
 /**
  * @author yanghe
- * @date 2015年11月26日 上午11:14:28
+ * @since 1.0
  */
 public interface IAfter {
     void after(MethodInvocation invocation, Object result);

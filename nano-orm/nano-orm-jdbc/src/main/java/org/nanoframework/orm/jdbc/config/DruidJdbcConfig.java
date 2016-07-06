@@ -22,7 +22,7 @@ import org.nanoframework.commons.util.Assert;
 
 /**
  * @author yanghe
- * @date 2015年9月30日 下午3:17:56
+ * @since 1.2
  */
 public class DruidJdbcConfig extends JdbcConfig {
 	private static final long serialVersionUID = -565746278164485851L;

@@ -25,7 +25,7 @@ import org.nanoframework.core.plugins.Plugin;
 
 /**
  * @author yanghe
- * @date 2015年10月30日 下午11:44:49
+ * @since 1.1
  */
 public class WebSocketPlugin implements Plugin {
 

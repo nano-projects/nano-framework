@@ -17,7 +17,7 @@ package org.nanoframework.core.context;
 
 /**
  * @author yanghe
- * @date 2016年3月25日 下午3:44:51
+ * @since 1.0
  */
 public final class ApplicationContext {
     public static final String CONTEXT = "context";
@@ -39,7 +39,7 @@ public final class ApplicationContext {
     /**
      * Scheduler属性列表
      * @author yanghe
-     * @date 2016年3月25日 下午4:22:53
+     * @since 1.3
      */
     public static final class Scheduler {
         /** 任务扫描属性 */
@@ -72,13 +72,9 @@ public final class ApplicationContext {
         public static final String SCHEDULER_APP_JMX_ENABLE = "context.scheduler.app.jmx.enable";
         /** ETCD元素过期时间 */
         public static final String ETCD_KEY_TTL = "context.scheduler.etcd.key.ttl";
-        /**
-         * @see org.nanoframework.extension.etcd.etcd4j.transport.EtcdNettyConfig#CONNECT_TIMEOUT
-         */
+
         public static final String ETCD_CONNECT_TIMEOUT = "context.scheduler.etcd.connect.timeout";
-        /**
-         * @see org.nanoframework.extension.etcd.etcd4j.transport.EtcdNettyConfig#FRAME_SIZE
-         */
+        
         public static final String ETCD_FRAME_SIZE = "context.scheduler.etcd.max.frame.size";
     }
 

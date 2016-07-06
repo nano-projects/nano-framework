@@ -24,7 +24,6 @@ import ch.ethz.ssh2.Connection;
 /**
  * 
  * @author yanghe
- * @date 2015年8月21日 上午11:01:50
  * @since 1.1
  */
 public class GanymedSSH {

@@ -37,7 +37,7 @@ public class Log4j2Impl implements org.nanoframework.commons.support.logging.Log
 
     /**
      * @since 0.2.21
-     * @param log
+     * @param log the log
      */
     public Log4j2Impl(Logger log) {
         this.log = (ExtendedLogger) log;

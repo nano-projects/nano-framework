@@ -17,7 +17,7 @@ package org.nanoframework.core.component.aop;
 
 /**
  * @author yanghe
- * @date 2016年3月16日 下午1:49:45
+ * @since 1.0
  */
 public final class MethodNames {
     protected static final String BEFORE = "before";

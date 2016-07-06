@@ -27,8 +27,7 @@ import org.nanoframework.web.server.mvc.View;
 /**
  * 视图实现
  * @author yanghe
- * @date 2015年6月23日 下午2:35:26 
- *
+ * @since 1.0 
  */
 public class ForwardView implements View {
 

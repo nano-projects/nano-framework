@@ -38,7 +38,7 @@ import com.google.common.collect.Sets;
 
 /**
  * @author yanghe
- * @date 2015年12月10日 下午1:20:59
+ * @since 1.2
  */
 public class RedisCache<K, V> implements Cache<K, V> {
 	private Logger LOG = LoggerFactory.getLogger(RedisCache.class);

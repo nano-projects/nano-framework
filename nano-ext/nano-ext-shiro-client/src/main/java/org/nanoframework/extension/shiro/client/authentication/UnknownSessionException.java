@@ -20,7 +20,7 @@ import org.nanoframework.extension.shiro.client.AuthenticationException;
 /**
  *
  * @author yanghe
- * @since
+ * @since 1.3
  */
 public class UnknownSessionException extends AuthenticationException {
     private static final long serialVersionUID = -4174629197858120417L;

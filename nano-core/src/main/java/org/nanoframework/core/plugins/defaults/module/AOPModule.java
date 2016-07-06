@@ -37,7 +37,7 @@ import com.google.inject.matcher.Matchers;
 
 /**
  * @author yanghe
- * @date 2015年10月8日 下午5:21:03
+ * @since 1.1
  */
 public class AOPModule extends Module {
 

@@ -15,15 +15,12 @@
  */
 package org.nanoframework.commons.util;
 
-import org.nanoframework.commons.exception.ExtensionRuntimeException;
-
 import com.alibaba.fastjson.JSON;
 
 /**
  * 公共全局类
  * @author yanghe
- * @date 2015年6月10日 下午1:28:01 
- *
+ * @since 1.0
  */
 public class Constants {
     public static final String SERVER_SSL = "server.ssl";
@@ -46,7 +43,7 @@ public class Constants {
 
     public static final byte[] createJsonErrorMessage(Object object) {
         if (object == null) {
-            throw new ExtensionRuntimeException("消息对象不能为空!");
+            throw new NullPointerException("消息对象不能为空!");
         }
         
         return JSON.toJSONString(object).getBytes(Charsets.UTF_8);

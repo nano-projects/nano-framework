@@ -27,7 +27,7 @@ import org.nanoframework.orm.ORMType;
 
 /**
  * @author yanghe
- * @date 2015年12月22日 上午10:13:35
+ * @since 1.2
  */
 public class MybatisDataSourceLoader extends DataSourceLoader {
 	private Logger LOG = LoggerFactory.getLogger(MybatisDataSourceLoader.class);

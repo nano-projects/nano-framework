@@ -24,8 +24,7 @@ import java.lang.annotation.Target;
 /**
  * 参数绑定
  * @author yanghe
- * @date 2015年6月5日 下午3:30:21 
- *
+ * @since 1.0
  */
 @Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
@@ -39,25 +38,19 @@ public @interface RequestParam {
     String value() default "";
 
     /**
-     * The name of the request parameter to bind to.
-     * 
-     * The property name is too stupid,  Deprecated it.
+     * @return The name of the request parameter to bind to.
+     * @deprecated The property name is too stupid,  Deprecated it.
      */
     @Deprecated
     String name() default "";
 
     /**
-     * Whether the parameter is required.
-     * <p>Default is <code>true</code>, leading to an exception thrown in case
-     * of the parameter missing in the request. Switch this to <code>false</code>
-     * if you prefer a <code>null</value> in case of the parameter missing.
-     * <p>Alternatively, provide a {@link #defaultValue() defaultValue},
-     * which implicitly sets this flag to <code>false</code>.
+     * @return Whether the parameter is required.
      */
     boolean required() default true;
 
     /**
-     * The default value to use as a fallback. Supplying a default value implicitly
+     * @return The default value to use as a fallback. Supplying a default value implicitly
      * sets {@link #required()} to false.
      */
     String defaultValue() default ValueConstants.DEFAULT_NONE;

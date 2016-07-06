@@ -35,7 +35,7 @@ public class DBConfigInitTest {
 		Properties prop = PropertiesLoader.load("classpath:jdbc-test.properties");
 		if(prop != null) {
 			C3P0JdbcConfig config = new C3P0JdbcConfig(prop);
-			System.out.println(config._getBeanToMap());
+			System.out.println(config.beanToMap());
 			
 		}
 	}

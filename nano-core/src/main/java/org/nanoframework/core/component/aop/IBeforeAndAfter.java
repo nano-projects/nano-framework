@@ -17,7 +17,7 @@ package org.nanoframework.core.component.aop;
 
 /**
  * @author yanghe
- * @date 2015年11月26日 上午11:16:46
+ * @since 1.0
  */
 public interface IBeforeAndAfter extends IBefore, IAfter {
 

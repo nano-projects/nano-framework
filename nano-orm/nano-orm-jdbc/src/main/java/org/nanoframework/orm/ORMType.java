@@ -17,7 +17,7 @@ package org.nanoframework.orm;
 
 /**
  * @author yanghe
- * @date 2015年12月22日 上午9:21:28
+ * @since 1.2
  */
 public enum ORMType {
 	JDBC, MYBATIS;

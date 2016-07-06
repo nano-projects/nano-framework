@@ -18,7 +18,7 @@ package org.nanoframework.core.component.stereotype.bind;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:18:35
+ * @since 1.0
  */
 public enum RequestMethod {
     GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE, PATCH

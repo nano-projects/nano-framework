@@ -31,7 +31,7 @@ import com.google.common.collect.Maps;
  * 抽象Scheduler超类，对基本操作进行了封装
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:15:06
+ * @since 1.3
  */
 public abstract class BaseScheduler implements Runnable, Cloneable {
     protected static Logger LOG = LoggerFactory.getLogger(BaseScheduler.class);

@@ -18,7 +18,6 @@ package org.nanoframework.extension.ssh.exception;
 /**
  * 
  * @author yanghe
- * @date 2015年8月21日 上午11:00:44
  * @since 1.1
  */
 public class SSHException extends RuntimeException {

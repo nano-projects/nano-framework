@@ -29,8 +29,8 @@ import org.apache.ibatis.session.SqlSessionManager;
 
 /**
  * Method interceptor for {@link MultiTransactional} annotation.
- *
- * @version $Id$
+ * @author yanghe
+ * @since 1.2
  */
 public final class MultiTransactionalMethodInterceptor implements MethodInterceptor {
 

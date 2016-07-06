@@ -20,7 +20,7 @@ import org.nanoframework.commons.entity.BaseEntity;
 /**
  * Http 返回消息对象
  * @author yanghe
- * @date 2015年7月25日 下午8:18:08 
+ * @since 1.0
  */
 @Deprecated
 public class ResultMap extends BaseEntity {
@@ -43,13 +43,6 @@ public class ResultMap extends BaseEntity {
         this.info = info;
     }
 
-    /**
-     * 创建消息对象 
-     * @param status 状态码
-     * @param message 消息内容
-     * @param info 描述
-     * @return
-     */
     public static ResultMap create(int status, String message, String info) {
         return new ResultMap(status, message, info);
     }

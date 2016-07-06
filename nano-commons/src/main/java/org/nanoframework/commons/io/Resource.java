@@ -34,17 +34,12 @@ import java.net.URL;
  * @see #getURL()
  * @see #getURI()
  * @see #getFile()
- * @see FileSystemResource
  * @see ClassPathResource
- * @see UrlResource
- * @see ByteArrayResource
- * @see InputStreamResource
- * @see org.springframework.web.context.support.ServletContextResource
  */
 public interface Resource extends InputStreamSource {
 
     /**
-     * Return whether this resource actually exists in physical form.
+     * @return whether this resource actually exists in physical form.
      * <p>This method performs a definitive existence check, whereas the
      * existence of a <code>Resource</code> handle only guarantees a
      * valid descriptor handle.
@@ -52,7 +47,7 @@ public interface Resource extends InputStreamSource {
     boolean exists();
 
     /**
-     * Return whether the contents of this resource can be read,
+     * @return whether the contents of this resource can be read,
      * e.g. via {@link #getInputStream()} or {@link #getFile()}.
      * <p>Will be <code>true</code> for typical resource descriptors;
      * note that actual content reading may still fail when attempted.
@@ -62,7 +57,7 @@ public interface Resource extends InputStreamSource {
     boolean isReadable();
 
     /**
-     * Return whether this resource represents a handle with an open
+     * @return whether this resource represents a handle with an open
      * stream. If true, the InputStream cannot be read multiple times,
      * and must be read and closed to avoid resource leaks.
      * <p>Will be <code>false</code> for typical resource descriptors.
@@ -70,28 +65,28 @@ public interface Resource extends InputStreamSource {
     boolean isOpen();
 
     /**
-     * Return a URL handle for this resource.
+     * @return a URL handle for this resource.
      * @throws IOException if the resource cannot be resolved as URL,
      * i.e. if the resource is not available as descriptor
      */
     URL getURL() throws IOException;
 
     /**
-     * Return a URI handle for this resource.
+     * @return a URI handle for this resource.
      * @throws IOException if the resource cannot be resolved as URI,
      * i.e. if the resource is not available as descriptor
      */
     URI getURI() throws IOException;
 
     /**
-     * Return a File handle for this resource.
+     * @return a File handle for this resource.
      * @throws IOException if the resource cannot be resolved as absolute
      * file path, i.e. if the resource is not available in a file system
      */
     File getFile() throws IOException;
 
     /**
-     * Determine the last-modified timestamp for this resource.
+     * @return Determine the last-modified timestamp for this resource.
      * @throws IOException if the resource cannot be resolved
      * (in the file system or as some other known physical resource type)
      */
@@ -106,13 +101,13 @@ public interface Resource extends InputStreamSource {
     Resource createRelative(String relativePath) throws IOException;
 
     /**
-     * Return a filename for this resource, i.e. typically the last
+     * @return a filename for this resource, i.e. typically the last
      * part of the path: for example, "myfile.txt".
      */
     String getFilename();
 
     /**
-     * Return a description for this resource,
+     * @return a description for this resource,
      * to be used for error output when working with the resource.
      * <p>Implementations are also encouraged to return this value
      * from their <code>toString</code> method.

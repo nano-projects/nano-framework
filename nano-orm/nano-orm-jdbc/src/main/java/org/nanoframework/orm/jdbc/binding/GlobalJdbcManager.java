@@ -27,9 +27,7 @@ import java.util.concurrent.ConcurrentMap;
  * 存储方式为 {数据源名称 - JdbcManager} 
  * 
  * @author yanghe
- * @date 2015年7月29日 上午2:38:17 
- *
- * @see MultiDataSourceModule
+ *@since 1.2
  */
 public class GlobalJdbcManager {
 	private static ConcurrentMap<String, JdbcManager> globals = new ConcurrentHashMap<>();

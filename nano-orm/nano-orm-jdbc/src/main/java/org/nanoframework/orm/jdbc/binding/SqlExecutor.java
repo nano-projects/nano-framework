@@ -24,7 +24,7 @@ import org.nanoframework.orm.jdbc.jstl.Result;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:10:49
+ * @since 1.2
  */
 public interface SqlExecutor extends Closeable {
 	public void commit() throws SQLException;

@@ -38,7 +38,7 @@ public enum ConfigurationStrategyName {
     }
 
     /**
-     * Static helper method that will resolve a simple string to either an enum value or a {@link org.jasig.cas.client.configuration.ConfigurationStrategy} class.
+     * Static helper method that will resolve a simple string to either an enum value or a ConfigurationStrategy class.
      *
      * @param value the value to attempt to resolve.
      * @return the underlying class that this maps to (either via simple name or fully qualified class name).

@@ -52,12 +52,12 @@ public class AuthenticationComponentImpl implements AuthenticationComponent {
         try {
             final HttpServletRequest request = HttpContext.get(HttpServletRequest.class);
             final String principal = (String) ((SimplePrincipalCollection) request.getSession().getAttribute(PRINCIPALS_SESSION_KEY)).getPrimaryPrincipal();
-            final Map<String, Object> map = HttpStatus.OK.to()._getBeanToMap();
+            final Map<String, Object> map = HttpStatus.OK.to().beanToMap();
             map.put("username", principal);
             return map;
         } catch (final Throwable e) {
             LOGGER.error("Find user info error: {}", e.getMessage());
-            return ResultMap.create("Find user info error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR)._getBeanToMap();
+            return ResultMap.create("Find user info error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR).beanToMap();
         }
     }
 

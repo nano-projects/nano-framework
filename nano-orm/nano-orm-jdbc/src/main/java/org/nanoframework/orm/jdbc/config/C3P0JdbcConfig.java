@@ -24,8 +24,7 @@ import org.nanoframework.commons.util.Assert;
  * 数据源配置类
  * 
  * @author yanghe
- * @date 2015年7月20日 下午3:27:09 
- *
+ * @since 1.2
  */
 public class C3P0JdbcConfig extends JdbcConfig {
 	private static final long serialVersionUID = 8176998886713632074L;

@@ -92,19 +92,6 @@ public class SimpleByteSource implements ByteSource, Serializable {
     }
 
     /**
-     * Returns {@code true} if the specified object is a recognized data type that can be easily converted to
-     * bytes by instances of this class, {@code false} otherwise.
-     * <p/>
-     * This implementation returns {@code true} IFF the specified object is an instance of one of the following
-     * types:
-     * <ul>
-     * <li>{@code byte[]}</li>
-     * <li>{@code char[]}</li>
-     * <li>{@link ByteSource}</li>
-     * <li>{@link String}</li>
-     * <li>{@link File}</li>
-     * </li>{@link InputStream}</li>
-     * </ul>
      *
      * @param o the object to test to see if it can be easily converted to bytes by instances of this class.
      * @return {@code true} if the specified object can be easily converted to bytes by instances of this class,

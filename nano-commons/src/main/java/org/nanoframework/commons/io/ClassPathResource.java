@@ -56,7 +56,6 @@ public class ClassPathResource extends AbstractResource {
      * loading the resource.
      * @param path the absolute path within the class path
      * @see java.lang.ClassLoader#getResourceAsStream(String)
-     * @see org.machairodus.topology.util.springframework.util.ClassUtils#getDefaultClassLoader()
      */
     public ClassPathResource(String path) {
         this(path, (ClassLoader) null);
@@ -109,21 +108,21 @@ public class ClassPathResource extends AbstractResource {
     }
 
     /**
-     * Return the path for this resource (as resource path within the class path).
+     * @return the path for this resource (as resource path within the class path).
      */
     public final String getPath() {
         return this.path;
     }
 
     /**
-     * Return the ClassLoader that this resource will be obtained from.
+     * @return the ClassLoader that this resource will be obtained from.
      */
     public final ClassLoader getClassLoader() {
         return (this.classLoader != null ? this.classLoader : this.clazz.getClassLoader());
     }
 
     /**
-     * This implementation opens an InputStream for the given class path resource.
+     * @return This implementation opens an InputStream for the given class path resource.
      * @see java.lang.ClassLoader#getResourceAsStream(String)
      * @see java.lang.Class#getResourceAsStream(String)
      */
@@ -141,7 +140,7 @@ public class ClassPathResource extends AbstractResource {
     }
 
     /**
-     * This implementation returns a URL for the underlying class path resource.
+     * @return This implementation returns a URL for the underlying class path resource.
      * @see java.lang.ClassLoader#getResource(String)
      * @see java.lang.Class#getResource(String)
      */
@@ -159,16 +158,15 @@ public class ClassPathResource extends AbstractResource {
     }
 
     /**
-     * This implementation returns a File reference for the underlying class path
+     * @return This implementation returns a File reference for the underlying class path
      * resource, provided that it refers to a file in the file system.
-     * @see org.machairodus.topology.util.springframework.util.ResourceUtils#getFile(java.net.URL, String)
      */
     public File getFile() throws IOException {
         return ResourceUtils.getFile(getURL(), getDescription());
     }
 
     /**
-     * This implementation determines the underlying File
+     * @reutnr This implementation determines the underlying File
      * (or jar file, in case of a resource in a jar/zip).
      */
     protected File getFileForLastModifiedCheck() throws IOException {
@@ -182,9 +180,8 @@ public class ClassPathResource extends AbstractResource {
     }
 
     /**
-     * This implementation creates a ClassPathResource, applying the given path
+     * @return This implementation creates a ClassPathResource, applying the given path
      * relative to the path of the underlying resource of this descriptor.
-     * @see org.springframework.util.StringUtils#applyRelativePath(String, String)
      */
     public Resource createRelative(String relativePath) {
         String pathToUse = StringUtils.applyRelativePath(this.path, relativePath);
@@ -192,23 +189,22 @@ public class ClassPathResource extends AbstractResource {
     }
 
     /**
-     * This implementation returns the name of the file that this class path
+     * @return This implementation returns the name of the file that this class path
      * resource refers to.
-     * @see org.springframework.util.StringUtils#getFilename(String)
      */
     public String getFilename() {
         return StringUtils.getFilename(this.path);
     }
 
     /**
-     * This implementation returns a description that includes the class path location.
+     * @return This implementation returns a description that includes the class path location.
      */
     public String getDescription() {
         return "class path resource [" + this.path + ']';
     }
 
     /**
-     * This implementation compares the underlying class path locations.
+     * @return This implementation compares the underlying class path locations.
      */
     public boolean equals(Object obj) {
         if (obj == this) {
@@ -223,7 +219,7 @@ public class ClassPathResource extends AbstractResource {
     }
 
     /**
-     * This implementation returns the hash code of the underlying
+     * @return This implementation returns the hash code of the underlying
      * class path location.
      */
     public int hashCode() {

@@ -25,7 +25,7 @@ import org.nanoframework.orm.jedis.exception.NotFoundExtendException;
 /**
  * RedisClient的连接配置.
  * @author yanghe
- * @date 2015年7月27日 下午10:13:55 
+ * @since 1.0
  */
 public class RedisConfig extends BaseEntity {
     public static final String REDIS = "redis.";

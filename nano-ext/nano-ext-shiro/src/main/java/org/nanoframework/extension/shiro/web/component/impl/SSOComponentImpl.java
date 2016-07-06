@@ -151,7 +151,7 @@ public class SSOComponentImpl extends AbstractSSOComponent {
 	@Override
 	public Map<String, Object> login(final UsernamePasswordToken token, final String service) {
 	    if (StringUtils.isBlank(token.getUsername()) || ArrayUtils.isEmpty(token.getPassword())) {
-            return INVALID_USER_PASS._getBeanToMap();
+            return INVALID_USER_PASS.beanToMap();
         }
 
         Subject subject = SecurityUtils.getSubject();
@@ -164,7 +164,7 @@ public class SSOComponentImpl extends AbstractSSOComponent {
             if (subject.isAuthenticated()) {
                 return createOKResult(service);
             } else {
-                return INVALID_AUTH._getBeanToMap();
+                return INVALID_AUTH.beanToMap();
             }
             
         } catch (final AuthenticationException e) {
@@ -172,16 +172,16 @@ public class SSOComponentImpl extends AbstractSSOComponent {
             
         } catch (final Throwable e) {
             LOGGER.error("处理异常: {}", e.getMessage());
-            return INTERNAL_SERVER_ERROR._getBeanToMap();
+            return INTERNAL_SERVER_ERROR.beanToMap();
         }
 	}
 	
 	protected Map<String, Object> authenticationException(final AuthenticationException e) {
 	    LOGGER.error("权限认证失败: {}", e.getMessage());
         if (e.getMessage().indexOf("did not match the expected credentials") > -1) {
-            return PASSWORD_ERROR._getBeanToMap();
+            return PASSWORD_ERROR.beanToMap();
         } else {
-            Map<String, Object> authError = UNAUTH._getBeanToMap();
+            Map<String, Object> authError = UNAUTH.beanToMap();
             authError.put(ResultMap.MESSAGE, e.getMessage());
             return authError;
         }
@@ -211,16 +211,16 @@ public class SSOComponentImpl extends AbstractSSOComponent {
 	        if(subject.isAuthenticated() || subject.isRemembered()) {
                 return createOKResult(service);
 	        } else {
-	            return UNLOGIN._getBeanToMap();
+	            return UNLOGIN.beanToMap();
 	        }
 	    } catch (final Throwable e) {
 	        LOGGER.error("登陆校验异常: {}", e.getMessage());
-	        return INTERNAL_SERVER_ERROR._getBeanToMap();
+	        return INTERNAL_SERVER_ERROR.beanToMap();
 	    }
     }
 	
 	protected Map<String, Object> createOKResult() {
-        Map<String, Object> ok = OK._getBeanToMap();
+        Map<String, Object> ok = OK.beanToMap();
         String username = helper.getCurrentUsername();
         ok.put("username", username);
         return ok;

@@ -51,8 +51,8 @@ public class BASE64 extends BASE64Encoder {
     /**
      * 优化BASE64Encoder的encode方法，解决编码过长时自动换行及编码效率低的问题
      * 
-     * @param bytes
-     * @return
+     * @param bytes the bytes
+     * @return encode String
      */
     @Override
     public String encode(byte[] bytes) {

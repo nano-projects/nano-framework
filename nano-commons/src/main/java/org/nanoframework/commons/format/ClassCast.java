@@ -32,42 +32,34 @@ import com.alibaba.fastjson.TypeReference;
 /**
  * 类型转换处理类.
  * @author yanghe
- * @date 2015年6月5日 下午5:03:48 
+ * @since 1.0
  */
 public final class ClassCast {
-
-    public static final String _Integer = "java.lang.Integer";
-    public static final String _LInteger = "[Ljava.lang.Integer;";
-    public static final String _int = "int";
-    public static final String _Long = "java.lang.Long";
-    public static final String _LLong = "[Ljava.lang.Long;";
-    public static final String _long = "long";
-    public static final String _Double = "java.lang.Double";
-    public static final String _LDouble = "[Ljava.lang.Double;";
-    public static final String _double = "double";
-    public static final String _Float = "java.lang.Float";
-    public static final String _LFloat = "[Ljava.lang.Float;";
-    public static final String _float = "float";
-    public static final String _String = "java.lang.String";
-    public static final String _LString = "[Ljava.lang.String;";
-    public static final String _Date_util = "java.util.Date";
-    public static final String _LDate_util = "[Ljava.util.Date;";
-    public static final String _Date_sql = "java.sql.Date";
-    public static final String _LDate_sql = "[Ljava.sql.Date;";
-    public static final String _Timestamp = "java.sql.Timestamp";
-    public static final String _LTimestamp = "[Ljava.sql.Timestamp;";
-    public static final String _Boolean = "java.lang.Boolean";
-    public static final String _LBoolean = "[Ljava.lang.Boolean;";
-    public static final String _boolean = "boolean";
-    public static final String _BigDecimal = "java.math.BigDecimal";
-    public static final String _LBigDecimal = "[Ljava.math.BigDecimal;";
+    private static final String INTEGER_OBJ = "java.lang.Integer";
+    private static final String L_INTEGER_OBJ = "[Ljava.lang.Integer;";
+    private static final String INT = "int";
+    private static final String LONG_OBJ = "java.lang.Long";
+    private static final String L_LONG_OBJ = "[Ljava.lang.Long;";
+    private static final String LONG = "long";
+    private static final String DOUBLE_OBJ = "java.lang.Double";
+    private static final String L_DOUBLE_OBJ = "[Ljava.lang.Double;";
+    private static final String DOUBLE = "double";
+    private static final String FLOAT_OBJ = "java.lang.Float";
+    private static final String L_FLOAT_OBJ = "[Ljava.lang.Float;";
+    private static final String FLOAT = "float";
+    private static final String STRING = "java.lang.String";
+    private static final String DATE_UTIL = "java.util.Date";
+    private static final String DATE_SQL = "java.sql.Date";
+    private static final String TIMESTAMP = "java.sql.Timestamp";
+    private static final String BOOLEAN_OBJ = "java.lang.Boolean";
+    private static final String L_BOOLEAN_OBJ = "[Ljava.lang.Boolean;";
 
     private ClassCast() {
-        
+
     }
-    
+
     /**
-     * 根据Class进行转换，转换简单数据类型
+     * 根据Class进行转换，转换简单数据类型.
      * @param value 值
      * @param typeName 类型
      * @return 返回转换后的值
@@ -79,19 +71,19 @@ public final class ClassCast {
 
         try {
             switch (typeName) {
-                case _Integer:
+                case INTEGER_OBJ:
                     return Integer.valueOf(value);
 
-                case _Long:
+                case LONG_OBJ:
                     return Long.valueOf(value);
 
-                case _Double:
+                case DOUBLE_OBJ:
                     return Double.valueOf(value);
 
-                case _Float:
+                case FLOAT_OBJ:
                     return Float.valueOf(value);
-                    
-                case _Boolean:
+
+                case BOOLEAN_OBJ:
                     if (ObjectCompare.isInList(value.toUpperCase(), "1", "YES", "Y", "TRUE")) {
                         return Boolean.TRUE;
                     } else if (ObjectCompare.isInList(value.toUpperCase(), "0", "NO", "N", "FALSE")) {
@@ -99,28 +91,28 @@ public final class ClassCast {
                     } else {
                         return Boolean.valueOf(value);
                     }
-                case _String:
+                case STRING:
                     return value;
 
-                case _Date_util:
-                case _Date_sql:
+                case DATE_UTIL:
+                case DATE_SQL:
                     return DateFormat.parse(value, Pattern.DATETIME);
 
-                case _Timestamp:
-                    long time = DateFormat.parse(value, Pattern.TIMESTAMP).getTime();
+                case TIMESTAMP:
+                    final long time = DateFormat.parse(value, Pattern.TIMESTAMP).getTime();
                     return new Timestamp(time);
 
-                case _int:
-                case _long:
-                case _double:
-                case _float:
+                case INT:
+                case LONG:
+                case DOUBLE:
+                case FLOAT:
                     throw new ClassCastException("只支持对对象数据类型的转换，不支持基本数据类型的转换");
 
                 default:
                     return JSON.parseObject(value, Class.forName(typeName));
 
             }
-        } catch (ClassCastException | ClassNotFoundException | ParseException e) {
+        } catch (final ClassCastException | ClassNotFoundException | ParseException e) {
             throw new org.nanoframework.commons.exception.ClassCastException(e.getMessage(), e);
 
         }
@@ -133,18 +125,18 @@ public final class ClassCast {
      * @param typeName 类型
      * @return 返回转换后的值
      */
-    public static final Object cast(Object value, String typeName) {
+    public static final Object cast(final Object value, final String typeName) {
         if (value == null) {
             return null;
         }
-        
+
         if (StringUtils.isEmpty(typeName)) {
             throw new IllegalArgumentException("类型名不能为空");
         }
-        
+
         try {
             switch (typeName) {
-                case _Integer:
+                case INTEGER_OBJ:
                     if (value instanceof Integer) {
                         return value;
                     } else if (value instanceof BigDecimal) {
@@ -152,9 +144,9 @@ public final class ClassCast {
                     } else {
                         return new BigDecimal(String.valueOf(value)).intValue();
                     }
-                case _LInteger:
+                case L_INTEGER_OBJ:
                     Object[] values = ObjectUtils.toObjectArray(value);
-                    Integer[] ints = new Integer[values.length];
+                    final Integer[] ints = new Integer[values.length];
                     for (int idx = 0; idx < ints.length; idx++) {
                         if (values[idx] == null || "".equals(values[idx])) {
                             ints[idx] = null;
@@ -164,7 +156,7 @@ public final class ClassCast {
                     }
 
                     return ints;
-                case _Long:
+                case LONG_OBJ:
                     if (value instanceof Long) {
                         return value;
                     } else if (value instanceof BigDecimal) {
@@ -172,9 +164,9 @@ public final class ClassCast {
                     } else {
                         return new BigDecimal(String.valueOf(value)).longValue();
                     }
-                case _LLong:
+                case L_LONG_OBJ:
                     values = ObjectUtils.toObjectArray(value);
-                    Long[] longs = new Long[values.length];
+                    final Long[] longs = new Long[values.length];
                     for (int idx = 0; idx < longs.length; idx++) {
                         if (values[idx] == null || "".equals(values[idx])) {
                             longs[idx] = null;
@@ -184,7 +176,7 @@ public final class ClassCast {
                     }
 
                     return longs;
-                case _Double:
+                case DOUBLE_OBJ:
                     if (value instanceof Double) {
                         return value;
                     } else if (value instanceof BigDecimal) {
@@ -192,9 +184,9 @@ public final class ClassCast {
                     } else {
                         return new BigDecimal(String.valueOf(value)).doubleValue();
                     }
-                case _LDouble:
+                case L_DOUBLE_OBJ:
                     values = ObjectUtils.toObjectArray(value);
-                    Double[] doubles = new Double[values.length];
+                    final Double[] doubles = new Double[values.length];
                     for (int idx = 0; idx < doubles.length; idx++) {
                         if (values[idx] == null || "".equals(values[idx])) {
                             doubles[idx] = null;
@@ -204,7 +196,7 @@ public final class ClassCast {
                     }
 
                     return doubles;
-                case _Float:
+                case FLOAT_OBJ:
                     if (value instanceof Float) {
                         return value;
                     } else if (value instanceof BigDecimal) {
@@ -212,9 +204,9 @@ public final class ClassCast {
                     } else {
                         return new BigDecimal(String.valueOf(value)).floatValue();
                     }
-                case _LFloat:
+                case L_FLOAT_OBJ:
                     values = ObjectUtils.toObjectArray(value);
-                    Float[] floats = new Float[values.length];
+                    final Float[] floats = new Float[values.length];
                     for (int idx = 0; idx < floats.length; idx++) {
                         if (values[idx] == null || "".equals(values[idx])) {
                             floats[idx] = null;
@@ -224,15 +216,15 @@ public final class ClassCast {
                     }
 
                     return floats;
-                case _Boolean:
-                    if (value instanceof Boolean)
+                case BOOLEAN_OBJ:
+                    if (value instanceof Boolean) {
                         return value;
-                    else {
+                    } else {
                         return Boolean.valueOf(String.valueOf(value));
                     }
-                case _LBoolean:
+                case L_BOOLEAN_OBJ:
                     values = ObjectUtils.toObjectArray(value);
-                    Boolean[] booleans = new Boolean[values.length];
+                    final Boolean[] booleans = new Boolean[values.length];
                     for (int idx = 0; idx < booleans.length; idx++) {
                         if (values[idx] == null || "".equals(values[idx])) {
                             booleans[idx] = null;
@@ -242,23 +234,23 @@ public final class ClassCast {
                     }
 
                     return booleans;
-                case _Date_util:
-                case _Date_sql:
-                    if (value instanceof Date)
+                case DATE_UTIL:
+                case DATE_SQL:
+                    if (value instanceof Date) {
                         return value;
-                    else {
+                    } else {
                         return parseDate(String.valueOf(value));
                     }
-                case _Timestamp:
-                    if (value instanceof Date)
+                case TIMESTAMP:
+                    if (value instanceof Date) {
                         return new Timestamp(((Date) value).getTime());
-                    else {
+                    } else {
                         return new Timestamp(parseDate(String.valueOf(value)).getTime());
                     }
-                case _int:
-                case _long:
-                case _double:
-                case _float:
+                case INT:
+                case LONG:
+                case DOUBLE:
+                case FLOAT:
                     throw new ClassCastException("只支持对对象数据类型的转换，不支持基本数据类型的转换");
 
                 default:
@@ -276,9 +268,9 @@ public final class ClassCast {
                                 return cls;
                             };
                         };
-                        
-                        String[] array = (String[]) value;
-                        Object[] objs = new Object[array.length];
+
+                        final String[] array = (String[]) value;
+                        final Object[] objs = new Object[array.length];
                         int idx = 0;
                         for (String val : array) {
                             if (String.class == cls) {
@@ -296,13 +288,13 @@ public final class ClassCast {
                         if (cls == String.class) {
                             return value;
                         }
-                        
+
                         final TypeReference<Object> type = new TypeReference<Object>() {
                             public Type getType() {
                                 return cls;
                             };
                         };
-                        
+
                         try {
                             return JSON.parseObject((String) value, type);
                         } catch (final Throwable e) {
@@ -319,15 +311,16 @@ public final class ClassCast {
 
     /**
      * 
-     * @param datestr
-     * @return date
-     * @throws ParseException 
+     * @param date 时间格式字符串
+     * @return 时间对象
+     * @throws ParseException 时间转换异常
      */
-    public static Date parseDate(String date) throws ParseException {
-        if (StringUtils.isEmpty(date))
+    public static Date parseDate(final String date) throws ParseException {
+        if (StringUtils.isEmpty(date)) {
             return null;
+        }
 
-        String pattern = null;
+        final String pattern;
         if (date.indexOf(':') > 0) {
             if (date.indexOf('.') > 0) {
                 pattern = "yyyy-MM-dd HH:mm:ss.SSS";

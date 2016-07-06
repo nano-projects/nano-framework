@@ -21,7 +21,6 @@ import org.nanoframework.extension.ssh.exception.SSHException;
 
 /**
  * @author yanghe
- * @date 2015年8月20日 下午3:02:27
  * @since 1.1
  */
 public final class ShellExecutor extends SSHExecutor {

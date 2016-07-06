@@ -24,7 +24,7 @@ import org.nanoframework.commons.entity.BaseEntity;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:14:30
+ * @since 1.3
  */
 public class JmxMonitor extends BaseEntity {
     private static final long serialVersionUID = 743543178402183287L;

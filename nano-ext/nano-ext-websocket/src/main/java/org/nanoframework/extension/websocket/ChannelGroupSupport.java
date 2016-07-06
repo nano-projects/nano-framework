@@ -27,8 +27,7 @@ import io.netty.channel.group.ChannelGroup;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:22:34
- * @see new implementation can see {@link ChannelGroupItem} 
+ * @since 1.1
  */
 @Deprecated
 public class ChannelGroupSupport {

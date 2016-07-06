@@ -42,7 +42,7 @@ public class Log4jImpl extends Category implements org.nanoframework.commons.sup
 
     /**
      * @since 0.2.21
-     * @param log
+     * @param log the log
      */
     public Log4jImpl(Logger log) {
         super(log.getName());

@@ -27,7 +27,7 @@ import org.apache.ibatis.reflection.SystemMetaObject;
 
 /**
  * @author yanghe
- * @date 2015年9月30日 下午1:51:20
+ * @since 1.2
  */
 public class AbstractDataSourceFactory implements DataSourceFactory {
 	protected DataSource dataSource;

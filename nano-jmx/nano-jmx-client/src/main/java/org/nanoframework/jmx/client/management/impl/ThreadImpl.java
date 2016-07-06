@@ -29,7 +29,7 @@ import org.nanoframework.jmx.client.management.ThreadMXBean;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:07:09
+ * @since 1.1
  */
 public class ThreadImpl extends AbstractMXBean implements ThreadMXBean {
 	public static final String OBJECT_NAME = ManagementFactory.THREAD_MXBEAN_NAME;

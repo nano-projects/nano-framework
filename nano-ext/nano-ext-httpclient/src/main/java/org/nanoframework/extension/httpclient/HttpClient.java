@@ -169,10 +169,10 @@ public interface HttpClient {
     /**
      * Http 'PUT' request.
      * 
-     * @param url
-     * @param stream
-     * @param contentType
-     * @return
+     * @param url the url
+     * @param stream the stream
+     * @param contentType the contentType
+     * @return HttpResponse
      * @throws IOException
      */
     HttpResponse put(String url, String stream, ContentType contentType) throws IOException;
@@ -180,11 +180,10 @@ public interface HttpClient {
     /**
      * Http 'PUT' request.
      * 
-     * @param url
-     * @param headers
-     * @param stream
-     * @param contentType
-     * @return
+     * @param url the url
+     * @param stream the stream
+     * @param contentType the contentType
+     * @return HttpResponse
      * @throws IOException
      */
     HttpResponse put(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
@@ -224,7 +223,7 @@ public interface HttpClient {
      * Http 'DELETE' request.
      * 
      * @param url request url
-     * @param headers request params map
+     * @param params request params map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
      */
@@ -328,7 +327,7 @@ public interface HttpClient {
      * Http 'HEAD' request.
      * 
      * @param url request url
-     * @param headers request params map
+     * @param params request params map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
      */
@@ -358,7 +357,7 @@ public interface HttpClient {
      * Http 'OPTIONS' request.
      * 
      * @param url request url
-     * @param headers request params map
+     * @param params request params map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
      */
@@ -388,7 +387,7 @@ public interface HttpClient {
      * Http 'TRACE' request.
      * 
      * @param url request url
-     * @param headers request params map
+     * @param params request params map
      * @return HttpResponse
      * @throws IOException if I/O errors occur
      */

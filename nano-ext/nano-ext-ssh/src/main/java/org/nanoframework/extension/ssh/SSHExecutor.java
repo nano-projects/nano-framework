@@ -31,7 +31,6 @@ import ch.ethz.ssh2.StreamGobbler;
 
 /**
  * @author yanghe
- * @date 2015年8月20日 上午11:02:58
  * @since 1.1
  */
 abstract class SSHExecutor extends SSH implements Runnable {

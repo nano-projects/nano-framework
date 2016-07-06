@@ -25,7 +25,7 @@ import io.netty.handler.ssl.SslContext;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:23:13
+ * @since 1.1
  */
 public class WebSocketServerInitializer extends ChannelInitializer<SocketChannel> {
 

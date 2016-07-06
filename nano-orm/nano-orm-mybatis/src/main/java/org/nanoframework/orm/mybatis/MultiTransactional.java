@@ -29,7 +29,8 @@ import org.mybatis.guice.transactional.Isolation;
  * transactionality.
  * MyBatis多数据源事务处理注解<br>
  * 使用时被调用的方法必须是public的，否则无法进入拦截器
- * 
+ * @author yanghe
+ * @since 1.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})

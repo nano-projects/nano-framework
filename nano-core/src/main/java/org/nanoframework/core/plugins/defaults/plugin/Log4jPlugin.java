@@ -26,7 +26,7 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
  * @author yanghe
- * @date 2015年11月17日 上午9:06:59
+ * @since 1.1
  */
 public class Log4jPlugin implements Plugin {
     public static final String DEFAULT_LOG4J_PARAMETER_NAME = "log4j";

@@ -43,7 +43,7 @@ import com.alibaba.fastjson.TypeReference;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:13:33
+ * @since 1.3
  */
 public class EtcdOrderWatcherScheduler extends BaseScheduler {
 

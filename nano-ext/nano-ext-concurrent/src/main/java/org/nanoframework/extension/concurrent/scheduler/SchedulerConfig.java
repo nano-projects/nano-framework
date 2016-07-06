@@ -23,7 +23,7 @@ import org.nanoframework.extension.concurrent.exception.SchedulerException;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:15:49
+ * @since 1.3
  */
 public class SchedulerConfig extends BaseEntity {
     private static final long serialVersionUID = 5426844475306359870L;

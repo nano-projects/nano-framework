@@ -36,7 +36,7 @@ import com.google.common.collect.Maps;
 
 /**
  * @author yanghe
- * @date 2015年12月10日 上午10:24:05
+ * @since 1.2
  */
 public class RedisSessionDAO extends CachingSessionDAO {
     private static final Logger LOGGER = LoggerFactory.getLogger(RedisSessionDAO.class);

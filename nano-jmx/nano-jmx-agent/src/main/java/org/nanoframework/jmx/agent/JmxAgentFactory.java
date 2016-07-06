@@ -29,7 +29,6 @@ import org.nanoframework.jmx.agent.exception.MBeanRegisterException;
 /**
  * 
  * @author yanghe
- * @date 2015年12月24日 下午04:08
  * @since 1.2
  */
 public class JmxAgentFactory {

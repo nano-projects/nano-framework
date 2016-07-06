@@ -33,7 +33,7 @@ import org.nanoframework.orm.jdbc.config.JdbcConfig;
 
 /**
  * @author yanghe
- * @date 2015年9月30日 下午3:50:14
+ * @since 1.2
  */
 public class DruidPool implements Pool {
 	private final Logger logger = LoggerFactory.getLogger(DruidPool.class);

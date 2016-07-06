@@ -24,7 +24,7 @@ import org.nanoframework.orm.jdbc.jstl.Result;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:11:33
+ * @since 1.2
  */
 public interface DefaultSqlExecutor {
 	void commit(Connection conn) throws SQLException;

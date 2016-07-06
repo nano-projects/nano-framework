@@ -42,8 +42,7 @@ import org.nanoframework.server.exception.ReadXMLException;
  * Jetty Server
  * 
  * @author yanghe
- * @date 2015年7月11日 下午5:19:20 
- *
+ * @since 1.0
  */
 public class JettyCustomServer extends Server {
 	private static final Logger LOGGER = LoggerFactory.getLogger(JettyCustomServer.class);

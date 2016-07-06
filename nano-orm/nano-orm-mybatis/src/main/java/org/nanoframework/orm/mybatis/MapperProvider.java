@@ -22,8 +22,7 @@ import org.apache.ibatis.session.SqlSessionManager;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:12:55
- * @param <T>
+ * @since 1.2
  */
 public final class MapperProvider<T> implements Provider<T> {
 

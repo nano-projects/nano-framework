@@ -32,7 +32,7 @@ import com.google.inject.Module;
 
 /**
  * @author yanghe
- * @date 2015年12月22日 上午9:16:30
+ * @since 1.2
  */
 public abstract class DataSourceLoader {
     public static final String JDBC_ENVIRONMENT_ID = "JDBC.environment.id";

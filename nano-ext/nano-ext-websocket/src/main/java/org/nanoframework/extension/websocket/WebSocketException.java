@@ -17,7 +17,7 @@ package org.nanoframework.extension.websocket;
 
 /**
  * @author yanghe
- * @date 2015年8月25日 下午9:03:46
+ * @since 1.1
  */
 public class WebSocketException extends RuntimeException {
 	private static final long serialVersionUID = -6956723226962912844L;

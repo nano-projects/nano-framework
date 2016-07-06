@@ -58,7 +58,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 
 /**
  * @author yanghe
- * @date 2016年2月3日 下午8:15:02
+ * @since 1.2
  */
 public abstract class AbstractFilter implements Filter {
 

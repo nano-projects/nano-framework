@@ -34,7 +34,7 @@ public class JakartaCommonsLoggingImpl implements org.nanoframework.commons.supp
 
     /**
      * @since 0.2.1
-     * @param log
+     * @param log the log
      */
     public JakartaCommonsLoggingImpl(Log log) {
         this.log = log;

@@ -17,7 +17,7 @@ package org.nanoframework.core.chain.exception;
 
 /**
  * @author yanghe
- * @date 2015年12月3日 下午1:53:10
+ * @since 1.1
  */
 public class ChainStepException extends ChainException {
     private static final long serialVersionUID = -5737419285297498105L;

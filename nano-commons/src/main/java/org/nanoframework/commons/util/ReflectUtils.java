@@ -35,6 +35,7 @@ public final class ReflectUtils {
 
     /**
      * Attempts to create a class from a String.
+     * @param <T> the class type
      * @param className the name of the class to create.
      * @return the class.  CANNOT be NULL.
      * @throws IllegalArgumentException if the className does not exist.
@@ -55,6 +56,7 @@ public final class ReflectUtils {
     /**
      * Creates a new instance of the given class by passing the given arguments
      * to the constructor.
+     * @param <T> the newInstance type
      * @param className Name of class to be created.
      * @param args Constructor arguments.
      * @return New instance of given class.
@@ -66,6 +68,7 @@ public final class ReflectUtils {
     /**
      * Creates a new instance of the given class by passing the given arguments
      * to the constructor.
+     * @param <T> the newInstance type
      * @param clazz Class of instance to be created.
      * @param args Constructor arguments.
      * @return New instance of given class.

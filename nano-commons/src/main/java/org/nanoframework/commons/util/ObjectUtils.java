@@ -91,18 +91,18 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Determine whether the given object is an array:
-     * either an Object array or a primitive array.
      * @param obj the object to check
+     * @return Determine whether the given object is an array:
+     * either an Object array or a primitive array.
      */
     public static boolean isArray(Object obj) {
         return (obj != null && obj.getClass().isArray());
     }
 
     /**
-     * Determine whether the given array is empty:
-     * i.e. {@code null} or of zero length.
      * @param array the array to check
+     * @return Determine whether the given array is empty:
+     * i.e. {@code null} or of zero length.
      * @see #isEmpty(Object)
      */
     public static boolean isEmpty(Object[] array) {
@@ -199,10 +199,11 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Case insensitive alternative to {@link Enum#valueOf(Class, String)}.
+     * 
      * @param <E> the concrete Enum type
      * @param enumValues the array of all Enum constants in question, usually per Enum.values()
      * @param constant the constant to get the enum value of
+     * @return Case insensitive alternative to {@link Enum#valueOf(Class, String)}.
      * @throws IllegalArgumentException if the given constant is not found in the given array
      * of enum values. Use {@link #containsConstant(Enum[], String)} as a guard to avoid this exception.
      */
@@ -219,6 +220,8 @@ public abstract class ObjectUtils {
     /**
      * Append the given object to the given array, returning a new array
      * consisting of the input array contents plus the given object.
+     * @param <A> the array type
+     * @param <O> the obj type
      * @param array the array to append to (can be {@code null})
      * @param obj the object to append
      * @return the new array (of the same component type; never {@code null})
@@ -329,7 +332,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return as hash code for the given object; typically the value of
+     * @param obj the obj
+     * @return as hash code for the given object; typically the value of
      * {@code Object#hashCode()}}. If the object is an array,
      * this method will delegate to any of the {@code nullSafeHashCode}
      * methods for arrays in this class. If the object is {@code null},
@@ -381,7 +385,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(Object[] array) {
@@ -396,7 +401,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(boolean[] array) {
@@ -411,7 +417,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(byte[] array) {
@@ -426,7 +433,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(char[] array) {
@@ -441,7 +449,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(double[] array) {
@@ -456,7 +465,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(float[] array) {
@@ -471,7 +481,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(int[] array) {
@@ -486,7 +497,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(long[] array) {
@@ -501,7 +513,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return a hash code based on the contents of the specified array.
+     * @param array the array
+     * @return a hash code based on the contents of the specified array.
      * If {@code array} is {@code null}, this method returns 0.
      */
     public static int nullSafeHashCode(short[] array) {
@@ -516,7 +529,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return the same value as {@link Boolean#hashCode()}}.
+     * @param bool the bool
+     * @return the same value as {@link Boolean#hashCode()}}.
      * @see Boolean#hashCode()
      */
     public static int hashCode(boolean bool) {
@@ -524,7 +538,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return the same value as {@link Double#hashCode()}}.
+     * @param dbl the dbl
+     * @return the same value as {@link Double#hashCode()}}.
      * @see Double#hashCode()
      */
     public static int hashCode(double dbl) {
@@ -532,7 +547,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return the same value as {@link Float#hashCode()}}.
+     * @param flt the flt
+     * @return the same value as {@link Float#hashCode()}}.
      * @see Float#hashCode()
      */
     public static int hashCode(float flt) {
@@ -540,7 +556,8 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * Return the same value as {@link Long#hashCode()}}.
+     * @param lng the lng
+     * @return the same value as {@link Long#hashCode()}}.
      * @see Long#hashCode()
      */
     public static int hashCode(long lng) {
@@ -918,8 +935,9 @@ public abstract class ObjectUtils {
     }
 
     /**
-     * 通过FastJSON进行序列化级别的复制
-     * 
+     * 通过FastJSON进行序列化级别的复制.
+     * @param type the alibaba fastjson TypeReference
+     * @param <T> the object type
      * @param object 需要复制的对象
      * @return 经过序列化转换的对象
      */

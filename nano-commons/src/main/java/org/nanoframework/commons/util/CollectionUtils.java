@@ -79,6 +79,7 @@ public abstract class CollectionUtils {
 
     /**
      * Merge the given array into the given Collection.
+     * @param <E> the Collection type
      * @param array the array to merge (may be {@code null})
      * @param collection the target Collection to merge the array into
      */
@@ -98,6 +99,8 @@ public abstract class CollectionUtils {
      * copying all properties (key-value pairs) over.
      * <p>Uses {@code Properties.propertyNames()} to even catch
      * default properties linked into the original Properties instance.
+     * @param <K> the Map key type
+     * @param <V> the Map value type
      * @param props the Properties instance to merge (may be {@code null})
      * @param map the target Map to merge the properties into
      */
@@ -198,6 +201,7 @@ public abstract class CollectionUtils {
      * '{@code source}'. If no element in '{@code candidates}' is present in
      * '{@code source}' returns {@code null}. Iteration order is
      * {@link Collection} implementation specific.
+     * @param <E> the Collection type
      * @param source the source Collection
      * @param candidates the candidates to search for
      * @return the first present object, or {@code null} if not found
@@ -217,6 +221,7 @@ public abstract class CollectionUtils {
 
     /**
      * Find a single value of the given type in the given Collection.
+     * @param <T> the Class type
      * @param collection the Collection to search
      * @param type the type to look for
      * @return a value of the given type found if there is a clear match,
@@ -309,7 +314,11 @@ public abstract class CollectionUtils {
     }
 
     /**
-     * Marshal the elements from the given enumeration into an array of the given type.
+     * @param enumeration the enumeration
+     * @param array the array
+     * @param <A> the array type
+     * @param <E> the enumeration type
+     * @return Marshal the elements from the given enumeration into an array of the given type.
      * Enumeration elements must be assignable to the type of the given array. The array
      * returned will be a different instance than the array given.
      */
@@ -323,6 +332,7 @@ public abstract class CollectionUtils {
 
     /**
      * Adapt an enumeration to an iterator.
+     * @param <E> the enumeration type
      * @param enumeration the enumeration
      * @return the iterator
      */
@@ -332,6 +342,8 @@ public abstract class CollectionUtils {
 
     /**
      * Adapt a {@code Map<K, List<V>>} to an {@code MultiValueMap<K, V>}.
+     * @param <K> the map key type
+     * @param <V> the map value type
      * @param map the original map
      * @return the multi-value map
      * @since 3.1
@@ -343,6 +355,8 @@ public abstract class CollectionUtils {
 
     /**
      * Return an unmodifiable view of the specified multi-value map.
+     * @param <K> the map key type
+     * @param <V> the map value type
      * @param  map the map for which an unmodifiable view is to be returned.
      * @return an unmodifiable view of the specified multi-value map.
      * @since 3.1

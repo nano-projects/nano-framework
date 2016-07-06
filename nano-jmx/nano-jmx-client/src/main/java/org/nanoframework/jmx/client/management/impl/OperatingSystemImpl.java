@@ -28,7 +28,6 @@ import org.nanoframework.jmx.client.management.OperatingSystemMXBean;
 /**
  * 
  * @author yanghe
- * @date 2015年8月18日 下午5:50:58 
  * @since 1.1
  */
 public class OperatingSystemImpl extends AbstractMXBean implements OperatingSystemMXBean {

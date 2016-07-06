@@ -25,6 +25,11 @@ import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.plugins.PluginLoader;
 import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
 
+/**
+ * 
+ * @author yanghe
+ * @since 1.0
+ */
 public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 2341783013239890497L;
 	private Logger LOG = LoggerFactory.getLogger(DispatcherServlet.class);

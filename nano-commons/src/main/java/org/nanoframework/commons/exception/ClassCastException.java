@@ -15,21 +15,21 @@
  */
 package org.nanoframework.commons.exception;
 
-public class ClassCastException extends ExtensionRuntimeException {
+/**
+ *
+ * @author yanghe
+ * @since 1.0
+ */
+public class ClassCastException extends RuntimeException {
     private static final long serialVersionUID = 3778728285493433413L;
 
-    public ClassCastException() {
-
-    }
-
-    public ClassCastException(String message) {
-        super(message);
-
-    }
-
-    public ClassCastException(String message, Throwable cause) {
+    /**
+     * 
+     * @param message the message
+     * @param cause the cause
+     */
+    public ClassCastException(final String message, final Throwable cause) {
         super(message, cause);
-
     }
 
     @Override

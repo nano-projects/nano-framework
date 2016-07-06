@@ -33,7 +33,6 @@ import org.nanoframework.core.context.ApplicationContext;
 /**
  * 
  * @author yanghe
- * @date 2015年9月23日 下午8:51:22
  * @since 1.2
  */
 public class MapperNode extends BaseEntity {

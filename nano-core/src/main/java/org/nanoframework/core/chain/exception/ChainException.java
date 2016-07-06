@@ -17,7 +17,7 @@ package org.nanoframework.core.chain.exception;
 
 /**
  * @author yanghe
- * @date 2015年12月3日 下午1:53:10
+ * @since 1.1
  */
 public class ChainException extends RuntimeException {
     private static final long serialVersionUID = -7483751208817429812L;

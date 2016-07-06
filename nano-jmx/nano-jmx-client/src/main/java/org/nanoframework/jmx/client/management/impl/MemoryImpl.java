@@ -27,7 +27,6 @@ import org.nanoframework.jmx.client.management.MemoryMXBean;
 /**
  * 
  * @author yanghe
- * @date 2015年8月18日 下午5:47:23 
  * @since 1.1
  */
 public class MemoryImpl extends AbstractMXBean implements MemoryMXBean {

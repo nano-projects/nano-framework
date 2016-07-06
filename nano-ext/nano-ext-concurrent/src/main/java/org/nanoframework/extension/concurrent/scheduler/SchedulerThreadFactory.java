@@ -20,7 +20,7 @@ import java.util.concurrent.ThreadFactory;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:16:32
+ * @since 1.3
  */
 public class SchedulerThreadFactory implements ThreadFactory {
     private BaseScheduler baseScheduler;

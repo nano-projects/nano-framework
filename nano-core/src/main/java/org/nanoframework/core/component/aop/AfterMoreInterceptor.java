@@ -29,7 +29,7 @@ import com.google.inject.Injector;
 
 /**
  * @author yanghe
- * @date 2016年3月16日 下午1:23:21
+ * @since 1.0
  */
 public class AfterMoreInterceptor implements MethodInterceptor {
 

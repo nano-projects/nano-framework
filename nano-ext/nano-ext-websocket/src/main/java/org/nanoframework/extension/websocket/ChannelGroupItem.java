@@ -32,7 +32,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:22:34
+ * @since 1.1
  */
 public class ChannelGroupItem {
 	private static final Logger LOG = LoggerFactory.getLogger(ChannelGroupItem.class);

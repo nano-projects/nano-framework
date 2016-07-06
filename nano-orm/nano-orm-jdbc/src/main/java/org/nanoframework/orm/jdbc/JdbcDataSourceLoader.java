@@ -32,7 +32,7 @@ import org.nanoframework.orm.jdbc.config.TomcatJdbcConfig;
 
 /**
  * @author yanghe
- * @date 2015年12月22日 上午8:52:47
+ * @since 1.2
  */
 public class JdbcDataSourceLoader extends DataSourceLoader {
 	

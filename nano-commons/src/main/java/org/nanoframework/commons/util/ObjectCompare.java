@@ -24,8 +24,7 @@ import org.apache.commons.lang3.StringUtils;
  * 对象比较处理类
  * 
  * @author yanghe
- * @date 2015年6月5日 下午4:54:24 
- *
+ * @since 1.0
  */
 public class ObjectCompare {
 

@@ -25,7 +25,7 @@ import com.google.inject.Injector;
 
 /**
  * @author yanghe
- * @date 2015年10月8日 下午6:28:26
+ * @since 1.0
  */
 public class BeforeAndAfterInterceptor implements MethodInterceptor {
 

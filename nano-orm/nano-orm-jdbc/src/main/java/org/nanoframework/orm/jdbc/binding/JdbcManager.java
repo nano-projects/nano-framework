@@ -36,8 +36,7 @@ import org.nanoframework.orm.jdbc.jstl.Result;
 /**
  * 
  * @author yanghe
- * @date 2015年7月30日 下午4:19:56 
- *
+ * @since 1.2
  */
 public class JdbcManager implements SqlExecutor {
 

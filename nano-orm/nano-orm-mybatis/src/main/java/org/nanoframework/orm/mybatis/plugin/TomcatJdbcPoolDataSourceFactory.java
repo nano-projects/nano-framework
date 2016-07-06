@@ -57,7 +57,7 @@ public class TomcatJdbcPoolDataSourceFactory extends AbstractDataSourceFactory {
 	            map.put((String) key, value);   
 	        });
 	        
-	        TomcatJdbcConfig config = TomcatJdbcConfig._getMapToBean(map, TomcatJdbcConfig.class);
+	        TomcatJdbcConfig config = TomcatJdbcConfig.mapToBean(map, TomcatJdbcConfig.class);
     	    if(TomcatJdbcDataSource != null) {
     	        TomcatJdbcDataSource.getMethod("setDriverClassName", String.class).invoke(dataSource, config.getDriver());
                 TomcatJdbcDataSource.getMethod("setUrl", String.class).invoke(dataSource, config.getUrl());

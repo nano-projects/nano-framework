@@ -21,8 +21,7 @@ import java.util.Map;
  * 模型接口
  * 
  * @author yanghe
- * @date 2015年6月23日 下午2:34:10 
- *
+ * @since 1.0 
  */
 public interface Model {
 
@@ -44,13 +43,13 @@ public interface Model {
 	/**
 	 * 验证属性是否存在
 	 * @param attributeName 属性名
-	 * @return
+	 * @return boolean
 	 */
 	boolean containsAttribute(String attributeName);
 
 	/**
 	 * 返回模型属性映射表
-	 * @return Map<String, Object>
+	 * @return Map
 	 */
 	Map<String, Object> get();
 

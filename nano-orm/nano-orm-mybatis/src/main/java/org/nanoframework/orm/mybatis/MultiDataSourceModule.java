@@ -50,8 +50,7 @@ import com.google.inject.Scopes;
  * 将创建的SqlSessionFactory写入至全局管理类
  * 
  * @author yanghe
- * @date 2015年7月29日 上午2:40:25 
- *
+ * @since 1.2
  */
 public class MultiDataSourceModule extends AbstractModule {
 

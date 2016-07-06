@@ -111,15 +111,6 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 	    return INSTANCE;
 	}
 	
-    /**
-     * 获取连接
-     *
-     * getConnection
-     *
-     * @param dataSource 数据源
-     * @return Connection
-     * @throws java.sql.SQLException 数据库异常
-     */
     public Connection getConnection(String dataSource) throws SQLException {
         try {
             Connection conn = pool.getPool(dataSource).getConnection();
@@ -177,13 +168,6 @@ public class JdbcAdapter implements DefaultSqlExecutor {
         return pstmt;
     }
     
-    /**
-	 * 执行查询
-	 * 
-	 * @param String
-	 * @return Result
-	 * @throws Exception
-	 */
 	public Result executeQuery(String sql, Connection conn) throws SQLException {
 		Assert.notNull(conn);
 		long start = System.currentTimeMillis();
@@ -207,13 +191,6 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		return result;
 	}
 
-	/**
-	 * 执行更新
-	 * 
-	 * @param String
-	 * @return void
-	 * @throws Exception
-	 */
 	public int executeUpdate(String sql, Connection conn) throws SQLException {
 		Assert.notNull(conn);
 		long start = System.currentTimeMillis();
@@ -233,11 +210,6 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		return result;
 	}
 	
-	/**
-	 * 执行有参数查询
-	 * @param sql 有参数的SQL
-	 * @param values 参数值
-	 */
 	public Result executeQuery(String sql, List<Object> values, Connection conn) throws SQLException {
 		Assert.notNull(conn);
 		long start = System.currentTimeMillis();
@@ -262,14 +234,6 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		return result;
 	}
 	
-	/**
-	 * 执行更新
-	 * @param String 要执行的sql
-	 * @param List<Object> values 参数列表
-	 * @return Integer 返回更新的影响行数
-	 * @throws Exception
-	 * 
-	 */
 	public int executeUpdate(String sql, List<Object> values , Connection conn) throws SQLException {
 		Assert.notNull(conn);
 		long start = System.currentTimeMillis();
@@ -291,14 +255,6 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		return result;
 	}
 	
-	/**
-	 * 执行更新
-	 * @param String 要执行的sql
-	 * @param List<Object> values 参数列表
-	 * @return Integer 返回更新的影响行数
-	 * @throws Exception
-	 * 
-	 */
 	public int[] executeBatchUpdate(String sql, List<List<Object>> batchValues , Connection conn) throws SQLException {
 		Assert.notNull(conn);
 		
@@ -324,13 +280,6 @@ public class JdbcAdapter implements DefaultSqlExecutor {
 		return result;
 	}
 	
-    /**
-     * 执行有参数查询
-     *
-     * @param preStmt 要设备参数据的Statement对象
-     * @param values 参数值
-     * @throws java.sql.SQLException SQL异常
-     */
     private void setValues(PreparedStatement preStmt, List<Object> values) throws SQLException {
     	if(values == null || values.size() == 0) {
     		return ;

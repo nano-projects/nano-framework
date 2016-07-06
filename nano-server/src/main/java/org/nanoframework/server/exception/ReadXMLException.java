@@ -18,8 +18,7 @@ package org.nanoframework.server.exception;
 /**
  * 
  * @author yanghe
- * @date 2015年7月11日 下午5:20:33 
- *
+ * @since 1.0
  */
 public class ReadXMLException extends RuntimeException {
 	private static final long serialVersionUID = 5581544308399688381L;

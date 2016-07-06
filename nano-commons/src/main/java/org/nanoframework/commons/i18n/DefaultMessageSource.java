@@ -27,33 +27,44 @@ import org.nanoframework.commons.util.StringUtils;
 
 /**
  * @author yanghe
- * @date 2016年3月5日 下午3:13:10
+ * @since 1.2
  */
 public class DefaultMessageSource implements MessageSource {
-    private static final ConcurrentMap<Locale, Properties> MESSAGE = new ConcurrentHashMap<>();
     public static final String DEFAULT_PREFIX_MESSAGE = "/messages/messages";
     public static final String PROPERITES_SUFFIX = ".properties";
-    private final Object LOCK = new Object();
+    private static final ConcurrentMap<Locale, Properties> MESSAGE = new ConcurrentHashMap<>();
+    private final Object lock = new Object();
     private final MessageFactory messageFactory;
     private Locale locale;
 
+    /**
+     * 构建本地语言的I18N对象.
+     */
     protected DefaultMessageSource() {
         this(Locale.getDefault());
     }
 
-    protected DefaultMessageSource(Locale locale) {
+    /**
+     * 构建指定语言的I18N对象.
+     * @param locale 语言
+     */
+    protected DefaultMessageSource(final Locale locale) {
         this.locale = locale == null ? Locale.ROOT : locale;
         messageFactory = ParameterizedMessageFactory.INSTANCE;
         load(this.locale);
     }
 
+    /**
+     * 通过语言加载I18N对应的国际化文件.
+     * @param locale 语言
+     * @return 对应语言的国际化属性文件配置
+     */
     protected Properties load(final Locale locale) {
         Properties properties;
         if ((properties = MESSAGE.get(locale)) == null) {
-            synchronized (LOCK) {
+            synchronized (lock) {
                 if ((properties = MESSAGE.get(locale)) == null) {
-                    properties = PropertiesLoader
-                            .load(DEFAULT_PREFIX_MESSAGE + (StringUtils.isEmpty(locale.getLanguage()) ? "" : '_' + locale.getLanguage())
+                    properties = PropertiesLoader.load(DEFAULT_PREFIX_MESSAGE + (StringUtils.isEmpty(locale.getLanguage()) ? "" : '_' + locale.getLanguage())
                                     + (StringUtils.isEmpty(locale.getCountry()) ? "" : '_' + locale.getCountry()) + PROPERITES_SUFFIX);
                     MESSAGE.put(locale, properties);
                 }
@@ -64,78 +75,84 @@ public class DefaultMessageSource implements MessageSource {
     }
 
     @Override
-    public String getMessage(String code, String defaultMessage) {
+    public String getMessage(final String code, final String defaultMessage) {
         try {
             return formatter(MESSAGE.get(locale).getProperty(code));
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return defaultMessage;
         }
     }
 
     @Override
-    public String getMessage(String code, String defaultMessage, Locale locale) {
+    public String getMessage(final String code, final String defaultMessage, final Locale locale) {
         try {
             return formatter(load(locale).getProperty(code));
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return defaultMessage;
         }
     }
 
     @Override
-    public String getMessage(String code, Object[] args, String defaultMessage) {
+    public String getMessage(final String code, final Object[] args, final String defaultMessage) {
         try {
             return formatter(MESSAGE.get(locale).getProperty(code), args);
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             return defaultMessage;
         }
     }
 
     @Override
-    public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+    public String getMessage(final String code, final Object[] args, final String defaultMessage, final Locale locale) {
+        try {
+            return formatter(load(locale).getProperty(code), args);
+        } catch (final Throwable e) {
+            return defaultMessage;
+        }
+    }
+
+    @Override
+    public String getMessage(final String code) throws NoSuchMessageException {
+        try {
+            return formatter(MESSAGE.get(locale).getProperty(code));
+        } catch (final Throwable e) {
+            throw new NoSuchMessageException(code);
+        }
+    }
+
+    @Override
+    public String getMessage(final String code, final Object[] args) throws NoSuchMessageException {
+        try {
+            return formatter(MESSAGE.get(locale).getProperty(code), args);
+        } catch (final Throwable e) {
+            throw new NoSuchMessageException(code);
+        }
+    }
+
+    @Override
+    public String getMessage(final String code, final Locale locale) throws NoSuchMessageException {
+        try {
+            return formatter(load(locale).getProperty(code));
+        } catch (final Throwable e) {
+            throw new NoSuchMessageException(code);
+        }
+    }
+
+    @Override
+    public String getMessage(final String code, final Object[] args, final Locale locale) throws NoSuchMessageException {
         try {
             return formatter(load(locale).getProperty(code), args);
         } catch (Throwable e) {
-            return defaultMessage;
-        }
-    }
-
-    @Override
-    public String getMessage(String code) throws NoSuchMessageException {
-        try {
-            return formatter(MESSAGE.get(locale).getProperty(code));
-        } catch (Throwable e) {
             throw new NoSuchMessageException(code);
         }
     }
 
-    @Override
-    public String getMessage(String code, Object[] args) throws NoSuchMessageException {
-        try {
-            return formatter(MESSAGE.get(locale).getProperty(code), args);
-        } catch (Throwable e) {
-            throw new NoSuchMessageException(code);
-        }
-    }
-
-    @Override
-    public String getMessage(String code, Locale locale) throws NoSuchMessageException {
-        try {
-            return formatter(load(locale).getProperty(code));
-        } catch (Throwable e) {
-            throw new NoSuchMessageException(code);
-        }
-    }
-
-    @Override
-    public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
-        try {
-            return formatter(load(locale).getProperty(code), args);
-        } catch (Throwable e) {
-            throw new NoSuchMessageException(code);
-        }
-    }
-
-    protected String formatter(final String message, Object... args) {
+    /**
+     * 转化国际化消息
+     * @param message 国际化消息
+     * @param args 格式参数
+     * @return 转化后的国际化消息
+     */
+    protected String formatter(final String message, final Object... args) {
         return messageFactory.newMessage(message, args).getFormattedMessage();
     }
 }

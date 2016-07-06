@@ -19,8 +19,7 @@ package org.nanoframework.orm.jdbc;
  * 数据源处理异常
  * 
  * @author yanghe
- * @date 2015年7月21日 下午9:44:00 
- *
+ * @since 1.2
  */
 public class DataSourceException extends RuntimeException {
 	private static final long serialVersionUID = -4463455332449664304L;

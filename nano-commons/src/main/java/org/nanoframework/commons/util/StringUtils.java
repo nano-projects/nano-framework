@@ -78,6 +78,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
      * that commonly deals with Strings but generally has to iterate over
      * Objects since attributes may e.g. be primitive value objects as well.
      * @param str the candidate String
+     * @return Check whether the given {@code String} is empty.
      * @since 3.2.1
      */
     public static boolean isEmpty(Object str) {
@@ -87,9 +88,9 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
     /**
      * Check that the given {@code CharSequence} is neither {@code null} nor
      * of length 0.
-     * <p>Note: this method returns {@code true} for a {@code CharSequence}
-     * that purely consists of whitespace.
-     * <p><pre class="code">
+     * Note: this method returns {@code true} for a {@code CharSequence}
+     * that purely consists of whitespace. <br>
+     * <pre class="code">
      * StringUtils.hasLength(null) = false
      * StringUtils.hasLength("") = false
      * StringUtils.hasLength(" ") = true
@@ -104,8 +105,8 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
     }
 
     /**
-     * Check that the given {@code String} is neither {@code null} nor of length 0.
-     * <p>Note: this method returns {@code true} for a {@code String} that
+     * Check that the given {@code String} is neither {@code null} nor of length 0.<br>
+     * Note: this method returns {@code true} for a {@code String} that
      * purely consists of whitespace.
      * @param str the {@code String} to check (may be {@code null})
      * @return {@code true} if the {@code String} is not {@code null} and has length
@@ -306,6 +307,8 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
      * ignoring upper/lower case.
      * @param str the {@code String} to check
      * @param prefix the prefix to look for
+     * @return Test if the given {@code String} starts with the specified prefix,
+     * ignoring upper/lower case.
      * @see java.lang.String#startsWith
      */
     public static boolean startsWithIgnoreCase(String str, String prefix) {
@@ -328,6 +331,8 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
      * ignoring upper/lower case.
      * @param str the {@code String} to check
      * @param suffix the suffix to look for
+     * @return Test if the given {@code String} ends with the specified suffix,
+     * ignoring upper/lower case.
      * @see java.lang.String#endsWith
      */
     public static boolean endsWithIgnoreCase(String str, String suffix) {
@@ -352,6 +357,8 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @param str the original string (or StringBuilder)
      * @param index the index in the original string to start matching against
      * @param substring the substring to match at the given index
+     * @return Test whether the given string matches the given substring
+     * at the given index.
      */
     public static boolean substringMatch(CharSequence str, int index, CharSequence substring) {
         for (int j = 0; j < substring.length(); j++) {
@@ -367,6 +374,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
      * Count the occurrences of the substring {@code sub} in string {@code str}.
      * @param str string to search in. Return 0 if this is {@code null}.
      * @param sub string to search for. Return 0 if this is {@code null}.
+     * @return Count the occurrences of the substring {@code sub} in string {@code str}.
      */
     public static int countOccurrencesOf(String str, String sub) {
         if (str == null || sub == null || str.length() == 0 || sub.length() == 0) {
@@ -470,6 +478,8 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
      * Unqualify a string qualified by a '.' dot character. For example,
      * "this.name.is.qualified", returns "qualified".
      * @param qualifiedName the qualified name
+     * @return Unqualify a string qualified by a '.' dot character. For example,
+     * "this.name.is.qualified", returns "qualified".
      */
     public static String unqualify(String qualifiedName) {
         return unqualify(qualifiedName, '.');
@@ -480,6 +490,8 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
      * "this:name:is:qualified" returns "qualified" if using a ':' separator.
      * @param qualifiedName the qualified name
      * @param separator the separator
+     * @return Unqualify a string qualified by a separator character. For example,
+     * "this:name:is:qualified" returns "qualified" if using a ':' separator.
      */
     public static String unqualify(String qualifiedName, char separator) {
         return qualifiedName.substring(qualifiedName.lastIndexOf(separator) + 1);
@@ -525,7 +537,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     /**
      * Extract the filename from the given path,
-     * e.g. {@code "mypath/myfile.txt" -> "myfile.txt"}.
+     * e.g. {@code "mypath/myfile.txt" -&gt; "myfile.txt"}.
      * @param path the file path (may be {@code null})
      * @return the extracted filename, or {@code null} if none
      */
@@ -539,7 +551,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     /**
      * Extract the filename extension from the given path,
-     * e.g. "mypath/myfile.txt" -> "txt".
+     * e.g. "mypath/myfile.txt" -&gt; "txt".
      * @param path the file path (may be {@code null})
      * @return the extracted filename extension, or {@code null} if none
      */
@@ -560,7 +572,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     /**
      * Strip the filename extension from the given path,
-     * e.g. "mypath/myfile.txt" -> "mypath/myfile".
+     * e.g. "mypath/myfile.txt" -&gt; "mypath/myfile".
      * @param path the file path (may be {@code null})
      * @return the path with stripped filename extension,
      * or {@code null} if none

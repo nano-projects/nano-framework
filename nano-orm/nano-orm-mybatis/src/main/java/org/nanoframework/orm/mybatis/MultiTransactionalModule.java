@@ -27,7 +27,7 @@ import com.google.inject.matcher.Matcher;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:13:35
+ * @since 1.2
  */
 public class MultiTransactionalModule extends AbstractModule {
 

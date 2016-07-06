@@ -22,8 +22,7 @@ import java.util.concurrent.ConcurrentMap;
  * 全局变量，针对一些全局的属性做统一管理
  * 
  * @author yanghe
- * @date 2015年6月26日 上午8:38:08 
- *
+ * @since 1.0
  */
 public class Globals {
 

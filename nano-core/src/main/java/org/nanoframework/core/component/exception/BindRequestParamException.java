@@ -15,16 +15,13 @@
  */
 package org.nanoframework.core.component.exception;
 
-import org.nanoframework.commons.exception.ExtensionRuntimeException;
-
 /**
  * 绑定参数异常类
  * 
  * @author yanghe
- * @date 2015年6月5日 下午10:56:16 
- *
+ * @since 1.0
  */
-public class BindRequestParamException extends ExtensionRuntimeException {
+public class BindRequestParamException extends RuntimeException {
     private static final long serialVersionUID = 2491490102693997402L;
 
     public BindRequestParamException() {

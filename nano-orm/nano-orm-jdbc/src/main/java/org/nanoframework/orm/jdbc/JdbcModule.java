@@ -34,7 +34,7 @@ import com.google.inject.matcher.Matcher;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:09:08
+ * @since 1.2
  */
 public class JdbcModule extends AbstractModule {
 

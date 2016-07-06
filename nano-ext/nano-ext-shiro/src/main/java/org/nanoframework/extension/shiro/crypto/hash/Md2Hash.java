@@ -19,11 +19,6 @@ import org.apache.shiro.codec.Base64;
 import org.apache.shiro.codec.Hex;
 
 /**
- * Generates an MD2 Hash (RFC 1319) from a given input <tt>source</tt> with an optional <tt>salt</tt> and
- * hash iterations.
- * <p/>
- * See the {@link SimpleHash SimpleHash} parent class JavaDoc for a detailed explanation of Hashing
- * techniques and how the overloaded constructors function.
  *
  * @since 0.9
  */

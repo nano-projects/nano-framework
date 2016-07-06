@@ -15,16 +15,13 @@
  */
 package org.nanoframework.core.component.exception;
 
-import org.nanoframework.commons.exception.ExtensionRuntimeException;
-
 /**
  * 组件扫描异常类
  * 
  * @author yanghe
- * @date 2015年6月5日 下午10:55:58 
- *
+ * @since 1.0 
  */
-public class ComponentScanException extends ExtensionRuntimeException {
+public class ComponentScanException extends RuntimeException {
     private static final long serialVersionUID = 1531128943789094538L;
 
     public ComponentScanException() {

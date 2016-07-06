@@ -18,7 +18,7 @@ package org.nanoframework.commons.util;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:03:11
+ * @since 1.1
  */
 public final class MathUtils {
 

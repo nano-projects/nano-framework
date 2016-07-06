@@ -18,7 +18,6 @@ package org.nanoframework.jmx.client.exception;
 /**
  * 
  * @author yanghe
- * @date 2015年8月18日 下午5:23:45 
  * @since 1.1
  */
 public class AttributeException extends MXBeanException {

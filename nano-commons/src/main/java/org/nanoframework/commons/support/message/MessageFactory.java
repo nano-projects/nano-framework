@@ -19,7 +19,6 @@ package org.nanoframework.commons.support.message;
  * Creates messages. Implementations can provide different message format syntaxes.
  * @author yanghe
  * @see ParameterizedMessageFactory
- * @see StringFormatterMessageFactory
  * @since 1.4.0
  */
 public interface MessageFactory {
@@ -51,7 +50,6 @@ public interface MessageFactory {
      *            the message parameters
      * @return a new message
      * @see ParameterizedMessageFactory
-     * @see StringFormatterMessageFactory
      */
     Message newMessage(String message, Object... params);
 }

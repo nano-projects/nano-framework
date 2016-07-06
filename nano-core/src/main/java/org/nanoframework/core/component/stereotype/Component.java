@@ -25,8 +25,7 @@ import java.lang.annotation.Target;
  * 组件类，添加后根据配置进行IOC
  * 
  * @author yanghe
- * @date 2015年6月5日 上午8:47:20 
- *
+ * @since 1.0
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

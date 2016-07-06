@@ -161,8 +161,8 @@ public class ServiceUtils {
      * @param casServerLoginUrl the CAS Server login url.
      * @param serviceParameterName the name of the parameter that defines the service.
      * @param serviceUrl the actual service's url.
-     * @param renew whether we should send renew or not.
-     * @param gateway where we should send gateway or not.
+     * @param sessionIdParameterName the sessionIdParameterName
+     * @param sessionId the sessionId
      * @return the fully constructed redirect url.
      */
     public static String constructRedirectUrl(final String casServerLoginUrl, final String serviceParameterName, final String serviceUrl, final String sessionIdParameterName, final String sessionId) {
@@ -183,6 +183,7 @@ public class ServiceUtils {
      *
      * @param request the request to check.
      * @param parameter the parameter to look for.
+     * @param parameters the parameters
      * @return the value of the parameter.
      */
     public static String safeGetParameter(final HttpServletRequest request, final String parameter, final List<String> parameters) {

@@ -26,7 +26,6 @@ import org.nanoframework.commons.entity.BaseEntity;
  * 
  * @author yanghe
  * @since 1.0
- * @date 2015年6月5日 下午10:56:30 
  */
 public class RequestMapper extends BaseEntity {
     private static final long serialVersionUID = 6571078157462085564L;

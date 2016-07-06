@@ -32,8 +32,7 @@ import org.nanoframework.commons.crypt.CryptUtil;
  * 系统运行时功能扩展类
  * 
  * @author yanghe
- * @date 2015年6月5日 下午10:59:47 
- *
+ * @since 1.0
  */
 public class RuntimeUtil {
 
@@ -142,9 +141,8 @@ public class RuntimeUtil {
     }
 
     /**
-     * 判断当前运行的系统是否是Windows
-     * 
-     * @return
+     * 判断当前运行的系统是否是Windows.
+     * @return boolean
      */
     public static boolean isWindows() {
         if (OSNAME.contains("Windows"))
@@ -154,8 +152,7 @@ public class RuntimeUtil {
     }
 
     /**
-     * 根据Class获取该Class所在的磁盘路径
-     * 
+     * 根据Class获取该Class所在的磁盘路径.
      * @param clz 查询的类
      * @return 返回该类的所在位置
      */
@@ -172,7 +169,7 @@ public class RuntimeUtil {
     /**
      * 获取运行时中的所有Jar文件
      * @return List
-     * @throws IOException
+     * @throws IOException if I/O error occur
      */
     public static List<JarFile> classPaths() throws IOException {
         String[] classPaths = System.getProperty("java.class.path").split(":");

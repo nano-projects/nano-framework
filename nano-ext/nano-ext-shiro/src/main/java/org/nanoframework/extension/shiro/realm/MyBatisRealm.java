@@ -43,7 +43,7 @@ import org.nanoframework.orm.mybatis.GlobalSqlSession;
 
 /**
  * @author yanghe
- * @date 2015年12月8日 下午10:39:29
+ * @since 1.2
  */
 public class MyBatisRealm extends JdbcRealm {
 	private Logger LOGGER = LoggerFactory.getLogger(MyBatisRealm.class);

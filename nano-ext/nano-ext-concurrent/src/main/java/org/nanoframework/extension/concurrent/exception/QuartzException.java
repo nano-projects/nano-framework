@@ -18,7 +18,7 @@ package org.nanoframework.extension.concurrent.exception;
 /**
  * 调度任务异常.
  * @author yanghe
- * @date 2015年6月11日 下午2:59:02 
+ * @since 1.0
  */
 @Deprecated
 public class QuartzException extends RuntimeException {

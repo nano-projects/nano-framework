@@ -52,7 +52,7 @@ import redis.clients.jedis.Tuple;
  * RedisClient的实现类，主要实现对Jedis的操作实现封装.
  * 
  * @author yanghe
- * @date 2015年7月26日 上午11:01:19 
+ * @since 1.0
  */
 public class RedisClientImpl extends AbstractRedisClient {
     public RedisClientImpl(final String type) {

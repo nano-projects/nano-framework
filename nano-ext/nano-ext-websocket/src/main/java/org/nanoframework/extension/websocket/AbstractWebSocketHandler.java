@@ -43,7 +43,9 @@ import io.netty.handler.codec.http.websocketx.WebSocketServerHandshakerFactory;
 import io.netty.util.CharsetUtil;
 
 /**
- * Handles handshakes and messages
+ *
+ * @author yanghe
+ * @since 1.1
  */
 public abstract class AbstractWebSocketHandler extends SimpleChannelInboundHandler<Object> implements Cloneable {
 

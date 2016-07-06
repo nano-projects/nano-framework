@@ -15,26 +15,29 @@
  */
 package org.nanoframework.commons.entity;
 
-import org.nanoframework.commons.exception.ExtensionRuntimeException;
-
 /**
  * 实体类操作异常类.
  * @author yanghe
- * @date 2015年6月9日 上午8:57:21 
+ * @since 1.0
  */
-public class EntityException extends ExtensionRuntimeException {
+public class EntityException extends RuntimeException {
     private static final long serialVersionUID = 3642079270948106738L;
 
-    public EntityException() {
-
-    }
-
-    public EntityException(String message) {
+    /**
+     * 
+     * @param message 错误信息
+     */
+    public EntityException(final String message) {
         super(message);
 
     }
 
-    public EntityException(String message, Throwable cause) {
+    /**
+     * 
+     * @param message 错误信息
+     * @param cause 错误对象
+     */
+    public EntityException(final String message, final Throwable cause) {
         super(message, cause);
 
     }

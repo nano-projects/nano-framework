@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -36,11 +35,12 @@ import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMapping;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 
+import com.google.common.collect.Sets;
+
 /**
  * 扫描组件，并返回符合要求的集合
  * @author yanghe
- * @date 2015年6月5日 上午9:01:37 
- *
+ * @since 1.0
  */
 public class ComponentScan {
 
@@ -69,11 +69,11 @@ public class ComponentScan {
     }
 
     /**
-     * 返回带有RequestMapping的所有传入对象的方法
-     * 
+     * 返回带有RequestMapping的所有传入对象的方法。
      * @param obj 已实例化的对象
      * @param methods 该对象中的方法
      * @param annotationClass 方法级别的注解，并且必须继承自RequestMapping
+     * @param componentURI 组件URI
      * @return 返回方法组
      */
     public static Map<String, Map<RequestMethod, RequestMapper>> filter(Object obj, Method[] methods, Class<? extends RequestMapping> annotationClass,
@@ -88,10 +88,7 @@ public class ComponentScan {
                     if (mapping != null && !"".equals(mapping.value()))
                         return true;
                     else {
-                        if (LOG.isDebugEnabled())
-                            LOG.debug(
-                                    "无效的URI Mapper定义: " + obj.getClass().getName() + '.' + method.getName() + ':' + (componentURI + mapping.value()));
-
+                        LOG.debug("无效的URI Mapper定义: " + obj.getClass().getName() + '.' + method.getName() + ':' + (componentURI + mapping.value()));
                         return false;
                     }
                 }).map(method -> {
@@ -158,20 +155,16 @@ public class ComponentScan {
         return false;
     }
 
-    /**
-     * 获取指定包路径下的所有类
-     * @param packageName
-     * @return
-     */
     public static void scan(String packageName) {
         if (StringUtils.isEmpty(packageName)) {
             LOG.warn("没有设置packageName, 跳过扫描");
             return;
         }
 
-        if (classes == null)
-            classes = new HashSet<>();
-
+        if (classes == null) {
+            classes = Sets.newHashSet();
+        }
+        
         classes.addAll(getClasses(packageName));
     }
 

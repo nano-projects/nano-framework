@@ -33,7 +33,6 @@ import ch.ethz.ssh2.StreamGobbler;
 
 /**
  * @author yanghe
- * @date 2015年8月20日 下午3:32:38
  * @since 1.1
  */
 public final class FindProcessExecutor extends CallableSSHExecutor<Boolean> {

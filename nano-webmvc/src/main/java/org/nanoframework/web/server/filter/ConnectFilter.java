@@ -40,8 +40,7 @@ import org.nanoframework.web.server.http.status.HttpStatusCode;
  * 如果配置这2个属性的内容，则拦截所有的http请求。<br>
  * 
  * @author yanghe
- * @date 2015年7月25日 下午8:32:08 
- *
+ * @since 1.0
  */
 @Deprecated
 public class ConnectFilter implements Filter {

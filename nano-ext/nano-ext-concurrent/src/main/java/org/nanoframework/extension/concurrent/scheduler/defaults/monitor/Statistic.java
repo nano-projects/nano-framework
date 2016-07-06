@@ -28,7 +28,7 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:14:58
+ * @since 1.3
  */
 public class Statistic {
     private ConcurrentMap<String, AtomicLong> statisticMap = new ConcurrentHashMap<String, AtomicLong>();

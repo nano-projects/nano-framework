@@ -28,7 +28,6 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 
 /**
  * @author yanghe
- * @date 2015年11月17日 上午9:06:59
  * @since 1.3.7
  */
 public class Log4j2Plugin implements Plugin {

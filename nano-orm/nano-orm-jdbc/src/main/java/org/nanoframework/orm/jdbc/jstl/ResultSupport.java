@@ -25,7 +25,6 @@ import java.sql.SQLException;
  * from a SQL query.</p>
  *
  * @author Justyna Horwat
- *
  */
 public class ResultSupport {
 

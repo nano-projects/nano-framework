@@ -20,7 +20,7 @@ import org.nanoframework.extension.concurrent.scheduler.SchedulerAnalysis;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:14:25
+ * @since 1.3
  */
 public interface EtcdSchedulerOperate {
     final EtcdSchedulerOperate EMPTY = new EtcdSchedulerOperate() {

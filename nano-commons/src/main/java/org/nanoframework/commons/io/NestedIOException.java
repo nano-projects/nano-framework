@@ -29,8 +29,6 @@ import java.io.IOException;
  * @since 2.0
  * @see #getMessage
  * @see #printStackTrace
- * @see org.springframework.core.NestedCheckedException
- * @see org.springframework.core.NestedRuntimeException
  */
 public class NestedIOException extends IOException {
     private static final long serialVersionUID = -713470029719907448L;

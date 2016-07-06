@@ -30,7 +30,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:04:40
+ * @since 1.0
  */
 @SuppressWarnings("restriction")
 public class ZipUtils {
@@ -40,10 +40,6 @@ public class ZipUtils {
     private ZipUtils() {
     }
 
-    /**
-     * 
-     * 使用gzip进行压缩
-     */
     public static String gzip(String primStr) {
         if (StringUtils.isEmpty(primStr))
             return primStr;
@@ -107,15 +103,6 @@ public class ZipUtils {
         return BASE64.getInstance().encode(out.toByteArray());
     }
 
-    /**
-     * 
-     * <p>
-     * Description:使用gzip进行解压缩
-     * </p>
-     * 
-     * @param compressedStr
-     * @return
-     */
     public static String gunzip(String compressedStr) {
         if (StringUtils.isEmpty(compressedStr))
             return StringUtils.EMPTY;
@@ -180,15 +167,6 @@ public class ZipUtils {
 
     }
 
-    /**
-     * 
-     * <p>
-     * Description:使用gzip进行解压缩
-     * </p>
-     * 
-     * @param compressedStr
-     * @return
-     */
     public static byte[] gunzipToByte(String compressedStr) {
         if (compressedStr == null)
             return null;
@@ -250,13 +228,6 @@ public class ZipUtils {
 
     }
 
-    /**
-     * 使用zip进行压缩
-     * 
-     * @param str
-     *            压缩前的文本
-     * @return 返回压缩后的文本
-     */
     public static final String zip(String str) {
         if (str == null)
             return null;
@@ -305,13 +276,6 @@ public class ZipUtils {
 
     }
 
-    /**
-     * 使用zip进行解压缩
-     * 
-     * @param compressed
-     *            压缩后的文本
-     * @return 解压后的字符串
-     */
     public static final String unzip(String compressedStr) {
         if (compressedStr == null) {
             return null;
@@ -374,11 +338,6 @@ public class ZipUtils {
         }
 
         return decompressed;
-
-    }
-
-    public static void main(String[] args) {
-        System.out.println(gzip("admin"));
 
     }
 

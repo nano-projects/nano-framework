@@ -23,20 +23,13 @@ package org.nanoframework.commons.exception;
 public class SerializationException extends RuntimeException {
     private static final long serialVersionUID = 7933180233859813371L;
 
-    public SerializationException() {
-        super();
-    }
-
-    public SerializationException(final String msg) {
-        super(msg);
-    }
-
-    public SerializationException(final Throwable cause) {
-        super(cause);
-    }
-
-    public SerializationException(final String msg, final Throwable cause) {
-        super(msg, cause);
+    /**
+     * 
+     * @param message the message
+     * @param cause the cause
+     */
+    public SerializationException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
 }

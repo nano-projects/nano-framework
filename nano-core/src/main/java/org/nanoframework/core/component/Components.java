@@ -63,13 +63,10 @@ public class Components {
     /**
      * 加载组件服务，并且装载至组件服务映射表中.
      * 
-     * @param contextPath context主路径
      * @throws LoaderException 加载异常类
      * @throws IOException IO异常类
-     * 
      * @see ComponentScan#scan(String)
      * @see ComponentScan#filter(Object, Method[], Class, String)
-     * 
      */
     public static final void load() throws LoaderException, IOException {
         if (isLoaded) {
@@ -201,9 +198,9 @@ public class Components {
 
     /**
      * 组件服务调用.
-     * 
      * @param mapper 组件映射
      * @param parameter 参数列表
+     * @param objs 附加参数列表
      * @return 返回调用结果
      */
     public static final Object invoke(RequestMapper mapper, Map<String, Object> parameter, Object... objs) {
@@ -245,6 +242,7 @@ public class Components {
      * 获取地址-方法映射.
      * 
      * @param url HTTP调用 - 请求URL
+     * @param method Http请求类型
      * @return 返回映射
      */
     public static final RequestMapper getMapper(String url, RequestMethod method) {

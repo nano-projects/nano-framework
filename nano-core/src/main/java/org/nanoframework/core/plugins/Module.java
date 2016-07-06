@@ -24,7 +24,7 @@ import com.google.inject.AbstractModule;
 
 /**
  * @author yanghe
- * @date 2015年10月31日 上午11:02:21
+ * @since 1.1
  */
 public abstract class Module extends AbstractModule {
     protected List<Module> modules = new ArrayList<>();

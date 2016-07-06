@@ -27,15 +27,6 @@ import org.apache.shiro.codec.Hex;
 import org.apache.shiro.crypto.UnknownAlgorithmException;
 
 /**
- * Provides a base for all Shiro Hash algorithms with support for salts and multiple hash iterations.
- * <p/>
- * Read
- * <a href="http://www.owasp.org/index.php/Hashing_Java" target="blank">http://www.owasp.org/index.php/Hashing_Java</a>
- * for a good article on the benefits of hashing, including what a 'salt' is as well as why it and multiple hash
- * iterations can be useful.
- * <p/>
- * This class and its subclasses support hashing with additional capabilities of salting and multiple iterations via
- * overloaded constructors.
  *
  * @since 0.9
  * @deprecated in Shiro 1.1 in favor of using the concrete {@link SimpleHash} implementation directly.
@@ -58,27 +49,10 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
      */
     private transient String base64Encoded = null;
 
-    /**
-     * Creates an new instance without any of its properties set (no hashing is performed).
-     * <p/>
-     * Because all constructors in this class (except this one) hash the {@code source} constructor argument, this
-     * default, no-arg constructor is useful in scenarios when you have a byte array that you know is already hashed and
-     * just want to set the bytes in their raw form directly on an instance.  After instantiating the instance with
-     * this default, no-arg constructor, you can then immediately call {@link #setBytes setBytes} to have a
-     * fully-initialized instance.
-     */
     public AbstractHash() {
     }
 
     /**
-     * Creates a hash of the specified {@code source} with no {@code salt} using a single hash iteration.
-     * <p/>
-     * It is a convenience constructor that merely executes <code>this( source, null, 1);</code>.
-     * <p/>
-     * Please see the
-     * {@link #AbstractHash(Object source, Object salt, int numIterations) AbstractHash(Object,Object,int)}
-     * constructor for the types of Objects that may be passed into this constructor, as well as how to support further
-     * types.
      *
      * @param source the object to be hashed.
      * @throws CodecException if the specified {@code source} cannot be converted into a byte array (byte[]).
@@ -88,14 +62,6 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     }
 
     /**
-     * Creates a hash of the specified {@code source} using the given {@code salt} using a single hash iteration.
-     * <p/>
-     * It is a convenience constructor that merely executes <code>this( source, salt, 1);</code>.
-     * <p/>
-     * Please see the
-     * {@link #AbstractHash(Object source, Object salt, int numIterations) AbstractHash(Object,Object,int)}
-     * constructor for the types of Objects that may be passed into this constructor, as well as how to support further
-     * types.
      *
      * @param source the source object to be hashed.
      * @param salt   the salt to use for the hash
@@ -106,18 +72,6 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     }
 
     /**
-     * Creates a hash of the specified {@code source} using the given {@code salt} a total of
-     * {@code hashIterations} times.
-     * <p/>
-     * By default, this class only supports Object method arguments of
-     * type {@code byte[]}, {@code char[]}, {@link String}, {@link java.io.File File}, or
-     * {@link java.io.InputStream InputStream}.  If either argument is anything other than these
-     * types a {@link org.apache.shiro.codec.CodecException CodecException} will be thrown.
-     * <p/>
-     * If you want to be able to hash other object types, or use other salt types, you need to override the
-     * {@link #toBytes(Object) toBytes(Object)} method to support those specific types.  Your other option is to
-     * convert your arguments to one of the default three supported types first before passing them in to this
-     * constructor}.
      *
      * @param source         the source object to be hashed.
      * @param salt           the salt to use for the hash
@@ -147,10 +101,6 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     }
 
     /**
-     * Sets the raw bytes stored by this hash instance.
-     * <p/>
-     * The bytes are kept in raw form - they will not be hashed/changed.  This is primarily a utility method for
-     * constructing a Hash instance when the hashed value is already known.
      *
      * @param alreadyHashedBytes the raw already-hashed bytes to store in this instance.
      */
@@ -223,11 +173,6 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     }
 
     /**
-     * Returns a hex-encoded string of the underlying {@link #getBytes byte array}.
-     * <p/>
-     * This implementation caches the resulting hex string so multiple calls to this method remain efficient.
-     * However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
-     * next time this method is called.
      *
      * @return a hex-encoded string of the underlying {@link #getBytes byte array}.
      */
@@ -239,11 +184,6 @@ public abstract class AbstractHash extends CodecSupport implements Hash, Seriali
     }
 
     /**
-     * Returns a Base64-encoded string of the underlying {@link #getBytes byte array}.
-     * <p/>
-     * This implementation caches the resulting Base64 string so multiple calls to this method remain efficient.
-     * However, calling {@link #setBytes setBytes} will null the cached value, forcing it to be recalculated the
-     * next time this method is called.
      *
      * @return a Base64-encoded string of the underlying {@link #getBytes byte array}.
      */

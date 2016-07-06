@@ -45,8 +45,7 @@ import com.alibaba.fastjson.JSON;
  * 如果不存在的话，则请求后续的内容.
  * 
  * @author yanghe
- * @date 2015年6月23日 下午2:38:22 
- * 
+ * @since 1.0 
  */
 public class HttpRequestFilter extends AbstractFilter {
 	private Logger logger = LoggerFactory.getLogger(HttpRequestFilter.class);

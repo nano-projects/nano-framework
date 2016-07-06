@@ -26,6 +26,8 @@ import java.util.Map;
 
 import org.junit.Test;
 
+import com.google.common.collect.Lists;
+
 /**
  * @author yanghe
  * @date 2015年10月8日 下午2:11:35
@@ -34,17 +36,11 @@ public class BaseEntityTest {
 
     @Test
     public void getAttributeNamesTest() {
-        List<String> attrList = new ArrayList<String>() {
-            private static final long serialVersionUID = 1L;
-            {
-                add("id");
-                add("name");
-            }
-        };
+        List<String> attrList = Lists.newArrayList("id", "name");
 
         UseEntity entity = new UseEntity();
-        final String[] attrs = entity._getAttributeNames();
-        final String[] attrs2 = entity._getAttributeNames();
+        final String[] attrs = entity.attributeNames();
+        final String[] attrs2 = entity.attributeNames();
         assertEquals(attrs == attrs2, true);
         assertEquals(2, attrs.length);
         assertTrue(attrList.contains(attrs[0]));
@@ -55,9 +51,9 @@ public class BaseEntityTest {
     public void getAttributeValueTest() {
         UseEntity entity = new UseEntity();
         entity.setId("1234567890");
-        assertEquals("1234567890", entity._getAttributeValue("id"));
+        assertEquals("1234567890", entity.attributeValue("id"));
         try {
-            entity._getAttributeValue("");
+            entity.attributeValue("");
         } catch (final Throwable e) {
             assertEquals(e instanceof IllegalArgumentException, true);
         }
@@ -66,13 +62,13 @@ public class BaseEntityTest {
     @Test
     public void getAttributeValueByDefaultTest() {
         UseEntity entity = new UseEntity();
-        assertEquals("1234567890", entity._getAttributeValue("id", "1234567890"));
+        assertEquals("1234567890", entity.attributeValue("id", "1234567890"));
     }
 
     @Test
     public void setAttributeValueTest() {
         UseEntity entity = new UseEntity();
-        entity._setAttributeValue("id", "1234567890");
+        entity.setAttributeValue("id", "1234567890");
         assertEquals("1234567890", entity.getId());
     }
 
@@ -82,7 +78,7 @@ public class BaseEntityTest {
         entity.setId("id0");
         entity.setName("name0");
 
-        Map<String, Object> map = entity._getBeanToMap();
+        Map<String, Object> map = entity.beanToMap();
         assertNotNull(map);
         assertEquals("id0", map.get("id"));
         assertEquals("name0", map.get("name"));
@@ -98,7 +94,7 @@ public class BaseEntityTest {
             }
         };
 
-        UseEntity entity = UseEntity._getMapToBean(map, UseEntity.class);
+        UseEntity entity = UseEntity.mapToBean(map, UseEntity.class);
         assertNotNull(entity);
         assertEquals("id0", entity.getId());
         assertEquals("name0", entity.getName());
@@ -119,7 +115,7 @@ public class BaseEntityTest {
             }
         };
 
-        List<UseEntity> entityList = UseEntity._getMapToBeans(list, UseEntity.class);
+        List<UseEntity> entityList = UseEntity.mapToBeans(list, UseEntity.class);
         assertNotNull(entityList);
         assertEquals(1, entityList.size());
         assertEquals("id0", entityList.get(0).getId());

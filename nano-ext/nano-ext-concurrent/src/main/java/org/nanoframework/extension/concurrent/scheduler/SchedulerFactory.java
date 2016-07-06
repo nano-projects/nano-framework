@@ -59,7 +59,7 @@ import com.google.inject.Injector;
  * 任务工厂.
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:15:58
+ * @since 1.3
  */
 public class SchedulerFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerFactory.class);
@@ -188,7 +188,7 @@ public class SchedulerFactory {
 
     /**
      * 关闭整组任务
-     * @param groupName
+     * @param groupName the groupName
      */
     public void closeGroup(String groupName) {
         Assert.hasLength(groupName, "groupName must not be null");
@@ -473,7 +473,6 @@ public class SchedulerFactory {
 
     /**
      * 加载任务调度
-     * @param injector Guice Injector
      * @throws IllegalArgumentException 非法的参数列表
      * @throws IllegalAccessException ?
      */

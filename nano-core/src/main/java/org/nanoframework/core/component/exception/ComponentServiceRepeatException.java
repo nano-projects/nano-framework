@@ -15,16 +15,13 @@
  */
 package org.nanoframework.core.component.exception;
 
-import org.nanoframework.commons.exception.ExtensionRuntimeException;
-
 /**
  * 重复组件服务异常
  * 
  * @author yanghe
- * @date 2015年6月5日 下午9:50:28 
- *
+ * @since 1.0 
  */
-public class ComponentServiceRepeatException extends ExtensionRuntimeException {
+public class ComponentServiceRepeatException extends RuntimeException {
     private static final long serialVersionUID = -4050783744076776903L;
 
     public ComponentServiceRepeatException() {

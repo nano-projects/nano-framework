@@ -19,7 +19,7 @@ import org.nanoframework.core.chain.exception.ChainException;
 
 /**
  * @author yanghe
- * @date 2015年12月3日 下午1:17:29
+ * @since 1.1
  */
 public abstract class AbstractChain implements Chain {
 

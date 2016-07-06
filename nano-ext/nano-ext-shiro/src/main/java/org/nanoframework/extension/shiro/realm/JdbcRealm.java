@@ -25,7 +25,7 @@ import org.nanoframework.orm.jdbc.binding.GlobalJdbcManager;
 
 /**
  * @author yanghe
- * @date 2015年12月8日 下午10:39:29
+ * @since 1.2
  */
 public class JdbcRealm extends org.apache.shiro.realm.jdbc.JdbcRealm {
     protected String dataSourceName;

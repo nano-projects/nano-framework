@@ -19,7 +19,7 @@ import javax.servlet.ServletConfig;
 
 /**
  * @author yanghe
- * @date 2015年10月30日 下午11:23:59
+ * @since 1.1
  */
 public interface Plugin {
     boolean load() throws Throwable;

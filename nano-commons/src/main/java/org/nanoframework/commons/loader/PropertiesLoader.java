@@ -20,7 +20,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
@@ -32,27 +31,37 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.ResourceUtils;
 
+import com.google.common.collect.Maps;
+
 /**
  * 属性文件操作公有类，负责对属性文件进行读写操作.
  * @author yanghe
  * @since 1.0
  */
 public class PropertiesLoader {
-    public static Map<String, Properties> PROPERTIES = new HashMap<>();
+    /** 属性文件集合/ */
+    public static final Map<String, Properties> PROPERTIES = Maps.newHashMap();
+    /** 属性配置列表根. */
     public static final String CONTEXT = "context";
 
     private static Logger LOGGER = LoggerFactory.getLogger(PropertiesLoader.class);
 
-    public static final Properties load(String path) {
-        InputStream input = null;
+    /**
+     * 根据路径加载属性文件.
+     * @param path 属性文件路径
+     * @return Properties
+     */
+    public static final Properties load(final String path) {
         try {
+            InputStream input = null;
             try {
-                Resource resource = new ClassPathResource(path);
+                final Resource resource = new ClassPathResource(path);
                 input = resource.getInputStream();
-            } catch (IOException e) {
+            } catch (final IOException e) {
+                // ignore
             }
 
-            Properties properties;
+            final Properties properties;
             if (input != null) {
                 properties = PropertiesLoader.load(input);
             } else {
@@ -61,73 +70,68 @@ public class PropertiesLoader {
 
             return properties;
         } catch (IOException e) {
-            throw new LoaderException("加载属性文件异常: " + e.getMessage());
+            throw new LoaderException("加载属性文件异常: " + e.getMessage(), e);
         }
     }
 
     /**
      * 通过输入流加载属性文件.
-     * 
-     * @param input 文件输入流，例如：xxx.class.getResourceAsStream("")
+     * @param input 文件输入流
      * @return 返回加载后的Properties
      * @throws LoaderException Loader异常
      * @throws IOException IO异常
      */
-    private static final Properties load(InputStream input) {
+    private static final Properties load(final InputStream input) {
         if (input == null) {
             throw new LoaderException("输入流为空");
         }
 
         try {
-            Properties prop = new Properties();
+            final Properties prop = new Properties();
             prop.load(new InputStreamReader(input, Charsets.UTF_8));
             return prop;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new LoaderException("加载属性文件异常: " + e.getMessage());
         }
     }
 
     /**
      * 通过文件加载属性文件.
-     * 
      * @param file 输入文件
      * @return 返回加载后的Properties
      * @throws LoaderException Loader异常
      * @throws IOException IO异常
      */
-    private static final Properties load(File file) throws LoaderException, IOException {
+    private static final Properties load(final File file) throws LoaderException, IOException {
         if (file == null) {
             throw new LoaderException("文件对象为空");
         }
 
-        Properties prop = new Properties();
+        final Properties prop = new Properties();
         prop.load(new InputStreamReader(new FileInputStream(file), Charsets.UTF_8));
-
         return prop;
     }
 
     /**
-     * 加载属性文件
-     * 
+     * 加载属性文件.
      * @param contextPath 文件相对路径
-     * @Param stream context属性流
+     * @param stream context属性流
      * @param loadContext 是否加载context
      * @throws LoaderException 加载异常
      * @throws IOException IO异常
      */
     @Deprecated
-    public static final void load(String contextPath, InputStream stream, boolean loadContext) throws LoaderException, IOException {
-        Properties prop = load(stream);
+    public static final void load(final String contextPath, final InputStream stream, final boolean loadContext) throws LoaderException, IOException {
+        final Properties prop = load(stream);
         prop.forEach((key, value) -> System.setProperty((String) key, (String) value));
         PROPERTIES.put(contextPath, prop);
-
         if (loadContext) {
-            String context = prop.getProperty(CONTEXT);
+            final String context = prop.getProperty(CONTEXT);
             if (StringUtils.isNotEmpty(context)) {
-                String[] ctxs = context.split(";");
+                final String[] ctxs = context.split(";");
                 if (ctxs.length > 0) {
                     for (String ctx : ctxs) {
-                        Properties properties = load(ctx);
+                        final Properties properties = load(ctx);
                         if (properties != null) {
                             PROPERTIES.put(ctx, properties);
                         } else {
@@ -140,19 +144,26 @@ public class PropertiesLoader {
         }
     }
 
-    public static final void load(String contextPath, boolean loadContext) throws LoaderException, IOException {
-        Properties prop = load(contextPath);
+    /**
+     * 加载属性文件.
+     * @param contextPath 文件相对路径
+     * @param loadContext 是否加载context
+     * @throws LoaderException 加载异常
+     * @throws IOException IO异常
+     */
+    public static final void load(final String contextPath, final boolean loadContext) throws LoaderException, IOException {
+        final Properties prop = load(contextPath);
         prop.forEach((key, value) -> System.setProperty((String) key, (String) value));
         PROPERTIES.put(contextPath, prop);
 
         if (loadContext) {
-            String context = prop.getProperty(CONTEXT);
+            final String context = prop.getProperty(CONTEXT);
             if (StringUtils.isNotEmpty(context)) {
-                String[] ctxs = context.split(";");
+                final String[] ctxs = context.split(";");
                 if (ctxs.length > 0) {
                     for (String ctx : ctxs) {
                         if (StringUtils.isNotBlank(ctx)) {
-                            Properties properties = load(ctx);
+                            final Properties properties = load(ctx);
                             if (properties != null) {
                                 PROPERTIES.put(ctx, properties);
                             } else {

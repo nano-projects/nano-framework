@@ -19,25 +19,84 @@ import java.util.Locale;
 
 /**
  * @author yanghe
- * @date 2016年3月5日 下午3:02:09
+ * @since 1.2
  */
 public interface MessageSource {
-    public static final MessageSource DEFAULT = new DefaultMessageSource(Locale.getDefault());
+    /**
+     * 本地语言的I18N消息处理对象.
+     */
+    final MessageSource DEFAULT = new DefaultMessageSource(Locale.getDefault());
 
+    /**
+     * 获取国际化消息.
+     * @param code 属性编码
+     * @param defaultMessage 默认消息
+     * @return 国际化消息
+     */
     String getMessage(String code, String defaultMessage);
 
+    /**
+     * 获取国际化消息.
+     * @param code 属性编码
+     * @param defaultMessage 默认消息
+     * @param locale 语言
+     * @return 国际化消息
+     */
     String getMessage(String code, String defaultMessage, Locale locale);
 
+    /**
+     * 获取国际化消息.
+     * @param code 属性编码
+     * @param args 参数列表
+     * @param defaultMessage 默认消息
+     * @return 国际化消息
+     */
     String getMessage(String code, Object[] args, String defaultMessage);
 
+    /**
+     * 获取国际化消息.
+     * @param code 属性编码
+     * @param args 参数列表
+     * @param defaultMessage 默认消息
+     * @param locale 语言
+     * @return 国际化消息
+     */
     String getMessage(String code, Object[] args, String defaultMessage, Locale locale);
 
+    /**
+     * 获取国际化消息.
+     * @param code 属性编码
+     * @return 国际化消息
+     * @throws NoSuchMessageException 未查找到属性编码时抛出
+     */
     String getMessage(String code) throws NoSuchMessageException;
 
+    /**
+     * 获取国际化消息.
+     * @param code 属性编码
+     * @param args 参数列表
+     * @return 国际化消息
+     * @throws NoSuchMessageException 未查找到属性编码时抛出
+     */
     String getMessage(String code, Object[] args) throws NoSuchMessageException;
 
+    /**
+     * 获取国际化消息.
+     * @param code 属性编码
+     * @param locale 语言
+     * @return 国际化消息
+     * @throws NoSuchMessageException 未查找到属性编码时抛出
+     */
     String getMessage(String code, Locale locale) throws NoSuchMessageException;
 
+    /**
+     * 获取国际化消息.
+     * @param code 属性编码
+     * @param args  参数列表
+     * @param locale 语言
+     * @return 国际化消息
+     * @throws NoSuchMessageException 未查找到属性编码时抛出
+     */
     String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException;
 
 }

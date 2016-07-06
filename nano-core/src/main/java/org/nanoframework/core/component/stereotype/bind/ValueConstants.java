@@ -18,8 +18,7 @@ package org.nanoframework.core.component.stereotype.bind;
 /**
  * 
  * @author yanghe
- * @date 2015年6月5日 下午3:30:14 
- *
+ * @since 1.0
  */
 public interface ValueConstants {
 
@@ -29,8 +28,6 @@ public interface ValueConstants {
      * <p>This is an artificial arrangement of 16 unicode characters,
      * with its sole purpose being to never match user-declared values.
      * @see RequestParam#defaultValue()
-     * @see RequestHeader#defaultValue()
-     * @see CookieValue#defaultValue()
      */
     String DEFAULT_NONE = "\n\t\t\n\t\t\n\uE000\uE001\uE002\n\t\t\t\t\n";
 }

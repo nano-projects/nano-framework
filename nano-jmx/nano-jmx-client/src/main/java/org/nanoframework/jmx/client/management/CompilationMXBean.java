@@ -17,7 +17,7 @@ package org.nanoframework.jmx.client.management;
 
 /**
  * @author yanghe
- * @date 2015年12月2日 下午9:47:22
+ * @since 1.1
  */
 public interface CompilationMXBean extends java.lang.management.CompilationMXBean {
 

@@ -29,8 +29,7 @@ import org.apache.ibatis.session.SqlSessionManager;
  * 存储方式为 {数据源名称 - SqlSessionManager} 
  * 
  * @author yanghe
- * @date 2015年7月29日 上午2:38:17 
- *
+ * @since 1.2
  * @see MultiDataSourceModule
  */
 public class GlobalSqlSession {

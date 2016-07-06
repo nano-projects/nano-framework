@@ -26,7 +26,7 @@ import org.nanoframework.orm.PoolType;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:12:26
+ * @since 1.2
  */
 public class DataSourceConfig extends BaseEntity {
 	private static final long serialVersionUID = -3733512377087727530L;

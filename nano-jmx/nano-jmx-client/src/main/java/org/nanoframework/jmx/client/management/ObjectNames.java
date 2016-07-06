@@ -22,7 +22,6 @@ package org.nanoframework.jmx.client.management;
  * Other为都可用
  * 
  * @author yanghe
- * @date 2015年8月18日 下午10:57:23 
  * @since 1.1
  */
 public enum ObjectNames {

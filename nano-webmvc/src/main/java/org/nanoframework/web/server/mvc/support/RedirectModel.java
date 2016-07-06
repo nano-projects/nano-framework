@@ -25,8 +25,7 @@ import org.nanoframework.web.server.mvc.Model;
  * 模型实现
  * 
  * @author yanghe
- * @date 2015年6月23日 下午2:38:07 
- *
+ * @since 1.0 
  */
 public class RedirectModel implements Model {
 

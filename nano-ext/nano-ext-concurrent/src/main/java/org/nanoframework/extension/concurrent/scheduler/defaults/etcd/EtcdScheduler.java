@@ -60,7 +60,7 @@ import org.nanoframework.extension.etcd.etcd4j.responses.EtcdKeysResponse;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:13:33 
+ * @since 1.3
  */
 public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate {
 

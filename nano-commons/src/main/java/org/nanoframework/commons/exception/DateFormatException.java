@@ -15,22 +15,20 @@
  */
 package org.nanoframework.commons.exception;
 
+/**
+ *
+ * @author yanghe
+ * @since 1.0
+ */
 public class DateFormatException extends RuntimeException {
     private static final long serialVersionUID = 4883777612565681931L;
 
-    public DateFormatException() {
-        super();
-    }
-
-    public DateFormatException(String message) {
-        super(message);
-    }
-
-    public DateFormatException(Throwable cause) {
-        super(cause);
-    }
-
-    public DateFormatException(String message, Throwable cause) {
+    /**
+     * 
+     * @param message the message
+     * @param cause the cause
+     */
+    public DateFormatException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

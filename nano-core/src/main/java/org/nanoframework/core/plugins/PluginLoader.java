@@ -34,7 +34,7 @@ import com.google.inject.Injector;
 
 /**
  * @author yanghe
- * @date 2015年10月30日 下午10:29:16
+ * @since 1.1
  */
 public abstract class PluginLoader {
     private Logger logger = LoggerFactory.getLogger(PluginLoader.class);

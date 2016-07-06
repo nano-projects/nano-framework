@@ -45,7 +45,7 @@ abstract class VFS {
     private static VFS instance;
 
     /**
-     * Get the singleton {@link VFS} instance. If no {@link VFS} implementation can be found for the
+     * @return Get the singleton {@link VFS} instance. If no {@link VFS} implementation can be found for the
      * current environment, then this method returns null.
      */
     @SuppressWarnings("unchecked")
@@ -162,7 +162,7 @@ abstract class VFS {
         return Collections.list(Thread.currentThread().getContextClassLoader().getResources(path));
     }
 
-    /** Return true if the {@link VFS} implementation is valid for the current environment. */
+    /** @return Return true if the {@link VFS} implementation is valid for the current environment. */
     public abstract boolean isValid();
 
     /**

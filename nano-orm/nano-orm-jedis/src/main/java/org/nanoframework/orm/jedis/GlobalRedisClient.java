@@ -23,7 +23,7 @@ import java.util.Set;
  * RedisClient的全局设置.
  * 
  * @author yanghe
- * @date 2015年7月16日 下午4:52:05 
+ * @since 1.0
  */
 public class GlobalRedisClient {
 	private static final Map<String, RedisClient> GLOBALS = new HashMap<>();

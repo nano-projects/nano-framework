@@ -17,7 +17,7 @@ package org.nanoframework.core.chain;
 
 /**
  * @author yanghe
- * @date 2015年12月3日 下午1:16:50
+ * @since 1.1
  */
 public interface Chain {
     Object execute(Object object);

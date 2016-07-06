@@ -21,7 +21,7 @@ import org.apache.shiro.realm.jdbc.JdbcRealm.SaltStyle;
 
 /**
  * @author yanghe
- * @date 2015年12月9日 下午3:25:08
+ * @since 1.2
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class EnumConverter extends AbstractConverter {

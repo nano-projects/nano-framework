@@ -26,7 +26,6 @@ import org.nanoframework.jmx.client.management.CompilationMXBean;
 /**
  * 
  * @author yanghe
- * @date 2015年8月18日 下午5:20:10 
  * @since 1.1
  */
 public class CompilationImpl extends AbstractMXBean implements CompilationMXBean {

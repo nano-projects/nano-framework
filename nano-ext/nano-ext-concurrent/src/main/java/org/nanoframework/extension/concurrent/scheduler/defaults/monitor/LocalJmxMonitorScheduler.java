@@ -42,7 +42,7 @@ import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
  * 使用组件进行初始化，而非启动时初始化
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:14:03
+ * @since 1.3
  */
 public class LocalJmxMonitorScheduler extends BaseScheduler {
     private final EtcdClient etcd;

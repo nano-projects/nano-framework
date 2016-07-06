@@ -251,7 +251,7 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
             final String shiroServer = ServiceUtils.constructRedirectUrl(this.shiroSessionBindURL, getProtocol().getServiceParameterName(), service,
                     "sessionId", localSessionId(request));
             
-            final Map<String, Object> map = HttpStatus.UNAUTHORIZED.to()._getBeanToMap();
+            final Map<String, Object> map = HttpStatus.UNAUTHORIZED.to().beanToMap();
             map.put("__SERVICE", shiroServer);
             write(request, response, map);
         } else {

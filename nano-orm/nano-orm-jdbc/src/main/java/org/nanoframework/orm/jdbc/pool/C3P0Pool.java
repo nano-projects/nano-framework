@@ -36,8 +36,7 @@ import org.nanoframework.orm.jdbc.config.JdbcConfig;
  * C3P0连接池管理类
  * 
  * @author yanghe
- * @date 2015年7月21日 下午9:41:01 
- *
+ * @since 1.2
  */
 public class C3P0Pool implements Pool {
 	private Logger LOG = LoggerFactory.getLogger(C3P0Pool.class);
@@ -51,12 +50,6 @@ public class C3P0Pool implements Pool {
 		}
 	}
 	
-	/**
-	 * 创建管理对象
-	 * 
-	 * @param configs 数据库配置
-	 * @throws PropertyVetoException
-	 */
 	public C3P0Pool(Collection<JdbcConfig> configs) throws PropertyVetoException {
 		Assert.notNull(configs);
 		Assert.notEmpty(configs);

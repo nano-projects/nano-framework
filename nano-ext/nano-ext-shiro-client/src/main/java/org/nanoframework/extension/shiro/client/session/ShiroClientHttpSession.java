@@ -58,8 +58,8 @@ public class ShiroClientHttpSession extends ShiroHttpSession {
      * @param currentRequest the currentRequest
      * @param servletContext the servletContext
      * @param httpClient the httpClient
+     * @param retry the retry
      * @param url the url
-     * @param requestMethod the requestMethod
      */
     public ShiroClientHttpSession(final Session session, final HttpServletRequest currentRequest, final ServletContext servletContext,
             final HttpClient httpClient, final int retry, final String url) {
@@ -71,6 +71,7 @@ public class ShiroClientHttpSession extends ShiroHttpSession {
      * @param currentRequest the currentRequest
      * @param servletContext the servletContext
      * @param httpClient the httpClient
+     * @param retry the retry
      * @param url the url
      * @param requestMethod the requestMethod
      */

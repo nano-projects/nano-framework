@@ -20,7 +20,7 @@ import org.nanoframework.commons.entity.BaseEntity;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:13:14
+ * @since 1.3
  */
 public class EtcdAppInfo extends BaseEntity {
     private static final long serialVersionUID = -5412741101794352940L;

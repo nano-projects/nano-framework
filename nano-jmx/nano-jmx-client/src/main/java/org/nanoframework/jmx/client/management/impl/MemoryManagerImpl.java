@@ -27,7 +27,6 @@ import org.nanoframework.jmx.client.management.ObjectNames;
 /**
  * 
  * @author yanghe
- * @date 2015年8月18日 下午9:26:53 
  * @since 1.1
  */
 public class MemoryManagerImpl extends AbstractMXBean implements MemoryManagerMXBean {

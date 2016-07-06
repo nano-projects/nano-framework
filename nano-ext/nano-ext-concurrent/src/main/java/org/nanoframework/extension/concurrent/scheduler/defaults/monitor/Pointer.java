@@ -20,7 +20,7 @@ import org.nanoframework.commons.entity.BaseEntity;
 /**
  * 
  * @author yanghe
- * @date 2016年3月22日 下午5:14:53
+ * @since 1.3
  */
 public class Pointer extends BaseEntity {
     private static final long serialVersionUID = 7350989467756362845L;

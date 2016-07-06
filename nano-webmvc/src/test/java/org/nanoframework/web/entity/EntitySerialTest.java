@@ -39,14 +39,14 @@ public class EntitySerialTest extends TestCase {
 		
 		LOG.info("转换成JSON: " + JSON.toJSONString(test));
 
-		LOG.info("获取属性: EntityTest.ID = " + test._getAttributeValue(EntityTest.ID));
+		LOG.info("获取属性: EntityTest.ID = " + test.attributeValue(EntityTest.ID));
 		
-		test._setAttributeValue(EntityTest.NAME, "Fuck you");
+		test.setAttributeValue(EntityTest.NAME, "Fuck you");
 		LOG.info("设置属性: EntityTest.Name = Fuck you");
 		
-		LOG.info("获取新设置的属性值: EntityTest.Name = " + test._getAttributeValue(EntityTest.NAME));
+		LOG.info("获取新设置的属性值: EntityTest.Name = " + test.attributeValue(EntityTest.NAME));
 		
-		LOG.info("获取所有的属性名: " + StringUtils.join(test._getAttributeNames(), ", "));
+		LOG.info("获取所有的属性名: " + StringUtils.join(test.attributeNames(), ", "));
 		
 	}
 }

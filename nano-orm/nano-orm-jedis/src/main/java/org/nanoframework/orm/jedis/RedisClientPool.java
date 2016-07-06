@@ -52,7 +52,7 @@ import redis.clients.util.Sharded;
  * RedisClient连接池管理类.
  * 
  * @author yanghe
- * @date 2015年7月26日 下午10:12:12 
+ * @since 1.0
  */
 public class RedisClientPool {
     /** RedisClientPool. */
@@ -100,14 +100,14 @@ public class RedisClientPool {
                 final String[] idxs = root.split(",");
                 for (String idx : idxs) {
                     final RedisConfig conf = RedisConfig.newInstance();
-                    for (String name : conf._getAttributeNames()) {
+                    for (String name : conf.attributeNames()) {
                         if (RedisConfig.REDIS_TYPE.equals(name)) {
                             Assert.hasLength(rds.getProperty(RedisConfig.REDIS + idx + '.' + name));
                         } else if (RedisConfig.EXTEND_PROPERTIES.equals(name)) {
                             continue;
                         }
 
-                        conf._setAttributeValue(name, rds.getProperty(RedisConfig.REDIS + idx + '.' + name));
+                        conf.setAttributeValue(name, rds.getProperty(RedisConfig.REDIS + idx + '.' + name));
                     }
 
                     confs.put(conf.getRedisType(), conf);

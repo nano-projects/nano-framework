@@ -30,7 +30,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:10:31
+ * @since 1.2
  */
 public final class JdbcTransactionalMethodInterceptor implements MethodInterceptor {
 

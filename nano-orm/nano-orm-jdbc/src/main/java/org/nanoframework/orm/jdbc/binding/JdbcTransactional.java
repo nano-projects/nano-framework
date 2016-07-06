@@ -23,7 +23,7 @@ import java.lang.annotation.Target;
 /**
  * 
  * @author yanghe
- * @date 2015年8月19日 上午9:09:54
+ * @since 1.2
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.METHOD, ElementType.TYPE})

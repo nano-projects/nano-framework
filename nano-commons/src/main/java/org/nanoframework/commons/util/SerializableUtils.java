@@ -24,7 +24,7 @@ import org.nanoframework.commons.exception.SerializationException;
 
 /**
  * @author yanghe
- * @date 2015年12月10日 上午10:31:54
+ * @since 1.1
  */
 public class SerializableUtils {
     public static <T> String encode(T object) {

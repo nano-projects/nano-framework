@@ -19,8 +19,7 @@ package org.nanoframework.core.status;
  * 组件服务调用状态码
  * 
  * @author yanghe
- * @date 2015年7月25日 下午9:08:21 
- *
+ * @since 1.0
  */
 @Deprecated
 public interface ComponentStatus {

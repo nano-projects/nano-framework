@@ -26,8 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * 视图接口
  * 
  * @author yanghe
- * @date 2015年6月23日 下午2:34:19 
- *
+ * @since 1.0 
  */
 public interface View {
 

@@ -38,7 +38,7 @@ import com.google.inject.Injector;
 
 /**
  * @author yanghe
- * @date 2015年8月25日 下午9:00:25
+ * @since 1.1
  */
 public class WebSocketFactory {
 	private static Logger LOG = LoggerFactory.getLogger(WebSocketFactory.class);

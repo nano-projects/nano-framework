@@ -23,7 +23,7 @@ import org.nanoframework.commons.util.CollectionUtils;
 /**
  * Http 返回消息对象
  * @author yanghe
- * @date 2015年7月25日 下午8:18:08 
+ * @since 1.0 
  */
 public class ResultMap extends BaseEntity {
 	private static final long serialVersionUID = -4525859189036534494L;
@@ -50,7 +50,7 @@ public class ResultMap extends BaseEntity {
 	 * @param status 状态码
 	 * @param message 消息内容
 	 * @param info 描述
-	 * @return
+	 * @return new ResultMap instance
 	 */
 	public static ResultMap create(int status, String message, String info) {
 		return new ResultMap(status, message, info);

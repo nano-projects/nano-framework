@@ -19,19 +19,9 @@ package org.nanoframework.commons.crypt;
  * 
  * @author yanghe
  * @since 1.0
- * @date 2015年8月19日 上午9:00:03
  */
 public class DecryptException extends RuntimeException {
     private static final long serialVersionUID = 2618331308933845339L;
-
-    public DecryptException() {
-
-    }
-
-    public DecryptException(final String message) {
-        super(message);
-
-    }
 
     public DecryptException(final String message, final Throwable cause) {
         super(message, cause);

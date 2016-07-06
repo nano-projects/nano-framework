@@ -29,7 +29,6 @@ import org.nanoframework.commons.util.ObjectCompare;
  * 
  * @author yanghe
  * @since 1.3.7
- * @date 2015年6月5日 下午10:58:41 
  */
 public class URLContext {
 
@@ -45,32 +44,25 @@ public class URLContext {
     private URLContext() {
     }
 
-    /** 创建URLContext对象. */
     public static URLContext create() {
         return new URLContext();
 
     }
 
-    /** 获取URI串. */
     public String getContext() {
         return context;
     }
 
-    /** 获取URI串, 去除context root. */
     public String getNoRootContext() {
         final String root = System.getProperty(ApplicationContext.CONTEXT_ROOT);
         return context == null ? "" : StringUtils.isEmpty(root) ? context : context.replaceFirst(root, "");
     }
 
-    /** 设置URI串. */
     public URLContext setContext(final String context) {
         this.context = context;
         return this;
     }
 
-    /**
-     * @return the special
-     */
     public String[] getSpecial() {
         return special;
     }
@@ -80,22 +72,15 @@ public class URLContext {
         return this;
     }
 
-    /** 获取参数列表. */
     public Map<String, Object> getParameter() {
         return parameter;
     }
 
-    /** 设置参数列表. */
     public URLContext setParameter(final Map<String, Object> parameter) {
         this.parameter = parameter;
         return this;
     }
 
-    /**
-     * 过滤URI.
-     * @param uri Http request URI
-     * @return
-     */
     @Deprecated
     public static final boolean filterURI(final String uri) {
         if (!uri.startsWith(System.getProperty(ApplicationContext.CONTEXT_ROOT))
@@ -106,10 +91,6 @@ public class URLContext {
         return true;
     }
 
-    /**
-     * 转换URL, 将context及参数名转位小写，以使其不区分大小写.
-     * @param url 请求URL
-     */
     @SuppressWarnings("unchecked")
     public static final URLContext formatURL(final String url) {
         if (StringUtils.isEmpty(url)) {

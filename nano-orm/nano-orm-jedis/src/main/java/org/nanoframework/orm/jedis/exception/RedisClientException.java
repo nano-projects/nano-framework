@@ -19,7 +19,7 @@ package org.nanoframework.orm.jedis.exception;
  * Jedis操作异常处理类.
  * 
  * @author yanghe
- * @date 2015年7月27日 下午10:13:16 
+ * @since 1.0
  */
 public class RedisClientException extends RuntimeException {
     private static final long serialVersionUID = -6151365904901655741L;

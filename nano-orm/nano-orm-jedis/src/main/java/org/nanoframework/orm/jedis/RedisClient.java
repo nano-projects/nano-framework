@@ -33,8 +33,7 @@ import com.google.inject.ImplementedBy;
  * 但是部分操作可以进行遍历Sharding节点来进行操作，这也是可以满足操作的<br>
  * 
  * @author yanghe
- * @date 2015年6月11日 下午9:53:41 
- *
+ * @since 1.0
  */
 @ImplementedBy(RedisClientImpl.class)
 public interface RedisClient {
@@ -66,14 +65,15 @@ public interface RedisClient {
 	
 	/**
 	 * 删除给定的一个或多个 key 。
-	 * 
 	 * @param keys key动态数组
+	 * @return 删除key的数量
 	 */
 	long del(String... keys);
 	
 	/**
 	 * 删除给定列表的所有key 。
 	 * @param keys key列表
+	 * @return 删除key的数量
 	 */
 	long del(List<String> keys);
 	
@@ -182,8 +182,7 @@ public interface RedisClient {
 	
 	/**
 	 * 返回 key 所关联的字符串值。
-	 * 
-	 * @param key散列Key
+	 * @param key 散列Key
 	 * @return 当 key 不存在时，返回 null ，否则，返回 key 的值。如果 key 不是字符串类型，那么返回一个错误。
 	 */
 	String get(String key);
@@ -191,10 +190,10 @@ public interface RedisClient {
 	/**
 	 * 返回 key 所关联的字符串值，并且通过FastJson转换为泛型所对应的数据类型。<br>
 	 * 如果类型转换不匹配是则返回一个错误
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 散列Key
 	 * @param type 对象类型转换
-	 * @return当 key 不存在时，返回 null ，否则，返回 key 的值。如果 key 不是字符串类型，那么返回一个错误。
+	 * @return 当 key 不存在时，返回 null ，否则，返回 key 的值。如果 key 不是字符串类型，那么返回一个错误。
 	 */
 	<T> T get(String key, TypeReference<T> type);
 	
@@ -208,7 +207,7 @@ public interface RedisClient {
 	
 	/**
 	 * 返回所有(一个或多个)给定 key 的值。
-	 * 
+	 * @param <T> TypeReference type
 	 * @param keys 散列Key的数组
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 当 key 不存在时，返回 null ，否则，返回 key 的值。如果 key 不是字符串类型，那么返回一个错误。
@@ -217,7 +216,7 @@ public interface RedisClient {
 	
 	/**
 	 * 返回所有(一个或多个)给定 key 的值。
-	 * 
+	 * @param <T> TypeReference type
 	 * @param keys 散列Key的List集合
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 当 key 不存在时，返回 null ，否则，返回 key 的值。如果 key 不是字符串类型，那么返回一个错误。
@@ -378,7 +377,7 @@ public interface RedisClient {
 	
 	/**
 	 * 返回哈希表 key 中给定域 field 的值。并将值转换成泛型对象。
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 哈希表Key
 	 * @param field 哈希域
 	 * @param type TypeReference的泛型对象
@@ -390,7 +389,7 @@ public interface RedisClient {
 	 * 返回哈希表 key 中，一个或多个给定域的值。<br>
 	 * 如果给定的域不存在于哈希表，那么返回一个 nil 值。<br>
 	 * 因为不存在的 key 被当作一个空哈希表来处理，所以对一个不存在的 key 进行 HMGET 操作将返回一个只带有 nil 值的表。<br>
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 哈希表Key
 	 * @param fields 哈希域数组
 	 * @param type TypeReference的泛型对象
@@ -410,7 +409,7 @@ public interface RedisClient {
 	/**
 	 * 返回哈希表 key 中，所有的域和值。<br>
 	 * 在返回值里，紧跟每个域名(field name)之后是域的值(value)，所以返回值的长度是哈希表大小的两倍。
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 哈希表Key
 	 * @param type TypeReference的泛型对象
 	 * @return 以Map形式返回哈希表的域和域的值。若 key 不存在，返回空Map。
@@ -488,9 +487,9 @@ public interface RedisClient {
 	 * 若域 field 已经存在，该操作无效。<br>
 	 * 如果 key 不存在，一个新哈希表被创建并执行 HSETNX 命令。<br>
 	 * 
-	 * @param key
-	 * @param field
-	 * @param value
+	 * @param key the key
+	 * @param field the field
+	 * @param value the value
 	 * @return 设置成功，返回 true 。如果给定域已经存在且没有操作被执行，返回 false 。
 	 */
 	boolean hsetByNX(String key, String field, Object value);
@@ -500,8 +499,8 @@ public interface RedisClient {
 	 * 若域 field 已经存在，该操作无效。<br>
 	 * 如果 key 不存在，一个新哈希表被创建并执行 HSETNX 命令。<br>
 	 * 在Cluster模式下，即使存在一个给定的field，其他field也将写入成功.
-	 * @param key
-	 * @param map
+	 * @param key the key
+	 * @param map the map
 	 * @return 设置成功，返回 true 。如果给定域已经存在且没有操作被执行，返回 false 。
 	 */
 	Map<String, Boolean> hsetByNX(String key, Map<String, Object> map);
@@ -526,7 +525,7 @@ public interface RedisClient {
 	 * 当存在多个给定 key 时， BLPOP/BRPOP 按给定 key 参数排列的先后顺序，依次检查各个列表。<br>
 	 * 假设现在有 job 、 command 和 request 三个列表，其中 job 不存在， command 和 request 都持有非空列表。考虑以下命令：<br>
 	 * BLPOP job command request 0<br>
-	 * BLPOP 保证返回的元素来自 command ，因为它是按”查找 job -> 查找 command -> 查找 request “这样的顺序，第一个找到的非空列表。<br>
+	 * BLPOP 保证返回的元素来自 command ，因为它是按 "查找 job -&gt; 查找 command -&gt; 查找 request" 这样的顺序，第一个找到的非空列表。<br>
 	 * 
 	 * Timeout默认为0
 	 * 
@@ -534,13 +533,13 @@ public interface RedisClient {
 	 * @param pop 读取方式
 	 * @return 如果列表为空，返回一个 null 。否则，返回被弹出元素的值。
 	 * 
-	 * @see #LPOP
-	 * @see #RPOP
+	 * @see Mark#LPOP
+	 * @see Mark#RPOP
 	 */
 	String bpop(String key, Mark pop);
 	
 	/**
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 列表Key
 	 * @param pop 读取方式
 	 * @param type TypeReference的泛型对象
@@ -562,7 +561,7 @@ public interface RedisClient {
 	String bpop(String key, int timeout, Mark pop);
 	
 	/**
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 列表Key
 	 * @param timeout 超时时间(秒)
 	 * @param pop 读取方式
@@ -582,7 +581,7 @@ public interface RedisClient {
 	Map<String, String> bpop(String[] keys, Mark pop);
 	
 	/**
-	 * 
+	 * @param <T> TypeReference type
 	 * @param keys 列表Key的数组
 	 * @param pop 读取方式
 	 * @param type TypeReference的泛型对象
@@ -604,7 +603,7 @@ public interface RedisClient {
 	Map<String, String> bpop(String[] keys, int timeout, Mark pop);
 	
 	/**
-	 * 
+	 * @param <T> TypeReference type
 	 * @param keys 列表Key的数组
 	 * @param timeout 超时时间(秒)
 	 * @param pop 读取方式
@@ -621,44 +620,16 @@ public interface RedisClient {
 	 * 超时参数 timeout 接受一个以秒为单位的数字作为值。超时参数设为 0 表示阻塞时间可以无限期延长(block indefinitely) 。<br>
 	 * Timeout默认为0
 	 * 
-	 * @param source
-	 * @param destination
-	 * @return
+	 * @param source the source
+	 * @param destination the destination
+	 * @return String
 	 */
 	String brpoplpush(String source, String destination);
 	
-	/**
-	 * 
-	 * @param source
-	 * @param destination
-	 * @param type
-	 * @return
-	 * 
-	 * @see #brpoplpush(String, String)
-	 */
 	<T> T brpoplpush(String source, String destination, TypeReference<T> type);
 	
-	/**
-	 * 
-	 * @param source
-	 * @param destination
-	 * @param timeout
-	 * @return
-	 * 
-	 * @see #brpoplpush(String, String)
-	 */
 	String brpoplpush(String source, String destination, int timeout);
 	
-	/**
-	 * 
-	 * @param source 源列表
-	 * @param destination 目标列表
-	 * @param timeout 超时时间(秒)
-	 * @param type
-	 * @return
-	 * 
-	 * @see #brpoplpush(String, String)
-	 */
 	<T> T brpoplpush(String source, String destination, int timeout, TypeReference<T> type);
 	
 	/**
@@ -667,21 +638,12 @@ public interface RedisClient {
 	 * 你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。<br>
 	 * 如果 key 不是列表类型，返回一个错误。<br>
 	 * 
-	 * @param key
-	 * @param index
-	 * @return
+	 * @param key the key
+	 * @param index the index
+	 * @return list对应index下标的数据
 	 */
 	String lindex(String key, int index);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param index
-	 * @param type
-	 * @return
-	 * 
-	 * @see #lindex(String, int)
-	 */
 	<T> T lindex(String key, int index, TypeReference<T> type);
 	
 	/**
@@ -691,21 +653,14 @@ public interface RedisClient {
 	 * 当 key 不存在时， key 被视为空列表，不执行任何操作。<br>
 	 * 如果 key 不是列表类型，返回一个错误。<br>
 	 * 
-	 * @param key
-	 * @param pivot
-	 * @param value
-	 * @param position
-	 * @return 
+	 * @param key the key
+	 * @param pivot the pivot
+	 * @param value the value
+	 * @param position the position
+	 * @return long
 	 */
 	long linsert(String key, String pivot, String value, Mark position);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param pivot
-	 * @param value
-	 * @param position
-	 */
 	long linsert(String key, String pivot, Object value, Mark position);
 	
 	/**
@@ -714,99 +669,33 @@ public interface RedisClient {
 	 * 如果 key 不存在，则 key 被解释为一个空列表，返回 0 . <br>
 	 * 如果 key 不是列表类型，返回一个错误。
 	 * 
-	 * @param key
-	 * @return
+	 * @param key the key
+	 * @return list长度
 	 */
 	long llen(String key);
 	
 	/**
-	 * 移除并返回列表 key 的头元素。
-	 * 
-	 * @param key
-	 * @return
+	 * 移除并返回列表 key 的头/尾元素。
+	 * @param key the key
+	 * @param pop the pop
+	 * @return 头或尾的元素
 	 */
 	String pop(String key, Mark pop);
 	
-	/**
-	 * 移除并返回列表 key 的{count}个元素。<br>
-	 * {count < 0}时使用RPOP，{count >= 0}时使用LPOP
-	 * 
-	 * @param key 列表Key
-	 * @param count 数量
-	 * @param pop 标记位
-	 * @return
-	 */
 	List<String> pop(String key, int count);
 	
-	/**
-	 * 移除并返回列表 key 的头元素。
-	 * 
-	 * @param key 列表Key
-	 * @param type 泛型对象
-	 * @return
-	 */
 	<T> T pop(String key, Mark pop, TypeReference<T> type);
 	
-	/**
-	 * 移除并返回列表 key 的{count}个元素。<br>
-	 * {count < 0}时使用RPOP，{count >= 0}时使用LPOP
-	 * 
-	 * @param key 列表Key
-	 * @param count 数量
-	 * @param pop 标记位
-	 * @param type 泛型对象
-	 * @return
-	 */
 	<T> List<T> pop(String key, int count, TypeReference<T> type);
 	
-	/**
-	 * LPUSH/RPUSH key value [value ...] <br>
-	 * 将一个或多个值 value 插入到列表 key 的表头 <br>
-	 * 如果有多个 value 值，那么各个 value 值按从左到右的顺序依次插入到表头：  <br>
-	 * 比如说，对空列表 mylist 执行命令 LPUSH/RPUSH mylist a b c ，列表的值将是 c b a ，这等同于原子性地执行 LPUSH/RPUSH mylist a 、 
-	 * LPUSH/RPUSH mylist b 和 LPUSH mylist c 三个命令。
-	 * 如果 key 不存在，一个空列表会被创建并执行 LPUSH/RPUSH 操作。当 key 存在但不是列表类型时，返回一个错误。 <br>
-	 * 
-	 * @param key
-	 * @param values
-	 * @param push
-	 * @return 
-	 */
 	boolean push(String key, String[] values, Mark push);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param values
-	 * @param push
-	 */
 	boolean push(String key, String value, Mark push);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param values
-	 * @param push
-	 * 
-	 * @see #push(String, String[], Mark)
-	 */
 	boolean push(String key, Object[] values, Mark push);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param value
-	 * @param push
-	 */
 	boolean push(String key, Object value, Mark push);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param values
-	 * @param push
-	 * @return
-	 */
 	boolean push(String key, List<Object> values, Mark push);
 	
 	/**
@@ -847,36 +736,12 @@ public interface RedisClient {
 	 */
 	Map<String, Boolean> push(String key, Map<String, Object> scanMap, Mark push, Mark policy);
 	
-	/**
-	 * 将一个或多个值插入到已存在的列表头部/尾部，列表不存在时操作无效.
-	 * @param key
-	 * @param values
-	 * @param push
-	 */
 	long pushx(String key, String[] values, Mark push);
 	
-	/**
-	 * 将一个或多个值插入到已存在的列表头部/尾部，列表不存在时操作无效.
-	 * @param key
-	 * @param value
-	 * @param push
-	 */
 	long pushx(String key, String value, Mark push);
 	
-	/**
-	 * 将一个或多个值插入到已存在的列表头部/尾部，列表不存在时操作无效.
-	 * @param key
-	 * @param values
-	 * @param push
-	 */
 	long pushx(String key, Object[] values, Mark push);
 	
-	/**
-	 * 将一个或多个值插入到已存在的列表头部/尾部，列表不存在时操作无效.
-	 * @param key
-	 * @param value
-	 * @param push
-	 */
 	long pushx(String key, Object value, Mark push);
 	
 	/**
@@ -887,151 +752,84 @@ public interface RedisClient {
 	 * @param key 列表Key
 	 * @param start 起始位置
 	 * @param end 结束位置
-	 * @return
+	 * @return 元素集合
 	 */
 	List<String> lrange(String key, int start, int end);
 	
-	/**
-	 * 返回列表 key 中0到count之间的所有的元素。
-	 * 
-	 * @param key 列表Key
-	 * @param count 数量
-	 * @return
-	 */
 	List<String> lrange(String key, int count);
 	
-	/**
-	 * 返回列表 key 中所有的元素
-	 * 
-	 * @param key 列表Key
-	 * @return
-	 */
 	List<String> lrange(String key);
 	
 	/**
 	 * 返回列表 key 中指定区间内的元素，区间以偏移量 start 和 end 指定。<br>
 	 * 下标(index)参数 start 和 stop 都以 0 为底，也就是说，以 0 表示列表的第一个元素，以 1 表示列表的第二个元素，以此类推。<br>
 	 * 你也可以使用负数下标，以 -1 表示列表的最后一个元素， -2 表示列表的倒数第二个元素，以此类推。<br>
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 列表Key
 	 * @param start 起始位置
 	 * @param end 结束位置
 	 * @param type 泛型对象
-	 * @return
+	 * @return 元素集合
 	 * 
 	 */
 	<T> List<T> lrange(String key, int start, int end, TypeReference<T> type);
 	
 	/**
 	 * 返回列表 key 中0到count之间的所有的元素。
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 列表Key
 	 * @param count 数量
 	 * @param type 泛型对象
-	 * @return
+	 * @return 元素集合
 	 */
 	<T> List<T> lrange(String key, int count, TypeReference<T> type);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param type
-	 * @return
-	 */
 	<T> List<T> lrange(String key, TypeReference<T> type);
 	
-	/**
-	 * 列表队列的读取方法
-	 * 
-	 * @param key
-	 * @param count
-	 * @return
-	 */
 	List<String> lrangeltrim(String key, int count);
 	
-	/**
-	 * 列表队列的读取方法
-	 * @param key
-	 * @param count
-	 * @param type
-	 * @return
-	 */
 	<T> List<T> lrangeltrim(String key, int count, TypeReference<T> type);
 	
 	/**
 	 * 根据参数 count 的值，移除列表中与参数 value 相等的元素。<br>
 	 * count 的值可以是以下几种：<br>
-	 * count > 0 : 从表头开始向表尾搜索，移除与 value 相等的元素，数量为 count 。<br>
-	 * count < 0 : 从表尾开始向表头搜索，移除与 value 相等的元素，数量为 count 的绝对值。<br>
+	 * count &gt; 0 : 从表头开始向表尾搜索，移除与 value 相等的元素，数量为 count 。<br>
+	 * count &lt; 0 : 从表尾开始向表头搜索，移除与 value 相等的元素，数量为 count 的绝对值。<br>
 	 * count = 0 : 移除表中所有与 value 相等的值。<br>
 	 * 
-	 * @param key
-	 * @param count
-	 * @param value
-	 * @return
+	 * @param key the key
+	 * @param count the count
+	 * @param value the value
+	 * @return delete size
 	 */
 	long lrem(String key, int count, String value);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 * 
-	 * @see #lrem(String, int, String)
-	 */
 	long lrem(String key, String value);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param count
-	 * @param value
-	 * @return
-	 * 
-	 * @see #lrem(String, int, String)
-	 */
 	long lrem(String key, int count, Object value);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param value
-	 * @return
-	 * 
-	 * @see #lrem(String, int, String)
-	 */
 	long lrem(String key, Object value);
 	
 	/**
 	 * 将列表 key 下标为 index 的元素的值设置为 value 。<br>
 	 * 当 index 参数超出范围，或对一个空列表( key 不存在)进行 LSET 时，返回一个错误。<br>
 	 * 
-	 * @param key
-	 * @param index
-	 * @param value
-	 * @return 
+	 * @param key the key
+	 * @param index the index
+	 * @param value the value
+	 * @return set value successful
 	 */
 	boolean lset(String key, int index, String value);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param index
-	 * @param value
-	 * @param type
-	 * 
-	 * @see #lset(String, int, String)
-	 */
 	boolean lset(String key, int index, Object value);
 	
 	/**
 	 * 对一个列表进行修剪(trim)，就是说，让列表只保留指定区间内的元素，不在指定区间之内的元素都将被删除。
 	 * 
-	 * @param key
-	 * @param start
-	 * @param end
-	 * @return 
+	 * @param key the key
+	 * @param start the start
+	 * @param end the end
+	 * @return trim successful
 	 */
 	boolean ltrim(String key, int start, int end);
 	
@@ -1063,26 +861,12 @@ public interface RedisClient {
 	 * @param key 集合Key
 	 * @param oldMembers 旧的元素
 	 * @param newMembers 新的元素
-	 * @return
+	 * @return replace size
 	 */
 	long sreplace(String key, String[] oldMembers, String[] newMembers);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param oldMembers
-	 * @param newMembers
-	 * @return
-	 */
 	long sreplace(String key, Object[] oldMembers, Object[] newMembers);
 	
-	/**
-	 * 
-	 * @param key
-	 * @param oldMembers
-	 * @param newMembers
-	 * @return
-	 */
 	long sreplace(String key, Collection<Object> oldMembers, Collection<Object> newMembers);
 	
 	/**
@@ -1118,7 +902,7 @@ public interface RedisClient {
 	
 	/**
 	 * 返回一个集合的全部成员，该集合是所有给定集合之间的差集。不存在的 key 被视为空集。
-	 * 
+	 * @param <T> TypeReference type
 	 * @param keys 集合Key动态数组
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 一个包含差集成员的列表。
@@ -1127,7 +911,7 @@ public interface RedisClient {
 	
 	/**
 	 * 返回一个集合的全部成员，该集合是所有给定集合之间的差集。不存在的 key 被视为空集。
-	 * 
+	 * @param <T> TypeReference type
 	 * @param keys 集合Key动态数组
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 一个包含差集成员的列表。
@@ -1158,6 +942,7 @@ public interface RedisClient {
 	 * 返回一个集合的全部成员，该集合是所有给定集合的交集。<br>
 	 * 不存在的 key 被视为空集。<br>
 	 * 当给定集合当中有一个空集时，结果也为空集(根据集合运算定律)。<br>
+	 * @param <T> TypeReference type
 	 * @param keys 集合Key数组
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 交集成员的列表。
@@ -1168,6 +953,7 @@ public interface RedisClient {
 	 * 返回一个集合的全部成员，该集合是所有给定集合的交集。<br>
 	 * 不存在的 key 被视为空集。<br>
 	 * 当给定集合当中有一个空集时，结果也为空集(根据集合运算定律)。<br>
+	 * @param <T> TypeReference type
 	 * @param keys 集合Key列表
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 交集成员的列表。
@@ -1213,7 +999,7 @@ public interface RedisClient {
 	
 	/**
 	 * 返回集合 key 中的所有成员。不存在的 key 被视为空集合。
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 集合Key
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 集合中的所有成员。
@@ -1247,7 +1033,7 @@ public interface RedisClient {
 	 * 
 	 * @param source 源集合Key
 	 * @param destination 目标集合Key
-	 * @param members 元素对象
+	 * @param member 元素对象
 	 * @return 如果 member 元素被成功移除，返回 true 。<br>
 	 * 如果 member 元素不是 source 集合的成员，并且没有任何操作对 destination 集合执行，那么返回 false 。
 	 */
@@ -1276,7 +1062,7 @@ public interface RedisClient {
 	/**
 	 * 移除并返回集合中的一个随机元素。<br>
 	 * 如果只想获取一个随机元素，但不想该元素从集合中被移除的话，可以使用 SRANDMEMBER 命令。<br>
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 集合Key
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 被移除的随机元素。当 key 不存在或 key 是空集时，返回 nil 。
@@ -1296,7 +1082,7 @@ public interface RedisClient {
 	/**
 	 * 移除并返回集合中的{count}个随机元素。<br>
 	 * 如果只想获取一个随机元素，但不想该元素从集合中被移除的话，可以使用 SRANDMEMBER 命令。<br>
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 集合Key
 	 * @param count 获取元素的数量
 	 * @param type 需要转换的TypeReference泛型类型
@@ -1314,7 +1100,7 @@ public interface RedisClient {
 	
 	/**
 	 * 返回集合中的一个随机元素
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 集合Key
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 返回一个元素；如果集合为空，返回 null
@@ -1334,7 +1120,7 @@ public interface RedisClient {
 	/**
 	 * 如果 count 为正数，且小于集合基数，那么命令返回一个包含 count 个元素的数组，数组中的元素各不相同。如果 count 大于等于集合基数，那么返回整个集合。<br>
 	 * 如果 count 为负数，那么命令返回一个数组，数组中的元素可能会重复出现多次，而数组的长度为 count 的绝对值。<br>
-	 * 
+	 * @param <T> TypeReference type
 	 * @param key 集合Key
 	 * @param count 获取元素的数量
 	 * @param type 需要转换的TypeReference泛型类型
@@ -1347,7 +1133,7 @@ public interface RedisClient {
 	 * 
 	 * @param key 集合Key
 	 * @param members 元素值动态数组
-	 * @return
+	 * @return rem member size
 	 */
 	long srem(String key, String... members);
 	
@@ -1356,7 +1142,7 @@ public interface RedisClient {
 	 * 
 	 * @param key 集合Key
 	 * @param members 元素对象动态数组
-	 * @return
+	 * @return rem member size
 	 */
 	long srem(String key, Object... members);
 	
@@ -1371,6 +1157,7 @@ public interface RedisClient {
 	/**
 	 * 返回一个集合的全部成员，该集合是所有给定集合的并集。<br>
 	 * 不存在的 key 被视为空集。<br>
+	 * @param <T> TypeReference type
 	 * @param keys 集合Key数组
 	 * @param type 需要转换的TypeReference泛型类型
 	 * @return 并集成员的列表。
@@ -1395,9 +1182,9 @@ public interface RedisClient {
 	 * 如果 key 不存在，则创建一个空的有序集并执行 ZADD 操作。<br>
 	 * 当 key 存在但不是有序集类型时，返回一个错误。
 	 * 
-	 * @param key
-	 * @param score
-	 * @param member
+	 * @param key the key
+	 * @param score the score
+	 * @param member the member
 	 * @return 被成功添加的新成员的数量，不包括那些被更新的、已经存在的成员。
 	 */
 	long zadd(String key, double score, String member);
@@ -1406,20 +1193,8 @@ public interface RedisClient {
 	
 	long zadd(String key, Map<Object, Double> values);
 	
-	/**
-	 * key存在的时候，返回有序集的元素个数，否则返回0.
-	 * @param key
-	 * @return
-	 */
 	long zcard(String key);
 	
-	/**
-	 * 返回有序集 key 中， score 值在 min 和 max 之间(默认包括 score 值等于 min 或 max )的成员的数量。
-	 * @param key
-	 * @param min
-	 * @param max
-	 * @return score 值在 min 和 max 之间的成员的数量。
-	 */
 	long zcount(String key, double min, double max);
 	
 	long zcount(String key);
@@ -1435,9 +1210,9 @@ public interface RedisClient {
 	 * 当 key 不是有序集类型时，返回一个错误。<br>
 	 * score 值可以是整数值或双精度浮点数。<br>
 	 * 
-	 * @param key
-	 * @param increment
-	 * @param member
+	 * @param key the key
+	 * @param increment the increment
+	 * @param member the member
 	 * @return member 成员的新 score 值
 	 */
 	double zincrby(String key, double increment, String member);
@@ -1452,12 +1227,12 @@ public interface RedisClient {
 	 * 下标参数 start 和 stop 都以 0 为底，也就是说，以 0 表示有序集第一个成员，以 1 表示有序集第二个成员，以此类推。<br>
 	 * 你也可以使用负数下标，以 -1 表示最后一个成员， -2 表示倒数第二个成员，以此类推。<br>
 	 * 超出范围的下标并不会引起错误。<br>
-	 * 比如说，当 start 的值比有序集的最大下标还要大，或是 start > stop 时， ZRANGE 命令只是简单地返回一个空列表。<br>
+	 * 比如说，当 start 的值比有序集的最大下标还要大，或是 start &gt; stop 时， ZRANGE 命令只是简单地返回一个空列表。<br>
 	 * 另一方面，假如 stop 参数的值比有序集的最大下标还要大，那么 Redis 将 stop 当作最大下标来处理。<br>
 	 * 
-	 * @param key
-	 * @param start
-	 * @param end
+	 * @param key the key
+	 * @param start the start
+	 * @param end the end
 	 * @return 指定区间内，有序集成员的列表。
 	 */
 	Set<String> zrange(String key, long start, long end);
@@ -1505,27 +1280,11 @@ public interface RedisClient {
 	<T> Map<T, Double> zrangeByScoreWithScores(String key, double min, double max, int offset, int count, TypeReference<T> type);
 	
 	<T> Map<T, Double> zrangeByScoreWithScores(String key, String min, String max, int offset, int count, TypeReference<T> type);
-	
-	/**
-	 * 返回有序集 key 中成员 member 的排名。其中有序集成员按 score 值递增(从小到大)顺序排列。<br>
-	 * 排名以 0 为底，也就是说， score 值最小的成员排名为 0 。<br>
-	 * 
-	 * @param key
-	 * @param member
-	 * @return
-	 */
+
 	long zrank(String key, String member);
 	
 	<T> long zrank(String key, T member);
 	
-	/**
-	 * 移除有序集 key 中的一个或多个成员，不存在的成员将被忽略。<br>
-	 * 当 key 存在但不是有序集类型时，返回一个错误。<br>
-	 * 
-	 * @param key
-	 * @param members
-	 * @return 被成功移除的成员的数量，不包括被忽略的成员。
-	 */
 	long zrem(String key, String... members);
 	
 	<T> long zrem(String key, @SuppressWarnings("unchecked") T... members);
@@ -1538,21 +1297,13 @@ public interface RedisClient {
 	 * 下标参数 start 和 stop 都以 0 为底，也就是说，以 0 表示有序集第一个成员，以 1 表示有序集第二个成员，以此类推。<br>
 	 * 你也可以使用负数下标，以 -1 表示最后一个成员， -2 表示倒数第二个成员，以此类推。<br>
 	 * 
-	 * @param key
-	 * @param start
-	 * @param end
+	 * @param key the key
+	 * @param start the start
+	 * @param end the end
 	 * @return 被移除成员的数量。
 	 */
 	long zremrangeByRank(String key, long start, long end);
 	
-	/**
-	 * 移除有序集 key 中，所有 score 值介于 min 和 max 之间(包括等于 min 或 max )的成员。
-	 * 
-	 * @param key
-	 * @param min
-	 * @param max
-	 * @return 被移除成员的数量。
-	 */
 	long zremrangeByScore(String key, double min, double max);
 	
 	long zremrangeByScore(String key, String start, String end);
