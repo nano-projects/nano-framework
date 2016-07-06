@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.message.MessageFactory;
 import org.nanoframework.commons.support.message.ParameterizedMessageFactory;
+import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.StringUtils;
 
 /**
@@ -133,7 +134,7 @@ public class DefaultMessageSource implements MessageSource {
         try {
             return formatter(load(locale).getProperty(code));
         } catch (final Throwable e) {
-            throw new NoSuchMessageException(code);
+            throw new NoSuchMessageException(code, locale);
         }
     }
 
@@ -142,7 +143,7 @@ public class DefaultMessageSource implements MessageSource {
         try {
             return formatter(load(locale).getProperty(code), args);
         } catch (Throwable e) {
-            throw new NoSuchMessageException(code);
+            throw new NoSuchMessageException(code, locale);
         }
     }
 
@@ -153,6 +154,7 @@ public class DefaultMessageSource implements MessageSource {
      * @return 转化后的国际化消息
      */
     protected String formatter(final String message, final Object... args) {
+        Assert.notNull(message);
         return messageFactory.newMessage(message, args).getFormattedMessage();
     }
 }
