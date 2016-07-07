@@ -18,7 +18,16 @@ package org.nanoframework.server;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.nio.file.WatchKey;
+import java.nio.file.WatchService;
+import java.util.List;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.Executors;
@@ -45,218 +54,298 @@ import org.nanoframework.server.exception.ReadXMLException;
  * @since 1.0
  */
 public class JettyCustomServer extends Server {
-	private static final Logger LOGGER = LoggerFactory.getLogger(JettyCustomServer.class);
-	
-	private static Properties CONTEXT;
-	private static String DEFAULT_RESOURCE_BASE = "./webRoot";
-	
-	static {
-		try {
-			CONTEXT = PropertiesLoader.load(ApplicationContext.MAIN_CONTEXT);
-			LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
-		} catch(LoaderException e) { }
-	}
-	
-	private static String DEFAULT_WEB_XML_PATH = DEFAULT_RESOURCE_BASE + "/WEB-INF/web.xml";
-	
-	private static String WEB_DEFAULT = DEFAULT_RESOURCE_BASE + "/WEB-INF/webdefault.xml";
-	
-	private static String DEFAULT_JETTY_CONFIG = DEFAULT_RESOURCE_BASE + "/WEB-INF/jetty.xml";
-	
-	public static JettyCustomServer DEFAULT;
-	static {
-		try {
-			DEFAULT = new JettyCustomServer();
-		} catch(Exception e) { }
-	}
-	
-	private static final String JETTY_PID_FILE = "jetty.pid";
-	
-	static final String[] CMD = new String[] {
-		"start", 
-		"stop"
-	};
-	
-	public JettyCustomServer() {
-		this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null, null, null);
-	}
-	
-	public JettyCustomServer(String mainContext) {
-		Assert.hasLength(mainContext, "未设置CONTEXT属性文件路径");
-		try {
-			CONTEXT = PropertiesLoader.load(mainContext);
-			LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
-		} catch(LoaderException e) { 
-			throw new JettyServerException(e.getMessage(), e);
-		}
-		
-		readXmlConfig(DEFAULT_JETTY_CONFIG);
-		applyHandle(CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null);
-	}
-	
-	public JettyCustomServer(String xmlConfigPath, String contextPath, String resourceBase, String webXmlPath) {
-		this(xmlConfigPath, contextPath, resourceBase, webXmlPath, null);
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(JettyCustomServer.class);
 
-	public JettyCustomServer(String xmlConfigPath, String contextPath) {
-		this(xmlConfigPath, contextPath, null, null, null);
-	}
-	
-	public JettyCustomServer(String xmlConfigPath, String contextPath, String warPath) {
-		this(xmlConfigPath, contextPath, null, null, warPath);
-	}
+    private static Properties CONTEXT;
+    private static String DEFAULT_RESOURCE_BASE = "./webRoot";
 
-	public JettyCustomServer(String xmlConfigPath, String contextPath, String resourceBase, String webXmlPath, String warPath) {
-		super();
-		if (StringUtils.isNotBlank(xmlConfigPath)) {
-			DEFAULT_JETTY_CONFIG = xmlConfigPath;
-			readXmlConfig(xmlConfigPath);
-		}
+    static {
+        try {
+            CONTEXT = PropertiesLoader.load(ApplicationContext.MAIN_CONTEXT);
+            LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
+        } catch (LoaderException e) {
+        }
+    }
 
-		if (StringUtils.isNotEmpty(warPath) && StringUtils.isNotEmpty(contextPath)) {
-			applyHandle(contextPath, warPath);
-		} else {
-			if (StringUtils.isNotEmpty(resourceBase))
-				DEFAULT_RESOURCE_BASE = resourceBase;
-			
-			if (StringUtils.isNotEmpty(webXmlPath))
-				DEFAULT_WEB_XML_PATH = webXmlPath;
-			
-			if (StringUtils.isNotBlank(contextPath)) 
-				applyHandle(contextPath, warPath);
-		}
-	}
-	
-	private void readXmlConfig(String configPath) {
-		try {
-			XmlConfiguration configuration = new XmlConfiguration(new FileInputStream(configPath));
-			configuration.configure(this);
-		} catch(Exception e) {
-			throw new ReadXMLException(e.getMessage(), e);
-		}
-	}
+    private static String DEFAULT_WEB_XML_PATH = DEFAULT_RESOURCE_BASE + "/WEB-INF/web.xml";
 
-	public void applyHandle(String contextPath, String warPath) {
-		ContextHandlerCollection handler = new ContextHandlerCollection();
-		WebAppContext webapp = new WebAppContext();
-		webapp.setContextPath(contextPath);
-		webapp.setDefaultsDescriptor(WEB_DEFAULT);
-		if (StringUtils.isEmpty(warPath)) {
-			webapp.setResourceBase(DEFAULT_RESOURCE_BASE);
-			webapp.setDescriptor(DEFAULT_WEB_XML_PATH);
-		} else 
-			webapp.setWar(warPath);
+    private static String WEB_DEFAULT = DEFAULT_RESOURCE_BASE + "/WEB-INF/webdefault.xml";
 
-		handler.addHandler(webapp);
-		super.setHandler(handler);
-	}
+    private static String DEFAULT_JETTY_CONFIG = DEFAULT_RESOURCE_BASE + "/WEB-INF/jetty.xml";
 
-	public void startServer() {
-		try {
-			writePID2File();
-			super.start();
-			LOGGER.info("Current thread: {} | Idle thread: {}", super.getThreadPool().getThreads(), super.getThreadPool().getIdleThreads());
-			super.join();
-		} catch (Throwable e) {
-			throw new JettyServerException(e.getMessage(), e);
-		}
-	}
-	
-	/**
-	 * 根据PID优雅停止进程
-	 * 
-	 * @since 1.2.15
-	 */
-	public void stopServer() {
-		try {
-			String pid = readPID();
-			if(StringUtils.isNotBlank(pid)) {
-				if(RuntimeUtil.exsitsProcess(pid)) {
-					RuntimeUtil.exitProcess(pid);
-					delPID();
-					return ;
-				} else {
-					return ;
-				}
-			}
-			
-			throw new JettyServerException("Not found jetty.pid");
-		} catch(Throwable e) {
-			throw new JettyServerException("Stop Server error: " + e.getMessage());
-		}
-	}
-	
-	public void startServerDaemon() {
-		Executors.newFixedThreadPool(1, (runnable) -> {
-			Thread jetty = new Thread(runnable);
-			jetty.setName("Jetty Server Deamon: " + System.currentTimeMillis());
-			return jetty;
-		}).execute(() -> startServer());
-	}
+    public static JettyCustomServer DEFAULT;
+    static {
+        try {
+            DEFAULT = new JettyCustomServer();
+        } catch (Exception e) {
+        }
+    }
 
-	public void writePID2File() {
-		try {
-			final String pid = RuntimeUtil.PID;
-			File file = new File(JETTY_PID_FILE);
-			if(!file.exists())
-				file.createNewFile();
-		
-			try(FileWriter writer = new FileWriter(file, false)) {
-				writer.write(pid);
-				writer.flush();
-			}
-		} catch(Throwable e) {
-			throw new JettyServerException(e.getMessage(), e);
-		}
-	}
-	
-	public String readPID() {
-		try {
-			File file = new File(JETTY_PID_FILE);
-			if(file.exists()) {
-				try (InputStream input = new FileInputStream(file)) {
-					try (Scanner scanner = new Scanner(input)) {
-						StringBuilder builder = new StringBuilder();
-						while(scanner.hasNextLine()) {
-							builder.append(scanner.nextLine());
-						}
-						
-						return builder.toString();
-					}
-				}
-			}
-			
-			return StringUtils.EMPTY;
-		} catch(Throwable e) {
-			throw new JettyServerException("Read PID file error: " + e.getMessage());
-		}
-	}
-	
-	public void delPID() {
-		try {
-			File file = new File(JETTY_PID_FILE);
-			if(file.exists()) 
-				file.delete();
-			
-		} catch(Throwable e) {
-			throw new JettyServerException("Del PID file error: " + e.getMessage());
-		}
-	}
-	
-	public final void bootstrap(String[] args) {
-		if(args.length > 0) {
-			if(StringUtils.equals(args[0], CMD[0])) {
-				startServerDaemon();
-				
-			} else if(StringUtils.equals(args[0], CMD[1])) {
-				stopServer();
-				
-			} else {
-				throw new JettyServerException("Unknown command in args list");
-				
-			}
-		} else {
-			startServerDaemon();
-		}
-	}
+    private static final String JETTY_PID_FILE = "jetty.pid";
+
+    static enum Commonds {
+        START, STOP, VERSION, HELP
+    }
+
+    public JettyCustomServer() {
+        this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null, null, null);
+    }
+
+    public JettyCustomServer(final String mainContext) {
+        Assert.hasLength(mainContext, "未设置CONTEXT属性文件路径");
+        try {
+            CONTEXT = PropertiesLoader.load(mainContext);
+            LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
+        } catch (LoaderException e) {
+            throw new JettyServerException(e.getMessage(), e);
+        }
+
+        readXmlConfig(DEFAULT_JETTY_CONFIG);
+        applyHandle(CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null);
+    }
+
+    public JettyCustomServer(final String xmlConfigPath, final String contextPath, final String resourceBase, final String webXmlPath) {
+        this(xmlConfigPath, contextPath, resourceBase, webXmlPath, null);
+    }
+
+    public JettyCustomServer(final String xmlConfigPath, final String contextPath) {
+        this(xmlConfigPath, contextPath, null, null, null);
+    }
+
+    public JettyCustomServer(final String xmlConfigPath, final String contextPath, final String warPath) {
+        this(xmlConfigPath, contextPath, null, null, warPath);
+    }
+
+    public JettyCustomServer(final String xmlConfigPath, final String contextPath, final String resourceBase, final String webXmlPath,
+            final String warPath) {
+        super();
+        if (StringUtils.isNotBlank(xmlConfigPath)) {
+            DEFAULT_JETTY_CONFIG = xmlConfigPath;
+            readXmlConfig(xmlConfigPath);
+        }
+
+        if (StringUtils.isNotEmpty(warPath) && StringUtils.isNotEmpty(contextPath)) {
+            applyHandle(contextPath, warPath);
+        } else {
+            if (StringUtils.isNotEmpty(resourceBase)) {
+                DEFAULT_RESOURCE_BASE = resourceBase;
+            }
+
+            if (StringUtils.isNotEmpty(webXmlPath)) {
+                DEFAULT_WEB_XML_PATH = webXmlPath;
+            }
+
+            if (StringUtils.isNotBlank(contextPath)) {
+                applyHandle(contextPath, warPath);
+            }
+        }
+    }
+
+    private void readXmlConfig(final String configPath) {
+        try {
+            final XmlConfiguration configuration = new XmlConfiguration(new FileInputStream(configPath));
+            configuration.configure(this);
+        } catch (final Throwable e) {
+            throw new ReadXMLException(e.getMessage(), e);
+        }
+    }
+
+    public void applyHandle(final String contextPath, final String warPath) {
+        final ContextHandlerCollection handler = new ContextHandlerCollection();
+        final WebAppContext webapp = new WebAppContext();
+        webapp.setContextPath(contextPath);
+        webapp.setDefaultsDescriptor(WEB_DEFAULT);
+        if (StringUtils.isEmpty(warPath)) {
+            webapp.setResourceBase(DEFAULT_RESOURCE_BASE);
+            webapp.setDescriptor(DEFAULT_WEB_XML_PATH);
+        } else {
+            webapp.setWar(warPath);
+        }
+
+        handler.addHandler(webapp);
+        super.setHandler(handler);
+    }
+
+    protected void startServer() {
+        try {
+            writePid2File();
+            super.start();
+            LOGGER.info("Current thread: {} | Idle thread: {}", super.getThreadPool().getThreads(), super.getThreadPool().getIdleThreads());
+            super.join();
+        } catch (final Throwable e) {
+            if (e instanceof JettyServerException) {
+                throw (JettyServerException) e;
+            }
+
+            throw new JettyServerException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 根据PID优雅停止进程
+     * 
+     * @since 1.2.15
+     */
+    protected void stopServer() {
+        try {
+            final String pid = readPidFile();
+            if (StringUtils.isNotBlank(pid)) {
+                if (RuntimeUtil.existsProcess(pid)) {
+                    RuntimeUtil.exitProcess(pid);
+                    return;
+                }
+
+                return;
+            }
+
+            throw new JettyServerException("Not found jetty.pid");
+        } catch (Throwable e) {
+            if (e instanceof JettyServerException) {
+                throw (JettyServerException) e;
+            }
+
+            throw new JettyServerException("Stop Server error: " + e.getMessage());
+        }
+    }
+
+    protected void startServerDaemon() {
+        Executors.newFixedThreadPool(1, (runnable) -> {
+            final Thread jetty = new Thread(runnable);
+            jetty.setName("Jetty Server Deamon: " + System.currentTimeMillis());
+            return jetty;
+        }).execute(() -> startServer());
+    }
+
+    protected void writePid2File() {
+        try {
+            final String pid = RuntimeUtil.PID;
+            final File file = new File(JETTY_PID_FILE);
+            if (!file.exists()) {
+                file.createNewFile();
+                file.deleteOnExit();
+                watcherPid(file);
+            } else {
+                LOGGER.error("服务已启动或异常退出，请先删除jetty.pid文件后重试");
+                System.exit(1);
+            }
+
+            try (FileWriter writer = new FileWriter(file, false)) {
+                writer.write(pid);
+                writer.flush();
+            }
+        } catch (Throwable e) {
+            if (e instanceof JettyServerException) {
+                throw (JettyServerException) e;
+            }
+
+            throw new JettyServerException(e.getMessage(), e);
+        }
+    }
+    
+    protected void watcherPid(final File jettyPidFile) throws IOException {
+        final WatchService watcher = FileSystems.getDefault().newWatchService();
+        final Path path = Paths.get(".");
+        path.register(watcher, StandardWatchEventKinds.ENTRY_DELETE);
+        
+        Executors.newFixedThreadPool(1, (runnable) -> {
+            final Thread jetty = new Thread(runnable);
+            jetty.setName("Jetty PID Watcher: " + System.currentTimeMillis());
+            return jetty;
+        }).execute(() -> {
+            try {
+                for (;;) {
+                    final WatchKey watchKey = watcher.take();
+                    final List<WatchEvent<?>> events = watchKey.pollEvents();
+                    for(WatchEvent<?> event : events) {
+                        final String fileName = ((Path) event.context()).toFile().getAbsolutePath();
+                        if (jettyPidFile.getAbsolutePath().equals(fileName)) {
+                            LOGGER.info("jetty.pid已被删除，应用进入退出流程");
+                            System.exit(0);
+                        }
+                    }
+                    
+                    watchKey.reset();
+                }
+            } catch (final InterruptedException e) {
+                LOGGER.info("Stoped File Wather");
+            }
+        });
+    }
+
+    protected String readPidFile() {
+        try {
+            final File file = new File(JETTY_PID_FILE);
+            if (file.exists()) {
+                try (final InputStream input = new FileInputStream(file); final Scanner scanner = new Scanner(input)) {
+                    final StringBuilder builder = new StringBuilder();
+                    while (scanner.hasNextLine()) {
+                        builder.append(scanner.nextLine());
+                    }
+
+                    return builder.toString();
+                }
+            }
+
+            return StringUtils.EMPTY;
+        } catch (Throwable e) {
+            throw new JettyServerException("Read PID file error: " + e.getMessage());
+        }
+    }
+
+    public final void bootstrap(String[] args) {
+        if (args.length > 0) {
+            final Commonds cmd;
+            try {
+                cmd = Commonds.valueOf(args[0].toUpperCase());
+            } catch (final Throwable e) {
+                throw new JettyServerException("Unknown command in args list");
+            }
+            
+            switch (cmd) {
+                case START:
+                    startServerDaemon();
+                    break;
+                case STOP:
+                    stopServer();
+                    break;
+                case VERSION:
+                    version();
+                    break;
+                case HELP:
+                    usage();
+                    break;
+            }
+            
+        } else {
+            usage();
+        }
+    }
+    
+    protected void version() {
+        final StringBuilder versionBuilder = new StringBuilder();
+        versionBuilder.append("NanoFramework Version: ");
+        versionBuilder.append(ApplicationContext.FRAMEWORK_VERSION);
+        versionBuilder.append('\n');
+        
+        final String appContext = CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT, "");
+        final String appVersion = CONTEXT.getProperty(ApplicationContext.VERSION, "0.0.0");
+        versionBuilder.append("Application[");
+        versionBuilder.append(appContext);
+        versionBuilder.append("] Version: ");
+        versionBuilder.append(appVersion);
+        versionBuilder.append('\n');
+        System.out.println(versionBuilder.toString());
+    }
+    
+    protected void usage() {
+        final StringBuilder usageBuilder = new StringBuilder();
+        usageBuilder.append("Usage: \n\n");
+        usageBuilder.append("    ./bootstrap.sh command\n\n");
+        usageBuilder.append("The commands are: \n");
+        usageBuilder.append("    start        Start Application on Jetty Server\n");
+        usageBuilder.append("    stop         Stop Application\n");
+        usageBuilder.append("    version      Show the NanoFramwork and Application version\n\n");
+        usageBuilder.append("Use \"./bootstrap.sh help\" for more information about a command.\n");
+        System.out.println(usageBuilder.toString());
+    }
 }

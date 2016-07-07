@@ -102,7 +102,7 @@ public class RuntimeUtil {
      * @return 查询结果
      * @throws IOException IO异常
      */
-    public static boolean exsitsProcess(String PID) throws IOException {
+    public static boolean existsProcess(String PID) throws IOException {
 
         if (PID == null || "".equals(PID))
             return false;

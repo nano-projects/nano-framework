@@ -23,6 +23,6 @@ import org.nanoframework.server.JettyCustomServer;
  */
 public class ShiroStartup {
 	public static void main(String[] args) {
-		new Thread(() -> JettyCustomServer.DEFAULT.startServer()).start();
+	    JettyCustomServer.DEFAULT.bootstrap(args);
 	}
 }

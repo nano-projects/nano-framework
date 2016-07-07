@@ -25,9 +25,7 @@ import org.nanoframework.server.JettyCustomServer;
 public class JettyStartupTest {
 
 	public static void main(String[] args) throws Exception {
-		JettyCustomServer server = new JettyCustomServer("/jetty");
-		new Thread(() -> { server.startServer(); }).start();
-		
+		JettyCustomServer.DEFAULT.bootstrap(args);
 	}
 	
 }

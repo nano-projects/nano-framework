@@ -20,20 +20,6 @@
 	version="2.5">
 	<display-name>Nano Jetty</display-name>
 
-	<listener>
-		<listener-class>org.nanoframework.web.server.listener.ContextLoaderListener</listener-class>
-	</listener>
-
-	<filter>
-		<filter-name>connectFilter</filter-name>
-		<filter-class>org.nanoframework.web.server.filter.ConnectFilter</filter-class>
-	</filter>
-
-	<filter-mapping>
-		<filter-name>connectFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
 	<filter>
 		<filter-name>httpRequestFilter</filter-name>
 		<filter-class>org.nanoframework.web.server.filter.HttpRequestFilter</filter-class>
@@ -47,20 +33,15 @@
 	<servlet>
 		<servlet-name>Dispatcher-Servlet</servlet-name>
 		<servlet-class>org.nanoframework.web.server.servlet.DispatcherServlet</servlet-class>
-		<init-param>
-			<param-name>context</param-name>
-			<param-value>/context.properties</param-value>
-		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
 		<servlet-name>Dispatcher-Servlet</servlet-name>
-		<url-pattern>*.do</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
 
 	<welcome-file-list>
-		<welcome-file>main.html</welcome-file>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 </web-app>
