@@ -20,12 +20,26 @@ package org.nanoframework.core.context;
  * @since 1.0
  */
 public final class ApplicationContext {
-    public static final String FRAMEWORK_VERSION = "1.3.14-SNAPSHOT";
-    public static final String VERSION = "context.version";
     public static final String CONTEXT = "context";
     public static final String PLUGIN_LOADER = "pluginLoader";
     public static final String MAIN_CONTEXT = "/context.properties";
-
+    
+    /**
+     * NanoFramework版本号.
+     * @since 1.3.14
+     */
+    public static final String FRAMEWORK_VERSION = "1.3.14-SNAPSHOT";
+    /**
+     * 项目版本号属性.
+     * @since 1.3.14
+     */
+    public static final String VERSION = "context.version";
+    /**
+     * 项目运行模式属性.
+     * @since 1.3.14
+     */
+    public static final String MODE = "context.mode";
+    
     /** 应用标识，即 WebContext */
     public static final String CONTEXT_ROOT = "context.root";
     @Deprecated

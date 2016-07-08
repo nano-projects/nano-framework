@@ -83,10 +83,6 @@ public class JettyCustomServer extends Server {
 
     private static final String JETTY_PID_FILE = "jetty.pid";
 
-    static enum Commonds {
-        START, STOP, VERSION, HELP
-    }
-
     public JettyCustomServer() {
         this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null, null, null);
     }
@@ -220,14 +216,19 @@ public class JettyCustomServer extends Server {
         try {
             final String pid = RuntimeUtil.PID;
             final File file = new File(JETTY_PID_FILE);
-            if (!file.exists()) {
-                file.createNewFile();
-                file.deleteOnExit();
-                watcherPid(file);
-            } else {
-                LOGGER.error("服务已启动或异常退出，请先删除jetty.pid文件后重试");
-                System.exit(1);
+            final Mode mode = mode(false);
+            if (file.exists()) {
+                if (mode == Mode.PROD) {
+                    LOGGER.error("服务已启动或异常退出，请先删除jetty.pid文件后重试");
+                    System.exit(1);
+                } else {
+                    file.delete();
+                }
             }
+            
+            file.createNewFile();
+            file.deleteOnExit();
+            watcherPid(file);
 
             try (FileWriter writer = new FileWriter(file, false)) {
                 writer.write(pid);
@@ -294,13 +295,8 @@ public class JettyCustomServer extends Server {
 
     public final void bootstrap(String[] args) {
         if (args.length > 0) {
-            final Commonds cmd;
-            try {
-                cmd = Commonds.valueOf(args[0].toUpperCase());
-            } catch (final Throwable e) {
-                throw new JettyServerException("Unknown command in args list");
-            }
-            
+            final Mode mode = mode(true);
+            final Commands cmd = cmd(args, mode);
             switch (cmd) {
                 case START:
                     startServerDaemon();
@@ -319,6 +315,47 @@ public class JettyCustomServer extends Server {
         } else {
             usage();
         }
+    }
+    
+    protected Commands cmd(final String[] args, final Mode mode) {
+        Commands cmd;
+        try {
+            cmd = Commands.valueOf(args[0].toUpperCase());
+        } catch (final Throwable e) {
+            if (mode == Mode.DEV) {
+                cmd = Commands.START;
+            } else {
+                throw new JettyServerException("Unknown command in args list");
+            }
+        }
+        
+        return cmd;
+    }
+    
+    protected Mode mode(final boolean output) {
+        Mode mode;
+        try {
+            mode = Mode.valueOf(CONTEXT.getProperty(ApplicationContext.MODE, Mode.PROD.name()));
+            if (output) {
+                switch (mode) {
+                    case DEV:
+                        System.out.println("Please set <context.mode> in context.properties to set 'PROD' mode.");
+                        break;
+                    case PROD:
+                        System.out.println("Please set <context.mode> in context.properties to set 'DEV' mode.");
+                        break;
+                }
+            }
+        } catch (final Throwable e) {
+            if (output) {
+                System.out.println("Unknown Application Mode, setting default Mode: 'PROD'.");
+                System.out.println("Please set <context.mode> in context.properties to set 'DEV' or 'PROD' mode.");
+            }
+            
+            mode = Mode.PROD;
+        }
+        
+        return mode;
     }
     
     protected void version() {
