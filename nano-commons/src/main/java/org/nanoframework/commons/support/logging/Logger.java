@@ -22,51 +22,54 @@ package org.nanoframework.commons.support.logging;
  */
 public interface Logger {
 
-    boolean isDebugEnabled();
+    boolean isErrorEnabled();
+    
+    void error(String message, Throwable e);
 
-    void error(String msg, Throwable e);
+    void error(String message);
 
-    void error(String msg);
+    void error(String message, Object... args);
 
-    boolean isInfoEnabled();
-
-    void info(String msg);
-
-    void debug(String msg);
-
-    void debug(String msg, Throwable e);
+    void error(Throwable cause);
 
     boolean isWarnEnabled();
 
-    void warn(String msg);
+    void warn(String message);
 
-    void warn(String msg, Throwable e);
+    void warn(String message, Throwable e);
 
-    int getErrorCount();
+    void warn(String message, Object... args);
 
-    int getWarnCount();
+    void warn(Throwable cause);
 
-    int getInfoCount();
+    boolean isInfoEnabled();
 
-    int getDebugCount();
+    void info(String message);
 
-    void resetStat();
+    void info(String message, Object... args);
 
-    void warn(String paramString, Object... paramArrayOfObject);
+    void info(Throwable cause);
 
-    void warn(Throwable paramThrowable);
+    void info(String message, Throwable cause);
 
-    void info(String paramString, Object... paramArrayOfObject);
+    boolean isDebugEnabled();
+    
+    void debug(String message);
 
-    void info(Throwable paramThrowable);
+    void debug(String message, Throwable e);
 
-    void info(String paramString, Throwable paramThrowable);
+    void debug(String message, Object... args);
 
-    void debug(String paramString, Object... paramArrayOfObject);
+    void debug(Throwable cause);
+    
+    boolean isTraceEnabled();
+    
+    void trace(String message);
+    
+    void trace(String message, Object... args);
+    
+    void trace(Throwable cause);
+    
+    void trace(String message, Throwable cause);
 
-    void debug(Throwable paramThrowable);
-
-    void error(String paramString, Object... paramArrayOfObject);
-
-    void error(Throwable paramThrowable);
 }

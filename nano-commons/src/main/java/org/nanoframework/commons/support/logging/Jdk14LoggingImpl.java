@@ -18,155 +18,167 @@ package org.nanoframework.commons.support.logging;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.nanoframework.commons.util.Assert;
+
 /**
  *
  * @author yanghe
  * @since 1.0
  */
-public class Jdk14LoggingImpl implements org.nanoframework.commons.support.logging.Logger {
+public class Jdk14LoggingImpl extends AbstractAnalysisLogger implements org.nanoframework.commons.support.logging.Logger {
+    private Logger logger;
 
-    private Logger log;
-
-    private int errorCount;
-    private int warnCount;
-    private int infoCount;
-    private int debugCount;
-
-    private String loggerName;
-
-    public Jdk14LoggingImpl(String loggerName) {
-        this.loggerName = loggerName;
-        log = Logger.getLogger(loggerName);
-    }
-
-    public boolean isDebugEnabled() {
-        return log.isLoggable(Level.FINE);
-    }
-
-    public void error(String s, Throwable e) {
-        log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), s, e);
-        errorCount++;
-    }
-
-    public void error(String s) {
-        log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), s);
-        errorCount++;
-    }
-
-    public void debug(String s) {
-        debugCount++;
-        log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), s);
-    }
-
-    public void debug(String s, Throwable e) {
-        debugCount++;
-        log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), s, e);
-    }
-
-    public void warn(String s) {
-        log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), s);
-        warnCount++;
+    public Jdk14LoggingImpl(final String loggerName) {
+        Assert.hasText(loggerName);
+        logger = Logger.getLogger(loggerName);
+        setLoggerName(loggerName);
     }
 
     @Override
-    public void warn(String s, Throwable e) {
-        log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), s, e);
-        warnCount++;
+    public boolean isErrorEnabled() {
+        return logger.isLoggable(Level.SEVERE);
     }
 
     @Override
-    public int getWarnCount() {
-        return warnCount;
-    }
-
-    public int getErrorCount() {
-        return errorCount;
+    public void error(final String message, final Throwable cause) {
+        logger.logp(Level.SEVERE, getLoggerName(), methodName(), message, cause);
+        incrementError();
     }
 
     @Override
-    public void resetStat() {
-        errorCount = 0;
-        warnCount = 0;
-        infoCount = 0;
-        debugCount = 0;
+    public void error(final String message) {
+        logger.logp(Level.SEVERE, getLoggerName(), methodName(), message);
+        incrementError();
+    }
+    
+    @Override
+    public void error(final String message, final Object... args) {
+        logger.logp(Level.SEVERE, getLoggerName(), methodName(), message, args);
+        incrementError();
     }
 
     @Override
-    public boolean isInfoEnabled() {
-        return log.isLoggable(Level.INFO);
+    public void error(final Throwable cause) {
+        logger.logp(Level.SEVERE, getLoggerName(), methodName(), cause.getMessage(), cause);
+        incrementError();
     }
-
-    @Override
-    public void info(String msg) {
-        log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), msg);
-        infoCount++;
-    }
-
-    @Override
-    public int getInfoCount() {
-        return infoCount;
-    }
-
+    
     @Override
     public boolean isWarnEnabled() {
-        return log.isLoggable(Level.WARNING);
+        return logger.isLoggable(Level.WARNING);
     }
-
-    public int getDebugCount() {
-        return debugCount;
+    
+    @Override
+    public void warn(final String message, final Object... args) {
+        logger.logp(Level.WARNING, getLoggerName(), methodName(), message, args);
+        incrementWarn();
     }
 
     @Override
-    public void warn(String paramString, Object... paramArrayOfObject) {
-        log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
-        warnCount++;
+    public void warn(final Throwable cause) {
+        logger.logp(Level.WARNING, getLoggerName(), methodName(), cause.getMessage(), cause);
+        incrementWarn();
+    }
+    
+    public void warn(final String message) {
+        logger.logp(Level.WARNING, getLoggerName(), methodName(), message);
+        incrementWarn();
     }
 
     @Override
-    public void warn(Throwable paramThrowable) {
-        log.logp(Level.WARNING, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
-        warnCount++;
+    public void warn(final String message, final Throwable cause) {
+        logger.logp(Level.WARNING, getLoggerName(), methodName(), message, cause);
+        incrementWarn();
+    }
+    
+    @Override
+    public boolean isInfoEnabled() {
+        return logger.isLoggable(Level.INFO);
     }
 
     @Override
-    public void info(String paramString, Object... paramArrayOfObject) {
-        log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
-        infoCount++;
+    public void info(final String message) {
+        logger.logp(Level.INFO, getLoggerName(), methodName(), message);
+        incrementInfo();
     }
 
     @Override
-    public void info(Throwable paramThrowable) {
-        log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
-        infoCount++;
+    public void info(final String message, final Object... args) {
+        logger.logp(Level.INFO, getLoggerName(), methodName(), message, args);
+        incrementInfo();
     }
 
     @Override
-    public void info(String paramString, Throwable paramThrowable) {
-        log.logp(Level.INFO, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramThrowable);
-        infoCount++;
+    public void info(final Throwable cause) {
+        logger.logp(Level.INFO, getLoggerName(), methodName(), cause.getMessage(), cause);
+        incrementInfo();
     }
 
     @Override
-    public void debug(String paramString, Object... paramArrayOfObject) {
-        log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
-        debugCount++;
+    public void info(final String message, final Throwable cause) {
+        logger.logp(Level.INFO, getLoggerName(), methodName(), message, cause);
+        incrementInfo();
+    }
+    
+    @Override
+    public boolean isDebugEnabled() {
+        return logger.isLoggable(Level.FINE);
     }
 
     @Override
-    public void debug(Throwable paramThrowable) {
-        log.logp(Level.FINE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
-        debugCount++;
+    public void debug(final String message) {
+        logger.logp(Level.FINE, getLoggerName(), methodName(), message);
+        incrementDebug();
     }
 
     @Override
-    public void error(String paramString, Object... paramArrayOfObject) {
-        log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), paramString, paramArrayOfObject);
-        errorCount++;
+    public void debug(final String message, final Throwable cause) {
+        logger.logp(Level.FINE, getLoggerName(), methodName(), message, cause);
+        incrementDebug();
     }
 
     @Override
-    public void error(Throwable paramThrowable) {
-        log.logp(Level.SEVERE, loggerName, Thread.currentThread().getStackTrace()[1].getMethodName(), null, paramThrowable);
-        errorCount++;
+    public void debug(final String message, final Object... args) {
+        logger.logp(Level.FINE, getLoggerName(), methodName(), message, args);
+        incrementDebug();
+    }
+
+    @Override
+    public void debug(final Throwable cause) {
+        logger.logp(Level.FINE, getLoggerName(), methodName(), cause.getMessage(), cause);
+        incrementDebug();
+    }
+
+    @Override
+    public boolean isTraceEnabled() {
+        return logger.isLoggable(Level.ALL);
+    }
+
+    @Override
+    public void trace(final String message) {
+        logger.logp(Level.ALL, getLoggerName(), methodName(), message);
+        incrementTrace();
+    }
+
+    @Override
+    public void trace(final String message, final Object... args) {
+        logger.logp(Level.ALL, getLoggerName(), methodName(), message, args);
+        incrementTrace();
+    }
+
+    @Override
+    public void trace(final Throwable cause) {
+        logger.logp(Level.ALL, getLoggerName(), methodName(), cause.getMessage(), cause);
+        incrementTrace();
+    }
+
+    @Override
+    public void trace(final String message, final Throwable cause) {
+        logger.logp(Level.ALL, getLoggerName(), methodName(), message, cause);
+        incrementTrace();
+    }
+
+    protected String methodName() {
+        return Thread.currentThread().getStackTrace()[1].getMethodName();
     }
 }

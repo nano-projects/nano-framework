@@ -17,153 +17,169 @@ package org.nanoframework.commons.support.logging;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.nanoframework.commons.support.message.MessageFactory;
+import org.nanoframework.commons.support.message.ParameterizedMessageFactory;
+import org.nanoframework.commons.util.Assert;
 
 /**
  *
  * @author yanghe
  * @since 1.0
  */
-public class JakartaCommonsLoggingImpl implements org.nanoframework.commons.support.logging.Logger {
+public class JakartaCommonsLoggingImpl extends AbstractAnalysisLogger implements org.nanoframework.commons.support.logging.Logger {
+    private Log logger;
+    
+    private MessageFactory messageFactory = ParameterizedMessageFactory.INSTANCE;
 
-    private Log log;
-
-    private int errorCount;
-    private int warnCount;
-    private int infoCount;
-    private int debugCount;
-
-    /**
-     * @since 0.2.1
-     * @param log the log
-     */
-    public JakartaCommonsLoggingImpl(Log log) {
-        this.log = log;
+    public JakartaCommonsLoggingImpl(final Log logger) {
+        Assert.notNull(logger);
+        this.logger = logger;
+        setLoggerName(logger.getClass().getName());
     }
 
-    public JakartaCommonsLoggingImpl(String loggerName) {
-        log = LogFactory.getLog(loggerName);
+    public JakartaCommonsLoggingImpl(final String loggerName) {
+        Assert.hasText(loggerName);
+        logger = LogFactory.getLog(loggerName);
+        setLoggerName(loggerName);
+    }
+    
+    @Override
+    public boolean isErrorEnabled() {
+        return logger.isErrorEnabled();
     }
 
-    public boolean isDebugEnabled() {
-        return log.isDebugEnabled();
+    public void error(final String message, final Throwable cause) {
+        logger.error(message, cause);
+        incrementError();
     }
 
-    public void error(String s, Throwable e) {
-        log.error(s, e);
-        errorCount++;
+    public void error(final String message) {
+        logger.error(message);
+        incrementError();
     }
-
-    public void error(String s) {
-        log.error(s);
-        errorCount++;
-    }
-
-    public void debug(String s) {
-        debugCount++;
-        log.debug(s);
-    }
-
-    public void debug(String s, Throwable e) {
-        debugCount++;
-        log.debug(s, e);
-    }
-
-    public void warn(String s) {
-        log.warn(s);
-        warnCount++;
+    
+    @Override
+    public void error(final String message, final Object... args) {
+        logger.error(messageFactory.newMessage(message, args).getFormattedMessage());
+        incrementError();
     }
 
     @Override
-    public void warn(String s, Throwable e) {
-        log.warn(s, e);
-        warnCount++;
+    public void error(final Throwable cause) {
+        logger.error(cause.getMessage(), cause);
+        incrementError();
     }
-
-    @Override
-    public int getWarnCount() {
-        return warnCount;
-    }
-
-    public int getErrorCount() {
-        return errorCount;
-    }
-
-    @Override
-    public void resetStat() {
-        errorCount = 0;
-        warnCount = 0;
-        infoCount = 0;
-        debugCount++;
-    }
-
-    @Override
-    public boolean isInfoEnabled() {
-        return log.isInfoEnabled();
-    }
-
-    @Override
-    public void info(String msg) {
-        log.info(msg);
-        infoCount++;
-    }
-
-    @Override
-    public int getInfoCount() {
-        return infoCount;
-    }
-
+    
     @Override
     public boolean isWarnEnabled() {
-        return log.isWarnEnabled();
+        return logger.isWarnEnabled();
     }
-
-    public int getDebugCount() {
-        return debugCount;
-    }
-
-    @Override
-    public void warn(String paramString, Object... paramArrayOfObject) {
-
+    
+    public void warn(final String message) {
+        logger.warn(message);
+        incrementWarn();
     }
 
     @Override
-    public void warn(Throwable paramThrowable) {
-
+    public void warn(final String message, final Throwable cause) {
+        logger.warn(message, cause);
+        incrementWarn();
+    }
+    
+    @Override
+    public void warn(final String message, final Object... args) {
+        logger.warn(messageFactory.newMessage(message, args).getFormattedMessage());
+        incrementWarn();
     }
 
     @Override
-    public void info(String paramString, Object... paramArrayOfObject) {
-
+    public void warn(final Throwable cause) {
+        logger.warn(cause.getMessage(), cause);
+        incrementWarn();
+    }
+    
+    @Override
+    public boolean isInfoEnabled() {
+        return logger.isInfoEnabled();
+    }
+    
+    @Override
+    public void info(final String message) {
+        logger.info(message);
+        incrementInfo();
+    }
+    
+    @Override
+    public void info(final String message, final Object... args) {
+        logger.info(messageFactory.newMessage(message, args).getFormattedMessage());
+        incrementInfo();
     }
 
     @Override
-    public void info(Throwable paramThrowable) {
-
+    public void info(final Throwable cause) {
+        logger.info(cause.getMessage(), cause);
+        incrementInfo();
     }
 
     @Override
-    public void info(String paramString, Throwable paramThrowable) {
+    public void info(final String message, final Throwable cause) {
+        logger.info(message, cause);
+        incrementInfo();
+    }
+    
+    public boolean isDebugEnabled() {
+        return logger.isDebugEnabled();
+    }
 
+    public void debug(final String message) {
+        logger.debug(message);
+        incrementDebug();
+    }
+
+    public void debug(final String message, final Throwable cause) {
+        logger.debug(message, cause);
+        incrementDebug();
     }
 
     @Override
-    public void debug(String paramString, Object... paramArrayOfObject) {
-
+    public void debug(final String message, final Object... args) {
+        logger.debug(messageFactory.newMessage(message, args).getFormattedMessage());
+        incrementDebug();
     }
 
     @Override
-    public void debug(Throwable paramThrowable) {
-
+    public void debug(final Throwable cause) {
+        logger.debug(cause.getMessage(), cause);
+        incrementDebug();
     }
-
+    
     @Override
-    public void error(String paramString, Object... paramArrayOfObject) {
-
+    public boolean isTraceEnabled() {
+        return logger.isTraceEnabled();
     }
-
+    
     @Override
-    public void error(Throwable paramThrowable) {
-
+    public void trace(final String message) {
+        logger.trace(message);
+        incrementTrace();
+    }
+    
+    @Override
+    public void trace(final String message, final Object... args) {
+        logger.trace(messageFactory.newMessage(message, args).getFormattedMessage());
+        incrementTrace();
+    }
+    
+    @Override
+    public void trace(final String message, final Throwable cause) {
+        logger.trace(message, cause);
+        incrementTrace();
+    }
+    
+    @Override
+    public void trace(final Throwable cause) {
+        logger.trace(cause.getMessage(), cause);
+        incrementTrace();
     }
 
 }

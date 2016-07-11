@@ -24,160 +24,172 @@ import org.slf4j.spi.LocationAwareLogger;
  * @author yanghe
  * @since 1.0
  */
-public class SLF4JImpl implements org.nanoframework.commons.support.logging.Logger {
+public class SLF4JImpl extends AbstractAnalysisLogger implements org.nanoframework.commons.support.logging.Logger {
 
-    private static final String callerFQCN = SLF4JImpl.class.getName();
+    private static final String FQNC = SLF4JImpl.class.getName();
     private static final Logger testLogger = LoggerFactory.getLogger(SLF4JImpl.class);
 
     static {
-        // if the logger is not a LocationAwareLogger instance, it can not get
-        // correct stack StackTraceElement
-        // so ignore this implementation.
         if (!(testLogger instanceof LocationAwareLogger)) {
             throw new UnsupportedOperationException(testLogger.getClass() + " is not a suitable logger");
         }
     }
 
-    private int errorCount;
-    private int warnCount;
-    private int infoCount;
-    private int debugCount;
-    private LocationAwareLogger log;
+    private LocationAwareLogger logger;
 
-    public SLF4JImpl(LocationAwareLogger log) {
-        this.log = log;
+    public SLF4JImpl(final LocationAwareLogger logger) {
+        this.logger = logger;
+        setLoggerName(logger.getName());
     }
 
-    public SLF4JImpl(String loggerName) {
-        this.log = (LocationAwareLogger) LoggerFactory.getLogger(loggerName);
-    }
-
-    @Override
-    public boolean isDebugEnabled() {
-        return log.isDebugEnabled();
+    public SLF4JImpl(final String loggerName) {
+        this.logger = (LocationAwareLogger) LoggerFactory.getLogger(loggerName);
+        setLoggerName(loggerName);
     }
 
     @Override
-    public void error(String msg, Throwable e) {
-        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, msg, null, e);
-        errorCount++;
+    public boolean isErrorEnabled() {
+        return logger.isErrorEnabled();
     }
 
     @Override
-    public void error(String msg) {
-        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, msg, null, null);
-        errorCount++;
+    public void error(final String message, final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.ERROR_INT, message, null, cause);
+        incrementError();
+    }
+
+    @Override
+    public void error(final String message) {
+        logger.log(null, FQNC, LocationAwareLogger.ERROR_INT, message, null, null);
+        incrementError();
+    }
+    
+    @Override
+    public void error(final String message, final Object... args) {
+        logger.log(null, FQNC, LocationAwareLogger.ERROR_INT, message, args, null);
+        incrementError();
+    }
+
+    @Override
+    public void error(final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.ERROR_INT, cause.getMessage(), null, cause);
+        incrementError();
+    }
+    
+    @Override
+    public boolean isWarnEnabled() {
+        return logger.isWarnEnabled();
+    }
+
+    @Override
+    public void warn(final String message) {
+        logger.log(null, FQNC, LocationAwareLogger.WARN_INT, message, null, null);
+        incrementWarn();
+    }
+
+    @Override
+    public void warn(final String message, final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.WARN_INT, message, null, cause);
+        incrementWarn();
+    }
+
+    @Override
+    public void warn(final String message, final Object... args) {
+        logger.log(null, FQNC, LocationAwareLogger.WARN_INT, message, args, null);
+        incrementWarn();
+    }
+
+    @Override
+    public void warn(final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.WARN_INT, cause.getMessage(), null, cause);
+        incrementWarn();
     }
 
     @Override
     public boolean isInfoEnabled() {
-        return log.isInfoEnabled();
+        return logger.isInfoEnabled();
     }
 
     @Override
-    public void info(String msg) {
-        infoCount++;
-        log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, msg, null, null);
+    public void info(final String message) {
+        logger.log(null, FQNC, LocationAwareLogger.INFO_INT, message, null, null);
+        incrementInfo();
     }
 
     @Override
-    public void debug(String msg) {
-        debugCount++;
-        log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, msg, null, null);
+    public void info(final String message, final Object... args) {
+        logger.log(null, FQNC, LocationAwareLogger.INFO_INT, message, args, null);
+        incrementInfo();
     }
 
     @Override
-    public void debug(String msg, Throwable e) {
-        debugCount++;
-        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, msg, null, e);
+    public void info(final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.INFO_INT, cause.getMessage(), null, cause);
+        incrementInfo();
     }
 
     @Override
-    public boolean isWarnEnabled() {
-        return log.isWarnEnabled();
+    public void info(final String message, final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.INFO_INT, message, null, cause);
+        incrementInfo();
+    }
+    
+    @Override
+    public boolean isDebugEnabled() {
+        return logger.isDebugEnabled();
+    }
+    
+    @Override
+    public void debug(final String message) {
+        logger.log(null, FQNC, LocationAwareLogger.DEBUG_INT, message, null, null);
+        incrementDebug();
     }
 
     @Override
-    public void warn(String msg) {
-        log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, msg, null, null);
-        warnCount++;
+    public void debug(final String message, final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.ERROR_INT, message, null, cause);
+        incrementDebug();
     }
 
     @Override
-    public void warn(String msg, Throwable e) {
-        log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, msg, null, e);
-        warnCount++;
+    public void debug(final String message, final Object... args) {
+        logger.log(null, FQNC, LocationAwareLogger.DEBUG_INT, message, args, null);
+        incrementDebug();
     }
 
     @Override
-    public int getErrorCount() {
-        return errorCount;
+    public void debug(final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.DEBUG_INT, cause.getMessage(), null, cause);
+        incrementDebug();
     }
 
     @Override
-    public int getWarnCount() {
-        return warnCount;
+    public boolean isTraceEnabled() {
+        return logger.isTraceEnabled();
     }
 
     @Override
-    public int getInfoCount() {
-        return infoCount;
-    }
-
-    public int getDebugCount() {
-        return debugCount;
+    public void trace(final String message) {
+        logger.log(null, FQNC, LocationAwareLogger.TRACE_INT, message, null, null);
+        incrementWarn();
     }
 
     @Override
-    public void resetStat() {
-        errorCount = 0;
-        warnCount = 0;
-        infoCount = 0;
-        debugCount = 0;
+    public void trace(final String message, final Object... args) {
+        logger.log(null, FQNC, LocationAwareLogger.TRACE_INT, message, args, null);
+        incrementWarn();
     }
 
     @Override
-    public void warn(String paramString, Object... paramArrayOfObject) {
-        log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, paramString, paramArrayOfObject, null);
+    public void trace(final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.TRACE_INT, cause.getMessage(), null, cause);
+        incrementWarn();
     }
 
     @Override
-    public void warn(Throwable paramThrowable) {
-        log.log(null, callerFQCN, LocationAwareLogger.WARN_INT, null, null, paramThrowable);
+    public void trace(final String message, final Throwable cause) {
+        logger.log(null, FQNC, LocationAwareLogger.TRACE_INT, message, null, cause);
+        incrementWarn();        
     }
-
-    @Override
-    public void info(String paramString, Object... paramArrayOfObject) {
-        log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, paramString, paramArrayOfObject, null);
-    }
-
-    @Override
-    public void info(Throwable paramThrowable) {
-        log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, null, null, paramThrowable);
-    }
-
-    @Override
-    public void info(String paramString, Throwable paramThrowable) {
-        log.log(null, callerFQCN, LocationAwareLogger.INFO_INT, paramString, null, paramThrowable);
-    }
-
-    @Override
-    public void debug(String paramString, Object... paramArrayOfObject) {
-        log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, paramString, paramArrayOfObject, null);
-    }
-
-    @Override
-    public void debug(Throwable paramThrowable) {
-        log.log(null, callerFQCN, LocationAwareLogger.DEBUG_INT, null, null, paramThrowable);
-    }
-
-    @Override
-    public void error(String paramString, Object... paramArrayOfObject) {
-        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, paramString, paramArrayOfObject, null);
-    }
-
-    @Override
-    public void error(Throwable paramThrowable) {
-        log.log(null, callerFQCN, LocationAwareLogger.ERROR_INT, null, null, paramThrowable);
-    }
+    
 }

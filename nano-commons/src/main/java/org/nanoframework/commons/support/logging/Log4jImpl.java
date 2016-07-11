@@ -15,7 +15,6 @@
  */
 package org.nanoframework.commons.support.logging;
 
-import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.Priority;
@@ -27,163 +26,180 @@ import org.nanoframework.commons.support.message.ParameterizedMessageFactory;
  * @author yanghe
  * @since 1.0
  */
-public class Log4jImpl extends Category implements org.nanoframework.commons.support.logging.Logger {
-
+public class Log4jImpl extends AbstractLog4jAnalysisLogger implements org.nanoframework.commons.support.logging.Logger {
     private static final String FQCN = Log4jImpl.class.getName();
 
-    private Logger log;
-
-    private int errorCount;
-    private int warnCount;
-    private int infoCount;
-    private int debugCount;
-
     private MessageFactory messageFactory = ParameterizedMessageFactory.INSTANCE;
+    
+    private Logger logger;
 
-    /**
-     * @since 0.2.21
-     * @param log the log
-     */
-    public Log4jImpl(Logger log) {
-        super(log.getName());
-        this.log = log;
+    public Log4jImpl(final Logger logger) {
+        super(logger.getName());
+        this.logger = logger;
+        this.parent = logger;
     }
 
-    public Log4jImpl(String loggerName) {
+    public Log4jImpl(final String loggerName) {
         super(loggerName);
-        log = Logger.getLogger(loggerName);
+        logger = Logger.getLogger(loggerName);
+        this.parent = logger;
     }
 
-    public Logger getLog() {
-        return log;
+    @Override
+    public boolean isErrorEnabled() {
+        return logger.isEnabledFor(Level.ERROR);
     }
 
+    @Override
+    public void error(final String message, final Throwable cause) {
+        logger.log(FQCN, Level.ERROR, message, cause);
+        incrementError();
+    }
+
+    @Override
+    public void error(final String message) {
+        logger.log(FQCN, Level.ERROR, message, null);
+        incrementError();
+    }
+    
+    @Override
+    public void error(final String message, final Object... args) {
+        l7dlog(Level.ERROR, message, args, null);
+        incrementError();
+    }
+
+    @Override
+    public void error(final Throwable cause) {
+        l7dlog(Level.ERROR, cause.getMessage(), null, cause);
+        incrementError();
+    }
+    
+    @Override
+    public boolean isWarnEnabled() {
+        return logger.isEnabledFor(Level.WARN);
+    }
+    
+    @Override
+    public void warn(final String message) {
+        logger.log(FQCN, Level.WARN, message, null);
+        incrementWarn();
+    }
+
+    @Override
+    public void warn(final String message, final Throwable cause) {
+        logger.log(FQCN, Level.WARN, message, cause);
+        incrementWarn();
+    }
+    
+    @Override
+    public void warn(final String message, final Object... args) {
+        l7dlog(Level.WARN, message, args, null);
+        incrementWarn();
+    }
+
+    @Override
+    public void warn(final Throwable cause) {
+        l7dlog(Level.WARN, cause.getMessage(), null, cause);
+        incrementWarn();
+    }
+    
+    @Override
     public boolean isDebugEnabled() {
-        return log.isDebugEnabled();
+        return logger.isDebugEnabled();
     }
 
-    public void error(String s, Throwable e) {
-        errorCount++;
-        log.log(FQCN, Level.ERROR, s, e);
+    @Override
+    public void debug(final String message) {
+        logger.log(FQCN, Level.DEBUG, message, null);
+        incrementDebug();
     }
 
-    public void error(String s) {
-        errorCount++;
-        log.log(FQCN, Level.ERROR, s, null);
+    @Override
+    public void debug(final String message, final Throwable cause) {
+        logger.log(FQCN, Level.DEBUG, message, cause);
+        incrementDebug();
+    }
+    
+    @Override
+    public void debug(final String message, final Object... args) {
+        l7dlog(Level.DEBUG, message, args, null);
+        incrementDebug();
     }
 
-    public void debug(String s) {
-        debugCount++;
-        log.log(FQCN, Level.DEBUG, s, null);
-    }
-
-    public void debug(String s, Throwable e) {
-        debugCount++;
-        log.log(FQCN, Level.DEBUG, s, e);
-    }
-
-    public void warn(String s) {
-        log.log(FQCN, Level.WARN, s, null);
-        warnCount++;
-    }
-
-    public void warn(String s, Throwable e) {
-        log.log(FQCN, Level.WARN, s, e);
-        warnCount++;
-    }
-
-    public int getWarnCount() {
-        return warnCount;
-    }
-
-    public int getErrorCount() {
-        return errorCount;
-    }
-
-    public void resetStat() {
-        errorCount = 0;
-        warnCount = 0;
-        infoCount = 0;
-        debugCount = 0;
-    }
-
-    public int getDebugCount() {
-        return debugCount;
+    @Override
+    public void debug(final Throwable cause) {
+        l7dlog(Level.DEBUG, cause.getMessage(), null, cause);
+        incrementDebug();
     }
 
     public boolean isInfoEnabled() {
-        return log.isInfoEnabled();
+        return logger.isInfoEnabled();
     }
 
-    public void info(String msg) {
-        infoCount++;
-        log.log(FQCN, Level.INFO, msg, null);
-    }
-
-    public boolean isWarnEnabled() {
-        return log.isEnabledFor(Level.WARN);
-    }
-
-    public int getInfoCount() {
-        return infoCount;
-    }
-
-    public String toString() {
-        return log.toString();
+    public void info(final String message) {
+        logger.log(FQCN, Level.INFO, message, null);
+        incrementInfo();
     }
 
     @Override
-    public void warn(String paramString, Object... paramArrayOfObject) {
-        l7dlog(Level.WARN, paramString, paramArrayOfObject, null);
+    public void info(final String message, final Object... args) {
+        l7dlog(Level.INFO, message, args, null);
+        incrementInfo();
     }
 
     @Override
-    public void warn(Throwable paramThrowable) {
-        l7dlog(Level.WARN, null, null, paramThrowable);
+    public void info(final Throwable cause) {
+        l7dlog(Level.INFO, cause.getMessage(), null, cause);
+        incrementInfo();
     }
 
     @Override
-    public void info(String paramString, Object... paramArrayOfObject) {
-        l7dlog(Level.INFO, paramString, paramArrayOfObject, null);
+    public void info(final String message, final Throwable cause) {
+        l7dlog(Level.INFO, message, null, cause);
+        incrementInfo();
     }
 
     @Override
-    public void info(Throwable paramThrowable) {
-        l7dlog(Level.INFO, null, null, paramThrowable);
+    public boolean isTraceEnabled() {
+        return logger.isEnabledFor(Level.TRACE);
     }
 
     @Override
-    public void info(String paramString, Throwable paramThrowable) {
-        l7dlog(Level.INFO, paramString, null, paramThrowable);
+    public void trace(final String message) {
+        logger.log(FQCN, Level.TRACE, message, null);
+        incrementTrace();
     }
 
     @Override
-    public void debug(String paramString, Object... paramArrayOfObject) {
-        l7dlog(Level.DEBUG, paramString, paramArrayOfObject, null);
+    public void trace(final String message, final Object... args) {
+        l7dlog(Level.INFO, message, args, null);
+        incrementTrace();
     }
 
     @Override
-    public void debug(Throwable paramThrowable) {
-        l7dlog(Level.DEBUG, null, null, paramThrowable);
+    public void trace(final Throwable cause) {
+        logger.log(FQCN, Level.TRACE, cause.getMessage(), cause);
+        incrementTrace();
     }
 
     @Override
-    public void error(String paramString, Object... paramArrayOfObject) {
-        l7dlog(Level.ERROR, paramString, paramArrayOfObject, null);
+    public void trace(final String message, final Throwable cause) {
+        logger.log(FQCN, Level.TRACE, message, cause);
+        incrementTrace();
     }
-
-    @Override
-    public void error(Throwable paramThrowable) {
-        l7dlog(Level.ERROR, null, null, paramThrowable);
-    }
-
-    public void l7dlog(Priority priority, String message, Object[] params, Throwable t) {
-        if (log.getLoggerRepository().isDisabled(priority.toInt())) {
+    
+    public void l7dlog(Priority priority, String message, Object[] args, Throwable t) {
+        if (logger.getLoggerRepository().isDisabled(priority.toInt())) {
             return;
         }
 
         if (priority.isGreaterOrEqual(this.getEffectiveLevel())) {
-            forcedLog(FQCN, priority, messageFactory.newMessage(message, params).getFormattedMessage(), t);
+            forcedLog(FQCN, priority, messageFactory.newMessage(message, args).getFormattedMessage(), t);
         }
+    }
+    
+    @Override
+    public String toString() {
+        return logger.toString();
     }
 }
