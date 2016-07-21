@@ -16,20 +16,18 @@
 package org.nanoframework.server;
 
 import java.io.IOException;
-import java.util.Map;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.nanoframework.extension.httpclient.HttpClient;
-import org.nanoframework.extension.httpclient.HttpResponse;
+import org.nanoframework.core.component.Components;
+import org.nanoframework.core.component.stereotype.bind.RequestMapper;
+import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 import org.nanoframework.web.server.http.status.HttpStatus;
-import org.nanoframework.web.server.http.status.HttpStatusCode;
 import org.nanoframework.web.server.http.status.ResultMap;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
-import com.google.inject.Guice;
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -39,17 +37,21 @@ import com.google.inject.Guice;
 public class JettyStartupTest {
 
     @Before
-	public void init() {
+	public void init() throws InterruptedException {
 	    JettyCustomServer.DEFAULT.bootstrap("start");
+	    Thread.sleep(3000);
 	}
     
     @Test
     public void invoke() throws IOException {
-        final HttpClient httpClient = Guice.createInjector().getInstance(HttpClient.class);
-        final HttpResponse response = httpClient.get("http://localhost:8080/jetty/v1/test");
-        Assert.assertEquals(response.statusCode, HttpStatusCode.SC_OK);
-        final ResultMap result = ResultMap.create(JSON.parseObject(response.entity, new TypeReference<Map<String, Object>>() { }));
-        Assert.assertEquals(result.getInfo(), HttpStatus.OK.info);
+        final RequestMapper mapper = Components.getMapper("/v1/test", RequestMethod.GET);
+        Object ret = Components.invoke(mapper, Maps.newHashMap());
+        Assert.assertEquals(ret instanceof ResultMap, true);
+        Assert.assertEquals(((ResultMap) ret).getInfo(), HttpStatus.OK.info);
     }
 	
+    @After
+    public void destroy() throws InterruptedException {
+        JettyCustomServer.DEFAULT.bootstrap("stop");
+    }
 }

@@ -206,14 +206,15 @@ public class Components {
     public static final Object invoke(RequestMapper mapper, Map<String, Object> parameter, Object... objs) {
         if (mapper != null) {
             try {
-                Map<String, String> param = mapper.getParam();
-                if (!CollectionUtils.isEmpty(param))
+                final Map<String, String> param = mapper.getParam();
+                if (!CollectionUtils.isEmpty(param)) {
                     parameter.putAll(param);
-                Object obj = mapper.getObject();
-                Method method = (Method) mapper.getMethod();
-                Object[] bind = Components.bindParam(method, parameter, objs);
+                }
+                
+                final Object obj = mapper.getObject();
+                final Method method = (Method) mapper.getMethod();
+                final Object[] bind = Components.bindParam(method, parameter, objs);
                 return method.invoke(obj, bind);
-
             } catch (Exception e) {
                 LOGGER.error(e.getMessage());
                 if (e instanceof ComponentInvokeException) {
