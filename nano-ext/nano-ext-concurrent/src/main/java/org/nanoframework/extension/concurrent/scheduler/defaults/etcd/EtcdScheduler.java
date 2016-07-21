@@ -66,7 +66,7 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 
     private final Set<Class<?>> clsSet;
 
-    public static final String SYSTEM_ID = MD5Utils.getMD5String(UUID.randomUUID().toString() + System.currentTimeMillis() + Math.random());
+    public static final String SYSTEM_ID = MD5Utils.md5(UUID.randomUUID().toString() + System.currentTimeMillis() + Math.random());
 
     public static final String ROOT_RESOURCE = "/machairodus/" + System.getProperty(ETCD_USER, "");
     public static final String DIR = ROOT_RESOURCE + '/' + SYSTEM_ID;

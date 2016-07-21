@@ -27,7 +27,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.shiro.session.Session;
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.ContentType;
 import org.nanoframework.commons.util.ObjectUtils;
 import org.nanoframework.commons.util.ReflectUtils;
@@ -237,7 +236,7 @@ public abstract class AbstractShiroClientFilter extends AbstractConfigurationFil
         response.setContentType(contentType);
         final Writer out = response.getWriter();
         final String callback;
-        if(!ObjectUtils.isEmpty(callback = request.getParameter(Constants.CALLBACK))) {
+        if(!ObjectUtils.isEmpty(callback = request.getParameter("callback"))) {
             out.write(callback + '(' + JSON.toJSONString(result, SerializerFeature.WriteDateUseDateFormat) + ')');
         } else { 
             out.write(JSON.toJSONString(result, SerializerFeature.WriteDateUseDateFormat));

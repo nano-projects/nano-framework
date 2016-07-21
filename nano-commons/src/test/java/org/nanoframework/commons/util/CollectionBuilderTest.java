@@ -15,19 +15,26 @@
  */
 package org.nanoframework.commons.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
- * 
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.15
  */
-public final class MathUtils {
+public class CollectionBuilderTest {
 
-    public static double max(double... doubles) {
-        double max = 0;
-        for (double doub : doubles) {
-            max = Math.max(max, doub);
-        }
-
-        return max;
+    @Test
+    public void collectionBuilderTest() {
+        Collection<Integer> collection = CollectionBuilder.<Integer>create().add(1).add(2).build();
+        Assert.assertEquals(collection.size(), 2);
+     
+        Collection<Integer> arrayList = CollectionBuilder.<Integer>create(ReflectUtils.convert(ArrayList.class)).add(1).add(2).build();
+        Assert.assertEquals(arrayList instanceof List, true);
     }
 }

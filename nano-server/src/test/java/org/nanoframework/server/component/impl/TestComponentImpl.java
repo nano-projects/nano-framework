@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.commons.util;
+package org.nanoframework.server.component.impl;
+
+import org.nanoframework.server.component.TestComponent;
+import org.nanoframework.web.server.http.status.HttpStatus;
+import org.nanoframework.web.server.http.status.ResultMap;
 
 /**
- * 
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.15
  */
-public final class MathUtils {
+public class TestComponentImpl implements TestComponent {
 
-    public static double max(double... doubles) {
-        double max = 0;
-        for (double doub : doubles) {
-            max = Math.max(max, doub);
-        }
-
-        return max;
+    @Override
+    public ResultMap test() {
+        return HttpStatus.OK.to();
     }
 }

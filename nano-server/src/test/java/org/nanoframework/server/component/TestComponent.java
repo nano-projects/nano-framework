@@ -13,21 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.commons.util;
+package org.nanoframework.server.component;
+
+import org.nanoframework.core.component.stereotype.Component;
+import org.nanoframework.core.component.stereotype.bind.RequestMapping;
+import org.nanoframework.server.component.impl.TestComponentImpl;
+import org.nanoframework.web.server.http.status.ResultMap;
+
+import com.google.inject.ImplementedBy;
 
 /**
- * 
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.15
  */
-public final class MathUtils {
+@Component
+@ImplementedBy(TestComponentImpl.class)
+@RequestMapping("/v1")
+public interface TestComponent {
 
-    public static double max(double... doubles) {
-        double max = 0;
-        for (double doub : doubles) {
-            max = Math.max(max, doub);
-        }
-
-        return max;
-    }
+    @RequestMapping("/test")
+    ResultMap test();
 }

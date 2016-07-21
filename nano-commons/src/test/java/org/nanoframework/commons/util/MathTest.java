@@ -15,19 +15,19 @@
  */
 package org.nanoframework.commons.util;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
- * 
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.15
  */
-public final class MathUtils {
+public class MathTest {
 
-    public static double max(double... doubles) {
-        double max = 0;
-        for (double doub : doubles) {
-            max = Math.max(max, doub);
-        }
-
-        return max;
+    @Test
+    public void maxTest() {
+        double max = MathUtils.max(1, 2, 3);
+        Assert.assertEquals(max == 3, true);
     }
 }

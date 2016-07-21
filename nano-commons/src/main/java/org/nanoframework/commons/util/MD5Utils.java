@@ -34,58 +34,54 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
  * @since 1.0
  */
 public class MD5Utils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MD5Utils.class);
 
-    private static final Logger LOG = LoggerFactory.getLogger(MD5Utils.class);
+    private static char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
 
-    private static char hexDigits[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    private static MessageDigest MESSAGE_DIGEST;
 
-    private static MessageDigest messagedigest = null;
-
-    private static ConcurrentMap<String, String> fileMd5Map = new ConcurrentHashMap<String, String>();
+    private static ConcurrentMap<String, String> FILE_MD5_MAP = new ConcurrentHashMap<String, String>();
 
     static {
         try {
-            messagedigest = MessageDigest.getInstance("MD5");
+            MESSAGE_DIGEST = MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
-            LOG.error("MD5FileUtil messagedigest初始化失败", e);
+            LOGGER.error("MD5FileUtil messagedigest初始化失败", e);
         }
     }
 
     private MD5Utils() {
     }
 
-    public static String getFileMD5String(File file) {
-
+    public static String md5(final File file) {
         FileInputStream in = null;
         FileChannel ch = null;
         String md5 = null;
-
         try {
-            if (fileMd5Map.get(file.getAbsolutePath()) != null) {
-                return fileMd5Map.get(file.getAbsolutePath());
+            if (FILE_MD5_MAP.get(file.getAbsolutePath()) != null) {
+                return FILE_MD5_MAP.get(file.getAbsolutePath());
             }
 
             in = new FileInputStream(file);
             ch = in.getChannel();
-            MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
-            messagedigest.update(byteBuffer);
-            md5 = bufferToHex(messagedigest.digest());
+            final MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
+            MESSAGE_DIGEST.update(byteBuffer);
+            md5 = bufferToHex(MESSAGE_DIGEST.digest());
 
-            fileMd5Map.put(file.getAbsolutePath(), md5);
-
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
-
+            FILE_MD5_MAP.put(file.getAbsolutePath(), md5);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         } finally {
             try {
-                if (ch != null)
+                if (ch != null) {
                     ch.close();
+                }
 
-                if (in != null)
+                if (in != null) {
                     in.close();
-
-            } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
+                }
+            } catch (final IOException e) {
+                LOGGER.error(e.getMessage(), e);
             }
 
         }
@@ -94,69 +90,52 @@ public class MD5Utils {
 
     }
 
-    public static String getMD5String(String s) {
-        return getMD5String(s.getBytes());
+    public static String md5(final String s) {
+        return md5(s.getBytes());
     }
 
-    public static String getMD5String(byte[] bytes) {
-        messagedigest.update(bytes);
-        return bufferToHex(messagedigest.digest());
+    public static String md5(final byte[] bytes) {
+        MESSAGE_DIGEST.update(bytes);
+        return bufferToHex(MESSAGE_DIGEST.digest());
     }
 
-    private static String bufferToHex(byte bytes[]) {
+    private static String bufferToHex(final byte bytes[]) {
         return bufferToHex(bytes, 0, bytes.length);
     }
 
-    private static String bufferToHex(byte bytes[], int m, int n) {
-        StringBuffer stringbuffer = new StringBuffer(2 * n);
-        int k = m + n;
-        for (int l = m; l < k; l++) {
-            appendHexPair(bytes[l], stringbuffer);
+    private static String bufferToHex(final byte bytes[], final int begin, final int end) {
+        final StringBuilder builder = new StringBuilder(2 * end);
+        final int length = begin + end;
+        for (int index = begin; index < length; index++) {
+            appendHexPair(bytes[index], builder);
         }
-        return stringbuffer.toString();
+        
+        return builder.toString();
     }
 
-    private static void appendHexPair(byte bt, StringBuffer stringbuffer) {
-        char c0 = hexDigits[(bt & 0xf0) >> 4];
-        char c1 = hexDigits[bt & 0xf];
-        stringbuffer.append(c0);
-        stringbuffer.append(c1);
+    private static void appendHexPair(final byte bt, final StringBuilder builder) {
+        builder.append(HEX_DIGITS[(bt & 0xf0) >> 4]);
+        builder.append(HEX_DIGITS[bt & 0xf]);
     }
 
-    public static boolean checkPassword(String password, String md5PwdStr) {
-        String s = getMD5String(password);
-        return s.equals(md5PwdStr);
+    public static boolean check(final String plaintext, final String ciphertext) {
+        final String cipher = md5(plaintext);
+        return cipher.equals(ciphertext);
     }
 
     /** 
-     * 转换byte为Hex字符串 
+     * 转换byte为Hex字符串.
      * @param value 要转换的byte数据 
-     * @param minlength 生成hex的最小长度（长度不足时会在前面加0） 
+     * @param minLength 生成hex的最小长度（长度不足时会在前面加0） 
      * @return hex String
      */
-    public static String byteToHex(byte value, int minlength) {
-        String s = Integer.toHexString(value & 0xff);
-        if (s.length() < minlength) {
-            for (int i = 0; i < (minlength - s.length()); i++)
-                s = '0' + s;
+    public static String byteToHex(final byte value, final int minLength) {
+        String hex = Integer.toHexString(value & 0xff);
+        if (hex.length() < minLength) {
+            for (int i = 0; i < (minLength - hex.length()); i++)
+                hex = '0' + hex;
         }
-        return s;
-    }
-
-    /** 
-     * MD5加密字符串 
-     * @param value the value
-     * @return md5 byte array
-     */
-    public static byte[] MD5(byte[] value) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(value);
-            return md.digest();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        }
-        return null;
+        return hex;
     }
 
 }

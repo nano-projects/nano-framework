@@ -40,7 +40,7 @@ public class RuntimeUtil {
     public static final String OSNAME = System.getProperty("os.name");
     public static final int AVAILABLE_PROCESSORS = Runtime.getRuntime().availableProcessors() + 1;
     public static final String TOKEN = MD5Utils
-            .getMD5String(CryptUtil.encrypt("nanoframework.TOKEN::encrypt:org.nanoframework.commons.util.RuntimeUtil", null));
+            .md5(CryptUtil.encrypt("nanoframework.TOKEN::encrypt:org.nanoframework.commons.util.RuntimeUtil", null));
 
     /**
      * 杀死当前系统进行

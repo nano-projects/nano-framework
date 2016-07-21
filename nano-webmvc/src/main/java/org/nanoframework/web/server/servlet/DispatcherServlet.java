@@ -32,31 +32,27 @@ import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
  */
 public class DispatcherServlet extends HttpServlet {
 	private static final long serialVersionUID = 2341783013239890497L;
-	private Logger LOG = LoggerFactory.getLogger(DispatcherServlet.class);
+	private Logger LOGGER = LoggerFactory.getLogger(DispatcherServlet.class);
 	
 	@Override
 	public void init() throws ServletException {
 		super.init();
 		try {
-			String pluginLoader = this.getInitParameter(ApplicationContext.PLUGIN_LOADER);
+			final String pluginLoader = this.getInitParameter(ApplicationContext.PLUGIN_LOADER);
 			if(StringUtils.isBlank(pluginLoader)) {
-				if(LOG.isDebugEnabled())
-					LOG.debug("使用默认的插件加载器: " + DefaultPluginLoader.class.getName());
-				
+				LOGGER.debug("使用默认的插件加载器: " + DefaultPluginLoader.class.getName());
 				new DefaultPluginLoader().init(this.getServletConfig());
 			} else {
-				Class<?> cls = Class.forName(pluginLoader);
+				final Class<?> cls = Class.forName(pluginLoader);
 				if(PluginLoader.class.isAssignableFrom(cls)) {
-					if(LOG.isDebugEnabled())
-						LOG.debug("使用插件加载器: " + pluginLoader);
-					
+					LOGGER.debug("使用插件加载器: " + pluginLoader);
 					((PluginLoader) cls.newInstance()).init(this.getServletConfig());
-					
-				} else 
+				} else {
 					throw new IllegalArgumentException("插件加载器必须继承PluginLoader类");
+				}
 			}
-		} catch(Throwable e) {
-			LOG.error(e.getMessage(), e);
+		} catch(final Throwable e) {
+			LOGGER.error(e.getMessage(), e);
 			System.exit(1);
 		}
 	}

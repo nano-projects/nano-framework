@@ -15,19 +15,24 @@
  */
 package org.nanoframework.commons.util;
 
+import org.apache.commons.codec.binary.Base64;
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
- * 
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.15
  */
-public final class MathUtils {
+public class Base64Test {
 
-    public static double max(double... doubles) {
-        double max = 0;
-        for (double doub : doubles) {
-            max = Math.max(max, doub);
-        }
-
-        return max;
+    @Test
+    public void base64Test() {
+        final String content = "base 64 content";
+        final BASE64 base64 = BASE64.getInstance();
+        final String encode = base64.encode(content.getBytes());
+        final String decode = new String(Base64.decodeBase64(encode));
+        
+        Assert.assertEquals(content, decode);
     }
 }

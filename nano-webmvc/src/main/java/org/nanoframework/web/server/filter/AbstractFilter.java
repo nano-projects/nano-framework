@@ -39,7 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.nanoframework.commons.util.Charsets;
-import org.nanoframework.commons.util.Constants;
 import org.nanoframework.commons.util.ContentType;
 import org.nanoframework.commons.util.ObjectUtils;
 import org.nanoframework.commons.util.StringUtils;
@@ -112,7 +111,7 @@ public abstract class AbstractFilter implements Filter {
             out = response.getWriter();
             /** 跨域JSONP的Ajax请求支持 */
             final String callback;
-            if (!ObjectUtils.isEmpty(callback = (String) urlContext.getParameter().get(Constants.CALLBACK))) {
+            if (!ObjectUtils.isEmpty(callback = (String) urlContext.getParameter().get("callback"))) {
                 out.write(callback + '(' + JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat) + ')');
             } else {
                 out.write(JSON.toJSONString(ret, SerializerFeature.WriteDateUseDateFormat));

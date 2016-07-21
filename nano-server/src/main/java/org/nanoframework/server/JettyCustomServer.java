@@ -293,7 +293,7 @@ public class JettyCustomServer extends Server {
         }
     }
 
-    public final void bootstrap(String[] args) {
+    public final void bootstrap(String... args) {
         if (args.length > 0) {
             final Mode mode = mode(true);
             final Commands cmd = cmd(args, mode);

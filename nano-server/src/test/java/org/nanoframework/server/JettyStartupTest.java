@@ -15,7 +15,21 @@
  */
 package org.nanoframework.server;
 
-import org.nanoframework.server.JettyCustomServer;
+import java.io.IOException;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.nanoframework.extension.httpclient.HttpClient;
+import org.nanoframework.extension.httpclient.HttpResponse;
+import org.nanoframework.web.server.http.status.HttpStatus;
+import org.nanoframework.web.server.http.status.HttpStatusCode;
+import org.nanoframework.web.server.http.status.ResultMap;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.google.inject.Guice;
 
 /**
  * 
@@ -24,8 +38,18 @@ import org.nanoframework.server.JettyCustomServer;
  */
 public class JettyStartupTest {
 
-	public static void main(String[] args) throws Exception {
-		JettyCustomServer.DEFAULT.bootstrap(args);
+    @Before
+	public void init() {
+	    JettyCustomServer.DEFAULT.bootstrap("start");
 	}
+    
+    @Test
+    public void invoke() throws IOException {
+        final HttpClient httpClient = Guice.createInjector().getInstance(HttpClient.class);
+        final HttpResponse response = httpClient.get("http://localhost:8080/jetty/v1/test");
+        Assert.assertEquals(response.statusCode, HttpStatusCode.SC_OK);
+        final ResultMap result = ResultMap.create(JSON.parseObject(response.entity, new TypeReference<Map<String, Object>>() { }));
+        Assert.assertEquals(result.getInfo(), HttpStatus.OK.info);
+    }
 	
 }

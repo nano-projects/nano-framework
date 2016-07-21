@@ -39,6 +39,7 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+        
 		<dependency>
 			<groupId>org.eclipse.jetty.aggregate</groupId>
 			<artifactId>jetty-all</artifactId>
@@ -93,6 +94,11 @@
 			<artifactId>nano-ext-websocket</artifactId>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.nanoframework</groupId>
+            <artifactId>nano-ext-httpclient</artifactId>
+            <scope>provided</scope>
+        </dependency>
 	</dependencies>
 	
 	<build>

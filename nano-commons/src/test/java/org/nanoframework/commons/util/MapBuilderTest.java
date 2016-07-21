@@ -15,19 +15,26 @@
  */
 package org.nanoframework.commons.util;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import org.junit.Assert;
+import org.junit.Test;
+
 /**
- * 
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.15
  */
-public final class MathUtils {
+public class MapBuilderTest {
 
-    public static double max(double... doubles) {
-        double max = 0;
-        for (double doub : doubles) {
-            max = Math.max(max, doub);
-        }
-
-        return max;
+    @Test
+    public void buildTest() {
+        final Map<String, Integer> map = MapBuilder.<String, Integer>create().put("1", 1).put("2", 2).build();
+        Assert.assertEquals(map.size(), 2);
+        
+        final Map<String, Integer> concurrentMap = MapBuilder.<String, Integer>create(ReflectUtils.convert(ConcurrentHashMap.class)).put("1", 1).build();
+        Assert.assertEquals(concurrentMap instanceof ConcurrentMap, true);
     }
 }
