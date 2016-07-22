@@ -112,9 +112,13 @@ public class Components {
      * @throws IOException IO异常类
      */
     public static final void reload() throws LoaderException, IOException {
+        destroy();
+        load();
+    }
+    
+    public static final void destroy() {
         MapperNode.clear();
         isLoaded = false;
-        load();
     }
 
     /**

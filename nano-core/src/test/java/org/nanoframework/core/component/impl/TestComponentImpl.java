@@ -13,25 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.server.component;
+package org.nanoframework.core.component.impl;
 
-import org.nanoframework.core.component.stereotype.Component;
-import org.nanoframework.core.component.stereotype.bind.RequestMapping;
-import org.nanoframework.server.component.impl.TestComponentImpl;
-import org.nanoframework.web.server.http.status.ResultMap;
-
-import com.google.inject.ImplementedBy;
+import org.nanoframework.core.component.TestComponent;
 
 /**
  *
  * @author yanghe
  * @since 1.3.15
  */
-@Component
-@ImplementedBy(TestComponentImpl.class)
-@RequestMapping("/v1")
-public interface TestComponent {
+public class TestComponentImpl implements TestComponent {
 
-    @RequestMapping("/test")
-    ResultMap test();
+    @Override
+    public String test() {
+        return "OK";
+    }
+    
+    @Override
+    public String reload() {
+        return "Reload";
+    }
 }
