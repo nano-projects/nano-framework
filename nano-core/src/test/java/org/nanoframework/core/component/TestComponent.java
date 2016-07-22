@@ -17,7 +17,10 @@ package org.nanoframework.core.component;
 
 import org.nanoframework.core.component.impl.TestComponentImpl;
 import org.nanoframework.core.component.stereotype.Component;
+import org.nanoframework.core.component.stereotype.bind.PathVariable;
 import org.nanoframework.core.component.stereotype.bind.RequestMapping;
+import org.nanoframework.core.component.stereotype.bind.RequestMethod;
+import org.nanoframework.core.component.stereotype.bind.RequestParam;
 
 import com.google.inject.ImplementedBy;
 
@@ -36,4 +39,7 @@ public interface TestComponent {
     
     @RequestMapping("/reload")
     String reload();
+    
+    @RequestMapping(value = "/param/{param0}", method = RequestMethod.GET)
+    String hasParam(@PathVariable("param0") String param0, @RequestParam("param1") String param1);
 }

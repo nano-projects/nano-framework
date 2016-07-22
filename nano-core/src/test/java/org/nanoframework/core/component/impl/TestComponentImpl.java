@@ -33,4 +33,9 @@ public class TestComponentImpl implements TestComponent {
     public String reload() {
         return "Reload";
     }
+    
+    @Override
+    public String hasParam(final String param0, final String param1) {
+        return param0 + '=' + param1;
+    }
 }

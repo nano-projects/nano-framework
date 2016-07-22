@@ -26,6 +26,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
+import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.core.component.impl.TestComponentImpl;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
@@ -90,8 +91,14 @@ public class ComponentsTest {
         
         Components.reload();
         final RequestMapper reloadMapper = Components.getMapper("/v1/reload", RequestMethod.POST);
-        final Object reload = Components.invoke(reloadMapper, Maps.newHashMap());
+        Assert.assertNotNull(reloadMapper);
+        final Object reload = Components.invoke(reloadMapper, null);
         Assert.assertEquals(reload, "Reload");
+        
+        final RequestMapper hasParamMapper = Components.getMapper("/v1/param/hello", RequestMethod.GET);
+        Assert.assertNotNull(hasParamMapper);
+        final Object hasParam = Components.invoke(hasParamMapper, MapBuilder.<String, Object>create().put("param1", "world").build());
+        Assert.assertEquals(hasParam, "hello=world");
     }
     
 }

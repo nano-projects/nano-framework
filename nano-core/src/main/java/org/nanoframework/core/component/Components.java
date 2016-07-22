@@ -18,7 +18,6 @@ package org.nanoframework.core.component;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -47,11 +46,11 @@ import org.nanoframework.core.component.stereotype.bind.ValueConstants;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
 
+import com.google.common.collect.Lists;
 import com.google.inject.Injector;
 
 /**
  * 组件操作类.
- * 
  * @author yanghe
  * @since 1.0.0
  */
@@ -62,7 +61,6 @@ public class Components {
 
     /**
      * 加载组件服务，并且装载至组件服务映射表中.
-     * 
      * @throws LoaderException 加载异常类
      * @throws IOException IO异常类
      * @see ComponentScan#scan(String)
@@ -73,27 +71,23 @@ public class Components {
             throw new LoaderException("Component已经加载，这里不再进行重复的加载，如需重新加载请调用reload方法");
         }
 
-        if (PropertiesLoader.PROPERTIES.isEmpty()) {
-            throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
-        }
-
         PropertiesLoader.PROPERTIES.values().stream()
-                .filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE))).forEach(item -> {
-                    Arrays.asList(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE).split(","))
-                            .forEach(packageName -> ComponentScan.scan(packageName));
-                });
+        .filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE)))
+        .forEach(item -> {
+            Arrays.asList(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE).split(","))
+            .forEach(packageName -> ComponentScan.scan(packageName));
+        });
 
-        Set<Class<?>> componentClasses = ComponentScan.filter(Component.class);
+        final Set<Class<?>> componentClasses = ComponentScan.filter(Component.class);
         LOGGER.info("Component size: " + componentClasses.size());
-
         if (componentClasses.size() > 0) {
             for (Class<?> clz : componentClasses) {
                 LOGGER.info("Inject Component Class: " + clz.getName());
-                Object obj = Globals.get(Injector.class).getInstance(clz);
-                Method[] methods = clz.getMethods();
-
-                Map<String, Map<RequestMethod, RequestMapper>> mapper = ComponentScan.filter(obj, methods, RequestMapping.class,
+                final Object obj = Globals.get(Injector.class).getInstance(clz);
+                final Method[] methods = clz.getMethods();
+                final Map<String, Map<RequestMethod, RequestMapper>> mapper = ComponentScan.filter(obj, methods, RequestMapping.class,
                         clz.isAnnotationPresent(RequestMapping.class) ? clz.getAnnotation(RequestMapping.class).value() : "");
+                
                 for (Entry<String, Map<RequestMethod, RequestMapper>> entry : mapper.entrySet()) {
                     MapperNode.addLeaf(entry.getKey(), entry.getValue());
                 }
@@ -107,7 +101,6 @@ public class Components {
 
     /**
      * 重新加载组件.
-     * 
      * @throws LoaderException 加载异常类
      * @throws IOException IO异常类
      */
@@ -123,7 +116,6 @@ public class Components {
 
     /**
      * 绑定参数，根据调用的方法参数列表的类型对传入的参数进行类型转换.
-     * 
      * @param method 调用的方法
      * @param params 请求参数列表
      * @param objs 附加参数列表
@@ -131,19 +123,18 @@ public class Components {
      * 
      * @see org.nanoframework.commons.format.ClassCast#cast(Object, String)
      */
-    public static final Object[] bindParam(Method method, Map<String, Object> params, Object... objs) {
+    public static final Object[] bindParam(final Method method, Map<String, Object> params, final Object... objs) {
         if (params == null) {
             params = Collections.emptyMap();
         }
 
         params.keySet().forEach(key -> key = key.toLowerCase());
-
-        Parameter[] parameters = method.getParameters();
+        final Parameter[] parameters = method.getParameters();
         if (parameters != null && parameters.length > 0) {
-            List<Object> values = new ArrayList<>();
+            final List<Object> values = Lists.newArrayList();
             for (Parameter parameter : parameters) {
-                Class<?> type = parameter.getType();
-                RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
+                final Class<?> type = parameter.getType();
+                final RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
                 if (requestParam != null) {
                     String value = requestParam.value();
                     if (StringUtils.isBlank(value)) {
@@ -161,19 +152,19 @@ public class Components {
                     }
 
                     try {
-                        Object obj = ClassCast.cast(param, type.getName());
+                        final Object obj = ClassCast.cast(param, type.getName());
                         values.add(obj);
                     } catch (org.nanoframework.commons.exception.ClassCastException e) {
                         LOGGER.error(e.getMessage(), e);
                         throw new BindRequestParamException("类型转换异常: 数据类型 [ " + type.getName() + " ], 值 [ " + param + " ]");
                     }
                 } else {
-                    PathVariable pathVariable = parameter.getAnnotation(PathVariable.class);
+                    final PathVariable pathVariable = parameter.getAnnotation(PathVariable.class);
                     if (pathVariable != null) {
-                        Object param = params.get(pathVariable.value().toLowerCase());
+                        final Object param = params.get(pathVariable.value().toLowerCase());
                         if (param != null) {
                             try {
-                                Object obj = ClassCast.cast(param, type.getName());
+                                final Object obj = ClassCast.cast(param, type.getName());
                                 values.add(obj);
                             } catch (org.nanoframework.commons.exception.ClassCastException e) {
                                 LOGGER.error(e.getMessage(), e);
@@ -207,7 +198,7 @@ public class Components {
      * @param objs 附加参数列表
      * @return 返回调用结果
      */
-    public static final Object invoke(RequestMapper mapper, Map<String, Object> parameter, Object... objs) {
+    public static final Object invoke(final RequestMapper mapper, final Map<String, Object> parameter, final Object... objs) {
         if (mapper != null) {
             try {
                 final Map<String, String> param = mapper.getParam();
@@ -245,12 +236,11 @@ public class Components {
 
     /**
      * 获取地址-方法映射.
-     * 
      * @param url HTTP调用 - 请求URL
      * @param method Http请求类型
      * @return 返回映射
      */
-    public static final RequestMapper getMapper(String url, RequestMethod method) {
+    public static final RequestMapper getMapper(final String url, final RequestMethod method) {
         return MapperNode.get(url, method);
     }
 
