@@ -67,14 +67,16 @@ public class SchedulerTest extends PluginLoaderInit {
         factory.closeGroup(conf.getGroup());
         
         // wait scheduler group to closed status
-        Thread.sleep(5000);
+        while(factory.getStoppingSchedulerSize() > 0) {
+            Thread.sleep(10);
+        }
         
         Assert.assertEquals(factory.getStartedSchedulerSize(), 2);
         Assert.assertEquals(factory.getStoppedSchedulerSize(), 2);
         
         factory.startAll();
         
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         
         Assert.assertEquals(factory.getStartedSchedulerSize(), 4);
         
@@ -90,7 +92,9 @@ public class SchedulerTest extends PluginLoaderInit {
         factory.closeAll();
         
         // wait scheduler to closed status
-        Thread.sleep(5000);
+        while(factory.getStoppingSchedulerSize() > 0) {
+            Thread.sleep(10);
+        }
         
         Assert.assertEquals(factory.getStartedSchedulerSize(), 0);
         Assert.assertEquals(factory.getStoppingSchedulerSize(), 0);
