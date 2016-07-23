@@ -30,17 +30,17 @@ import com.google.inject.Injector;
 public class BeforeAndAfterInterceptor implements MethodInterceptor {
 
     @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        BeforeAndAfter beforeAndAfter = invocation.getMethod().getAnnotation(BeforeAndAfter.class);
-        Object instance = Globals.get(Injector.class).getInstance(beforeAndAfter.value());
-        Method beforeMethod = beforeAndAfter.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
-        Method afterMethod = beforeAndAfter.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
+    public Object invoke(final MethodInvocation invocation) throws Throwable {
+        final BeforeAndAfter beforeAndAfter = invocation.getMethod().getAnnotation(BeforeAndAfter.class);
+        final Object instance = Globals.get(Injector.class).getInstance(beforeAndAfter.value());
+        final Method beforeMethod = beforeAndAfter.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
+        final Method afterMethod = beforeAndAfter.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
 
         Object obj = null;
         try {
             beforeMethod.invoke(instance, invocation);
             return obj = invocation.proceed();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             obj = e;
             throw e;
 

@@ -13,19 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.chain;
+package org.nanoframework.extension.concurrent.scheduler;
 
 /**
+ *
  * @author yanghe
- * @date 2015年12月3日 下午1:25:02
+ * @since 1.3.15
  */
-public class MultiplyChain extends AbstractChain {
+@Scheduler(parallel = 2, interval = 1000, lazy = true, daemon = true)
+public class TestScheduler extends BaseScheduler {
 
     @Override
-    public Object execute(Object object) {
-        System.out.println(object);
-        long num = (long) object;
-        return next(num * 10);
+    public void before() {
+
+    }
+
+    @Override
+    public void execute() {
+
+    }
+
+    @Override
+    public void after() {
+
+    }
+
+    @Override
+    public void destroy() {
+
     }
 
 }

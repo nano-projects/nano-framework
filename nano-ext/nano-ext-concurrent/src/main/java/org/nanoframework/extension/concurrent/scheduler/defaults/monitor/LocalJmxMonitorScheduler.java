@@ -18,7 +18,7 @@ package org.nanoframework.extension.concurrent.scheduler.defaults.monitor;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.SCHEDULER_APP_JMX_ENABLE;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.SCHEDULER_APP_JMX_RATE;
 import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.DEFAULT_SCHEDULER_NAME_PREFIX;
-import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.threadFactory;
+import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.THREAD_FACTORY;
 
 import java.lang.management.ClassLoadingMXBean;
 import java.lang.management.ManagementFactory;
@@ -58,8 +58,8 @@ public class LocalJmxMonitorScheduler extends BaseScheduler {
         config.setId("LocalJmxMonitorScheduler-0");
         config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "LocalJmxMonitorScheduler-0");
         config.setGroup("LocalJmxMonitorScheduler");
-        threadFactory.setBaseScheduler(this);
-        config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
+        THREAD_FACTORY.setBaseScheduler(this);
+        config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, THREAD_FACTORY));
         config.setTotal(1);
         config.setDaemon(Boolean.TRUE);
         config.setBeforeAfterOnly(Boolean.TRUE);
@@ -112,7 +112,7 @@ public class LocalJmxMonitorScheduler extends BaseScheduler {
 
             etcd.put(JMX_KEY, CryptUtil.encrypt(monitor.toString(), EtcdScheduler.SYSTEM_ID)).send().get();
         } catch (Throwable e) {
-            LOG.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             thisWait(1000);
         }
 

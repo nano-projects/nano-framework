@@ -30,15 +30,15 @@ import com.google.inject.Injector;
 public class AfterInterceptor implements MethodInterceptor {
 
     @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        After after = invocation.getMethod().getAnnotation(After.class);
-        Method method = after.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
-        Object instance = Globals.get(Injector.class).getInstance(after.value());
+    public Object invoke(final MethodInvocation invocation) throws Throwable {
+        final After after = invocation.getMethod().getAnnotation(After.class);
+        final Method method = after.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
+        final Object instance = Globals.get(Injector.class).getInstance(after.value());
 
         Object obj = null;
         try {
             return obj = invocation.proceed();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             obj = e;
             throw e;
 

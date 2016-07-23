@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.chain;
+package org.nanoframework.core.component.aop;
+
+import org.aopalliance.intercept.MethodInvocation;
+
+import com.google.inject.Singleton;
 
 /**
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.15
  */
-public interface Chain {
-    Object execute(Object object);
+@Singleton
+public class AfterAOP implements IAfter {
+    public static Object RESULT;
+    
+    @Override
+    public void after(final MethodInvocation invocation, final Object result) {
+        RESULT = result;
+    }
 
-    Chain getChain();
-
-    Chain setChain(Chain chain);
 }

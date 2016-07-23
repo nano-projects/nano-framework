@@ -16,7 +16,7 @@
 package org.nanoframework.extension.concurrent.scheduler.defaults.etcd;
 
 import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.DEFAULT_SCHEDULER_NAME_PREFIX;
-import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.threadFactory;
+import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.THREAD_FACTORY;
 
 import java.text.ParseException;
 import java.util.List;
@@ -64,8 +64,8 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
         config.setId("EtcdOrderWatcherScheduler-0");
         config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "EtcdOrderWatcherScheduler-0");
         config.setGroup("EtcdOrderWatcherScheduler");
-        threadFactory.setBaseScheduler(this);
-        config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
+        THREAD_FACTORY.setBaseScheduler(this);
+        config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, THREAD_FACTORY));
         config.setTotal(1);
         config.setDaemon(Boolean.TRUE);
         config.setBeforeAfterOnly(Boolean.TRUE);
@@ -101,7 +101,7 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
             etcdOrderFetchScheduler.active();
 
         } catch (Exception e) {
-            LOG.error("waitForChange error: " + e.getMessage());
+            LOGGER.error("waitForChange error: " + e.getMessage());
             return;
         }
 
@@ -126,8 +126,8 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
             config.setId("EtcdOrderFetchScheduler-0");
             config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "EtcdOrderFetchScheduler-0");
             config.setGroup("EtcdOrderFetchScheduler");
-            threadFactory.setBaseScheduler(this);
-            config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
+            THREAD_FACTORY.setBaseScheduler(this);
+            config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, THREAD_FACTORY));
             config.setTotal(1);
             config.setDaemon(Boolean.TRUE);
             config.setBeforeAfterOnly(Boolean.TRUE);
@@ -155,7 +155,7 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
                         }
                     }
                 } catch (Exception e) {
-                    LOG.error("get Order Error: {}", e.getMessage());
+                    LOGGER.error("get Order Error: {}", e.getMessage());
                 }
 
                 count++;
@@ -174,7 +174,7 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
                 try {
                     etcd.delete(node.key).send().get();
                 } catch (Exception e) {
-                    LOG.error("Delete Order.list item error: " + e.getMessage());
+                    LOGGER.error("Delete Order.list item error: " + e.getMessage());
                 }
             }
         }
@@ -206,8 +206,8 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
             config.setId("EtcdOrderExecuteScheduler-0");
             config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "EtcdOrderExecuteScheduler-0");
             config.setGroup("EtcdOrderExecuteScheduler");
-            threadFactory.setBaseScheduler(this);
-            config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
+            THREAD_FACTORY.setBaseScheduler(this);
+            config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, THREAD_FACTORY));
             config.setTotal(1);
             config.setDaemon(Boolean.TRUE);
             setConfig(config);
@@ -261,7 +261,7 @@ public class EtcdOrderWatcherScheduler extends BaseScheduler {
 
                     }
                 } catch (Exception e) {
-                    LOG.error("Order process error: " + e.getMessage());
+                    LOGGER.error("Order process error: " + e.getMessage());
                 }
             }
         }

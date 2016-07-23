@@ -17,19 +17,18 @@ package org.nanoframework.extension.concurrent.scheduler.defaults.etcd;
 
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_APP_NAME;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_CLIENT_ID;
+import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_KEY_TTL;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_MAX_RETRY_COUNT;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_SCHEDULER_ANALYSIS;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_URI;
 import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_USER;
-import static org.nanoframework.core.context.ApplicationContext.Scheduler.ETCD_KEY_TTL;
 import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.DEFAULT_SCHEDULER_NAME_PREFIX;
-import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.threadFactory;
+import static org.nanoframework.extension.concurrent.scheduler.SchedulerFactory.THREAD_FACTORY;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.net.Inet4Address;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -57,15 +56,14 @@ import org.nanoframework.extension.etcd.client.retry.RetryWithExponentialBackOff
 import org.nanoframework.extension.etcd.etcd4j.EtcdClient;
 import org.nanoframework.extension.etcd.etcd4j.responses.EtcdKeysResponse;
 
+import com.google.common.collect.Lists;
+
 /**
  * 
  * @author yanghe
  * @since 1.3
  */
 public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate {
-
-    private final Set<Class<?>> clsSet;
-
     public static final String SYSTEM_ID = MD5Utils.md5(UUID.randomUUID().toString() + System.currentTimeMillis() + Math.random());
 
     public static final String ROOT_RESOURCE = "/machairodus/" + System.getProperty(ETCD_USER, "");
@@ -75,7 +73,8 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
     public static final String INFO_KEY = DIR + "/App.info";
     public static final boolean SCHEDULER_ANALYSIS_ENABLE = Boolean.parseBoolean(System.getProperty(ETCD_SCHEDULER_ANALYSIS, "false"));
     private static String APP_NAME;
-
+    
+    private final Set<Class<?>> clsSet;
     private final int maxRetryCount = Integer.parseInt(System.getProperty(ETCD_MAX_RETRY_COUNT, "1"));
     private final int timeout = Integer.parseInt(System.getProperty(ETCD_KEY_TTL, "120"));
     private Map<Class<?>, String> clsIndex = new HashMap<Class<?>, String>();
@@ -84,18 +83,16 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
     private boolean init = false;
     private EtcdClient etcd;
 
-    public EtcdScheduler(Set<Class<?>> clsSet) {
+    public EtcdScheduler(final Set<Class<?>> clsSet) {
         Assert.notNull(clsSet);
-
         this.clsSet = clsSet;
 
-        SchedulerConfig config = new SchedulerConfig();
+        final SchedulerConfig config = new SchedulerConfig();
         config.setId("EtcdScheduler-0");
         config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + "EtcdScheduler-0");
         config.setGroup("EtcdScheduler");
-        threadFactory.setBaseScheduler(this);
-        config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
-        //		try { config.setCron(new CronExpression("0 * * * * ?")); } catch(ParseException e) {}
+        THREAD_FACTORY.setBaseScheduler(this);
+        config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, THREAD_FACTORY));
         config.setInterval(60_000L);
         config.setTotal(1);
         config.setDaemon(Boolean.TRUE);
@@ -129,11 +126,11 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
             if (!init) {
                 etcd.putDir(DIR).ttl(timeout).prevExist(false).send().get();
                 init = true;
-            } else
+            } else {
                 etcd.putDir(DIR).ttl(timeout).prevExist(true).send().get();
-
-        } catch (Exception e) {
-            LOG.error("Put base dir error: " + e.getMessage(), e);
+            }
+        } catch (final Throwable e) {
+            LOGGER.error("Put base dir error: " + e.getMessage(), e);
             if (e.getMessage() != null && e.getMessage().indexOf("Key not found") > -1) {
                 reSync();
                 return;
@@ -183,7 +180,7 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
             String value = CryptUtil.encrypt(info.toString(), SYSTEM_ID);
             etcd.put(INFO_KEY, value).send().get();
         } catch (Exception e) {
-            LOG.error("Send App info error: " + e.getMessage());
+            LOGGER.error("Send App info error: " + e.getMessage());
 
             // 异常2秒重试
             thisWait(2000);
@@ -193,10 +190,10 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 
     public void syncClass() {
         if (!CollectionUtils.isEmpty(clsSet)) {
-            Iterator<Class<?>> iter = clsSet.iterator();
+            final Iterator<Class<?>> iter = clsSet.iterator();
             while (iter.hasNext()) {
                 try {
-                    Class<?> cls = iter.next();
+                    final Class<?> cls = iter.next();
                     String index;
                     EtcdKeysResponse response;
                     if ((index = clsIndex.get(cls)) != null) {
@@ -210,32 +207,35 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
                         }
                     }
 
-                    LOG.debug("Class Sync: " + cls.getName());
+                    LOGGER.debug("Class Sync: " + cls.getName());
                 } catch (Exception e) {
-                    LOG.error("Send to Etcd error: " + e.getMessage());
+                    LOGGER.error("Send to Etcd error: " + e.getMessage());
                 }
             }
         }
     }
 
     public void syncInstance() {
-        Collection<BaseScheduler> started = SchedulerFactory.getInstance().getStartedScheduler();
-        Collection<BaseScheduler> stopping = SchedulerFactory.getInstance().getStoppingScheduler();
-        Collection<BaseScheduler> stopped = SchedulerFactory.getInstance().getStoppedScheduler();
+        final Collection<BaseScheduler> started = SchedulerFactory.getInstance().getStartedScheduler();
+        final Collection<BaseScheduler> stopping = SchedulerFactory.getInstance().getStoppingScheduler();
+        final Collection<BaseScheduler> stopped = SchedulerFactory.getInstance().getStoppedScheduler();
 
         if (!CollectionUtils.isEmpty(started)) {
-            for (BaseScheduler scheduler : started)
+            for (BaseScheduler scheduler : started) {
                 start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
+            }
         }
 
         if (!CollectionUtils.isEmpty(stopping)) {
-            for (BaseScheduler scheduler : stopping)
+            for (BaseScheduler scheduler : stopping) {
                 stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
+            }
         }
 
         if (!CollectionUtils.isEmpty(stopped)) {
-            for (BaseScheduler scheduler : stopped)
+            for (BaseScheduler scheduler : stopped) {
                 stopped(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), false, scheduler.getAnalysis());
+            }
         }
     }
 
@@ -251,21 +251,22 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 
     private final void initEtcdClient() {
         /** create ETCD client instance */
-        String username = System.getProperty(ETCD_USER, "");
-        String clientId = CryptUtil.decrypt(System.getProperty(ETCD_CLIENT_ID, ""), username);
+        final String username = System.getProperty(ETCD_USER, "");
+        final String clientId = CryptUtil.decrypt(System.getProperty(ETCD_CLIENT_ID, ""), username);
         APP_NAME = System.getProperty(ETCD_APP_NAME, "");
-        String[] uris = System.getProperty(ETCD_URI, "").split(",");
+        final String[] uris = System.getProperty(ETCD_URI, "").split(",");
         if (!StringUtils.isEmpty(username.trim()) && !StringUtils.isEmpty(clientId.trim()) && !StringUtils.isEmpty(APP_NAME.trim())
                 && uris.length > 0) {
-            List<URI> uriList = new ArrayList<URI>();
+            final List<URI> uriList = Lists.newArrayList();
             for (String uri : uris) {
-                if (StringUtils.isEmpty(uri))
+                if (StringUtils.isEmpty(uri)) {
                     continue;
+                }
 
                 try {
                     uriList.add(URI.create(uri));
-                } catch (Throwable e) {
-                    LOG.error("Etcd URI Error: " + e.getMessage());
+                } catch (final Throwable e) {
+                    LOGGER.error("Etcd URI Error: " + e.getMessage());
                 }
             }
 
@@ -276,11 +277,11 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
         }
     }
 
-    private EtcdKeysResponse put(String key, SchedulerStatus status) {
+    private EtcdKeysResponse put(final String key, final SchedulerStatus status) {
         try {
             String index;
             EtcdKeysResponse response;
-            String value = CryptUtil.encrypt(status.toString(), SYSTEM_ID);
+            final String value = CryptUtil.encrypt(status.toString(), SYSTEM_ID);
             if ((index = indexMap.get(status.getId())) != null) {
                 response = etcd.put(key + '/' + index, value).prevExist(true).send().get();
             } else {
@@ -293,14 +294,14 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
             }
 
             return response;
-        } catch (Exception e) {
-            LOG.error("Put to etcd error: " + e.getMessage());
+        } catch (final Throwable e) {
+            LOGGER.error("Put to etcd error: " + e.getMessage());
         }
 
         return null;
     }
 
-    private EtcdKeysResponse delete(String key, SchedulerStatus status) {
+    private EtcdKeysResponse delete(final String key, final SchedulerStatus status) {
         try {
             String index;
             EtcdKeysResponse response = null;
@@ -310,31 +311,31 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
             }
 
             return response;
-        } catch (Exception e) {
-            LOG.error("Delete etcd file error: " + e.getMessage());
+        } catch (final Throwable e) {
+            LOGGER.error("Delete etcd file error: " + e.getMessage());
         }
 
         return null;
     }
 
     @Override
-    public void start(String group, String id, SchedulerAnalysis analysis) {
+    public void start(final String group, final String id, final SchedulerAnalysis analysis) {
         put(INSTANCE_KEY, new SchedulerStatus(group, id, Status.STARTED, analysis));
     }
 
     @Override
-    public void stopping(String group, String id, SchedulerAnalysis analysis) {
+    public void stopping(final String group, final String id, final SchedulerAnalysis analysis) {
         put(INSTANCE_KEY, new SchedulerStatus(group, id, Status.STOPPING, analysis));
     }
 
     @Override
-    public void stopped(String group, String id, boolean isRemove, SchedulerAnalysis analysis) {
+    public void stopped(final String group, final String id, final boolean isRemove, final SchedulerAnalysis analysis) {
         SchedulerStatus status = new SchedulerStatus(group, id, Status.STOPPED, analysis);
-        if (!isRemove)
+        if (!isRemove) {
             put(INSTANCE_KEY, status);
-        else
+        } else {
             delete(INSTANCE_KEY, status);
-
+        }
     }
 
     public EtcdClient getEtcd() {

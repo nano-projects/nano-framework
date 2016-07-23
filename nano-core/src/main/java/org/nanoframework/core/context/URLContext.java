@@ -15,14 +15,14 @@
  */
 package org.nanoframework.core.context;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nanoframework.commons.util.ObjectCompare;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * 请求地址解析后对象，拆解GET请求中的context和参数列表.
@@ -81,16 +81,6 @@ public class URLContext {
         return this;
     }
 
-    @Deprecated
-    public static final boolean filterURI(final String uri) {
-        if (!uri.startsWith(System.getProperty(ApplicationContext.CONTEXT_ROOT))
-                || ObjectCompare.isInListByRegEx(uri, System.getProperty(ApplicationContext.CONTEXT_FILTER).split(";"))) {
-            return false;
-        }
-
-        return true;
-    }
-
     @SuppressWarnings("unchecked")
     public static final URLContext formatURL(final String url) {
         if (StringUtils.isEmpty(url)) {
@@ -103,7 +93,7 @@ public class URLContext {
 
         // 拆分参数列表
         if (tokens.length > 1) {
-            final Map<String, Object> keyValue = new HashMap<>();
+            final Map<String, Object> keyValue = Maps.newHashMap();
             final String[] params = tokens[1].split("&");
             if (params.length > 0) {
                 boolean hasArray = false;
@@ -113,7 +103,7 @@ public class URLContext {
                         hasArray = true;
                         List<String> values = (List<String>) keyValue.get(kv[0]);
                         if (values == null) {
-                            values = new ArrayList<>();
+                            values = Lists.newArrayList();
                         }
 
                         values.add(kv[1]);

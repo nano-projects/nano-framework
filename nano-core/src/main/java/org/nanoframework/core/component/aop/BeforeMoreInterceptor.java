@@ -35,17 +35,17 @@ public class BeforeMoreInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        BeforeMore beforeMore = invocation.getMethod().getAnnotation(BeforeMore.class);
-        Before[] befores = beforeMore.value();
-        Map<Method, Object> map = Maps.newLinkedHashMap();
+        final BeforeMore beforeMore = invocation.getMethod().getAnnotation(BeforeMore.class);
+        final Before[] befores = beforeMore.value();
+        final Map<Method, Object> map = Maps.newLinkedHashMap();
         for (Before before : befores) {
-            Method method = before.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
-            Object instance = Globals.get(Injector.class).getInstance(before.value());
+            final Method method = before.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
+            final Object instance = Globals.get(Injector.class).getInstance(before.value());
             map.put(method, instance);
         }
 
-        for (Iterator<Entry<Method, Object>> iter = map.entrySet().iterator(); iter.hasNext();) {
-            Entry<Method, Object> entry = iter.next();
+        for (final Iterator<Entry<Method, Object>> iter = map.entrySet().iterator(); iter.hasNext();) {
+            final Entry<Method, Object> entry = iter.next();
             entry.getKey().invoke(entry.getValue(), invocation);
         }
 

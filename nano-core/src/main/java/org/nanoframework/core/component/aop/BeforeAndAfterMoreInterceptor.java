@@ -34,33 +34,33 @@ import com.google.inject.Injector;
 public class BeforeAndAfterMoreInterceptor implements MethodInterceptor {
 
     @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        BeforeAndAfterMore beforeAndAfterMore = invocation.getMethod().getAnnotation(BeforeAndAfterMore.class);
-        Map<Method, Object> beforeMap = Maps.newLinkedHashMap();
-        Map<Method, Object> afterMap = Maps.newLinkedHashMap();
+    public Object invoke(final MethodInvocation invocation) throws Throwable {
+        final BeforeAndAfterMore beforeAndAfterMore = invocation.getMethod().getAnnotation(BeforeAndAfterMore.class);
+        final Map<Method, Object> beforeMap = Maps.newLinkedHashMap();
+        final Map<Method, Object> afterMap = Maps.newLinkedHashMap();
         for (BeforeAndAfter beforeAndAfter : beforeAndAfterMore.value()) {
-            Object instance = Globals.get(Injector.class).getInstance(beforeAndAfter.value());
-            Method beforeMethod = beforeAndAfter.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
-            Method afterMethod = beforeAndAfter.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
+            final Object instance = Globals.get(Injector.class).getInstance(beforeAndAfter.value());
+            final Method beforeMethod = beforeAndAfter.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
+            final Method afterMethod = beforeAndAfter.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
             beforeMap.put(beforeMethod, instance);
             afterMap.put(afterMethod, instance);
         }
 
         Object obj = null;
         try {
-            for (Iterator<Entry<Method, Object>> iter = beforeMap.entrySet().iterator(); iter.hasNext();) {
-                Entry<Method, Object> entry = iter.next();
+            for (final Iterator<Entry<Method, Object>> iter = beforeMap.entrySet().iterator(); iter.hasNext();) {
+                final Entry<Method, Object> entry = iter.next();
                 entry.getKey().invoke(entry.getValue(), invocation);
             }
 
             return obj = invocation.proceed();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             obj = e;
             throw e;
 
         } finally {
-            for (Iterator<Entry<Method, Object>> iter = afterMap.entrySet().iterator(); iter.hasNext();) {
-                Entry<Method, Object> entry = iter.next();
+            for (final Iterator<Entry<Method, Object>> iter = afterMap.entrySet().iterator(); iter.hasNext();) {
+                final Entry<Method, Object> entry = iter.next();
                 entry.getKey().invoke(entry.getValue(), invocation, obj);
             }
         }

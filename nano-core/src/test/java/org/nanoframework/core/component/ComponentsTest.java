@@ -16,22 +16,18 @@
 package org.nanoframework.core.component;
 
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.List;
 
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
+import org.nanoframework.commons.exception.UnsupportedAccessException;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.util.MapBuilder;
-import org.nanoframework.core.component.impl.TestComponentImpl;
+import org.nanoframework.core.component.aop.AfterAOP;
+import org.nanoframework.core.component.aop.BeforeAOP;
+import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
-import org.nanoframework.core.plugins.PluginLoader;
-import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -41,38 +37,7 @@ import com.google.common.collect.Maps;
  * @author yanghe
  * @since 1.3.15
  */
-public class ComponentsTest {
-
-    private static PluginLoader PLUGIN_LOADER;
-    
-    @Before
-    public void init() {
-        if (PLUGIN_LOADER == null) {
-            PLUGIN_LOADER = new DefaultPluginLoader();
-            PLUGIN_LOADER.init(new ServletConfig() {
-                
-                @Override
-                public String getServletName() {
-                    return null;
-                }
-                
-                @Override
-                public ServletContext getServletContext() {
-                    return null;
-                }
-                
-                @Override
-                public Enumeration<String> getInitParameterNames() {
-                    return null;
-                }
-                
-                @Override
-                public String getInitParameter(String name) {
-                    return null;
-                }
-            });
-        }
-    }
+public class ComponentsTest extends PluginLoaderInit {
     
     @Test
     public void componentTest() throws LoaderException, IOException {
@@ -82,23 +47,80 @@ public class ComponentsTest {
         final List<RequestMethod> methods = Lists.asList(requestMethods[0], requestMethods);
         Assert.assertEquals(methods.contains(RequestMethod.GET), true);
         Assert.assertEquals(methods.contains(RequestMethod.POST), true);
-        Assert.assertEquals(mapper.getClz(), TestComponentImpl.class);
         Assert.assertEquals(mapper.getObject() instanceof TestComponent, true);
         
         final Object ret = Components.invoke(mapper, Maps.newHashMap());
         Assert.assertNotNull(ret);
         Assert.assertEquals(ret, "OK");
         
+    }
+    
+    @Test
+    public void reloadTest() throws LoaderException, IOException {
         Components.reload();
-        final RequestMapper reloadMapper = Components.getMapper("/v1/reload", RequestMethod.POST);
-        Assert.assertNotNull(reloadMapper);
-        final Object reload = Components.invoke(reloadMapper, null);
+        final RequestMapper mapper = Components.getMapper("/v1/reload", RequestMethod.POST);
+        Assert.assertNotNull(mapper);
+        final Object reload = Components.invoke(mapper, null);
         Assert.assertEquals(reload, "Reload");
-        
-        final RequestMapper hasParamMapper = Components.getMapper("/v1/param/hello", RequestMethod.GET);
-        Assert.assertNotNull(hasParamMapper);
-        final Object hasParam = Components.invoke(hasParamMapper, MapBuilder.<String, Object>create().put("param1", "world").build());
+    }
+    
+    @Test
+    public void hasParamTest() {
+        final RequestMapper mapper = Components.getMapper("/v1/param/hello", RequestMethod.GET);
+        Assert.assertNotNull(mapper);
+        final Object hasParam = Components.invoke(mapper, MapBuilder.<String, Object>create().put("param1", "world").build());
         Assert.assertEquals(hasParam, "hello=world");
+    }
+    
+    @Test
+    public void notFoundRouteTest() {
+        final RequestMapper mapper = Components.getMapper("/v1/param/hello", RequestMethod.POST);
+        Assert.assertEquals(mapper, null);
+    }
+    
+    @Test
+    public void emptyParamTest() {
+        final RequestMapper mapper = Components.getMapper("/v1/param/hello", RequestMethod.GET);
+        Assert.assertNotNull(mapper);
+        try {
+            Components.invoke(mapper, null);
+        } catch (final Throwable e) {
+            Assert.assertEquals(e instanceof ComponentInvokeException, true);
+        }
+    }
+    
+    @Test
+    public void beforeAopTest() {
+        final RequestMapper mapper = Components.getMapper("/v1/aop/before", RequestMethod.PUT);
+        Assert.assertNotNull(mapper);
+        final Object ret = Components.invoke(mapper, MapBuilder.<String, Object>create().put("param", "before").build());
+        Assert.assertEquals(ret, "before");
+        Assert.assertEquals(BeforeAOP.RESULT, "before");
+        BeforeAOP.RESULT = null;
+    }
+    
+    @Test
+    public void afterAopTest() {
+        final RequestMapper mapper = Components.getMapper("/v1/aop/after", RequestMethod.PUT);
+        Assert.assertNotNull(mapper);
+        Components.invoke(mapper, null);
+        Assert.assertEquals(AfterAOP.RESULT, "OK");
+        AfterAOP.RESULT = null;
+    }
+    
+    @Test
+    public void afterAopErrorTest() {
+        final RequestMapper mapper = Components.getMapper("/v1/aop/after/error", RequestMethod.PUT);
+        Assert.assertNotNull(mapper);
+        try {
+            Components.invoke(mapper, null);
+        } catch (final Throwable e) {
+            Assert.assertEquals(e instanceof ComponentInvokeException, true);
+            Assert.assertEquals(e.getCause() instanceof UnsupportedAccessException, true);
+        }
+        
+        Assert.assertEquals(AfterAOP.RESULT instanceof UnsupportedAccessException, true);
+        AfterAOP.RESULT = null;
     }
     
 }

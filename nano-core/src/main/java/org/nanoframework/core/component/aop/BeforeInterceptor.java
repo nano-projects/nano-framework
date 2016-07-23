@@ -30,10 +30,10 @@ import com.google.inject.Injector;
 public class BeforeInterceptor implements MethodInterceptor {
 
     @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        Before before = invocation.getMethod().getAnnotation(Before.class);
-        Method method = before.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
-        Object instance = Globals.get(Injector.class).getInstance(before.value());
+    public Object invoke(final MethodInvocation invocation) throws Throwable {
+        final Before before = invocation.getMethod().getAnnotation(Before.class);
+        final Method method = before.value().getMethod(MethodNames.BEFORE, MethodInvocation.class);
+        final Object instance = Globals.get(Injector.class).getInstance(before.value());
 
         method.invoke(instance, invocation);
         return invocation.proceed();

@@ -21,6 +21,8 @@ import java.util.Map;
 import org.apache.commons.lang3.ArrayUtils;
 import org.nanoframework.commons.entity.BaseEntity;
 
+import com.google.common.collect.Lists;
+
 /**
  * 组件映射类，存储实例化对象、对象类、方法.
  * 
@@ -102,13 +104,7 @@ public class RequestMapper extends BaseEntity {
 
     public boolean hasMethod(RequestMethod method) {
         if (ArrayUtils.isNotEmpty(requestMethods)) {
-            for (RequestMethod mtd : requestMethods) {
-                if (mtd == method) {
-                    return true;
-                }
-            }
-
-            return false;
+            return Lists.newArrayList(requestMethods).contains(method);
         }
 
         return true;

@@ -23,7 +23,6 @@ import static org.nanoframework.core.context.ApplicationContext.Scheduler.SHUTDO
 
 import java.text.ParseException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
@@ -62,37 +61,36 @@ import com.google.inject.Injector;
  * @since 1.3
  */
 public class SchedulerFactory {
+    public static final String DEFAULT_SCHEDULER_NAME_PREFIX = "Scheduler-Thread-Pool: ";
+    public static final SchedulerThreadFactory THREAD_FACTORY = new SchedulerThreadFactory();
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerFactory.class);
     private static SchedulerFactory FACTORY;
     private static final Object LOCK = new Object();
+    private static boolean IS_LOADED = false;
+    
+    private static final ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool(THREAD_FACTORY);
+    
+    private static EtcdSchedulerOperate ETCD_SCHEDULER;
+    
     private final ConcurrentMap<String, BaseScheduler> startedScheduler = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, BaseScheduler> stoppingScheduler = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, BaseScheduler> stoppedScheduler = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, Set<BaseScheduler>> group = new ConcurrentHashMap<>();
-    public static final SchedulerThreadFactory threadFactory = new SchedulerThreadFactory();
-    private static final ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool(threadFactory);
-
-    private static boolean isLoaded = false;
-
-    public static final String DEFAULT_SCHEDULER_NAME_PREFIX = "Scheduler-Thread-Pool: ";
 
     private final long shutdownTimeout = Long.parseLong(System.getProperty(SHUTDOWN_TIMEOUT, "60000"));
-
-    private static EtcdSchedulerOperate etcdScheduler;
 
     private SchedulerFactory() {
 
     }
 
     public static SchedulerFactory getInstance() {
-        if (FACTORY == null) {
-            synchronized (LOCK) {
-                if (FACTORY == null) {
-                    FACTORY = new SchedulerFactory();
-                    StatusMonitorScheduler statusMonitor = FACTORY.new StatusMonitorScheduler();
-                    statusMonitor.getConfig().getService().execute(statusMonitor);
-                    Runtime.getRuntime().addShutdownHook(new Thread(FACTORY.new ShutdownHook()));
-                }
+        synchronized (LOCK) {
+            if (FACTORY == null) {
+                FACTORY = new SchedulerFactory();
+                final StatusMonitorScheduler statusMonitor = FACTORY.new StatusMonitorScheduler();
+                statusMonitor.getConfig().getService().execute(statusMonitor);
+                Runtime.getRuntime().addShutdownHook(new Thread(FACTORY.new ShutdownHook()));
             }
         }
 
@@ -105,13 +103,13 @@ public class SchedulerFactory {
      * @param scheduler 任务
      * @return 返回当前任务
      */
-    public BaseScheduler bind(BaseScheduler scheduler) {
+    public BaseScheduler bind(final BaseScheduler scheduler) {
         try {
             scheduler.setClose(false);
             startedScheduler.put(scheduler.getConfig().getId(), scheduler);
             return scheduler;
         } finally {
-            LOGGER.info("绑定任务: 任务号[ " + scheduler.getConfig().getId() + " ]");
+            LOGGER.info("绑定任务: 任务号[ {} ]", scheduler.getConfig().getId());
         }
     }
 
@@ -121,10 +119,10 @@ public class SchedulerFactory {
      * @param scheduler 任务
      * @return 返回当前任务
      */
-    protected BaseScheduler unbind(BaseScheduler scheduler) {
-        BaseScheduler removed = startedScheduler.remove(scheduler.getConfig().getId());
-        if (removed != null) {
-            LOGGER.debug("解绑任务 : 任务号[ " + scheduler.getConfig().getId() + " ], 现存任务数: " + startedScheduler.size());
+    protected BaseScheduler unbind(final BaseScheduler scheduler) {
+        final BaseScheduler removedScheduler = startedScheduler.remove(scheduler.getConfig().getId());
+        if (removedScheduler != null) {
+            LOGGER.debug("解绑任务 : 任务号[ {} ], 现存任务数: {}", scheduler.getConfig().getId(), startedScheduler.size());
         }
 
         return scheduler;
@@ -146,7 +144,7 @@ public class SchedulerFactory {
         return startedScheduler.values();
     }
 
-    public int getStopedSchedulerSize() {
+    public int getStoppedSchedulerSize() {
         return stoppedScheduler.size();
     }
 
@@ -166,9 +164,9 @@ public class SchedulerFactory {
      * 关闭任务
      * @param id 任务号
      */
-    public void close(String id) {
+    public void close(final String id) {
         try {
-            BaseScheduler scheduler = startedScheduler.get(id);
+            final BaseScheduler scheduler = startedScheduler.get(id);
             close(scheduler);
         } finally {
             LOGGER.info("关闭任务, 任务号: {}", id);
@@ -178,7 +176,7 @@ public class SchedulerFactory {
     public void close(final BaseScheduler scheduler) {
         if (scheduler != null && !scheduler.isClose()) {
             /** Sync to Etcd by stop method */
-            etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
+            ETCD_SCHEDULER.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 
             scheduler.setClose(true);
             stoppingScheduler.put(scheduler.getConfig().getId(), scheduler);
@@ -190,14 +188,14 @@ public class SchedulerFactory {
      * 关闭整组任务
      * @param groupName the groupName
      */
-    public void closeGroup(String groupName) {
+    public void closeGroup(final String groupName) {
         Assert.hasLength(groupName, "groupName must not be null");
-        Set<String> ids = new HashSet<String>();
+        final Set<String> ids = Sets.newHashSet();
         startedScheduler.forEach((id, scheduler) -> {
             if (groupName.equals(scheduler.getConfig().getGroup())) {
                 if (!scheduler.isClose()) {
                     /** Sync to Etcd by stop method */
-                    etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
+                    ETCD_SCHEDULER.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 
                     scheduler.setClose(true);
                     stoppingScheduler.put(scheduler.getConfig().getId(), scheduler);
@@ -217,10 +215,10 @@ public class SchedulerFactory {
             LOGGER.warn("现在关闭所有的任务");
             startedScheduler.keySet().forEach(id -> {
                 try {
-                    BaseScheduler scheduler = startedScheduler.get(id);
+                    final BaseScheduler scheduler = startedScheduler.get(id);
                     if (scheduler != null && !scheduler.isClose()) {
                         /** Sync to Etcd by stop method */
-                        etcdScheduler.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
+                        ETCD_SCHEDULER.stopping(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
 
                         scheduler.setClose(true);
                         stoppingScheduler.put(scheduler.getConfig().getId(), scheduler);
@@ -241,98 +239,107 @@ public class SchedulerFactory {
     public void startAll() {
         if (stoppedScheduler.size() > 0) {
             stoppedScheduler.forEach((id, scheduler) -> {
-                LOGGER.info("Start scheduler [ " + id + " ], class with [ " + scheduler.getClass().getName() + " ]");
+                LOGGER.info("Start scheduler [ {} ], class with [ {} ]", id, scheduler.getClass().getName());
 
                 bind(scheduler);
-                threadFactory.setBaseScheduler(scheduler);
+                THREAD_FACTORY.setBaseScheduler(scheduler);
                 service.execute(scheduler);
 
                 /** Sync to Etcd by start method */
-                etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
+                final SchedulerConfig conf = scheduler.getConfig();
+                ETCD_SCHEDULER.start(conf.getGroup(), conf.getId(), scheduler.getAnalysis());
             });
 
             stoppedScheduler.clear();
         }
     }
 
-    public void startGroup(String groupName) {
+    public void startGroup(final String groupName) {
         if (stoppedScheduler.size() > 0) {
-            Set<String> keys = new HashSet<>();
+            final Set<String> keys = Sets.newHashSet();
             stoppedScheduler.forEach((id, scheduler) -> {
                 if (groupName.equals(scheduler.getConfig().getGroup())) {
                     if (scheduler.isClose()) {
-                        LOGGER.info("Start scheduler [ " + id + " ], class with [ " + scheduler.getClass().getName() + " ]");
+                        LOGGER.info("Start scheduler [ {} ], class with [ {} ]", id, scheduler.getClass().getName());
 
                         bind(scheduler);
-                        threadFactory.setBaseScheduler(scheduler);
+                        THREAD_FACTORY.setBaseScheduler(scheduler);
                         service.execute(scheduler);
                         keys.add(id);
 
                         /** Sync to Etcd by start method */
-                        etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
+                        final SchedulerConfig conf = scheduler.getConfig();
+                        ETCD_SCHEDULER.start(conf.getGroup(), conf.getId(), scheduler.getAnalysis());
                     }
                 }
             });
 
-            for (String key : keys)
+            for (String key : keys) {
                 stoppedScheduler.remove(key);
+            }
         }
     }
 
-    public void start(String id) {
-        BaseScheduler scheduler = stoppedScheduler.get(id);
+    public void start(final String id) {
+        final BaseScheduler scheduler = stoppedScheduler.get(id);
         if (scheduler != null && scheduler.isClose()) {
-            LOGGER.info("Start scheduler [ " + id + " ], class with [ " + scheduler.getClass().getName() + " ]");
+            LOGGER.info("Start scheduler [ {} ], class with [ {} ]", id, scheduler.getClass().getName());
 
             bind(scheduler);
-            threadFactory.setBaseScheduler(scheduler);
+            THREAD_FACTORY.setBaseScheduler(scheduler);
             service.execute(scheduler);
             stoppedScheduler.remove(id);
 
             /** Sync to Etcd by start method */
-            etcdScheduler.start(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), scheduler.getAnalysis());
+            final SchedulerConfig conf = scheduler.getConfig();
+            ETCD_SCHEDULER.start(conf.getGroup(), conf.getId(), scheduler.getAnalysis());
         }
     }
 
-    public void append(String groupName, int size, boolean autoStart) {
-        BaseScheduler scheduler = findLast(groupName);
-        if (scheduler == null)
+    public void append(final String groupName, final int size, final boolean autoStart) {
+        final BaseScheduler scheduler = findLast(groupName);
+        if (scheduler == null) {
             return;
+        }
 
         for (int idx = 0; idx < size; idx++) {
-            SchedulerConfig config = (SchedulerConfig) scheduler.getConfig().clone();
-            int total = config.getTotal();
-            config.setTotal(total + 1);
-            config.setNum(total);
-            config.setId(groupName + '-' + scheduler.getIndex(groupName));
-            config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + config.getId());
-            BaseScheduler newScheduler = scheduler.clone();
+            final SchedulerConfig conf = (SchedulerConfig) scheduler.getConfig().clone();
+            int total = conf.getTotal();
+            conf.setTotal(total + 1);
+            conf.setNum(total);
+            conf.setId(groupName + '-' + scheduler.getIndex(groupName));
+            conf.setName(DEFAULT_SCHEDULER_NAME_PREFIX + conf.getId());
+            
+            final BaseScheduler newScheduler = scheduler.clone();
             newScheduler.setClose(true);
             newScheduler.setClosed(true);
             newScheduler.setRemove(false);
-            newScheduler.setConfig(config);
+            newScheduler.setConfig(conf);
             addScheduler(newScheduler);
             if (autoStart) {
-                start(config.getId());
+                start(conf.getId());
             } else {
                 /** Sync to Etcd by start method */
-                etcdScheduler.stopped(newScheduler.getConfig().getGroup(), newScheduler.getConfig().getId(), false, scheduler.getAnalysis());
+                final SchedulerConfig newScheConf = newScheduler.getConfig();
+                ETCD_SCHEDULER.stopped(newScheConf.getGroup(), newScheConf.getId(), false, scheduler.getAnalysis());
             }
         }
     }
 
-    public boolean closed(String id) {
+    public boolean closed(final String id) {
         return stoppedScheduler.containsKey(id);
     }
 
-    public boolean started(String id) {
+    public boolean started(final String id) {
         return startedScheduler.containsKey(id);
     }
 
-    public boolean hasClosedGroup(String group) {
+    public boolean hasClosedGroup(final String group) {
         if (stoppedScheduler.size() > 0) {
-            for (BaseScheduler scheduler : stoppedScheduler.values()) {
-                if (scheduler.getConfig().getGroup().equals(group)) {
+            final Collection<BaseScheduler> schedulers = stoppedScheduler.values();
+            for (final BaseScheduler scheduler : schedulers) {
+                final SchedulerConfig conf = scheduler.getConfig();
+                if (conf.getGroup().equals(group)) {
                     return true;
                 }
             }
@@ -341,10 +348,11 @@ public class SchedulerFactory {
         return false;
     }
 
-    public boolean hasStartedGroup(String group) {
+    public boolean hasStartedGroup(final String group) {
         if (startedScheduler.size() > 0) {
-            for (BaseScheduler scheduler : startedScheduler.values()) {
-                if (scheduler.getConfig().getGroup().equals(group)) {
+            for (final BaseScheduler scheduler : startedScheduler.values()) {
+                final SchedulerConfig conf = scheduler.getConfig();
+                if (conf.getGroup().equals(group)) {
                     return true;
                 }
             }
@@ -353,7 +361,7 @@ public class SchedulerFactory {
         return false;
     }
 
-    public void addScheduler(BaseScheduler scheduler) {
+    public void addScheduler(final BaseScheduler scheduler) {
         Set<BaseScheduler> groupScheduler = group.get(scheduler.getConfig().getGroup());
         if (groupScheduler == null) {
             groupScheduler = Sets.newLinkedHashSet();
@@ -370,17 +378,21 @@ public class SchedulerFactory {
         rebalance(scheduler.getConfig().getGroup());
     }
 
-    public int removeScheduler(BaseScheduler scheduler, boolean force) {
-        Set<BaseScheduler> groupScheduler = group.get(scheduler.getConfig().getGroup());
+    public int removeScheduler(final BaseScheduler scheduler, final boolean force) {
+        final Set<BaseScheduler> groupScheduler = group.get(scheduler.getConfig().getGroup());
         boolean remove = false;
         if (groupScheduler.size() > 1 || force) {
             groupScheduler.remove(scheduler);
             scheduler.setRemove(remove = true);
+            
+            // 对已经停止的任务进行删除时，需要主动删除stoppedScheduler
+            stoppedScheduler.remove(scheduler.getConfig().getId(), scheduler);
         }
 
         if (scheduler.isClosed()) {
             /** Sync to Etcd by start method */
-            etcdScheduler.stopped(scheduler.getConfig().getGroup(), scheduler.getConfig().getId(), remove, scheduler.getAnalysis());
+            final SchedulerConfig conf = scheduler.getConfig();
+            ETCD_SCHEDULER.stopped(conf.getGroup(), conf.getId(), remove, scheduler.getAnalysis());
         } else {
             close(scheduler.getConfig().getId());
         }
@@ -389,12 +401,12 @@ public class SchedulerFactory {
         return groupScheduler.size();
     }
 
-    public int removeScheduler(BaseScheduler scheduler) {
+    public int removeScheduler(final BaseScheduler scheduler) {
         return removeScheduler(scheduler, false);
     }
 
-    public int removeScheduler(String groupName) {
-        BaseScheduler scheduler = findLast(groupName);
+    public int removeScheduler(final String groupName) {
+        final BaseScheduler scheduler = findLast(groupName);
         if (scheduler != null) {
             return removeScheduler(scheduler);
         }
@@ -402,7 +414,7 @@ public class SchedulerFactory {
         return 0;
     }
 
-    public final void removeGroup(String groupName) {
+    public final void removeGroup(final String groupName) {
         while (removeScheduler(groupName) > 1) {
             ;
         }
@@ -410,8 +422,8 @@ public class SchedulerFactory {
         closeGroup(groupName);
     }
 
-    public int getGroupSize(String groupName) {
-        Set<BaseScheduler> groupScheduler = group.get(groupName);
+    public int getGroupSize(final String groupName) {
+        final Set<BaseScheduler> groupScheduler = group.get(groupName);
         if (!CollectionUtils.isEmpty(groupScheduler)) {
             return groupScheduler.size();
         }
@@ -419,17 +431,18 @@ public class SchedulerFactory {
         return 0;
     }
 
-    public Set<BaseScheduler> getGroupScheduler(String groupName) {
+    public Set<BaseScheduler> getGroupScheduler(final String groupName) {
         return group.get(groupName);
     }
 
-    public final BaseScheduler find(String id) {
+    public final BaseScheduler find(final String id) {
         Assert.hasLength(id, "id must be not empty.");
-        String groupName = id.substring(0, id.lastIndexOf('-'));
-        Set<BaseScheduler> groupScheduler = group.get(groupName);
+        final String groupName = id.substring(0, id.lastIndexOf('-'));
+        final Set<BaseScheduler> groupScheduler = group.get(groupName);
         if (!CollectionUtils.isEmpty(groupScheduler)) {
-            for (BaseScheduler scheduler : groupScheduler) {
-                if (scheduler.getConfig().getId().equals(id)) {
+            for (final BaseScheduler scheduler : groupScheduler) {
+                final SchedulerConfig conf = scheduler.getConfig();
+                if (conf.getId().equals(id)) {
                     return scheduler;
                 }
             }
@@ -438,19 +451,21 @@ public class SchedulerFactory {
         return null;
     }
 
-    public BaseScheduler findLast(String groupName) {
+    public BaseScheduler findLast(final String groupName) {
         Assert.hasLength(groupName);
-        Set<BaseScheduler> groupScheduler = group.get(groupName);
+        final Set<BaseScheduler> groupScheduler = group.get(groupName);
         if (!CollectionUtils.isEmpty(groupScheduler)) {
             int max = -1;
-            for (BaseScheduler scheduler : groupScheduler) {
-                if (scheduler.getConfig().getNum() > max) {
+            for (final BaseScheduler scheduler : groupScheduler) {
+                final SchedulerConfig conf = scheduler.getConfig();
+                if (conf.getNum() > max) {
                     max = scheduler.getConfig().getNum();
                 }
             }
 
-            for (BaseScheduler scheduler : groupScheduler) {
-                if (scheduler.getConfig().getNum() == max) {
+            for (final BaseScheduler scheduler : groupScheduler) {
+                final SchedulerConfig conf = scheduler.getConfig();
+                if (conf.getNum() == max) {
                     return scheduler;
                 }
             }
@@ -459,11 +474,11 @@ public class SchedulerFactory {
         return null;
     }
 
-    public void rebalance(String groupName) {
+    public void rebalance(final String groupName) {
         Assert.hasLength(groupName);
-        Set<BaseScheduler> groupScheduler = group.get(groupName);
+        final Set<BaseScheduler> groupScheduler = group.get(groupName);
         if (!CollectionUtils.isEmpty(groupScheduler)) {
-            AtomicInteger idx = new AtomicInteger(0);
+            final AtomicInteger idx = new AtomicInteger(0);
             groupScheduler.forEach(scheduler -> {
                 scheduler.getConfig().setNum(idx.getAndIncrement());
                 scheduler.getConfig().setTotal(groupScheduler.size());
@@ -477,7 +492,7 @@ public class SchedulerFactory {
      * @throws IllegalAccessException ?
      */
     public static final void load() throws IllegalArgumentException, IllegalAccessException {
-        if (isLoaded) {
+        if (IS_LOADED) {
             throw new LoaderException("Scheduler已经加载，这里不再进行重复的加载，如需重新加载请调用reload方法");
         }
 
@@ -485,8 +500,8 @@ public class SchedulerFactory {
             throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
         }
 
-        Set<String> includes = Sets.newLinkedHashSet();
-        Set<String> exclusions = Sets.newLinkedHashSet();
+        final Set<String> includes = Sets.newLinkedHashSet();
+        final Set<String> exclusions = Sets.newLinkedHashSet();
         PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(BASE_PACKAGE) != null).forEach(item -> {
             ComponentScan.scan(item.getProperty(BASE_PACKAGE));
         });
@@ -507,23 +522,23 @@ public class SchedulerFactory {
             }
         });
 
-        Set<Class<?>> componentClasses = ComponentScan.filter(Scheduler.class);
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("Scheduler size: " + componentClasses.size());
-
+        final Set<Class<?>> componentClasses = ComponentScan.filter(Scheduler.class);
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Scheduler size: {}", componentClasses.size());
+        }
+        
         if (componentClasses.size() > 0) {
             if (includes.isEmpty()) {
                 includes.add(".");
             }
 
-            for (Class<?> clz : componentClasses) {
+            for (final Class<?> clz : componentClasses) {
                 if (BaseScheduler.class.isAssignableFrom(clz)) {
-                    LOGGER.info("Inject Scheduler Class: " + clz.getName());
+                    LOGGER.info("Inject Scheduler Class: {}", clz.getName());
 
-                    Scheduler scheduler = clz.getAnnotation(Scheduler.class);
-                    if (!ObjectCompare.isInListByRegEx(clz.getSimpleName(), includes)
-                            || ObjectCompare.isInListByRegEx(clz.getSimpleName(), exclusions)) {
-                        LOGGER.warn("过滤任务组: " + clz.getSimpleName() + ", 类名 [ " + clz.getName() + " ]");
+                    final Scheduler scheduler = clz.getAnnotation(Scheduler.class);
+                    if (!ObjectCompare.isInListByRegEx(clz.getSimpleName(), includes) || ObjectCompare.isInListByRegEx(clz.getSimpleName(), exclusions)) {
+                        LOGGER.warn("过滤任务组: {}, 类名 [ {} ]", clz.getSimpleName(), clz.getName());
                         continue;
                     }
 
@@ -536,7 +551,7 @@ public class SchedulerFactory {
                             /** 采用最后设置的属性作为最终结果 */
                             try {
                                 parallel = Integer.parseInt(value);
-                            } catch (NumberFormatException e) {
+                            } catch (final NumberFormatException e) {
                                 throw new SchedulerException("并行度属性设置错误, 属性名: [ " + parallelProperty + " ], 属性值: [ " + value + " ]");
                             }
                         }
@@ -556,42 +571,42 @@ public class SchedulerFactory {
                     }
 
                     for (int p = 0; p < parallel; p++) {
-                        BaseScheduler baseScheduler = (BaseScheduler) Globals.get(Injector.class).getInstance(clz);
-                        SchedulerConfig config = new SchedulerConfig();
-                        config.setId(clz.getSimpleName() + '-' + baseScheduler.getIndex(clz.getSimpleName()));
-                        config.setName(DEFAULT_SCHEDULER_NAME_PREFIX + config.getId());
-                        config.setGroup(clz.getSimpleName());
-                        config.setService(service);
-                        config.setBeforeAfterOnly(scheduler.beforeAfterOnly());
-                        config.setRunNumberOfTimes(scheduler.runNumberOfTimes());
-                        config.setInterval(scheduler.interval());
-                        config.setNum(p);
-                        config.setTotal(parallel);
+                        final BaseScheduler baseScheduler = (BaseScheduler) Globals.get(Injector.class).getInstance(clz);
+                        final SchedulerConfig conf = new SchedulerConfig();
+                        conf.setId(clz.getSimpleName() + '-' + baseScheduler.getIndex(clz.getSimpleName()));
+                        conf.setName(DEFAULT_SCHEDULER_NAME_PREFIX + conf.getId());
+                        conf.setGroup(clz.getSimpleName());
+                        conf.setService(service);
+                        conf.setBeforeAfterOnly(scheduler.beforeAfterOnly());
+                        conf.setRunNumberOfTimes(scheduler.runNumberOfTimes());
+                        conf.setInterval(scheduler.interval());
+                        conf.setNum(p);
+                        conf.setTotal(parallel);
                         if (StringUtils.isNotBlank(cron)) {
                             try {
-                                config.setCron(new CronExpression(cron));
-                            } catch (ParseException e) {
+                                conf.setCron(new CronExpression(cron));
+                            } catch (final ParseException e) {
                                 throw new SchedulerException(e.getMessage(), e);
                             }
                         }
 
-                        config.setDaemon(scheduler.daemon());
-                        config.setLazy(scheduler.lazy());
-                        config.setDefined(scheduler.defined());
-                        baseScheduler.setConfig(config);
+                        conf.setDaemon(scheduler.daemon());
+                        conf.setLazy(scheduler.lazy());
+                        conf.setDefined(scheduler.defined());
+                        baseScheduler.setConfig(conf);
 
-                        if (getInstance().stoppedScheduler.containsKey(config.getId())) {
-                            throw new SchedulerException("\n\t任务调度重复: " + config.getId() + ", 组件类: {'" + clz.getName() + "', '"
-                                    + getInstance().stoppedScheduler.get(config.getId()).getClass().getName() + "'}");
+                        if (getInstance().stoppedScheduler.containsKey(conf.getId())) {
+                            throw new SchedulerException("\n\t任务调度重复: " + conf.getId() + ", 组件类: {'" + clz.getName() + "', '"
+                                    + getInstance().stoppedScheduler.get(conf.getId()).getClass().getName() + "'}");
                         }
 
-                        getInstance().stoppedScheduler.put(config.getId(), baseScheduler);
+                        getInstance().stoppedScheduler.put(conf.getId(), baseScheduler);
                         Set<BaseScheduler> groupScheduler = getInstance().group.get(baseScheduler.getConfig().getGroup());
                         if (groupScheduler == null) {
                             groupScheduler = Sets.newLinkedHashSet();
                         }
                         groupScheduler.add(baseScheduler);
-                        getInstance().group.put(config.getGroup(), groupScheduler);
+                        getInstance().group.put(conf.getGroup(), groupScheduler);
                     }
                 } else {
                     throw new SchedulerException("必须继承: [ " + BaseScheduler.class.getName() + " ]");
@@ -602,22 +617,22 @@ public class SchedulerFactory {
             createEtcdScheduler(componentClasses);
         }
 
-        isLoaded = true;
+        IS_LOADED = true;
     }
 
-    private static final void createEtcdScheduler(Set<Class<?>> componentClasses) {
+    private static final void createEtcdScheduler(final Set<Class<?>> componentClasses) {
         try {
-            boolean enable = Boolean.parseBoolean(System.getProperty(ETCD_ENABLE, "false"));
+            final boolean enable = Boolean.parseBoolean(System.getProperty(ETCD_ENABLE, "false"));
             if (enable) {
-                EtcdScheduler scheduler = new EtcdScheduler(componentClasses);
-                etcdScheduler = scheduler;
+                final EtcdScheduler scheduler = new EtcdScheduler(componentClasses);
+                ETCD_SCHEDULER = scheduler;
                 scheduler.getConfig().getService().execute(scheduler);
                 scheduler.syncBaseDirTTL();
                 scheduler.syncInfo();
                 scheduler.syncClass();
 
                 /** Start Order Scheduler */
-                EtcdOrderWatcherScheduler etcdOrderScheduler = new EtcdOrderWatcherScheduler(scheduler.getEtcd());
+                final EtcdOrderWatcherScheduler etcdOrderScheduler = new EtcdOrderWatcherScheduler(scheduler.getEtcd());
                 etcdOrderScheduler.getConfig().getService().execute(etcdOrderScheduler);
 
                 if (LocalJmxMonitorScheduler.JMX_ENABLE) {
@@ -625,7 +640,7 @@ public class SchedulerFactory {
                     jmxScheduler.getConfig().getService().execute(jmxScheduler);
                 }
             } else {
-                etcdScheduler = EtcdSchedulerOperate.EMPTY;
+                ETCD_SCHEDULER = EtcdSchedulerOperate.EMPTY;
             }
         } catch (SchedulerException e) {
             LOGGER.error(e.getMessage(), e);
@@ -661,20 +676,20 @@ public class SchedulerFactory {
         private final ConcurrentMap<String, BaseScheduler> closed;
 
         public StatusMonitorScheduler() {
-            SchedulerConfig config = new SchedulerConfig();
-            config.setId("StatusMonitorScheduler-0");
-            config.setName("StatusMonitorScheduler");
-            config.setGroup("StatusMonitorScheduler");
-            threadFactory.setBaseScheduler(this);
-            config.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, threadFactory));
+            final SchedulerConfig conf = new SchedulerConfig();
+            conf.setId("StatusMonitorScheduler-0");
+            conf.setName("StatusMonitorScheduler");
+            conf.setGroup("StatusMonitorScheduler");
+            THREAD_FACTORY.setBaseScheduler(this);
+            conf.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, THREAD_FACTORY));
             try {
-                config.setCron(new CronExpression("* * * * * ?"));
-            } catch (ParseException e) {
+                conf.setCron(new CronExpression("* * * * * ?"));
+            } catch (final ParseException e) {
                 // ignore
             }
-            config.setTotal(1);
-            config.setDaemon(Boolean.TRUE);
-            setConfig(config);
+            conf.setTotal(1);
+            conf.setDaemon(Boolean.TRUE);
+            setConfig(conf);
             setClose(false);
             closed = new ConcurrentHashMap<>();
         }
@@ -698,7 +713,7 @@ public class SchedulerFactory {
                 stoppingScheduler.remove(id, scheduler);
 
                 /** Sync to Etcd by stopped method */
-                etcdScheduler.stopped(scheduler.getConfig().getGroup(), id, scheduler.isRemove(), scheduler.getAnalysis());
+                ETCD_SCHEDULER.stopped(scheduler.getConfig().getGroup(), id, scheduler.isRemove(), scheduler.getAnalysis());
             });
         }
 
@@ -721,7 +736,7 @@ public class SchedulerFactory {
             while ((int) BlockingQueueFactory.howManyElementInQueues() > 0) {
                 try {
                     Thread.sleep(10L);
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     // ignore
                 }
             }

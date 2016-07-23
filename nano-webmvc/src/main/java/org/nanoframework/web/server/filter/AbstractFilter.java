@@ -83,12 +83,12 @@ public abstract class AbstractFilter implements Filter {
 
     }
 
-    protected boolean validRequestMethod(ServletResponse response, Writer out, RequestMapper mapper, String _method) throws IOException {
-        if (!mapper.hasMethod(RequestMethod.valueOf(_method))) {
+    protected boolean validRequestMethod(ServletResponse response, Writer out, RequestMapper mapper, String method) throws IOException {
+        if (!mapper.hasMethod(RequestMethod.valueOf(method))) {
             response.setContentType(ContentType.APPLICATION_JSON);
             out = response.getWriter();
             ResultMap resultMap = ResultMap.create(UNSUPPORT_REQUEST_METHOD_CODE,
-                    "不支持此请求类型(" + _method + ")，仅支持类型(" + StringUtils.join(mapper.getRequestMethodStrs(), " / ") + ')', UNSUPPORT_REQUEST_METHOD_DESC);
+                    "不支持此请求类型(" + method + ")，仅支持类型(" + StringUtils.join(mapper.getRequestMethodStrs(), " / ") + ')', UNSUPPORT_REQUEST_METHOD_DESC);
             out.write(JSON.toJSONString(resultMap));
             return false;
         }

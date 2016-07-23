@@ -13,25 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.chain;
-
-import org.junit.Test;
+package org.nanoframework.extension.concurrent.scheduler;
 
 /**
+ *
  * @author yanghe
- * @date 2015年12月3日 下午1:28:05
+ * @since 1.3.15
  */
-public class ChainTest {
+@Scheduler(parallel = 2, interval = 1000, lazy = true, daemon = true)
+public class TestScheduler2 extends BaseScheduler {
 
-    @Test
-    public void test0() {
-        Chain chain0 = new PlusChain();
-        Chain chain1 = new SubtractChain();
-        Chain chain2 = new MultiplyChain();
-        Chain chain3 = new DivideChain();
+    @Override
+    public void before() {
 
-        chain0.setChain(chain1.setChain(chain2.setChain(chain3)));
-        System.out.println(chain0.execute(1L));
+    }
+
+    @Override
+    public void execute() {
+
+    }
+
+    @Override
+    public void after() {
+
+    }
+
+    @Override
+    public void destroy() {
+
     }
 
 }

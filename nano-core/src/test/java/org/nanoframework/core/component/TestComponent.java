@@ -42,4 +42,13 @@ public interface TestComponent {
     
     @RequestMapping(value = "/param/{param0}", method = RequestMethod.GET)
     String hasParam(@PathVariable("param0") String param0, @RequestParam("param1") String param1);
+    
+    @RequestMapping(value = "/aop/before", method = RequestMethod.PUT)
+    String beforeAop(@RequestParam("param") String param);
+    
+    @RequestMapping(value = "/aop/after", method = RequestMethod.PUT)
+    String afterAop();
+    
+    @RequestMapping(value = "/aop/after/error", method = RequestMethod.PUT)
+    String afterAopError();
 }

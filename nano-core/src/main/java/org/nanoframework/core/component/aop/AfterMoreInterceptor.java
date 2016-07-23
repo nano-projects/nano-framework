@@ -34,26 +34,26 @@ import com.google.inject.Injector;
 public class AfterMoreInterceptor implements MethodInterceptor {
 
     @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
-        AfterMore afterMore = invocation.getMethod().getAnnotation(AfterMore.class);
-        After[] afters = afterMore.value();
-        Map<Method, Object> map = Maps.newLinkedHashMap();
+    public Object invoke(final MethodInvocation invocation) throws Throwable {
+        final AfterMore afterMore = invocation.getMethod().getAnnotation(AfterMore.class);
+        final After[] afters = afterMore.value();
+        final Map<Method, Object> map = Maps.newLinkedHashMap();
         for (After after : afters) {
-            Method method = after.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
-            Object instance = Globals.get(Injector.class).getInstance(after.value());
+            final Method method = after.value().getMethod(MethodNames.AFTER, MethodInvocation.class, Object.class);
+            final Object instance = Globals.get(Injector.class).getInstance(after.value());
             map.put(method, instance);
         }
 
         Object obj = null;
         try {
             return obj = invocation.proceed();
-        } catch (Throwable e) {
+        } catch (final Throwable e) {
             obj = e;
             throw e;
 
         } finally {
-            for (Iterator<Entry<Method, Object>> iter = map.entrySet().iterator(); iter.hasNext();) {
-                Entry<Method, Object> entry = iter.next();
+            for (final Iterator<Entry<Method, Object>> iter = map.entrySet().iterator(); iter.hasNext();) {
+                final Entry<Method, Object> entry = iter.next();
                 entry.getKey().invoke(entry.getValue(), invocation, obj);
             }
         }

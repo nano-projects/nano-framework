@@ -15,7 +15,12 @@
  */
 package org.nanoframework.core.component.impl;
 
+import org.nanoframework.commons.exception.UnsupportedAccessException;
 import org.nanoframework.core.component.TestComponent;
+import org.nanoframework.core.component.aop.After;
+import org.nanoframework.core.component.aop.AfterAOP;
+import org.nanoframework.core.component.aop.Before;
+import org.nanoframework.core.component.aop.BeforeAOP;
 
 /**
  *
@@ -37,5 +42,23 @@ public class TestComponentImpl implements TestComponent {
     @Override
     public String hasParam(final String param0, final String param1) {
         return param0 + '=' + param1;
+    }
+    
+    @Before(BeforeAOP.class)
+    @Override
+    public String beforeAop(final String param) {
+        return param;
+    }
+    
+    @After(AfterAOP.class)
+    @Override
+    public String afterAop() {
+        return "OK";
+    }
+    
+    @After(AfterAOP.class)
+    @Override
+    public String afterAopError() {
+        throw new UnsupportedAccessException();
     }
 }

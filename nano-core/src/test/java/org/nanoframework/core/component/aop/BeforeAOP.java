@@ -13,37 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.chain;
+package org.nanoframework.core.component.aop;
 
-import org.nanoframework.core.chain.exception.ChainException;
+import org.aopalliance.intercept.MethodInvocation;
 
 /**
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.15
  */
-public abstract class AbstractChain implements Chain {
-
-    private Chain chain;
-
-    public Object next(Object object) {
-        if (chain != null)
-            return chain.execute(object);
-
-        return object;
-    }
-
+public class BeforeAOP implements IBefore {
+    public static Object RESULT;
+    
     @Override
-    public Chain getChain() {
-        return chain;
-    }
-
-    @Override
-    public Chain setChain(Chain chain) {
-        if (this == chain)
-            throw new ChainException("不能对自身设置责任链");
-
-        this.chain = chain;
-        return this;
+    public void before(MethodInvocation invocation) {
+        RESULT = invocation.getArguments()[0];
     }
 
 }
