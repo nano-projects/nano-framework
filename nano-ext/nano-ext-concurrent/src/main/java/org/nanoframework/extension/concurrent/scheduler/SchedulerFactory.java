@@ -682,11 +682,7 @@ public class SchedulerFactory {
             conf.setGroup("StatusMonitorScheduler");
             THREAD_FACTORY.setBaseScheduler(this);
             conf.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, THREAD_FACTORY));
-            try {
-                conf.setCron(new CronExpression("* * * * * ?"));
-            } catch (final ParseException e) {
-                // ignore
-            }
+            conf.setInterval(50L);
             conf.setTotal(1);
             conf.setDaemon(Boolean.TRUE);
             setConfig(conf);

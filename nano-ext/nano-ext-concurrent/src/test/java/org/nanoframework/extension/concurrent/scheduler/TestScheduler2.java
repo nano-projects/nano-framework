@@ -20,7 +20,7 @@ package org.nanoframework.extension.concurrent.scheduler;
  * @author yanghe
  * @since 1.3.15
  */
-@Scheduler(parallel = 2, interval = 1000, lazy = true, daemon = true)
+@Scheduler(parallel = 2, interval = 10, lazy = true, daemon = true)
 public class TestScheduler2 extends BaseScheduler {
 
     @Override
