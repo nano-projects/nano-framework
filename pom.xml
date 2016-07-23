@@ -612,7 +612,7 @@
                 <artifactId>coveralls-maven-plugin</artifactId>
                 <version>${coveralls-maven-plugin.version}</version>
                 <configuration>
-                    <repoToken>7GfhHyACVksgcOJvbvwNVm3Oe9f3SM5rU</repoToken>
+                    <repoToken>yourcoverallsprojectrepositorytoken</repoToken>
                 </configuration>
             </plugin>
             <plugin>

@@ -14,3 +14,4 @@ webRoot/
 jetty.pid
 .checkstyle
 .fbIncludeFilterFile
+coverage-local.sh
