@@ -28,6 +28,7 @@ import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
 import org.nanoframework.orm.jedis.cluster.HashTest;
+import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 import com.alibaba.fastjson.JSON;
 
@@ -53,11 +54,27 @@ public class ShardedInfoTest {
     
     @Test
     public void infoTest() {
-        LOGGER.debug(JSON.toJSONString(redisClient.info()));
+        try {
+            LOGGER.debug(JSON.toJSONString(redisClient.info()));
+        } catch (final Throwable e) {
+            if (!(e instanceof RedisClientException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
     
     @Test
     public void infoSectionTest() {
-        LOGGER.debug(JSON.toJSONString(redisClient.info("memory")));
+        try {
+            LOGGER.debug(JSON.toJSONString(redisClient.info("memory")));
+        } catch (final Throwable e) {
+            if (!(e instanceof RedisClientException)) {
+                throw e;
+            }
+            
+            LOGGER.error("Redis Server not up");
+        }
     }
 }
