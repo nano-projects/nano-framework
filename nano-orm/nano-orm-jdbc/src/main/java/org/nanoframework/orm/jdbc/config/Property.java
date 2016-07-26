@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.commons.annatations;
+package org.nanoframework.orm.jdbc.config;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -30,13 +30,12 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Deprecated
 public @interface Property {
     /**
      * 
      * @return 属性名称
      */
-    String name();
+    String value();
 
     /**
      * 

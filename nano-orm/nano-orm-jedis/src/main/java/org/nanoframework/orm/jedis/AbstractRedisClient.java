@@ -131,6 +131,25 @@ public abstract class AbstractRedisClient implements RedisClient {
         return value == SUCCESS ? true : false;
     }
     
+    protected Map<String, String> info0(final String info) {
+        final String[] attributes = info.split("\n");
+        final Map<String, String> decodeInfo = Maps.newLinkedHashMap();
+        for (final String attribute : attributes) {
+            if (!StringUtils.isEmpty(StringUtils.trim(attribute)) && !StringUtils.startsWith(attribute, "#")) {
+                final String[] keyvalue = attribute.substring(0, attribute.length() - 1).split(":");
+                if (keyvalue.length == 2) {
+                    final String key = keyvalue[0];
+                    final String value = StringUtils.endsWith(keyvalue[1], "\r") ? StringUtils.substring(keyvalue[1], 0, keyvalue[1].length() - 1) : keyvalue[1];
+                    decodeInfo.put(key, value);
+                } else {
+                    decodeInfo.put(keyvalue[0], "");
+                }
+            }
+        }
+        
+        return decodeInfo;
+    }
+    
     @Override
     public long del(final List<String> keys) {
         Assert.notNull(keys);

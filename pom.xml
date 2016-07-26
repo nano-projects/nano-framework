@@ -649,6 +649,7 @@
                             <conf>JAVADOC_STYLE</conf>
                             <less>JAVADOC_STYLE</less>
                             <ts>JAVADOC_STYLE</ts>
+                            <sql>JAVADOC_STYLE</sql>
                         </mapping>
                         <excludes>
                             <exclude>**/bin/**</exclude>

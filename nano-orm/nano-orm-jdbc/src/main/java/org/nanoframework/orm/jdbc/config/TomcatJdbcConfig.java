@@ -17,7 +17,6 @@ package org.nanoframework.orm.jdbc.config;
 
 import java.util.Properties;
 
-import org.nanoframework.commons.annatations.Property;
 import org.nanoframework.commons.util.Assert;
 
 /**
@@ -28,52 +27,52 @@ import org.nanoframework.commons.util.Assert;
 public class TomcatJdbcConfig extends JdbcConfig {
     private static final long serialVersionUID = -841473595983679697L;
 
-    @Property(name = "tomcat.jdbc.pool.initialSize")
+    @Property("tomcat.jdbc.pool.initialSize")
     private Integer initialSize;
 
-    @Property(name = "tomcat.jdbc.pool.minIdle")
+    @Property("tomcat.jdbc.pool.minIdle")
     private Integer minIdle;
 
-    @Property(name = "tomcat.jdbc.pool.maxWait")
+    @Property("tomcat.jdbc.pool.maxWait")
     private Integer maxWait;
 
-    @Property(name = "tomcat.jdbc.pool.maxActive")
+    @Property("tomcat.jdbc.pool.maxActive")
     private Integer maxActive;
 
-    @Property(name = "tomcat.jdbc.pool.testWhileIdle")
+    @Property("tomcat.jdbc.pool.testWhileIdle")
     private Boolean testWhileIdle;
 
-    @Property(name = "tomcat.jdbc.pool.testOnBorrow")
+    @Property("tomcat.jdbc.pool.testOnBorrow")
     private Boolean testOnBorrow;
 
-    @Property(name = "tomcat.jdbc.pool.validationQuery")
+    @Property("tomcat.jdbc.pool.validationQuery")
     private String validationQuery;
 
-    @Property(name = "tomcat.jdbc.pool.testOnReturn")
+    @Property("tomcat.jdbc.pool.testOnReturn")
     private Boolean testOnReturn;
 
-    @Property(name = "tomcat.jdbc.pool.validationInterval")
+    @Property("tomcat.jdbc.pool.validationInterval")
     private Long validationInterval;
 
-    @Property(name = "tomcat.jdbc.pool.timeBetweenEvictionRunsMillis")
+    @Property("tomcat.jdbc.pool.timeBetweenEvictionRunsMillis")
     private Integer timeBetweenEvictionRunsMillis;
 
-    @Property(name = "tomcat.jdbc.pool.logAbandoned")
+    @Property("tomcat.jdbc.pool.logAbandoned")
     private Boolean logAbandoned;
 
-    @Property(name = "tomcat.jdbc.pool.removeAbandoned")
+    @Property("tomcat.jdbc.pool.removeAbandoned")
     private Boolean removeAbandoned;
 
-    @Property(name = "tomcat.jdbc.pool.removeAbandonedTimeout")
+    @Property("tomcat.jdbc.pool.removeAbandonedTimeout")
     private Integer removeAbandonedTimeout;
 
-    @Property(name = "tomcat.jdbc.pool.minEvictableIdleTimeMillis")
+    @Property("tomcat.jdbc.pool.minEvictableIdleTimeMillis")
     private Integer minEvictableIdleTimeMillis;
 
-    @Property(name = "tomcat.jdbc.pool.jdbcInterceptors")
+    @Property("tomcat.jdbc.pool.jdbcInterceptors")
     private String jdbcInterceptors;
 
-    @Property(name = "tomcat.jdbc.pool.jmxEnabled")
+    @Property("tomcat.jdbc.pool.jmxEnabled")
     private Boolean jmxEnabled;
 
     public TomcatJdbcConfig() {

@@ -16,12 +16,10 @@
 package org.nanoframework.orm.jdbc.config;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.apache.commons.lang3.StringUtils;
-import org.nanoframework.commons.annatations.Property;
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.orm.jdbc.DataSourceException;
@@ -34,44 +32,44 @@ public abstract class JdbcConfig extends BaseEntity {
 	private static final long serialVersionUID = -5652080352809590470L;
 
 	/** 数据源名称 */
-	@Property(name = "JDBC.environment.id", required = true)
+	@Property(value = "JDBC.environment.id", required = true)
 	private String environmentId;
 	
 	/** 数据源驱动类名 */
-	@Property(name = "JDBC.driver", required = true)
+	@Property(value = "JDBC.driver", required = true)
 	private String driver;
 	
 	/** 数据库连接字符串 */
-	@Property(name = "JDBC.url", required = true)
+	@Property(value = "JDBC.url", required = true)
 	private String url;
 	
 	/** 用户名 */
-	@Property(name = "JDBC.username", required = true)
+	@Property(value = "JDBC.username", required = true)
 	private String userName;
 	
 	/** 密码 */
-	@Property(name = "JDBC.password", required = true)
+	@Property(value = "JDBC.password", required = true)
 	private String passwd;
 	
 	/** 是否自动提交 */
-	@Property(name = "JDBC.autoCommit")
+	@Property("JDBC.autoCommit")
 	private Boolean autoCommit;
 	
 	/** Statement执行超时时间, Default: 30 */
-	@Property(name = "JDBC.defaultStatementTimeout")
+	@Property("JDBC.defaultStatementTimeout")
 	private Integer defaultStatementTimeout = 30;
 	
-	protected void setProperties(Properties properties) {
-		List<Field> fields = allFields(new ArrayList<>(), getClass());
+	protected void setProperties(final Properties properties) {
 		if(!CollectionUtils.isEmpty(fields)) {
-			for(Field field : fields) {
+		    final Collection<Field> fields = this.fields.values();
+			for(final Field field : fields) {
 				Property property;
 				if((property = field.getAnnotation(Property.class)) != null) {
-					String value = properties.getProperty(property.name());
+					final String value = properties.getProperty(property.value());
 					if(StringUtils.isNotBlank(value)) {
 						setAttributeValue(field.getName(), value);
 					} else if(property.required()) {
-						throw new DataSourceException("属性 [" + property.name() + "] 设置为必选项，这里却获取了无效的属性值");
+						throw new DataSourceException("属性 [" + property.value() + "] 设置为必选项，这里却获取了无效的属性值");
 					}
 				}
 			}

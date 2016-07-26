@@ -64,6 +64,21 @@ public interface RedisClient {
 	}
 	
 	/**
+	 * 
+	 * @return Info list
+	 * @since 1.3.15
+	 */
+	List<Map<String, String>> info();
+	
+	/**
+	 * 
+	 * @param section the section
+	 * @return Info list
+	 * @since 1.3.15
+	 */
+	List<Map<String, String>> info(String section);
+	
+	/**
 	 * 删除给定的一个或多个 key 。
 	 * @param keys key动态数组
 	 * @return 删除key的数量

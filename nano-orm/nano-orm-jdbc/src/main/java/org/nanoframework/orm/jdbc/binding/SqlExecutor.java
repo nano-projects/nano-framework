@@ -26,19 +26,20 @@ import org.nanoframework.orm.jdbc.jstl.Result;
  * @author yanghe
  * @since 1.2
  */
-public interface SqlExecutor extends Closeable {
-	public void commit() throws SQLException;
+interface SqlExecutor extends Closeable {
+	void commit() throws SQLException;
 	
-	public void rollback() throws SQLException;
+	void rollback() throws SQLException;
 	
-	public Result executeQuery(String sql) throws SQLException;
+	Result executeQuery(String sql) throws SQLException;
 	
-	public int executeUpdate(String sql) throws SQLException;
+	int executeUpdate(String sql) throws SQLException;
 	
-	public Result executeQuery(String sql, List<Object> values) throws SQLException;
+	Result executeQuery(String sql, List<Object> values) throws SQLException;
 	
-	public int executeUpdate(String sql, List<Object> values) throws SQLException;
+	int executeUpdate(String sql, List<Object> values) throws SQLException;
 	
-	public int[] executeBatchUpdate(String sql, List<List<Object>> batchValues) throws SQLException;
+	int[] executeBatchUpdate(String sql, List<List<Object>> batchValues) throws SQLException;
 	
+	boolean execute(String sql) throws SQLException;
 }

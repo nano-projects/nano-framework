@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
+import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.orm.PoolType;
 import org.nanoframework.orm.jdbc.config.JdbcConfig;
 import org.nanoframework.orm.jdbc.jstl.Result;
@@ -49,294 +50,301 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
  * @since 1.3.6
  */
 public class JdbcAdapter implements DefaultSqlExecutor {
-    private static Object LOCK = new Object();
-    private static AtomicBoolean init = new AtomicBoolean(false);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcAdapter.class);
+    private static final Object LOCK = new Object();
+    private static final AtomicBoolean INIT = new AtomicBoolean(false);
+    private static JdbcAdapter INSTANCE;
     
-	private Logger logger = LoggerFactory.getLogger(JdbcAdapter.class);
-	private Pool pool;
-	private static JdbcAdapter INSTANCE;
-	
-	/**
-	 * 
-	 * @deprecated 使用 INSTANCE 替代 ADAPTER，外部使用时使用静态方法 adapter() 获取全局实例.
-	 */
-	@Deprecated
-	public static JdbcAdapter ADAPTER;
-	
-	private JdbcAdapter(Collection<JdbcConfig> configs, PoolType poolType) throws PropertyVetoException, SQLException {
-		Assert.notNull(poolType);
-		if(init.get()) {
-			throw new SQLException("数据源已经加载");
-		}
-		
-		switch(poolType) {
-			case C3P0:
-				pool = new C3P0Pool(configs);
-				break;
-			case DRUID: 
-				pool = new DruidPool(configs);
-				break;
-			case TOMCAT_JDBC_POOL:
-			    pool = new TomcatJdbcPool(configs);
-			    break;
-			default: 
-			    throw new DataSourceException("无效的PoolType");
-		}
-		
-		init.set(true);
-	}
-	
-	protected static final JdbcAdapter newInstance(Collection<JdbcConfig> configs, PoolType poolType, Object obj) {
-		try {
-			Assert.notNull(obj);
-			synchronized (LOCK) {
-    			if(INSTANCE == null) {
-    			    INSTANCE = new JdbcAdapter(configs, poolType);
-    			    ADAPTER = INSTANCE;
-    			} else {
-    			    INSTANCE.shutdown();
-    			    INSTANCE = null;
-    			    ADAPTER = null;
-    				return newInstance(configs, poolType, obj);
-    			}
-			}
-			
-			return INSTANCE;
-		} catch(SQLException | PropertyVetoException e) {
-			throw new DataSourceException(e.getMessage());
-		}
-	}
-	
-	public static final JdbcAdapter adapter() {
-	    return INSTANCE;
-	}
-	
-    public Connection getConnection(String dataSource) throws SQLException {
+    /**
+     * 
+     * @deprecated 使用 INSTANCE 替代 ADAPTER，外部使用时使用静态方法 adapter() 获取全局实例.
+     */
+    @Deprecated
+    public static JdbcAdapter ADAPTER;
+    
+    private Pool pool;
+
+    private JdbcAdapter(final Collection<JdbcConfig> configs, final PoolType poolType) throws PropertyVetoException, SQLException {
+        Assert.notNull(poolType);
+        if (INIT.get()) {
+            throw new SQLException("数据源已经加载");
+        }
+
+        switch (poolType) {
+            case C3P0:
+                pool = new C3P0Pool(configs);
+                break;
+            case DRUID:
+                pool = new DruidPool(configs);
+                break;
+            case TOMCAT_JDBC_POOL:
+                pool = new TomcatJdbcPool(configs);
+                break;
+            default:
+                throw new DataSourceException("无效的PoolType");
+        }
+
+        INIT.set(true);
+    }
+
+    protected static final JdbcAdapter newInstance(final Collection<JdbcConfig> configs, final PoolType poolType, final Object obj) {
         try {
-            Connection conn = pool.getPool(dataSource).getConnection();
-            return conn;
-        } catch(Exception e) {
-            logger.error(e.getMessage() , e);
+            Assert.notNull(obj);
+            synchronized (LOCK) {
+                if (INSTANCE == null) {
+                    INSTANCE = new JdbcAdapter(configs, poolType);
+                    ADAPTER = INSTANCE;
+                } else {
+                    INSTANCE.shutdown();
+                    return newInstance(configs, poolType, obj);
+                }
+            }
+
+            return INSTANCE;
+        } catch (final SQLException | PropertyVetoException e) {
+            throw new DataSourceException(e.getMessage());
+        }
+    }
+
+    public static final JdbcAdapter adapter() {
+        return INSTANCE;
+    }
+
+    public Connection getConnection(final String dataSource) throws SQLException {
+        try {
+            return pool.getPool(dataSource).getConnection();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
         }
 
         return null;
     }
-    
-    public void commit(Connection conn) throws SQLException {
-    	Assert.notNull(conn);
-    	
-    	if(isTxInit(conn)) {
-    		conn.commit();
-    	}
-    }
-    
-    public void rollback(Connection conn) throws SQLException {
-    	Assert.notNull(conn);
-    	
-    	if(isTxInit(conn)) {
-    		conn.rollback();
-    	}
-    }
-    
-    public boolean isTxInit(Connection conn) throws SQLException {
-    	Assert.notNull(conn);
-		return !conn.getAutoCommit();
+
+    public void commit(final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        if (isTxInit(conn)) {
+            conn.commit();
+        }
     }
 
-    public final Statement getStatement(Connection conn) throws SQLException {
-    	Assert.notNull(conn);
+    public void rollback(final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        if (isTxInit(conn)) {
+            conn.rollback();
+        }
+    }
+
+    public boolean isTxInit(final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        return !conn.getAutoCommit();
+    }
+
+    public final Statement getStatement(final Connection conn) throws SQLException {
+        Assert.notNull(conn);
         return conn.createStatement();
     }
-    
-    public final PreparedStatement getPreparedStmt(Connection conn, String sql, List<Object> values) throws SQLException {
-    	Assert.notNull(conn);
-        PreparedStatement pstmt = conn.prepareStatement(sql);
+
+    public final PreparedStatement getPreparedStmt(final Connection conn, final String sql, final List<Object> values) throws SQLException {
+        Assert.notNull(conn);
+        final PreparedStatement pstmt = conn.prepareStatement(sql);
         setValues(pstmt, values);
         return pstmt;
     }
-    
-    public final PreparedStatement getPreparedStmtForBatch(Connection conn, String sql, List<List<Object>> batchValues) throws SQLException {
-    	Assert.notNull(conn);
-    	PreparedStatement pstmt = conn.prepareStatement(sql);
-        if(batchValues != null && batchValues.size() > 0) {
-	        for(List<Object> values : batchValues) {
-	            setValues(pstmt, values);
-	            pstmt.addBatch();
-	        }
+
+    public final PreparedStatement getPreparedStmtForBatch(final Connection conn, final String sql, final List<List<Object>> batchValues) throws SQLException {
+        Assert.notNull(conn);
+        final PreparedStatement pstmt = conn.prepareStatement(sql);
+        if (batchValues != null && batchValues.size() > 0) {
+            for (List<Object> values : batchValues) {
+                setValues(pstmt, values);
+                pstmt.addBatch();
+            }
         }
 
         return pstmt;
     }
-    
-	public Result executeQuery(String sql, Connection conn) throws SQLException {
-		Assert.notNull(conn);
-		long start = System.currentTimeMillis();
-		Result result = null;
-		ResultSet rs = null;
-		Statement stmt = null;
-		
-		try {
-			stmt = getStatement(conn);
-			stmt.setQueryTimeout(60);
-			rs = stmt.executeQuery(sql);
-			rs.setFetchSize(rs.getRow());
-			result = ResultSupport.toResult(rs);
-		} finally{
-			close(rs, stmt);
-			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Query SQL ]: " + sql + " cost [ "+(System.currentTimeMillis() - start)+"ms ]");
-			}
-		}
-		
-		return result;
-	}
 
-	public int executeUpdate(String sql, Connection conn) throws SQLException {
-		Assert.notNull(conn);
-		long start = System.currentTimeMillis();
-		int result = 0;
-		Statement stmt = null;
-		try {
-			stmt = getStatement(conn);
-			stmt.setQueryTimeout(60);
-			result = stmt.executeUpdate(sql);
-		} finally{
-			close(stmt);
-			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Update/Insert SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + ']');
-			}
-		}
-		
-		return result;
-	}
-	
-	public Result executeQuery(String sql, List<Object> values, Connection conn) throws SQLException {
-		Assert.notNull(conn);
-		long start = System.currentTimeMillis();
-		Result result = null;
-		ResultSet rs = null;
-		PreparedStatement preStmt = null;
-		
-		try {
-			preStmt = getPreparedStmt(conn, sql, values);
-			preStmt.setQueryTimeout(60);
-			rs = preStmt.executeQuery();
-			rs.setFetchSize(rs.getRow());
-			result = ResultSupport.toResult(rs);
-		} finally{
-			close(rs , preStmt);
-			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Query SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + ']');
-				logger.debug("[ Execute Parameter ]: " + JSON.toJSONString(values, SerializerFeature.WriteDateUseDateFormat));
-			}
-		}
-		
-		return result;
-	}
-	
-	public int executeUpdate(String sql, List<Object> values , Connection conn) throws SQLException {
-		Assert.notNull(conn);
-		long start = System.currentTimeMillis();
-		Integer result = 0;
-		PreparedStatement preStmt = null;
-		
-		try {
-			preStmt = getPreparedStmt(conn, sql, values);
-			preStmt.setQueryTimeout(60);
-			result = preStmt.executeUpdate();
-		} finally{
-			close(preStmt);
-			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Update/Insert SQL ]: " + sql + " [cost " + (System.currentTimeMillis() - start) + ']');
-				logger.debug("[ Execute Parameter ]: " + JSON.toJSONString(values, SerializerFeature.WriteDateUseDateFormat));
-			}
-		}
-		
-		return result;
-	}
-	
-	public int[] executeBatchUpdate(String sql, List<List<Object>> batchValues , Connection conn) throws SQLException {
-		Assert.notNull(conn);
-		
-		if(batchValues == null || batchValues.size() == 0) {
-			return new int[0];
-		}
-		
-		long start = System.currentTimeMillis();
-		int[] result = new int[]{};
-		PreparedStatement preStmt = null;
-		try {
-			preStmt = getPreparedStmtForBatch(conn, sql, batchValues);
-			preStmt.setQueryTimeout(60);
-			result = preStmt.executeBatch();
-		} finally{
-			close(preStmt);
-			if(logger.isDebugEnabled()) {
-				logger.debug("[ Execute Update/Insert SQL ] : " + sql + " [cost " + (System.currentTimeMillis() - start) + ']');
-				logger.debug("[ Execute Parameter ]: " + JSON.toJSONString(batchValues, SerializerFeature.WriteDateUseDateFormat));
-			}
-		}
-		
-		return result;
-	}
-	
-    private void setValues(PreparedStatement preStmt, List<Object> values) throws SQLException {
-    	if(values == null || values.size() == 0) {
-    		return ;
-    	}
-    	
+    public Result executeQuery(final String sql, final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        long start = System.currentTimeMillis();
+        Result result = null;
+        ResultSet rs = null;
+        Statement stmt = null;
+
+        try {
+            stmt = getStatement(conn);
+            stmt.setQueryTimeout(60);
+            rs = stmt.executeQuery(sql);
+            rs.setFetchSize(rs.getRow());
+            result = ResultSupport.toResult(rs);
+        } finally {
+            close(rs, stmt);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("[ Execute Query SQL ]: {} cost [ {}ms ]", sql, System.currentTimeMillis() - start);
+            }
+        }
+
+        return result;
+    }
+
+    public int executeUpdate(final String sql, final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        final long start = System.currentTimeMillis();
+        int result = 0;
+        Statement stmt = null;
+        try {
+            stmt = getStatement(conn);
+            stmt.setQueryTimeout(60);
+            result = stmt.executeUpdate(sql);
+        } finally {
+            close(stmt);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("[ Execute Update/Insert SQL ]: {} [cost {}ms ]", sql, System.currentTimeMillis() - start);
+            }
+        }
+
+        return result;
+    }
+
+    public Result executeQuery(final String sql, final List<Object> values, final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        final long start = System.currentTimeMillis();
+        Result result = null;
+        ResultSet rs = null;
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = getPreparedStmt(conn, sql, values);
+            pstmt.setQueryTimeout(60);
+            rs = pstmt.executeQuery();
+            rs.setFetchSize(rs.getRow());
+            result = ResultSupport.toResult(rs);
+        } finally {
+            close(rs, pstmt);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("[ Execute Query SQL ]: {} [cost {}ms ]", sql, System.currentTimeMillis() - start);
+                LOGGER.debug("[ Execute Parameter ]: {}", JSON.toJSONString(values, SerializerFeature.WriteDateUseDateFormat));
+            }
+        }
+
+        return result;
+    }
+
+    public int executeUpdate(final String sql, final List<Object> values, final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        long start = System.currentTimeMillis();
+        PreparedStatement pstmt = null;
+
+        try {
+            pstmt = getPreparedStmt(conn, sql, values);
+            pstmt.setQueryTimeout(60);
+            return pstmt.executeUpdate();
+        } finally {
+            close(pstmt);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("[ Execute Update/Insert SQL ]: {} [cost {}ms ]", sql, System.currentTimeMillis() - start);
+                LOGGER.debug("[ Execute Parameter ]: {}", JSON.toJSONString(values, SerializerFeature.WriteDateUseDateFormat));
+            }
+        }
+
+    }
+
+    public int[] executeBatchUpdate(final String sql, final List<List<Object>> batchValues, final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        if (CollectionUtils.isEmpty(batchValues)) {
+            return new int[0];
+        }
+
+        final long start = System.currentTimeMillis();
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = getPreparedStmtForBatch(conn, sql, batchValues);
+            pstmt.setQueryTimeout(60);
+            return pstmt.executeBatch();
+        } finally {
+            close(pstmt);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("[ Execute Update/Insert SQL ] : {} [cost {}ms ]", sql, System.currentTimeMillis() - start);
+                LOGGER.debug("[ Execute Parameter ]: {}", JSON.toJSONString(batchValues, SerializerFeature.WriteDateUseDateFormat));
+            }
+        }
+    }
+    
+    @Override
+    public boolean execute(final String sql, final Connection conn) throws SQLException {
+        Assert.notNull(conn);
+        
+        final long start = System.currentTimeMillis();
+        Statement stmt = null;
+        try {
+            stmt = getStatement(conn);
+            return stmt.execute(sql);
+        } finally {
+            close(stmt);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("[ Execute ]: {} [cost {}ms ]", sql, System.currentTimeMillis() - start);
+            }
+        }
+    }
+
+    private void setValues(final PreparedStatement pstmt, final List<Object> values) throws SQLException {
+        if (CollectionUtils.isEmpty(values)) {
+            return;
+        }
+
         for (int i = 0; i < values.size(); i++) {
             if (values.get(i) instanceof Integer) {
-                preStmt.setInt(i + 1, (Integer) values.get(i));
+                pstmt.setInt(i + 1, (Integer) values.get(i));
             } else if (values.get(i) instanceof Long) {
-                preStmt.setLong(i + 1, (Long) values.get(i));
+                pstmt.setLong(i + 1, (Long) values.get(i));
             } else if (values.get(i) instanceof String) {
-                preStmt.setString(i + 1, (String) values.get(i));
+                pstmt.setString(i + 1, (String) values.get(i));
             } else if (values.get(i) instanceof Double) {
-                preStmt.setDouble(i + 1, (Double) values.get(i));
+                pstmt.setDouble(i + 1, (Double) values.get(i));
             } else if (values.get(i) instanceof Float) {
-                preStmt.setFloat(i + 1, (Float) values.get(i));
+                pstmt.setFloat(i + 1, (Float) values.get(i));
             } else if (values.get(i) instanceof Timestamp) {
-                preStmt.setTimestamp(i + 1, (Timestamp) values.get(i));
+                pstmt.setTimestamp(i + 1, (Timestamp) values.get(i));
             } else if (values.get(i) instanceof java.util.Date) {
                 java.util.Date tempDate = (java.util.Date) values.get(i);
-                preStmt.setDate(i + 1, new Date(tempDate.getTime()));
+                pstmt.setDate(i + 1, new Date(tempDate.getTime()));
             } else {
-                preStmt.setObject(i + 1, values.get(i));
+                pstmt.setObject(i + 1, values.get(i));
             }
         }
     }
 
-    public void close(Object... jdbcObj) {
+    public void close(final Object... jdbcObj) {
         if (jdbcObj != null && jdbcObj.length > 0) {
             for (Object obj : jdbcObj) {
-            	try {
-	                if (obj != null) {
-	                    if (obj instanceof ResultSet) {
-	                        ((ResultSet) obj).close();
-	                        obj = null;
-	                    } else if (obj instanceof Statement) {
-	                        ((Statement) obj).close();
-	                        obj = null;
-	                    } else if (obj instanceof PreparedStatement) {
-	                        ((PreparedStatement) obj).close();
-	                        obj = null;
-	                    } else if (obj instanceof Connection) {
-	                        ((Connection) obj).close();
-	                        obj = null;
-	                    }
-	                }
-            	} catch(SQLException e) {
-            		logger.error(e.getMessage() , e);
-            	}
+                try {
+                    if (obj != null) {
+                        if (obj instanceof ResultSet) {
+                            ((ResultSet) obj).close();
+                            obj = null;
+                        } else if (obj instanceof Statement) {
+                            ((Statement) obj).close();
+                            obj = null;
+                        } else if (obj instanceof PreparedStatement) {
+                            ((PreparedStatement) obj).close();
+                            obj = null;
+                        } else if (obj instanceof Connection) {
+                            ((Connection) obj).close();
+                            obj = null;
+                        }
+                    }
+                } catch (SQLException e) {
+                    LOGGER.error(e.getMessage(), e);
+                }
             }
         }
     }
-    
+
     public void shutdown() {
-    	pool.closeAndClear();
-    	pool = null;
-    	init.set(false);
+        pool.closeAndClear();
+        pool = null;
+        INIT.set(false);
+        INSTANCE = null;
+        ADAPTER = null;
     }
 
 }

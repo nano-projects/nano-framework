@@ -27,18 +27,20 @@ import org.nanoframework.orm.jdbc.jstl.Result;
  * @since 1.2
  */
 public interface DefaultSqlExecutor {
-	void commit(Connection conn) throws SQLException;
-	
-	void rollback(Connection conn) throws SQLException;
-	
-	Result executeQuery(String sql, Connection conn) throws SQLException;
-	
-	int executeUpdate(String sql, Connection conn) throws SQLException;
-	
-	Result executeQuery(String sql, List<Object> values, Connection conn) throws SQLException;
-	
-	int executeUpdate(String sql, List<Object> values, Connection conn) throws SQLException;
-	
-	int[] executeBatchUpdate(String sql, List<List<Object>> batchValues, Connection conn) throws SQLException;
-	
+    void commit(Connection conn) throws SQLException;
+    
+    void rollback(Connection conn) throws SQLException;
+    
+    Result executeQuery(String sql, Connection conn) throws SQLException;
+    
+    int executeUpdate(String sql, Connection conn) throws SQLException;
+    
+    Result executeQuery(String sql, List<Object> values, Connection conn) throws SQLException;
+    
+    int executeUpdate(String sql, List<Object> values, Connection conn) throws SQLException;
+    
+    int[] executeBatchUpdate(String sql, List<List<Object>> batchValues, Connection conn) throws SQLException;
+    
+    boolean execute(String sql, final Connection conn) throws SQLException;
+    
 }

@@ -13,35 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.commons.annatations;
+package org.nanoframework.orm.jdbc.record.script;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.List;
+
+import org.nanoframework.commons.entity.BaseEntity;
 
 /**
- * 属性注解.
- * 
+ *
  * @author yanghe
- * @since 1.0
+ * @since 1.3.15
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Deprecated
-public @interface Property {
-    /**
-     * 
-     * @return 属性名称
-     */
-    String name();
+public class SQLScript extends BaseEntity {
+    private static final long serialVersionUID = -5479991226898971698L;
 
-    /**
-     * 
-     * @return 是否必选项, 默认值: false
-     */
-    boolean required() default false;
+    public final String sql;
+    public final List<Object> values;
+
+    private SQLScript(final String sql, final List<Object> values) {
+        this.sql = sql;
+        this.values = values;
+    }
+
+    public static SQLScript create(final String sql, final List<Object> values) {
+        return new SQLScript(sql, values);
+    }
 
 }

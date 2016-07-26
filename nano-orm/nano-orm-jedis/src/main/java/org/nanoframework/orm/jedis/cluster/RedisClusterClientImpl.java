@@ -38,6 +38,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
+import redis.clients.jedis.exceptions.JedisClusterException;
 import redis.clients.jedis.JedisCluster;
 import redis.clients.jedis.Tuple;
 
@@ -57,6 +58,16 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
     public RedisClusterClientImpl(final RedisConfig config) {
         super(config);
         cluster = POOL.appendJedisCluster(config);
+    }
+    
+    @Override
+    public List<Map<String, String>> info() {
+        throw new JedisClusterException("No way to dispatch this command to Redis Cluster.");
+    }
+    
+    @Override
+    public List<Map<String, String>> info(String section) {
+        throw new JedisClusterException("No way to dispatch this command to Redis Cluster.");
     }
 
     @Override

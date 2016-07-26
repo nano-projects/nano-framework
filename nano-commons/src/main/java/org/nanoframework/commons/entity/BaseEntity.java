@@ -17,11 +17,11 @@ package org.nanoframework.commons.entity;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +42,11 @@ import com.google.common.collect.Maps;
  */
 public abstract class BaseEntity implements Cloneable, Serializable {
     private static final long serialVersionUID = 3188627488044889912L;
+    private static final List<String> FILTER_FIELD_NAMES = Lists.newArrayList("names", "cls", "methods", "fields");
 
-    private String[] names = null;
+    protected final Map<String, Method> methods = paramMethods();
+    protected final Map<String, Field> fields = paramFields();
+    private String[] names;
 
     /**
      * 获取所有属性名.
@@ -54,12 +57,7 @@ public abstract class BaseEntity implements Cloneable, Serializable {
             return names;
         }
 
-        final Field[] fields = paramFields();
-        names = new String[fields.length];
-        for (int i = 0, len = fields.length; i < len; i++) {
-            names[i] = fields[i].getName();
-        }
-
+        names = fields.keySet().toArray(new String[fields.size()]);
         return names;
     }
 
@@ -75,23 +73,17 @@ public abstract class BaseEntity implements Cloneable, Serializable {
             throw new IllegalArgumentException("属性名不能为空");
         }
 
-        final Class<?> cls = this.getClass();
-        final Method[] methods = paramMethods();
-        final Field[] fields = paramFields();
-
         try {
-            for (Field field : fields) {
-                if (fieldName.equals(field.getName())) {
-                    final String fieldGetName = parGetName(field.getName());
-                    if (!checkGetMet(methods, fieldGetName)) {
-                        continue;
-                    }
-
-                    final Method fieldGetMet = cls.getMethod(fieldGetName);
-                    return (T) fieldGetMet.invoke(this);
+            if (fields.containsKey(fieldName)) {
+                final Field field = fields.get(fieldName);
+                final String fieldGetName = parGetName(field.getName());
+                if (hasMethodName(fieldGetName)) {
+                    return (T) methods.get(fieldGetName).invoke(this);
                 }
+            } else {
+                throw new NoSuchFieldException("无效的属性名称: " + fieldName);
             }
-        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (final Throwable e) {
             throw new EntityException(e.getMessage(), e);
         }
 
@@ -130,60 +122,32 @@ public abstract class BaseEntity implements Cloneable, Serializable {
             throw new IllegalArgumentException("属性名不能为空");
         }
         
-        final Class<?> cls = this.getClass();
-        final Method[] methods = paramMethods();
-        final Field[] fields = paramFields();
         try {
-            for (Field field : fields) {
-                /** 设置不区分大小写 */
+            if (fields.containsKey(fieldName)) {
+                final Field field = fields.get(fieldName);
                 if ((!isCase && fieldName.toUpperCase().equals(field.getName().toUpperCase())) || (isCase && fieldName.equals(field.getName()))) {
                     final String fieldSetName = parSetName(field.getName());
-                    if (!checkSetMet(methods, fieldSetName)) {
-                        continue;
+                    if (hasMethodName(fieldSetName)) {
+                        final String typeName = field.getType().getName();
+                        methods.get(fieldSetName).invoke(this, ClassCast.cast(value, typeName));
                     }
-
-                    final Method fieldSetMet = cls.getMethod(fieldSetName, field.getType());
-                    final String typeName = field.getType().getName();
-                    fieldSetMet.invoke(this, ClassCast.cast(value, typeName));
-                    break;
                 }
+            } else {
+                throw new NoSuchFieldException("无效的属性名: " + fieldName);
             }
-        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (final Throwable e) {
             throw new EntityException(e.getMessage(), e);
-
         }
     }
 
     /**
-     * 检查是否有set方法.
+     * 检查是否有方法.
      * @param methods 方法集
-     * @param fieldSetMet 方法名
-     * @return boolean
-     */
-    private boolean checkSetMet(final Method[] methods, final String fieldSetMet) {
-        for (Method met : methods) {
-            if (fieldSetMet.equals(met.getName())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * 检查是否有get方法.
-     * @param methods 方法集
-     * @param fieldGetMet 方法名
+     * @param methodName 方法名
      * @return boolean 
      */
-    private boolean checkGetMet(final Method[] methods, final String fieldGetMet) {
-        for (Method met : methods) {
-            if (fieldGetMet.equals(met.getName())) {
-                return true;
-            }
-        }
-
-        return false;
+    private boolean hasMethodName(final String methodName) {
+        return methods.containsKey(methodName);
     }
 
     /**
@@ -277,18 +241,18 @@ public abstract class BaseEntity implements Cloneable, Serializable {
      * 获取实体类所有方法.
      * @return 实体类方法列表
      */
-    protected Method[] paramMethods() {
+    protected Map<String, Method> paramMethods() {
         final List<Method> methods = allMethods(Lists.newArrayList(), this.getClass());
-        final List<Method> methodList = Lists.newArrayList();
+        final Map<String, Method> methodMap = Maps.newLinkedHashMap();
         for (Method method : methods) {
             if (Modifier.isFinal(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
                 continue;
             }
 
-            methodList.add(method);
+            methodMap.put(method.getName(), method);
         }
 
-        return methodList.toArray(new Method[methodList.size()]);
+        return methodMap;
     }
 
     /**
@@ -310,22 +274,22 @@ public abstract class BaseEntity implements Cloneable, Serializable {
      * 获取实体类的所有属性.
      * @return 实体类属性列表
      */
-    protected Field[] paramFields() {
+    protected Map<String, Field> paramFields() {
         final List<Field> fields = allFields(Lists.newArrayList(), this.getClass());
-        final List<Field> filterList = Lists.newArrayList();
+        final Map<String, Field> fieldMap = Maps.newLinkedHashMap();
         for (Field field : fields) {
             if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
                 continue;
             }
 
-            if ("names".equals(field.getName())) {
+            if (filterField(field)) {
                 continue;
             }
 
-            filterList.add(field);
+            fieldMap.put(field.getName(), field);
         }
 
-        return filterList.toArray(new Field[filterList.size()]);
+        return fieldMap;
     }
 
     /**
@@ -342,7 +306,19 @@ public abstract class BaseEntity implements Cloneable, Serializable {
 
         return allFields(allFields, clazz.getSuperclass());
     }
-
+    
+    protected boolean filterField(final Field field) {
+        return FILTER_FIELD_NAMES.contains(field.getName());
+    }
+    
+    public Collection<Method> methods() {
+        return methods.values();
+    }
+    
+    public Collection<Field> fields() {
+        return fields.values();
+    }
+    
     @Override
     public BaseEntity clone() {
         try {

@@ -48,12 +48,6 @@ import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPipeline;
 import redis.clients.jedis.Tuple;
 
-/**
- * RedisClient的实现类，主要实现对Jedis的操作实现封装.
- * 
- * @author yanghe
- * @since 1.0
- */
 public class RedisClientImpl extends AbstractRedisClient {
     public RedisClientImpl(final String type) {
         super(type);
@@ -63,7 +57,47 @@ public class RedisClientImpl extends AbstractRedisClient {
         super(config);
         POOL.appendJedis(config);
     }
-
+    
+    @Override
+    public List<Map<String, String>> info() {
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Collection<Jedis> shards = jedis.getAllShards();
+            final List<Map<String, String>> infos = Lists.newArrayList();
+            shards.forEach(shard -> {
+                final String info = shard.info();
+                infos.add(info0(info));
+            });
+            
+            return infos;
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+    
+    @Override
+    public List<Map<String, String>> info(final String section) {
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Collection<Jedis> shards = jedis.getAllShards();
+            final List<Map<String, String>> infos = Lists.newArrayList();
+            shards.forEach(shard -> {
+                final String info = shard.info(section);
+                infos.add(info0(info));
+            });
+            
+            return infos;
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+    
     @Override
     public long del(final String... keys) {
         if (keys.length == 0) {

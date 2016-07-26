@@ -38,7 +38,6 @@ import java.util.TreeMap;
 
 class ResultImpl implements Result, Serializable {
 	private static final long serialVersionUID = -7894642257225247166L;
-	private final boolean JDBC_JSTL_CASE_INSENSITIVE_ORDER = Boolean.parseBoolean(System.getProperty("context.jdbc.jstl.case.insensitive.order", "false"));
 	private List<SortedMap<String, Object>> rowMap;
     private List<Object[]> rowByIndex;
     private String[] columnNames;
@@ -86,11 +85,12 @@ class ResultImpl implements Result, Serializable {
             }
             Object[] columns = new Object[noOfColumns];
             SortedMap<String, Object> columnMap;
-            if(JDBC_JSTL_CASE_INSENSITIVE_ORDER)
+            if(JDBC_JSTL_CASE_INSENSITIVE_ORDER) {
             	columnMap = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-            else 
+            } else { 
             	columnMap = new TreeMap<>();
-
+            }
+            
             // JDBC uses 1 as the lowest index!
             for (int i = 1; i <= noOfColumns; i++) {
                 Object value =  rs.getObject(i);

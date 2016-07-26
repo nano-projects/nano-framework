@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.commons.annatations;
+package org.nanoframework.orm.jdbc.record.annotation;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -22,26 +22,17 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * 属性注解.
- * 
+ *
  * @author yanghe
- * @since 1.0
+ * @since 1.3.15
  */
-@Target(ElementType.FIELD)
+@Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Deprecated
-public @interface Property {
+public @interface Table {
     /**
      * 
-     * @return 属性名称
+     * @return Database table name
      */
-    String name();
-
-    /**
-     * 
-     * @return 是否必选项, 默认值: false
-     */
-    boolean required() default false;
-
+    String value();
 }

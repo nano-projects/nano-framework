@@ -29,6 +29,7 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cs.dir>${project.parent.parent.basedir}</cs.dir>
+        <h2-version>1.4.191</h2-version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -36,6 +37,32 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jcl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
 		<dependency>
 			<groupId>com.google.inject</groupId>
 			<artifactId>guice</artifactId>
@@ -64,6 +91,12 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<scope>test</scope>
 		</dependency>
+        <dependency>  
+            <groupId>com.h2database</groupId>  
+            <artifactId>h2</artifactId>  
+            <version>${h2-version}</version>  
+            <scope>test</scope>  
+        </dependency>    
 		<dependency>
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-commons</artifactId>

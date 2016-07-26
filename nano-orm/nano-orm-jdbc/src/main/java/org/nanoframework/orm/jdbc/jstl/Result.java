@@ -38,7 +38,9 @@ import java.util.SortedMap;
  *
  */
 public interface Result {
-
+    final String JDBC_JSTL_CASE_INSENSITIVE_ORDER_PROPERTY = "context.jdbc.jstl.case.insensitive.order";
+    final boolean JDBC_JSTL_CASE_INSENSITIVE_ORDER = Boolean.parseBoolean(System.getProperty(JDBC_JSTL_CASE_INSENSITIVE_ORDER_PROPERTY, "false"));
+    
     /**
      * <p>Returns the result of the query as an array of <code>SortedMap</code> objects. 
      * Each item of the array represents a specific row in the query result.</p>

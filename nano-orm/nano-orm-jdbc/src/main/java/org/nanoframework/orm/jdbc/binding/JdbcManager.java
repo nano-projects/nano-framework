@@ -40,127 +40,130 @@ import org.nanoframework.orm.jdbc.jstl.Result;
  */
 public class JdbcManager implements SqlExecutor {
 
-	private DataSource dataSource;
-	private String envId;
-	private final DefaultSqlExecutor sqlExecutorProxy;
-	
-	private ThreadLocal<Connection> localConnection = new ThreadLocal<Connection>();
-	
-	public static JdbcManager newInstance(JdbcConfig config, DataSource dataSource) {
-		return new JdbcManager(config, dataSource);
-	}
+    private final DataSource dataSource;
+    private final String envId;
+    private final DefaultSqlExecutor sqlExecutorProxy;
 
-	private JdbcManager(JdbcConfig config, DataSource dataSource) {
-		this.dataSource = dataSource;
-		this.envId = config.getEnvironmentId();
-		this.sqlExecutorProxy = (DefaultSqlExecutor) Proxy.newProxyInstance(JdbcManager.class.getClassLoader(), new Class[]{ DefaultSqlExecutor.class }, new SqlExecutorInterceptor());
-		
-	}
+    private final ThreadLocal<Connection> localConnection = new ThreadLocal<Connection>();
 
-	protected void startManagedSession() throws SQLException {
-		this.localConnection.set(dataSource.getConnection());
-	}
+    private JdbcManager(final JdbcConfig config, final DataSource dataSource) {
+        this.dataSource = dataSource;
+        this.envId = config.getEnvironmentId();
+        this.sqlExecutorProxy = (DefaultSqlExecutor) Proxy.newProxyInstance(JdbcManager.class.getClassLoader(),
+                new Class[] { DefaultSqlExecutor.class }, new SqlExecutorInterceptor());
+    }
+    
+    public static JdbcManager newInstance(final JdbcConfig config, final DataSource dataSource) {
+        return new JdbcManager(config, dataSource);
+    }
 
-	protected void startManagedSession(boolean autoCommit) throws SQLException {
-		Connection conn;
-		Assert.notNull(conn = dataSource.getConnection());
-		conn.setAutoCommit(autoCommit);
-		
-		this.localConnection.set(conn);
-	}
+    public void startManagedSession() throws SQLException {
+        this.localConnection.set(dataSource.getConnection());
+    }
 
-	protected boolean isManagedSessionStarted() {
-		return this.localConnection.get() != null;
-	}
+    public void startManagedSession(final boolean autoCommit) throws SQLException {
+        final Connection conn;
+        Assert.notNull(conn = dataSource.getConnection());
+        conn.setAutoCommit(autoCommit);
+        this.localConnection.set(conn);
+    }
 
-	protected Connection getConnection() {
-		final Connection conn = this.localConnection.get();
-		if (conn == null)
-			throw new DataSourceException("数据源没有设置，无法获取Connection连接");
-		
-		return conn;
-	}
+    public boolean isManagedSessionStarted() {
+        return this.localConnection.get() != null;
+    }
 
-	@Override
-	public void commit() throws SQLException {
-	    adapter().commit(this.localConnection.get());
-		
-	}
+    protected Connection getConnection() {
+        final Connection conn = this.localConnection.get();
+        if (conn == null) {
+            throw new DataSourceException("数据源没有设置，无法获取Connection连接");
+        }
 
-	@Override
-	public void rollback() throws SQLException {
-		adapter().rollback(this.localConnection.get());
-	}
+        return conn;
+    }
 
-	@Override
-	public void close() {
-		try {
-			adapter().close(this.localConnection.get());
-			
-		} finally {
-			this.localConnection.set(null);
-		}
-	}
+    @Override
+    public void commit() throws SQLException {
+        adapter().commit(this.localConnection.get());
+    }
 
-	@Override
-	public Result executeQuery(String sql) throws SQLException {
-		return sqlExecutorProxy.executeQuery(sql, this.localConnection.get());
-	}
+    @Override
+    public void rollback() throws SQLException {
+        adapter().rollback(this.localConnection.get());
+    }
 
-	@Override
-	public int executeUpdate(String sql) throws SQLException {
-		return sqlExecutorProxy.executeUpdate(sql, this.localConnection.get());
-	}
+    @Override
+    public void close() {
+        try {
+            adapter().close(this.localConnection.get());
+        } finally {
+            this.localConnection.set(null);
+        }
+    }
 
-	@Override
-	public Result executeQuery(String sql, List<Object> values) throws SQLException {
-		return sqlExecutorProxy.executeQuery(sql, values, this.localConnection.get());
-	}
+    @Override
+    public Result executeQuery(final String sql) throws SQLException {
+        return sqlExecutorProxy.executeQuery(sql, this.localConnection.get());
+    }
 
-	@Override
-	public int executeUpdate(String sql, List<Object> values) throws SQLException {
-		return sqlExecutorProxy.executeUpdate(sql, values, this.localConnection.get());
-	}
+    @Override
+    public int executeUpdate(final String sql) throws SQLException {
+        return sqlExecutorProxy.executeUpdate(sql, this.localConnection.get());
+    }
 
-	@Override
-	public int[] executeBatchUpdate(String sql, List<List<Object>> batchValues) throws SQLException {
-		return sqlExecutorProxy.executeBatchUpdate(sql, batchValues, this.localConnection.get());
-	}
-	
-	public DataSource getDataSource() {
-		return dataSource;
-	}
-	
-	private class SqlExecutorInterceptor implements InvocationHandler {
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			final Connection conn = JdbcManager.this.localConnection.get();
-			if (conn != null) {
-				return method.invoke(adapter(), args);
-			} else {
-				final Connection newConn = adapter().getConnection(JdbcManager.this.envId);
-				try {
-					Parameter[] parameters = method.getParameters();
-					int idx = 0;
-					for(Parameter param : parameters) {
-						if(param.getType() == Connection.class) {
-							args[idx] = newConn;
-							break;
-						}
-						
-						idx ++;
-					}
-					
-					final Object result = method.invoke(adapter(), args);
-					adapter().commit(newConn);
-					return result;
-				} catch (Throwable t) {
-					adapter().rollback(newConn);
-					throw t;
-				} finally {
-					adapter().close(newConn);
-				}
-			}
-		}
-	}
+    @Override
+    public Result executeQuery(final String sql, final List<Object> values) throws SQLException {
+        return sqlExecutorProxy.executeQuery(sql, values, this.localConnection.get());
+    }
+
+    @Override
+    public int executeUpdate(final String sql, final List<Object> values) throws SQLException {
+        return sqlExecutorProxy.executeUpdate(sql, values, this.localConnection.get());
+    }
+
+    @Override
+    public int[] executeBatchUpdate(final String sql, final List<List<Object>> batchValues) throws SQLException {
+        return sqlExecutorProxy.executeBatchUpdate(sql, batchValues, this.localConnection.get());
+    }
+    
+    @Override
+    public boolean execute(String sql) throws SQLException {
+        return sqlExecutorProxy.execute(sql, this.localConnection.get());
+    }
+
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    private class SqlExecutorInterceptor implements InvocationHandler {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+            final Connection conn = JdbcManager.this.localConnection.get();
+            if (conn != null) {
+                return method.invoke(adapter(), args);
+            } else {
+                final Connection newConn = adapter().getConnection(JdbcManager.this.envId);
+                try {
+                    final Parameter[] parameters = method.getParameters();
+                    int idx = 0;
+                    for (final Parameter param : parameters) {
+                        if (param.getType() == Connection.class) {
+                            args[idx] = newConn;
+                            break;
+                        }
+
+                        idx++;
+                    }
+
+                    final Object result = method.invoke(adapter(), args);
+                    adapter().commit(newConn);
+                    return result;
+                } catch (final Throwable t) {
+                    adapter().rollback(newConn);
+                    throw t;
+                } finally {
+                    adapter().close(newConn);
+                }
+            }
+        }
+    }
 
 }

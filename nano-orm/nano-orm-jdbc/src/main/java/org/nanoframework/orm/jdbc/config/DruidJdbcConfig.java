@@ -17,7 +17,6 @@ package org.nanoframework.orm.jdbc.config;
 
 import java.util.Properties;
 
-import org.nanoframework.commons.annatations.Property;
 import org.nanoframework.commons.util.Assert;
 
 /**
@@ -27,52 +26,52 @@ import org.nanoframework.commons.util.Assert;
 public class DruidJdbcConfig extends JdbcConfig {
 	private static final long serialVersionUID = -565746278164485851L;
 
-	@Property(name = "druid.initialSize")
+	@Property("druid.initialSize")
 	private Integer initialSize;
 
-	@Property(name = "druid.maxActive")
+	@Property("druid.maxActive")
 	private Integer maxActive;
 
-	@Property(name = "druid.maxIdle")
+	@Property("druid.maxIdle")
 	private Integer maxIdle;
 
-	@Property(name = "druid.minIdle")
+	@Property("druid.minIdle")
 	private Integer minIdle;
 
-	@Property(name = "druid.maxWait")
+	@Property("druid.maxWait")
 	private Long maxWait;
 
-	@Property(name = "druid.removeAbandoned")
+	@Property("druid.removeAbandoned")
 	private Boolean removeAbandoned;
 
-	@Property(name = "druid.removeAbandonedTimeout")
+	@Property("druid.removeAbandonedTimeout")
 	private Integer removeAbandonedTimeout;
 
-	@Property(name = "druid.timeBetweenEvictionRunsMillis")
+	@Property("druid.timeBetweenEvictionRunsMillis")
 	private Long timeBetweenEvictionRunsMillis;
 
-	@Property(name = "druid.minEvictableIdleTimeMillis")
+	@Property("druid.minEvictableIdleTimeMillis")
 	private Long minEvictableIdleTimeMillis;
 
-	@Property(name = "druid.validationQuery")
+	@Property("druid.validationQuery")
 	private String validationQuery;
 
-	@Property(name = "druid.testWhileIdle")
+	@Property("druid.testWhileIdle")
 	private Boolean testWhileIdle;
 
-	@Property(name = "druid.testOnBorrow")
+	@Property("druid.testOnBorrow")
 	private Boolean testOnBorrow;
 
-	@Property(name = "druid.testOnReturn")
+	@Property("druid.testOnReturn")
 	private Boolean testOnReturn;
 
-	@Property(name = "druid.poolPreparedStatements")
+	@Property("druid.poolPreparedStatements")
 	private Boolean poolPreparedStatements;
 
-	@Property(name = "druid.maxPoolPreparedStatementPerConnectionSize")
+	@Property("druid.maxPoolPreparedStatementPerConnectionSize")
 	private Integer maxPoolPreparedStatementPerConnectionSize;
 
-	@Property(name = "druid.filters")
+	@Property("druid.filters")
 	private String filters;
 
 	public DruidJdbcConfig() {

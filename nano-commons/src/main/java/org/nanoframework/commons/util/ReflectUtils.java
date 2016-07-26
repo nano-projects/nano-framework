@@ -20,6 +20,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 
 /**
  * 
@@ -51,6 +52,10 @@ public final class ReflectUtils {
     @SuppressWarnings("unchecked")
     public static <T> Class<T> convert(final Class<?> cls) {
         return (Class<T>) cls;
+    }
+    
+    public static <T> Class<T> convert(final Type type) {
+        return loadClass(type.getTypeName());
     }
 
     /**
