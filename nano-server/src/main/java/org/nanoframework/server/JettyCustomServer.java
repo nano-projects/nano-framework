@@ -201,6 +201,11 @@ public class JettyCustomServer extends Server {
             }
 
             throw new JettyServerException("Stop Server error: " + e.getMessage());
+        } finally {
+            final File file = new File(JETTY_PID_FILE);
+            if (file.exists()) {
+                file.delete();
+            }
         }
     }
 
