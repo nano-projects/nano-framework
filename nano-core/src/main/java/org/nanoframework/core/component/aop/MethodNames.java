@@ -22,4 +22,8 @@ package org.nanoframework.core.component.aop;
 public final class MethodNames {
     protected static final String BEFORE = "before";
     protected static final String AFTER = "after";
+    
+    private MethodNames() {
+        
+    }
 }
