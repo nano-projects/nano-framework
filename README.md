@@ -34,7 +34,7 @@ mvn clean install -Dmaven.test.skip=true
 
 Quickstart
 ----
-- [Examples](https://github.com/nano-projects/nano-examples/blob/master/examples/examples.md)
+- [Examples](https://github.com/nano-projects/nano-examples)
 
 GitBook
 ----
