@@ -32,7 +32,6 @@ import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
-import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
@@ -63,11 +62,11 @@ public class KeyTest {
             Assert.assertEquals(redisClient.set("setKeyTest", "1"), true);
             Assert.assertEquals(redisClient.del("setKeyTest"), 1);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -93,11 +92,11 @@ public class KeyTest {
             
             Assert.assertEquals(redisClient.del(Lists.newArrayList(map.keySet().iterator())), 3);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -108,11 +107,11 @@ public class KeyTest {
             Assert.assertEquals(redisClient.exists("existsTest"), true);
             Assert.assertEquals(redisClient.del("existsTest"), 1);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -131,11 +130,11 @@ public class KeyTest {
             Assert.assertEquals(redisClient.exists("existsTest"), false);
             Assert.assertEquals(redisClient.ttl("expireTest"), -2);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -151,11 +150,11 @@ public class KeyTest {
             }
             Assert.assertEquals(redisClient.exists("expireDefaultTest"), false);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -172,11 +171,11 @@ public class KeyTest {
             }
             Assert.assertEquals(redisClient.exists("expireatTest"), false);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -192,11 +191,11 @@ public class KeyTest {
             
             Assert.assertEquals(error.getClass(), UnsupportedAccessException.class);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -210,11 +209,11 @@ public class KeyTest {
             Assert.assertEquals(redisClient.append("appendTest", Lists.newArrayList("789", "000"), "::"), 50);
             Assert.assertEquals(redisClient.del("appendTest"), 1);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -232,11 +231,11 @@ public class KeyTest {
             
             Assert.assertEquals(redisClient.del("getTest"), 1);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -276,11 +275,11 @@ public class KeyTest {
             
             Assert.assertEquals(redisClient.del(Lists.newArrayList("getBatchTest-0", "getBatchTest-1", "getBatchTest-2")), 3);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -292,11 +291,11 @@ public class KeyTest {
             Assert.assertEquals(redisClient.get("getSetTest"), "new-getset");
             Assert.assertEquals(redisClient.del("getSetTest"), 1);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -318,11 +317,11 @@ public class KeyTest {
             Assert.assertEquals(values1.get("setnxTest-2"), true);
             Assert.assertEquals(redisClient.del("setnxTest-0", "setnxTest-1", "setnxTest-2"), 3);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -347,11 +346,11 @@ public class KeyTest {
             
             Assert.assertEquals(redisClient.exists("setexTest"), false);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -362,11 +361,11 @@ public class KeyTest {
             Assert.assertEquals(redisClient.strLen("setexTest"), 5);
             Assert.assertEquals(redisClient.del("setexTest"), 1);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     

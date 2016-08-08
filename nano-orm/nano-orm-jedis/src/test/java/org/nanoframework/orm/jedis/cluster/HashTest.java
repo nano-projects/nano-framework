@@ -32,7 +32,6 @@ import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
-import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 import com.alibaba.fastjson.TypeReference;
 
@@ -65,11 +64,11 @@ public class HashTest {
             Assert.assertEquals(redisClient.hdel("hdelTest", "1"), 1);
             Assert.assertEquals(redisClient.hexists("hdelTest", "1"), false);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -94,11 +93,11 @@ public class HashTest {
             
             Assert.assertEquals(redisClient.hdel("hmTest", "1", "2", "3"), 3);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -122,11 +121,11 @@ public class HashTest {
             
             Assert.assertEquals(redisClient.hdel("hsetnxTest", "1", "2", "3"), 3);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     

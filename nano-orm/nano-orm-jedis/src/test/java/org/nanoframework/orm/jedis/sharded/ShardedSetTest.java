@@ -28,7 +28,6 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
 import org.nanoframework.orm.jedis.cluster.SetTest;
-import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
@@ -100,11 +99,11 @@ public class ShardedSetTest extends SetTest {
             
             Assert.assertEquals(redisClient.del("setTest", "setTest-1", "setTest-4"), 3);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
 }

@@ -25,7 +25,6 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
 import org.nanoframework.orm.jedis.cluster.KeyTest;
-import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 /**
  *
@@ -51,11 +50,11 @@ public class ShardedKeyTest extends KeyTest {
         try {
             redisClient.keys("*");
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
 }

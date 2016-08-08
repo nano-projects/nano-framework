@@ -29,7 +29,6 @@ import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
-import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 /**
  *
@@ -66,11 +65,11 @@ public class SortedSetTest {
             
             Assert.assertEquals(redisClient.del("sortedTest"), 1);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
 }

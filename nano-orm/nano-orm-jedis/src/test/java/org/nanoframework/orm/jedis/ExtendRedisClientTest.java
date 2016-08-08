@@ -28,7 +28,6 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.orm.jedis.RedisClient.Mark;
-import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 import com.alibaba.fastjson.JSON;
 
@@ -60,11 +59,11 @@ public class ExtendRedisClientTest {
             redisClient.push("MORE_PUSH", random, Mark.RPUSH);
             LOGGER.debug("PUSH: {}", random);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -73,11 +72,11 @@ public class ExtendRedisClientTest {
         try {
             LOGGER.debug("RANGE: {}", JSON.toJSONString(redisClient.lrange("MORE_PUSH")));
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     
@@ -87,11 +86,11 @@ public class ExtendRedisClientTest {
             List<String> values = redisClient.lrange("MORE_PUSH");
             values.forEach(value -> LOGGER.debug("REM: {}", redisClient.lrem("MORE_PUSH", value)));
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
     

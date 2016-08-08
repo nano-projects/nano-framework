@@ -34,7 +34,6 @@ import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 import org.nanoframework.orm.jedis.RedisClient.Mark;
 import org.nanoframework.orm.jedis.RedisClientPool;
-import org.nanoframework.orm.jedis.exception.RedisClientException;
 
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
@@ -153,11 +152,11 @@ public class ListTest {
             
             Assert.assertEquals(redisClient.pushx("pushTest", 18, Mark.RPUSH), 0);
         } catch (final Throwable e) {
-            if (!(e instanceof RedisClientException)) {
+            if (e instanceof AssertionError) {
                 throw e;
             }
             
-            LOGGER.error("Redis Server not up");
+            LOGGER.error(e.getMessage());
         }
     }
 }
