@@ -28,7 +28,8 @@ public final class ApplicationContext {
      * NanoFramework版本号.
      * @since 1.3.14
      */
-    public static final String FRAMEWORK_VERSION = "1.3.14-SNAPSHOT";
+    public static final String FRAMEWORK_VERSION = "1.3.16";
+    
     /**
      * 项目版本号属性.
      * @since 1.3.14
@@ -51,6 +52,35 @@ public final class ApplicationContext {
 
     /** 组件扫描属性 */
     public static final String COMPONENT_BASE_PACKAGE = "context.component-scan.base-package";
+    
+    /**
+     * Redis Configure to context.properties.
+     * @since 1.3.16
+     */
+    public static final String CONTEXT_REDIS = "context.redis";
+    
+    /**
+     *
+     * @author yanghe
+     * @since 1.3.16 
+     */
+    public static final class JettyRedisSession {
+        /** 默认集群节点名称. */
+        public static final String DEFAULT_JETTY_CLUSTER_WORKER_NAME = "_";
+        /** 默认过期Session定期扫描任务时间间隔. */
+        public static final String DEFAULT_SCAVENGER_INTERVAL = "30000";
+        /** 默认存储Session时间间隔. */
+        public static final String DEFAULT_SESSION_SAVE_INTERVAL = "20000";
+        
+        /** 集群模式下使用的RedisType名称属性. */
+        public static final String JETTY_CLUSTER = "context.jetty.cluster";
+        /** 集群节点名称属性. */
+        public static final String JETTY_CLUSTER_WORKER_NAME = "context.jetty.cluster.worker.name";
+        /** 过期Session定期扫描任务时间间隔属性. */
+        public static final String JETTY_SESSION_SCAVENGER_INTERVAL = "context.jetty.scavenger.interval";
+        /** 存储Session时间间隔. */
+        public static final String JETTY_SESSION_SAVE_INTERVAL = "context.jetty.session.save.interval";
+    }
 
     /**
      * Scheduler属性列表

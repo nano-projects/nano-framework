@@ -34,6 +34,7 @@ import java.util.concurrent.Executors;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.xml.XmlConfiguration;
 import org.nanoframework.commons.loader.LoaderException;
@@ -44,8 +45,11 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.context.ApplicationContext;
+import org.nanoframework.core.context.ApplicationContext.JettyRedisSession;
 import org.nanoframework.server.exception.JettyServerException;
 import org.nanoframework.server.exception.ReadXMLException;
+import org.nanoframework.server.session.redis.RedisSessionIdManager;
+import org.nanoframework.server.session.redis.RedisSessionManager;
 
 /**
  * Jetty Server
@@ -72,7 +76,7 @@ public class JettyCustomServer extends Server {
     private static String WEB_DEFAULT = DEFAULT_RESOURCE_BASE + "/WEB-INF/webdefault.xml";
 
     private static String DEFAULT_JETTY_CONFIG = DEFAULT_RESOURCE_BASE + "/WEB-INF/jetty.xml";
-
+    
     public static JettyCustomServer DEFAULT;
     static {
         try {
@@ -135,6 +139,7 @@ public class JettyCustomServer extends Server {
                 applyHandle(contextPath, warPath);
             }
         }
+        
     }
 
     private void readXmlConfig(final String configPath) {
@@ -157,9 +162,40 @@ public class JettyCustomServer extends Server {
         } else {
             webapp.setWar(warPath);
         }
-
+        
+        applySessionHandler(webapp);
+        
         handler.addHandler(webapp);
         super.setHandler(handler);
+    }
+    
+    protected void applySessionHandler(final WebAppContext webapp) {
+        final String jettyCluster = CONTEXT.getProperty(JettyRedisSession.JETTY_CLUSTER);
+        if (StringUtils.isNotBlank(jettyCluster)) {
+            setSessionIdManager(createRedisSessionIdManager(jettyCluster));
+            webapp.setSessionHandler(new SessionHandler(createRedisSessionManager(jettyCluster)));
+        }
+    }
+    
+    protected RedisSessionIdManager createRedisSessionIdManager(final String jettyCluster) {
+        final RedisSessionIdManager sessionIdManager = new RedisSessionIdManager(this, jettyCluster);
+        
+        final String workerName = CONTEXT.getProperty(JettyRedisSession.JETTY_CLUSTER_WORKER_NAME, JettyRedisSession.DEFAULT_JETTY_CLUSTER_WORKER_NAME);
+        sessionIdManager.setWorkerName(workerName);
+        
+        final long scavengerInterval = Long.parseLong(CONTEXT.getProperty(JettyRedisSession.JETTY_SESSION_SCAVENGER_INTERVAL, JettyRedisSession.DEFAULT_SCAVENGER_INTERVAL));
+        sessionIdManager.setScavengerInterval(scavengerInterval);
+        
+        return sessionIdManager;
+    }
+    
+    protected RedisSessionManager createRedisSessionManager(final String jettyCluster) {
+        final RedisSessionManager sessionManager = new RedisSessionManager(jettyCluster);
+        
+        final long saveInterval = Long.parseLong(CONTEXT.getProperty(JettyRedisSession.JETTY_SESSION_SAVE_INTERVAL, JettyRedisSession.DEFAULT_SESSION_SAVE_INTERVAL));
+        sessionManager.setSaveInterval(saveInterval);
+        
+        return sessionManager;
     }
 
     protected void startServer() {

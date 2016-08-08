@@ -44,7 +44,6 @@ import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.core.component.scan.ComponentScan;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.extension.concurrent.exception.SchedulerException;
-import org.nanoframework.extension.concurrent.queue.BlockingQueueFactory;
 import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdOrderWatcherScheduler;
 import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdScheduler;
 import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdSchedulerOperate;
@@ -728,18 +727,7 @@ public class SchedulerFactory {
     protected class ShutdownHook implements Runnable {
         @Override
         public void run() {
-            LOGGER.info("等待队列中的所有元素被执行完成后停止系统");
-            while ((int) BlockingQueueFactory.howManyElementInQueues() > 0) {
-                try {
-                    Thread.sleep(10L);
-                } catch (final InterruptedException e) {
-                    // ignore
-                }
-            }
-
-            LOGGER.info("队列中的所有元素已被执行完成");
-
-            long time = System.currentTimeMillis();
+            final long time = System.currentTimeMillis();
             LOGGER.info("开始停止任务调度");
             closeAll();
             List<BaseScheduler> schedulers = Lists.newArrayList();
@@ -754,12 +742,13 @@ public class SchedulerFactory {
                     Thread.sleep(100L);
                 } catch (InterruptedException e) {
                 }
-                for (BaseScheduler scheduler : schedulers) {
+                
+                for (final BaseScheduler scheduler : schedulers) {
                     scheduler.thisNotify();
                 }
             }
 
-            LOGGER.info("停止任务调度完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+            LOGGER.info("停止任务调度完成, 耗时: {}ms", System.currentTimeMillis() - time);
         }
 
     }

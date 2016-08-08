@@ -15,7 +15,6 @@
  */
 package org.nanoframework.core.plugins.defaults.plugin;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,8 +24,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoaderException;
+
+import com.google.common.collect.Lists;
 
 /**
  * @author yanghe
@@ -35,7 +38,8 @@ import org.nanoframework.core.plugins.PluginLoaderException;
 public class JedisPlugin implements Plugin {
     private Logger LOG = LoggerFactory.getLogger(JedisPlugin.class);
     public static final String DEFAULT_REDIS_PARAMETER_NAME = "redis";
-    private List<Properties> properties;
+    private static final String DEFAULT_REDIS_PATH = "/redis.properties";
+    private List<Properties> properties = Lists.newArrayList();
 
     @Override
     public boolean load() throws Throwable {
@@ -62,10 +66,25 @@ public class JedisPlugin implements Plugin {
     public void config(final ServletConfig config) throws Throwable {
         final String redis = config.getInitParameter(DEFAULT_REDIS_PARAMETER_NAME);
         if (StringUtils.isNotBlank(redis)) {
-            properties = new ArrayList<>();
             final String[] paths = redis.split(";");
-            for (String path : paths) {
+            for (final String path : paths) {
                 properties.add(PropertiesLoader.load(path));
+            }
+        }
+        
+        final String contextRedis = System.getProperty(ApplicationContext.CONTEXT_REDIS);
+        if (StringUtils.isNotBlank(contextRedis)) {
+            final String[] paths = contextRedis.split(";");
+            for (final String path : paths) {
+                properties.add(PropertiesLoader.load(path));
+            }
+        }
+        
+        if (CollectionUtils.isEmpty(properties)) {
+            try {
+                properties.add(PropertiesLoader.load(DEFAULT_REDIS_PATH));
+            } catch (final Throwable e) {
+                // ignore
             }
         }
     }
