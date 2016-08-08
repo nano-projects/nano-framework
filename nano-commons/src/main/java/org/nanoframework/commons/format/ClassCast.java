@@ -15,6 +15,7 @@
  */
 package org.nanoframework.commons.format;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -270,7 +271,7 @@ public final class ClassCast {
                         };
 
                         final String[] array = (String[]) value;
-                        final Object[] objs = new Object[array.length];
+                        final Object[] objs = (Object[]) Array.newInstance(cls, array.length);
                         int idx = 0;
                         for (String val : array) {
                             if (String.class == cls) {

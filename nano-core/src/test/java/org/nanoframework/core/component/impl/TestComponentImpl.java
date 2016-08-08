@@ -22,6 +22,8 @@ import org.nanoframework.core.component.aop.AfterAOP;
 import org.nanoframework.core.component.aop.Before;
 import org.nanoframework.core.component.aop.BeforeAOP;
 
+import com.alibaba.fastjson.JSON;
+
 /**
  *
  * @author yanghe
@@ -60,5 +62,10 @@ public class TestComponentImpl implements TestComponent {
     @Override
     public String afterAopError() {
         throw new UnsupportedAccessException();
+    }
+    
+    @Override
+    public String arrayTest(String[] array) {
+        return JSON.toJSONString(array);
     }
 }

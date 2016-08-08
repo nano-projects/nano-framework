@@ -29,6 +29,7 @@ import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 
+import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -123,4 +124,12 @@ public class ComponentsTest extends PluginLoaderInit {
         AfterAOP.RESULT = null;
     }
     
+    @Test
+    public void arrayTest() {
+        final RequestMapper mapper = Components.getMapper("/v1/array", RequestMethod.PUT);
+        final String[] array = { "1", "2", "3" };
+        Object value = Components.invoke(mapper, MapBuilder.<String, Object>create().put("array[]", array).build());
+        Assert.assertNotNull(value);
+        Assert.assertEquals(JSON.toJSONString(array), value);
+    }
 }

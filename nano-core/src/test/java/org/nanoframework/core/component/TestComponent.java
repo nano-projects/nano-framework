@@ -51,4 +51,7 @@ public interface TestComponent {
     
     @RequestMapping(value = "/aop/after/error", method = RequestMethod.PUT)
     String afterAopError();
+    
+    @RequestMapping(value = "/array", method = RequestMethod.PUT)
+    String arrayTest(@RequestParam("array[]") String[] array);
 }

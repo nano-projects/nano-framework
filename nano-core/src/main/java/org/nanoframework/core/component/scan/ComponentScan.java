@@ -44,7 +44,7 @@ import com.google.common.collect.Sets;
  */
 public class ComponentScan {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ComponentScan.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ComponentScan.class);
 
     private static Set<Class<?>> classes;
 
@@ -88,7 +88,7 @@ public class ComponentScan {
                     if (mapping != null && !"".equals(mapping.value()))
                         return true;
                     else {
-                        LOG.debug("无效的URI Mapper定义: " + obj.getClass().getName() + '.' + method.getName() + ':' + (componentURI + mapping.value()));
+                        LOGGER.debug("Unknown component mapper define: {}.{}:{}", obj.getClass().getName(), method.getName(), (componentURI + mapping.value()));
                         return false;
                     }
                 }).map(method -> {
@@ -103,8 +103,8 @@ public class ComponentScan {
                     }
 
                     methodMap.put((componentURI + mapping.value()).toLowerCase(), mappers);
-                    if (LOG.isDebugEnabled())
-                        LOG.debug("URI Mapper定义: " + obj.getClass().getName() + '.' + method.getName() + ':' + (componentURI + mapping.value()));
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("URI Mapper定义: " + obj.getClass().getName() + '.' + method.getName() + ':' + (componentURI + mapping.value()));
 
                     return methodMap;
                 }).iterator();iter.hasNext();) {
@@ -157,7 +157,7 @@ public class ComponentScan {
 
     public static void scan(String packageName) {
         if (StringUtils.isEmpty(packageName)) {
-            LOG.warn("没有设置packageName, 跳过扫描");
+            LOGGER.warn("没有设置packageName, 跳过扫描");
             return;
         }
 
