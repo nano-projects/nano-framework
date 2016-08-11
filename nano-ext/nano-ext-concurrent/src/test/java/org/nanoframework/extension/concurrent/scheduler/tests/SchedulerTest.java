@@ -18,11 +18,8 @@ package org.nanoframework.extension.concurrent.scheduler.tests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.nanoframework.extension.concurrent.scheduler.BaseScheduler;
-import org.nanoframework.extension.concurrent.scheduler.PluginLoaderInit;
 import org.nanoframework.extension.concurrent.scheduler.SchedulerConfig;
 import org.nanoframework.extension.concurrent.scheduler.SchedulerFactory;
-import org.nanoframework.extension.concurrent.scheduler.TestScheduler;
-import org.nanoframework.extension.concurrent.scheduler.TestScheduler2;
 
 /**
  *
@@ -41,7 +38,7 @@ public class SchedulerTest extends PluginLoaderInit {
         final BaseScheduler scheduler = factory.getStartedScheduler().iterator().next();
         final SchedulerConfig conf = scheduler.getConfig();
         
-        Assert.assertTrue(scheduler instanceof TestScheduler || scheduler instanceof TestScheduler2);
+        Assert.assertTrue(scheduler instanceof TestScheduler || scheduler instanceof Test2Scheduler);
         Assert.assertFalse(scheduler.isClose());
         Assert.assertFalse(scheduler.isClosed());
         

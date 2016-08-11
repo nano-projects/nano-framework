@@ -13,7 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.scheduler;
+package org.nanoframework.extension.concurrent.scheduler.tests;
+
+import org.nanoframework.extension.concurrent.scheduler.BaseScheduler;
+import org.nanoframework.extension.concurrent.scheduler.Scheduler;
 
 /**
  *
@@ -21,7 +24,7 @@ package org.nanoframework.extension.concurrent.scheduler;
  * @since 1.3.15
  */
 @Scheduler(parallel = 2, interval = 10, lazy = true, daemon = true)
-public class TestScheduler2 extends BaseScheduler {
+public class Test2Scheduler extends BaseScheduler {
 
     @Override
     public void before() {

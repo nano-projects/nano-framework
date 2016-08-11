@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -53,19 +52,19 @@ public class ComponentScan {
      * @param annotationClass 注解类
      * @return 过滤后的类
      */
-    public static Set<Class<?>> filter(Class<? extends Annotation> annotationClass) {
-        if (classes == null)
-            classes = new LinkedHashSet<>();
-
+    public static Set<Class<?>> filter(final Class<? extends Annotation> annotationClass) {
+        if (classes == null) {
+            classes = Sets.newLinkedHashSet();
+        }
+        
         if (classes.size() > 0) {
-            Set<Class<?>> annClasses = new LinkedHashSet<>();
+            final Set<Class<?>> annClasses = Sets.newLinkedHashSet();
             classes.stream().filter(clz -> clz.isAnnotationPresent(annotationClass)).forEach(clz -> annClasses.add(clz));
             return annClasses;
 
         }
 
         return Collections.emptySet();
-
     }
 
     /**
@@ -166,6 +165,12 @@ public class ComponentScan {
         }
         
         classes.addAll(getClasses(packageName));
+    }
+    
+    public static void clear() {
+        if (classes != null) {
+            classes.clear();
+        }
     }
 
     /**

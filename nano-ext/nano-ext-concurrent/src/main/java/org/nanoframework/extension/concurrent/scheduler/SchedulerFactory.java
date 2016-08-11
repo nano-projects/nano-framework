@@ -50,6 +50,7 @@ import org.nanoframework.extension.concurrent.scheduler.defaults.etcd.EtcdSchedu
 import org.nanoframework.extension.concurrent.scheduler.defaults.monitor.LocalJmxMonitorScheduler;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
@@ -492,7 +493,7 @@ public class SchedulerFactory {
      */
     public static final void load() throws IllegalArgumentException, IllegalAccessException {
         if (IS_LOADED) {
-            throw new LoaderException("Scheduler已经加载，这里不再进行重复的加载，如需重新加载请调用reload方法");
+            throw new LoaderException("Scheduler已经加载，这里不再进行重复的加载");
         }
 
         if (PropertiesLoader.PROPERTIES.size() == 0) {
@@ -502,7 +503,8 @@ public class SchedulerFactory {
         final Set<String> includes = Sets.newLinkedHashSet();
         final Set<String> exclusions = Sets.newLinkedHashSet();
         PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(BASE_PACKAGE) != null).forEach(item -> {
-            ComponentScan.scan(item.getProperty(BASE_PACKAGE));
+            final String basePacakge = item.getProperty(BASE_PACKAGE);
+            ComponentScan.scan(basePacakge);
         });
 
         PropertiesLoader.PROPERTIES.values().stream().forEach(item -> {
@@ -645,30 +647,36 @@ public class SchedulerFactory {
             LOGGER.error(e.getMessage(), e);
         }
     }
+    
+    public void destory() {
+        final long time = System.currentTimeMillis();
+        LOGGER.info("开始停止任务调度");
+        closeAll();
+        final List<BaseScheduler> schedulers = Lists.newArrayList();
+        schedulers.addAll(getStartedScheduler());
+        schedulers.addAll(getStoppingScheduler());
+        for (final BaseScheduler scheduler : schedulers) {
+            scheduler.thisNotify();
+        }
 
-    /**
-     * 重新加载调度任务
-     */
-    public static final void reload() {
-        getInstance().stoppedScheduler.clear();
-        getInstance().closeAll();
-        service.execute(() -> {
-            while (SchedulerFactory.getInstance().getStartedSchedulerSize() > 0) {
-                try {
-                    Thread.sleep(100L);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
-            }
-
-            LOGGER.info("所有任务已经全部关闭");
-
+        while ((getStartedSchedulerSize() > 0 || getStoppingSchedulerSize() > 0) && System.currentTimeMillis() - time < shutdownTimeout) {
             try {
-                load();
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                LOGGER.error(e.getMessage(), e);
+                Thread.sleep(100L);
+            } catch (final InterruptedException e) {
+                // ignore
             }
-        });
+            
+            for (final BaseScheduler scheduler : schedulers) {
+                scheduler.thisNotify();
+            }
+        }
+        
+        SchedulerFactory.IS_LOADED = false;
+        FACTORY.startedScheduler.clear();
+        FACTORY.stoppingScheduler.clear();
+        FACTORY.stoppedScheduler.clear();
+        group.clear();
+        LoggerFactory.getLogger(this.getClass()).info("停止任务调度完成, 耗时: {}ms", System.currentTimeMillis() - time);
     }
 
     protected class StatusMonitorScheduler extends BaseScheduler {
@@ -686,7 +694,7 @@ public class SchedulerFactory {
             conf.setDaemon(Boolean.TRUE);
             setConfig(conf);
             setClose(false);
-            closed = new ConcurrentHashMap<>();
+            closed = Maps.newConcurrentMap();
         }
 
         @Override
@@ -727,28 +735,7 @@ public class SchedulerFactory {
     protected class ShutdownHook implements Runnable {
         @Override
         public void run() {
-            final long time = System.currentTimeMillis();
-            LOGGER.info("开始停止任务调度");
-            closeAll();
-            List<BaseScheduler> schedulers = Lists.newArrayList();
-            schedulers.addAll(getStartedScheduler());
-            schedulers.addAll(getStoppingScheduler());
-            for (BaseScheduler scheduler : schedulers) {
-                scheduler.thisNotify();
-            }
-
-            while ((getStartedSchedulerSize() > 0 || getStoppingSchedulerSize() > 0) && System.currentTimeMillis() - time < shutdownTimeout) {
-                try {
-                    Thread.sleep(100L);
-                } catch (InterruptedException e) {
-                }
-                
-                for (final BaseScheduler scheduler : schedulers) {
-                    scheduler.thisNotify();
-                }
-            }
-
-            LOGGER.info("停止任务调度完成, 耗时: {}ms", System.currentTimeMillis() - time);
+            destory();
         }
 
     }

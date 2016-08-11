@@ -13,16 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.concurrent.scheduler;
+package org.nanoframework.extension.concurrent.scheduler.longwait;
+
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.extension.concurrent.scheduler.BaseScheduler;
+import org.nanoframework.extension.concurrent.scheduler.Scheduler;
 
 /**
  *
  * @author yanghe
- * @since 1.3.15
+ * @since 1.3.16
  */
-@Scheduler(parallel = 2, interval = 10, lazy = true, daemon = true)
-public class TestScheduler extends BaseScheduler {
-
+@Scheduler(parallel = 1, cron = "0 0 0 * * ?")
+public class LongWaitScheduler extends BaseScheduler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LongWaitScheduler.class);
+    
     @Override
     public void before() {
 
@@ -30,7 +36,7 @@ public class TestScheduler extends BaseScheduler {
 
     @Override
     public void execute() {
-
+        LOGGER.debug("Execute: {} at {}", getConfig().getId(), System.currentTimeMillis());
     }
 
     @Override
@@ -40,7 +46,7 @@ public class TestScheduler extends BaseScheduler {
 
     @Override
     public void destroy() {
-
+        LOGGER.debug("Closed: {}", getConfig().getId());
     }
 
 }

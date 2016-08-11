@@ -13,31 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.orm.jedis.exception;
+package org.nanoframework.extension.concurrent.scheduler.tests;
+
+import org.nanoframework.extension.concurrent.scheduler.BaseScheduler;
+import org.nanoframework.extension.concurrent.scheduler.Scheduler;
 
 /**
- * Jedis操作异常处理类.
- * 
+ *
  * @author yanghe
- * @since 1.0
+ * @since 1.3.15
  */
-public class RedisClientException extends RuntimeException {
-    private static final long serialVersionUID = -6151365904901655741L;
+@Scheduler(parallel = 2, interval = 10, lazy = true, daemon = true)
+public class TestScheduler extends BaseScheduler {
 
-    public RedisClientException() {
+    @Override
+    public void before() {
 
     }
 
-    public RedisClientException(final String message) {
-        super(message);
+    @Override
+    public void execute() {
+
     }
 
-    public RedisClientException(final String message, final Throwable cause) {
-        super(message, cause);
+    @Override
+    public void after() {
+
     }
 
-    public RedisClientException(final Throwable cause) {
-        super(cause);
+    @Override
+    public void destroy() {
+
     }
 
 }

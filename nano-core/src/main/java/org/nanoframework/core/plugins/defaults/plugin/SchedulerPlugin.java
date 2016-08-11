@@ -27,23 +27,28 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  * @since 1.3
  */
 public class SchedulerPlugin implements Plugin {
-
-    private Logger LOG = LoggerFactory.getLogger(SchedulerPlugin.class);
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerPlugin.class);
+    private static final String SCHEDULER_FACTORY_CLASS_NAME = "org.nanoframework.extension.concurrent.scheduler.SchedulerFactory";
+    private static final String SCHEDULER_FACTORY_INSTANCE = "getInstance";
+    private static final String SCHEDULER_FACTORY_LOAD = "load";
+    private static final String SCHEDULER_FACTORY_STARTALL = "startAll";
+    
     @Override
     public boolean load() throws Throwable {
         try {
-            Class<?> SchedulerFactory = Class.forName("org.nanoframework.extension.concurrent.scheduler.SchedulerFactory");
-            Object schedulerFactory = SchedulerFactory.getMethod("getInstance").invoke(SchedulerFactory);
-            long time = System.currentTimeMillis();
-            LOG.info("开始加载任务调度");
-            SchedulerFactory.getMethod("load").invoke(SchedulerFactory);
-            SchedulerFactory.getMethod("startAll").invoke(schedulerFactory);
-            LOG.info("加载任务调度结束, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-        } catch (Exception e) {
-            if (!(e instanceof ClassNotFoundException))
+            final Class<?> schedulerFactoryCls = Class.forName(SCHEDULER_FACTORY_CLASS_NAME);
+            final Object schedulerFactory = schedulerFactoryCls.getMethod(SCHEDULER_FACTORY_INSTANCE).invoke(schedulerFactoryCls);
+            
+            final long time = System.currentTimeMillis();
+            LOGGER.info("开始加载任务调度");
+            schedulerFactoryCls.getMethod(SCHEDULER_FACTORY_LOAD).invoke(schedulerFactoryCls);
+            schedulerFactoryCls.getMethod(SCHEDULER_FACTORY_STARTALL).invoke(schedulerFactory);
+            LOGGER.info("加载任务调度结束, 耗时: {}ms", System.currentTimeMillis() - time);
+        } catch (final Throwable e) {
+            if (!(e instanceof ClassNotFoundException)) {
                 throw new PluginLoaderException(e.getMessage(), e);
-
+            }
+            
             return false;
         }
 
@@ -51,7 +56,7 @@ public class SchedulerPlugin implements Plugin {
     }
 
     @Override
-    public void config(ServletConfig config) throws Throwable {
+    public void config(final ServletConfig config) throws Throwable {
 
     }
 

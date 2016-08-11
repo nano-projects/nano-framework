@@ -111,6 +111,7 @@ public class Components {
     
     public static final void destroy() {
         MapperNode.clear();
+        ComponentScan.clear();
         isLoaded = false;
     }
 
@@ -123,6 +124,7 @@ public class Components {
      * 
      * @see org.nanoframework.commons.format.ClassCast#cast(Object, String)
      */
+    @SuppressWarnings("deprecation")
     public static final Object[] bindParam(final Method method, Map<String, Object> params, final Object... objs) {
         if (params == null) {
             params = Collections.emptyMap();

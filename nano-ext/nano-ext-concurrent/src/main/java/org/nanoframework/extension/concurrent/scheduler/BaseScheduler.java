@@ -50,7 +50,8 @@ public abstract class BaseScheduler implements Runnable, Cloneable {
     private AtomicBoolean isLock = new AtomicBoolean(false);
     private static Map<String, AtomicLong> index = Maps.newHashMap();
     private SchedulerAnalysis analysis = SchedulerAnalysis.newInstance();
-
+    private SchedulerFactory factory = SchedulerFactory.getInstance();
+    
     public BaseScheduler() {
     }
 
@@ -91,8 +92,10 @@ public abstract class BaseScheduler implements Runnable, Cloneable {
             }
 
         } finally {
+            // 保证结束Scheduler后能够正常的切换到Stop列表中，需要先设置close = false
+            close = false;
             closed = true;
-            SchedulerFactory.getInstance().unbind(this);
+            factory.close(this);
             destroy();
         }
     }
@@ -278,6 +281,7 @@ public abstract class BaseScheduler implements Runnable, Cloneable {
 
     public void setClose(final boolean close) {
         this.close = close;
+        thisNotify();
     }
 
     public void setClosed(final boolean closed) {

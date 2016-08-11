@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.component;
+package org.nanoframework.extension.concurrent.scheduler.longwait;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.junit.After;
 import org.junit.Before;
+import org.nanoframework.commons.loader.PropertiesLoader;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.MapBuilder;
+import org.nanoframework.core.component.Components;
 import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
+import org.nanoframework.extension.concurrent.scheduler.SchedulerFactory;
 
 /**
  *
@@ -30,9 +37,11 @@ import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
  * @since 1.3.15
  */
 public abstract class PluginLoaderInit {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(PluginLoaderInit.class);
     
     @Before
-    public void init() {
+    public void init() throws Throwable {
+        final Map<String, String> map = MapBuilder.<String, String>create().put("context", "/longwait-context.properties").build();
         new DefaultPluginLoader().init(new ServletConfig() {
             
             @Override
@@ -51,14 +60,17 @@ public abstract class PluginLoaderInit {
             }
             
             @Override
-            public String getInitParameter(String name) {
-                return null;
+            public String getInitParameter(final String name) {
+                return map.get(name);
             }
         });
     }
     
     @After
     public void clear() throws Throwable {
+        SchedulerFactory.getInstance().destory();
         Components.destroy();
+        PropertiesLoader.PROPERTIES.clear();
     }
+    
 }
