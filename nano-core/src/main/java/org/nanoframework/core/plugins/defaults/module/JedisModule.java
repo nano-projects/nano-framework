@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins.defaults.plugin;
+package org.nanoframework.core.plugins.defaults.module;
 
 import java.util.List;
 import java.util.Properties;
@@ -26,7 +26,7 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.core.context.ApplicationContext;
-import org.nanoframework.core.plugins.Plugin;
+import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.plugins.PluginLoaderException;
 
 import com.google.common.collect.Lists;
@@ -35,14 +35,14 @@ import com.google.common.collect.Lists;
  * @author yanghe
  * @since 1.1
  */
-public class JedisPlugin implements Plugin {
-    private Logger LOG = LoggerFactory.getLogger(JedisPlugin.class);
+public class JedisModule extends Module {
+    private Logger LOGGER = LoggerFactory.getLogger(JedisModule.class);
     public static final String DEFAULT_REDIS_PARAMETER_NAME = "redis";
     private static final String DEFAULT_REDIS_PATH = "/redis.properties";
     private List<Properties> properties = Lists.newArrayList();
 
     @Override
-    public boolean load() throws Throwable {
+    public List<Module> load() throws Throwable {
         try {
             final Class<?> redisClientPool = Class.forName("org.nanoframework.orm.jedis.RedisClientPool");
             final long time = System.currentTimeMillis();
@@ -50,16 +50,16 @@ public class JedisPlugin implements Plugin {
             pool.getClass().getMethod("initRedisConfig", List.class).invoke(pool, properties);
             pool.getClass().getMethod("createJedis").invoke(pool);
             pool.getClass().getMethod("bindGlobal").invoke(pool);
-            LOG.info("加载Redis配置, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+            LOGGER.info("加载Redis配置, 耗时: " + (System.currentTimeMillis() - time) + "ms");
         } catch (final Throwable e) {
             if (!(e instanceof ClassNotFoundException)) {
                 throw new PluginLoaderException(e.getMessage(), e);
             }
 
-            return false;
         }
 
-        return true;
+        modules.add(this);
+        return modules;
     }
 
     @Override
@@ -88,4 +88,10 @@ public class JedisPlugin implements Plugin {
             }
         }
     }
+
+    @Override
+    protected void configure() {
+        
+    }
+
 }

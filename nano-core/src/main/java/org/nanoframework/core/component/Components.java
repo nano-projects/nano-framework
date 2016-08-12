@@ -54,10 +54,13 @@ import com.google.inject.Injector;
  * @author yanghe
  * @since 1.0.0
  */
-public class Components {
+public final class Components {
     private static final Logger LOGGER = LoggerFactory.getLogger(Components.class);
-
     private static boolean isLoaded;
+    
+    private Components() {
+        
+    }
 
     /**
      * 加载组件服务，并且装载至组件服务映射表中.

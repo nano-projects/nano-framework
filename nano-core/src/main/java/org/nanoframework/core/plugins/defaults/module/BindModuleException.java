@@ -13,27 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins;
-
-import java.util.List;
-
-import org.nanoframework.commons.util.Assert;
-
-import com.google.common.collect.Lists;
+package org.nanoframework.core.plugins.defaults.module;
 
 /**
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.16
  */
-public class Configure<T> {
-    private final List<T> configs = Lists.newLinkedList();
+public class BindModuleException extends RuntimeException {
+    private static final long serialVersionUID = 1362133459062971118L;
 
-    public void add(T config) {
-        Assert.notNull(config);
-        configs.add(config);
+    public BindModuleException() {
+        super();
     }
 
-    public List<T> get() {
-        return configs;
+    public BindModuleException(final String message) {
+        super(message);
+    }
+
+    public BindModuleException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public BindModuleException(final Throwable cause) {
+        super(cause);
     }
 }

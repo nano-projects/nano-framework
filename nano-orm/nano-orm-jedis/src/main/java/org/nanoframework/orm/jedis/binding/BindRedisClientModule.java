@@ -13,27 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins;
+package org.nanoframework.orm.jedis.binding;
 
-import java.util.List;
+import static com.google.inject.name.Names.named;
 
-import org.nanoframework.commons.util.Assert;
+import org.nanoframework.orm.jedis.GlobalRedisClient;
+import org.nanoframework.orm.jedis.RedisClient;
 
-import com.google.common.collect.Lists;
+import com.google.inject.AbstractModule;
 
 /**
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.16
  */
-public class Configure<T> {
-    private final List<T> configs = Lists.newLinkedList();
+public class BindRedisClientModule extends AbstractModule {
+    private static final String REDIS_NAMED_PRIFIX = "redis:";
 
-    public void add(T config) {
-        Assert.notNull(config);
-        configs.add(config);
+    @Override
+    protected void configure() {
+        GlobalRedisClient.keys().forEach(redisName -> bind(RedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName))
+                .toInstance(GlobalRedisClient.get(redisName)));
     }
 
-    public List<T> get() {
-        return configs;
-    }
 }

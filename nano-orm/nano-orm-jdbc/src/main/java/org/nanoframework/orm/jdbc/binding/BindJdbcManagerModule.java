@@ -13,27 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins;
+package org.nanoframework.orm.jdbc.binding;
 
-import java.util.List;
+import static com.google.inject.name.Names.named;
 
-import org.nanoframework.commons.util.Assert;
-
-import com.google.common.collect.Lists;
+import com.google.inject.AbstractModule;
 
 /**
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.3.16
  */
-public class Configure<T> {
-    private final List<T> configs = Lists.newLinkedList();
+public class BindJdbcManagerModule extends AbstractModule {
+    private static final String JDBC_NAMED_PRIFIX = "jdbc:";
 
-    public void add(T config) {
-        Assert.notNull(config);
-        configs.add(config);
+    @Override
+    protected void configure() {
+        GlobalJdbcManager.keys().forEach(jdbcName -> bind(JdbcManager.class).annotatedWith(named(JDBC_NAMED_PRIFIX + jdbcName))
+                .toInstance(GlobalJdbcManager.get(jdbcName)));
     }
 
-    public List<T> get() {
-        return configs;
-    }
 }

@@ -16,56 +16,53 @@
 package org.nanoframework.core.plugins.defaults.module;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.ServletConfig;
 
-import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.util.ReflectUtils;
 import org.nanoframework.core.plugins.Module;
-import org.nanoframework.core.plugins.PluginLoaderException;
 
 import com.google.common.collect.Lists;
+import com.google.inject.AbstractModule;
 
 /**
+ * Plugin加载完成后绑定常量.
  * @author yanghe
- * @since 1.1
+ * @since 1.3.16
  */
-public class DataSourceModule extends Module {
-    private static final List<String> DATA_SOURCE_LOADER_CLASS_NAMES = Lists.newArrayList(
-        "org.nanoframework.orm.jdbc.JdbcDataSourceLoader",
-        "org.nanoframework.orm.mybatis.MybatisDataSourceLoader"
+public class BindModule extends Module {
+    private static final List<String> BIND_MODULE_CLASS_NAMES = Lists.newArrayList(
+        "org.nanoframework.orm.jdbc.binding.BindJdbcManagerModule",
+        "org.nanoframework.orm.jedis.binding.BindRedisClientModule"
     );
     
     @Override
-    public List<Module> load() throws Throwable {
-        DATA_SOURCE_LOADER_CLASS_NAMES.forEach(clsName -> load(clsName));
-        return modules;
+    protected void configure() {
+        BIND_MODULE_CLASS_NAMES.forEach(clsName -> install(clsName));
     }
-    
+
     @SuppressWarnings("unchecked")
-    protected void load(final String clsName) {
+    protected void install(final String clsName) {
         try {
-            final Class<?> cls = Class.forName(clsName);
-            final Object obj = ReflectUtils.newInstance(cls);
-            PropertiesLoader.PROPERTIES.putAll((Map<String, Properties>) cls.getMethod("getLoadProperties").invoke(obj));
-            modules.addAll((List<Module>) cls.getMethod("getModules").invoke(obj));
+            final Class<? extends AbstractModule> cls = (Class<? extends AbstractModule>) Class.forName(clsName);
+            final AbstractModule module = ReflectUtils.newInstance(cls);
+            binder().install(module);
         } catch (final Throwable e) {
             if (!(e instanceof ClassNotFoundException)) {
-                throw new PluginLoaderException(e.getMessage(), e);
+                throw new BindModuleException(e.getMessage(), e);
             }
         }
     }
 
     @Override
-    public void config(final ServletConfig config) throws Throwable {
-
+    public List<Module> load() throws Throwable {
+        modules.add(this);
+        return modules;
     }
 
     @Override
-    protected void configure() {
-
+    public void config(final ServletConfig config) throws Throwable {
+        
     }
 
 }

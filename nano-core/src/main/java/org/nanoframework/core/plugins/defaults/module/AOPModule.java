@@ -55,7 +55,7 @@ public class AOPModule extends Module {
 
     @Override
     public List<Module> load() throws Throwable {
-        modules.add(new AOPModule());
+        modules.add(this);
         return modules;
     }
 

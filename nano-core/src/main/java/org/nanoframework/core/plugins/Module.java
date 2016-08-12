@@ -15,11 +15,11 @@
  */
 package org.nanoframework.core.plugins;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
 
+import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 
 /**
@@ -27,7 +27,7 @@ import com.google.inject.AbstractModule;
  * @since 1.1
  */
 public abstract class Module extends AbstractModule {
-    protected List<Module> modules = new ArrayList<>();
+    protected List<Module> modules = Lists.newLinkedList();
 
     public abstract List<Module> load() throws Throwable;
 

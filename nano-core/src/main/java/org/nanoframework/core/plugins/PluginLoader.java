@@ -16,7 +16,6 @@
 package org.nanoframework.core.plugins;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -29,6 +28,8 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.globals.Globals;
 
+import com.google.common.collect.Lists;
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 
@@ -60,56 +61,54 @@ public abstract class PluginLoader {
     }
 
     private void initProperties() {
-        long time = System.currentTimeMillis();
-
+        final long time = System.currentTimeMillis();
         try {
             configProperties(properties);
-            for (String path : properties.get()) {
+            for (final String path : properties.get()) {
                 PropertiesLoader.load(path, true);
             }
-        } catch (Exception e) {
+        } catch (final Throwable e) {
             throw new PluginLoaderException(e.getMessage(), e);
         }
 
-        logger.info("加载属性文件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+        logger.info("加载属性文件完成, 耗时: {}ms", System.currentTimeMillis() - time);
     }
 
     private void initModules() throws Throwable {
-        long time = System.currentTimeMillis();
+        final long time = System.currentTimeMillis();
         configModules(this.modules);
-        List<Module> loadedModules = new ArrayList<>();
-        for (Module module : this.modules.get()) {
-            if (logger.isInfoEnabled()) {
-                logger.info("加载Module: " + module.getClass().getName());
-            }
-
+        final List<AbstractModule> loadedModules = Lists.newArrayList();
+        final List<Module> modules = this.modules.get();
+        for (final Module module : modules) {
+            logger.info("加载Module: {}", module.getClass().getName());
             module.config(config);
             loadedModules.addAll(module.load());
         }
 
         logger.info("开始进行依赖注入");
         Globals.set(Injector.class, Guice.createInjector(loadedModules));
-        logger.info("依赖注入完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+        logger.info("依赖注入完成, 耗时: {}", System.currentTimeMillis() - time);
     }
-
-    private void initComponent() throws LoaderException, IOException {
-        long time = System.currentTimeMillis();
-        logger.info("开始加载组件服务");
-        Components.load();
-        logger.info("加载组件服务结束, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-    }
-
+    
     private void initPlugins() throws Throwable {
-        long time = System.currentTimeMillis();
+        final long time = System.currentTimeMillis();
         configPlugin(plugins);
-        for (Plugin plugin : plugins.get()) {
+        final List<Plugin> plugins = this.plugins.get();
+        for (final Plugin plugin : plugins) {
             plugin.config(config);
             if (plugin.load()) {
-                logger.info("加载插件: " + plugin.getClass().getName());
+                logger.info("加载插件: {}", plugin.getClass().getName());
             }
         }
 
-        logger.info("加载插件完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+        logger.info("加载插件完成, 耗时: {}", System.currentTimeMillis() - time);
+    }
+
+    private void initComponent() throws LoaderException, IOException {
+        final long time = System.currentTimeMillis();
+        logger.info("开始加载组件服务");
+        Components.load();
+        logger.info("加载组件服务结束, 耗时: {}", System.currentTimeMillis() - time);
     }
 
     protected abstract void configProperties(Configure<String> properties);
