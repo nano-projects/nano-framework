@@ -41,10 +41,14 @@ public class ShardedSetTest extends SetTest {
     @Before
     public void before() throws LoaderException, IOException {
         if (redisClient == null) {
-            Properties prop = PropertiesLoader.load("/redis-test.properties");
-            RedisClientPool.POOL.initRedisConfig(prop).createJedis();
-            RedisClientPool.POOL.bindGlobal();
-            redisClient = GlobalRedisClient.get("sharded");
+            try {
+                Properties prop = PropertiesLoader.load("/redis-test.properties");
+                RedisClientPool.POOL.initRedisConfig(prop).createJedis();
+                RedisClientPool.POOL.bindGlobal();
+                redisClient = GlobalRedisClient.get("sharded");
+            } catch (final Throwable e) {
+                // ignore
+            }
         }
     }
     

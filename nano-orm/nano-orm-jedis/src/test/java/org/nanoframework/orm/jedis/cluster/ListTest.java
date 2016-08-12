@@ -15,25 +15,18 @@
  */
 package org.nanoframework.orm.jedis.cluster;
 
-import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.nanoframework.commons.loader.LoaderException;
-import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.commons.util.ReflectUtils;
-import org.nanoframework.orm.jedis.GlobalRedisClient;
-import org.nanoframework.orm.jedis.RedisClient;
 import org.nanoframework.orm.jedis.RedisClient.Mark;
-import org.nanoframework.orm.jedis.RedisClientPool;
+import org.nanoframework.orm.jedis.RedisClientInitialize;
 
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
@@ -43,20 +36,8 @@ import com.google.common.collect.Lists;
  * @author yanghe
  * @since 0.0.1
  */
-public class ListTest {
+public class ListTest extends RedisClientInitialize {
     private static final Logger LOGGER = LoggerFactory.getLogger(ListTest.class);
-    
-    protected RedisClient redisClient;
-
-    @Before
-    public void before() throws LoaderException, IOException {
-        if (redisClient == null) {
-            Properties prop = PropertiesLoader.load("/redis-test.properties");
-            RedisClientPool.POOL.initRedisConfig(prop).createJedis();
-            RedisClientPool.POOL.bindGlobal();
-            redisClient = GlobalRedisClient.get("cluster");
-        }
-    }
     
     @Test
     public void listTest() {

@@ -45,10 +45,14 @@ public class ExtendRedisClientTest {
     @Before
     public void before() throws LoaderException, IOException {
         if (redisClient == null) {
-            Properties prop = PropertiesLoader.load("/redis-test.properties");
-            RedisClientPool.POOL.initRedisConfig(prop).createJedis();
-            RedisClientPool.POOL.bindGlobal();
-            redisClient = (RedisClientExt) GlobalRedisClient.get("sharded2");
+            try {
+                Properties prop = PropertiesLoader.load("/redis-test.properties");
+                RedisClientPool.POOL.initRedisConfig(prop).createJedis();
+                RedisClientPool.POOL.bindGlobal();
+                redisClient = (RedisClientExt) GlobalRedisClient.get("sharded2");
+            } catch (final Throwable e) {
+                // ignore
+            }
         }
     }
     

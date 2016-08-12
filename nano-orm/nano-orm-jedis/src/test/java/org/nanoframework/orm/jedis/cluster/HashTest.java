@@ -15,23 +15,16 @@
  */
 package org.nanoframework.orm.jedis.cluster;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
-import org.nanoframework.commons.loader.LoaderException;
-import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.MapBuilder;
-import org.nanoframework.orm.jedis.GlobalRedisClient;
-import org.nanoframework.orm.jedis.RedisClient;
-import org.nanoframework.orm.jedis.RedisClientPool;
+import org.nanoframework.orm.jedis.RedisClientInitialize;
 
 import com.alibaba.fastjson.TypeReference;
 
@@ -40,20 +33,8 @@ import com.alibaba.fastjson.TypeReference;
  * @author yanghe
  * @since 0.0.1
  */
-public class HashTest {
+public class HashTest extends RedisClientInitialize {
     private static final Logger LOGGER = LoggerFactory.getLogger(HashTest.class);
-    
-    protected RedisClient redisClient;
-
-    @Before
-    public void before() throws LoaderException, IOException {
-        if (redisClient == null) {
-            Properties prop = PropertiesLoader.load("/redis-test.properties");
-            RedisClientPool.POOL.initRedisConfig(prop).createJedis();
-            RedisClientPool.POOL.bindGlobal();
-            redisClient = GlobalRedisClient.get("cluster");
-        }
-    }
     
     @Test
     public void hdelTest() {

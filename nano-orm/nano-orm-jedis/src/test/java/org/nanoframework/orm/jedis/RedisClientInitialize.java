@@ -13,34 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.orm.jedis.sharded;
+package org.nanoframework.orm.jedis;
 
 import java.io.IOException;
 import java.util.Properties;
 
 import org.junit.Before;
-import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.orm.jedis.GlobalRedisClient;
-import org.nanoframework.orm.jedis.RedisClient;
-import org.nanoframework.orm.jedis.RedisClientPool;
-import org.nanoframework.orm.jedis.cluster.HashTest;
-
-import com.alibaba.fastjson.JSON;
 
 /**
  *
  * @author yanghe
- * @since 1.3.15
+ * @since 1.3.16
  */
-public class ShardedInfoTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HashTest.class);
-
+public class RedisClientInitialize {
     protected RedisClient redisClient;
-
+    
     @Before
     public void before() throws LoaderException, IOException {
         if (redisClient == null) {
@@ -48,36 +37,10 @@ public class ShardedInfoTest {
                 Properties prop = PropertiesLoader.load("/redis-test.properties");
                 RedisClientPool.POOL.initRedisConfig(prop).createJedis();
                 RedisClientPool.POOL.bindGlobal();
-                redisClient = GlobalRedisClient.get("sharded");
+                redisClient = GlobalRedisClient.get("cluster");
             } catch (final Throwable e) {
                 // ignore
             }
-        }
-    }
-    
-    @Test
-    public void infoTest() {
-        try {
-            LOGGER.debug(JSON.toJSONString(redisClient.info()));
-        } catch (final Throwable e) {
-            if (e instanceof AssertionError) {
-                throw e;
-            }
-            
-            LOGGER.error(e.getMessage());
-        }
-    }
-    
-    @Test
-    public void infoSectionTest() {
-        try {
-            LOGGER.debug(JSON.toJSONString(redisClient.info("memory")));
-        } catch (final Throwable e) {
-            if (e instanceof AssertionError) {
-                throw e;
-            }
-            
-            LOGGER.error(e.getMessage());
         }
     }
 }
