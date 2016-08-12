@@ -58,7 +58,6 @@ public class JedisModule extends Module {
 
         }
 
-        modules.add(this);
         return modules;
     }
 
