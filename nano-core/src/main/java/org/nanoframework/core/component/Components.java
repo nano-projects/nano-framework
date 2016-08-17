@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,6 +46,7 @@ import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
 /**
@@ -128,16 +128,16 @@ public final class Components {
      * @see org.nanoframework.commons.format.ClassCast#cast(Object, String)
      */
     @SuppressWarnings("deprecation")
-    public static final Object[] bindParam(final Method method, Map<String, Object> params, final Object... objs) {
-        if (params == null) {
-            params = Collections.emptyMap();
+    public static final Object[] bindParam(final Method method, final Map<String, Object> params, final Object... objs) {
+        final Map<String, Object> lowerCaseParams = Maps.newHashMap();
+        if (!CollectionUtils.isEmpty(params)) {
+            params.forEach((key, value) -> lowerCaseParams.put(key.toLowerCase(), value));
         }
-
-        params.keySet().forEach(key -> key = key.toLowerCase());
+        
         final Parameter[] parameters = method.getParameters();
         if (parameters != null && parameters.length > 0) {
             final List<Object> values = Lists.newArrayList();
-            for (Parameter parameter : parameters) {
+            for (final Parameter parameter : parameters) {
                 final Class<?> type = parameter.getType();
                 final RequestParam requestParam = parameter.getAnnotation(RequestParam.class);
                 if (requestParam != null) {
@@ -146,7 +146,7 @@ public final class Components {
                         value = requestParam.name();
                     }
 
-                    Object param = params.get(value.toLowerCase());
+                    Object param = lowerCaseParams.get(value.toLowerCase());
                     if (param == null && !StringUtils.equals(requestParam.defaultValue(), ValueConstants.DEFAULT_NONE)) {
                         param = requestParam.defaultValue();
                     }
@@ -166,7 +166,7 @@ public final class Components {
                 } else {
                     final PathVariable pathVariable = parameter.getAnnotation(PathVariable.class);
                     if (pathVariable != null) {
-                        final Object param = params.get(pathVariable.value().toLowerCase());
+                        final Object param = lowerCaseParams.get(pathVariable.value().toLowerCase());
                         if (param != null) {
                             try {
                                 final Object obj = ClassCast.cast(param, type.getName());

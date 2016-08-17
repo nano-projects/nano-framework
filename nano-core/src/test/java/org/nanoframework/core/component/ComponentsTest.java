@@ -128,7 +128,7 @@ public class ComponentsTest extends PluginLoaderInit {
     public void arrayTest() {
         final RequestMapper mapper = Components.getMapper("/v1/array", RequestMethod.PUT);
         final String[] array = { "1", "2", "3" };
-        Object value = Components.invoke(mapper, MapBuilder.<String, Object>create().put("array[]", array).build());
+        Object value = Components.invoke(mapper, MapBuilder.<String, Object>create().put("ARRAY[]", array).build());
         Assert.assertNotNull(value);
         Assert.assertEquals(JSON.toJSONString(array), value);
     }
