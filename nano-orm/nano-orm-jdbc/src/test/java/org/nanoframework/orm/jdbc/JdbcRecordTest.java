@@ -281,7 +281,19 @@ public class JdbcRecordTest {
             Assert.assertEquals(user.getDeleted().intValue(), 1);
         }
     }
-
+    
+    @Test
+    public void selectCountTest() throws SQLException {
+        final long count = record.selectCount();
+        Assert.assertEquals(count, 2);
+    }
+    
+    @Test
+    public void selectCountTest1() throws SQLException {
+        final long count = record.selectCount(Lists.newArrayList("username"), "admin");
+        Assert.assertEquals(count, 1);
+    }
+    
     @After
     public void destroy() {
         JdbcAdapter.adapter().shutdown();

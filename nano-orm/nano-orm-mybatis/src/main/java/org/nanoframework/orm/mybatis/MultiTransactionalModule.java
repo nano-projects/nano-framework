@@ -33,9 +33,10 @@ public class MultiTransactionalModule extends AbstractModule {
 
 	@Override
 	protected void configure() {
-        MultiTransactionalMethodInterceptor interceptor = new MultiTransactionalMethodInterceptor();
+        final MultiTransactionalMethodInterceptor interceptor = new MultiTransactionalMethodInterceptor();
         requestInjection(interceptor);
-        Matcher<AnnotatedElement> annotatedElement = annotatedWith(MultiTransactional.class);
+        
+        final Matcher<AnnotatedElement> annotatedElement = annotatedWith(MultiTransactional.class);
         bindInterceptor(any(), annotatedElement, interceptor);
         bindInterceptor(annotatedElement, not(annotatedElement), interceptor);
 	}

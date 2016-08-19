@@ -188,6 +188,21 @@ public abstract class AbstractJdbcRecord<T extends BaseEntity> {
         return createSelectStatement(fields, where, values);
     }
     
+    protected SQLScript createSelectCountStatement(final List<String> where, final Object... values) {
+        final StringBuilder sqlBuilder = new StringBuilder("select count(1) as count from ");
+        final StringBuilder whereBuilder = new StringBuilder();
+        if (!CollectionUtils.isEmpty(where)) {
+            whereBuilder.append(" where 1 = 1 ");
+            where.forEach(attribute -> {
+                whereBuilder.append("and ");
+                whereBuilder.append(fieldColumnMapper.get(attribute));
+                whereBuilder.append(" = ? ");
+            });
+        }
+        
+        return SQLScript.create(sqlBuilder.toString() + tableName + whereBuilder.toString(), Lists.newArrayList(values));
+    }
+    
     protected SQLScript createInsertStatement(final T entity) {
         return createInsertStatement(entity, true);
     }

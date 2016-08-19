@@ -26,6 +26,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.orm.jdbc.jstl.Result;
 import org.nanoframework.orm.jdbc.record.exception.MultiRecordException;
 import org.nanoframework.orm.jdbc.record.script.SQLScript;
 import org.nanoframework.orm.jdbc.record.script.SQLScriptBatch;
@@ -128,13 +129,49 @@ public class JdbcRecord<T extends BaseEntity> extends AbstractJdbcRecord<T> impl
         final SortedMap<?, ?>[] rows = manager.executeQuery(select.sql, select.values).getRows();
         if (!ArrayUtils.isEmpty(rows)) {
             if (rows.length > 1) {
-                throw new MultiRecordException();
+                throw new MultiRecordException("单条查询返回多条结果集: " + rows.length);
             }
             
             return toBean((Map<String, Object>) rows[0]);
         }
         
         return null;
+    }
+    
+    @Override
+    public long selectCount() throws SQLException {
+        return selectCount(Collections.emptyList());
+    }
+    
+    @Override
+    public long selectCount(final String[] where, final Object... values) throws SQLException {
+        return selectCount(Lists.newArrayList(where), values);
+    }
+    
+    @Override
+    public long selectCount(final List<String> where, final Object... values) throws SQLException {
+        return selectCount(createSelectCountStatement(where, values));
+    }
+    
+    @Override
+    public long selectCount(final String sql, final Object... values) throws SQLException {
+        return selectCount(sql, Lists.newArrayList(values));
+    }
+    
+    @Override
+    public long selectCount(final String sql, final List<Object> values) throws SQLException {
+        return selectCount(SQLScript.create(sql, values));
+    }
+    
+    @Override
+    public long selectCount(final SQLScript select) throws SQLException {
+        final Result result = manager.executeQuery(select.sql, select.values);
+        if (result.getRowCount() > 0) {
+            final String label = result.getColumnLabels()[0];
+            return (long) result.getRows()[0].get(label);
+        }
+        
+        return 0;
     }
     
     @Override

@@ -27,4 +27,7 @@ public class MultiRecordException extends RuntimeException {
         super();
     }
 
+    public MultiRecordException(final String message) {
+        super(message);
+    }
 }

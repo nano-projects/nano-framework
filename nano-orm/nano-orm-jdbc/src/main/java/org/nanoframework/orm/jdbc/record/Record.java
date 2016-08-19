@@ -57,6 +57,18 @@ public interface Record<T> {
     T selectOne(String sql, List<Object> values) throws SQLException;
 
     T selectOne(SQLScript select) throws SQLException;
+    
+    long selectCount() throws SQLException;
+    
+    long selectCount(String[] where, Object... values) throws SQLException;
+    
+    long selectCount(List<String> where, Object... values) throws SQLException;
+    
+    long selectCount(String sql, Object... values) throws SQLException;
+
+    long selectCount(String sql, List<Object> values) throws SQLException;
+
+    long selectCount(SQLScript select) throws SQLException;
 
     int insert(T entity) throws SQLException;
 
