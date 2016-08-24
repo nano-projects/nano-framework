@@ -37,7 +37,6 @@ import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.xml.XmlConfiguration;
-import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -60,16 +59,7 @@ import org.nanoframework.server.session.redis.RedisSessionManager;
 public class JettyCustomServer extends Server {
     private static final Logger LOGGER = LoggerFactory.getLogger(JettyCustomServer.class);
 
-    private static Properties CONTEXT;
     private static String DEFAULT_RESOURCE_BASE = "./webRoot";
-
-    static {
-        try {
-            CONTEXT = PropertiesLoader.load(ApplicationContext.MAIN_CONTEXT);
-            LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
-        } catch (LoaderException e) {
-        }
-    }
 
     private static String DEFAULT_WEB_XML_PATH = DEFAULT_RESOURCE_BASE + "/WEB-INF/web.xml";
 
@@ -77,48 +67,37 @@ public class JettyCustomServer extends Server {
 
     private static String DEFAULT_JETTY_CONFIG = DEFAULT_RESOURCE_BASE + "/WEB-INF/jetty.xml";
     
-    public static JettyCustomServer DEFAULT;
-    static {
-        try {
-            DEFAULT = new JettyCustomServer();
-        } catch (Exception e) {
-        }
-    }
-
     private static final String JETTY_PID_FILE = "jetty.pid";
-
-    public JettyCustomServer() {
-        this(DEFAULT_JETTY_CONFIG, CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null, null, null);
-    }
-
-    public JettyCustomServer(final String mainContext) {
-        Assert.hasLength(mainContext, "未设置CONTEXT属性文件路径");
-        try {
-            CONTEXT = PropertiesLoader.load(mainContext);
-            LOGGER.info("Runtime path: " + RuntimeUtil.getPath(JettyCustomServer.class));
-        } catch (LoaderException e) {
-            throw new JettyServerException(e.getMessage(), e);
-        }
-
-        readXmlConfig(DEFAULT_JETTY_CONFIG);
-        applyHandle(CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT), null);
-    }
-
-    public JettyCustomServer(final String xmlConfigPath, final String contextPath, final String resourceBase, final String webXmlPath) {
-        this(xmlConfigPath, contextPath, resourceBase, webXmlPath, null);
-    }
-
-    public JettyCustomServer(final String xmlConfigPath, final String contextPath) {
-        this(xmlConfigPath, contextPath, null, null, null);
-    }
-
-    public JettyCustomServer(final String xmlConfigPath, final String contextPath, final String warPath) {
-        this(xmlConfigPath, contextPath, null, null, warPath);
-    }
-
-    public JettyCustomServer(final String xmlConfigPath, final String contextPath, final String resourceBase, final String webXmlPath,
-            final String warPath) {
+    
+    private Properties context;
+    
+    private JettyCustomServer() {
         super();
+        loadContext(ApplicationContext.MAIN_CONTEXT);
+        init(DEFAULT_JETTY_CONFIG, context.getProperty(ApplicationContext.CONTEXT_ROOT), null, null, null);
+    }
+
+    private JettyCustomServer(final String contextPath) {
+        super();
+        loadContext(contextPath);
+        init(DEFAULT_JETTY_CONFIG, context.getProperty(ApplicationContext.CONTEXT_ROOT), null, null, null);
+    }
+    
+    public static JettyCustomServer server() {
+        return new JettyCustomServer();
+    }
+    
+    public static JettyCustomServer server(final String contextPath) {
+        return new JettyCustomServer(contextPath);
+    }
+
+    protected void loadContext(final String contextPath) {
+        Assert.hasLength(contextPath, "无效的context属性文件路径");
+        context = PropertiesLoader.load(contextPath);
+    }
+    
+    protected void init(final String xmlConfigPath, final String contextPath, final String resourceBase, final String webXmlPath,
+            final String warPath) {
         if (StringUtils.isNotBlank(xmlConfigPath)) {
             DEFAULT_JETTY_CONFIG = xmlConfigPath;
             readXmlConfig(xmlConfigPath);
@@ -139,7 +118,6 @@ public class JettyCustomServer extends Server {
                 applyHandle(contextPath, warPath);
             }
         }
-        
     }
 
     private void readXmlConfig(final String configPath) {
@@ -151,7 +129,7 @@ public class JettyCustomServer extends Server {
         }
     }
 
-    public void applyHandle(final String contextPath, final String warPath) {
+    private void applyHandle(final String contextPath, final String warPath) {
         final ContextHandlerCollection handler = new ContextHandlerCollection();
         final WebAppContext webapp = new WebAppContext();
         webapp.setContextPath(contextPath);
@@ -170,7 +148,7 @@ public class JettyCustomServer extends Server {
     }
     
     protected void applySessionHandler(final WebAppContext webapp) {
-        final String jettyCluster = CONTEXT.getProperty(JettyRedisSession.JETTY_CLUSTER);
+        final String jettyCluster = context.getProperty(JettyRedisSession.JETTY_CLUSTER);
         if (StringUtils.isNotBlank(jettyCluster)) {
             setSessionIdManager(createRedisSessionIdManager(jettyCluster));
             webapp.setSessionHandler(new SessionHandler(createRedisSessionManager(jettyCluster)));
@@ -180,10 +158,10 @@ public class JettyCustomServer extends Server {
     protected RedisSessionIdManager createRedisSessionIdManager(final String jettyCluster) {
         final RedisSessionIdManager sessionIdManager = new RedisSessionIdManager(this, jettyCluster);
         
-        final String workerName = CONTEXT.getProperty(JettyRedisSession.JETTY_CLUSTER_WORKER_NAME, JettyRedisSession.DEFAULT_JETTY_CLUSTER_WORKER_NAME);
+        final String workerName = context.getProperty(JettyRedisSession.JETTY_CLUSTER_WORKER_NAME, JettyRedisSession.DEFAULT_JETTY_CLUSTER_WORKER_NAME);
         sessionIdManager.setWorkerName(workerName);
         
-        final long scavengerInterval = Long.parseLong(CONTEXT.getProperty(JettyRedisSession.JETTY_SESSION_SCAVENGER_INTERVAL, JettyRedisSession.DEFAULT_SCAVENGER_INTERVAL));
+        final long scavengerInterval = Long.parseLong(context.getProperty(JettyRedisSession.JETTY_SESSION_SCAVENGER_INTERVAL, JettyRedisSession.DEFAULT_SCAVENGER_INTERVAL));
         sessionIdManager.setScavengerInterval(scavengerInterval);
         
         return sessionIdManager;
@@ -192,7 +170,7 @@ public class JettyCustomServer extends Server {
     protected RedisSessionManager createRedisSessionManager(final String jettyCluster) {
         final RedisSessionManager sessionManager = new RedisSessionManager(jettyCluster);
         
-        final long saveInterval = Long.parseLong(CONTEXT.getProperty(JettyRedisSession.JETTY_SESSION_SAVE_INTERVAL, JettyRedisSession.DEFAULT_SESSION_SAVE_INTERVAL));
+        final long saveInterval = Long.parseLong(context.getProperty(JettyRedisSession.JETTY_SESSION_SAVE_INTERVAL, JettyRedisSession.DEFAULT_SESSION_SAVE_INTERVAL));
         sessionManager.setSaveInterval(saveInterval);
         
         return sessionManager;
@@ -376,7 +354,7 @@ public class JettyCustomServer extends Server {
     protected Mode mode(final boolean output) {
         Mode mode;
         try {
-            mode = Mode.valueOf(CONTEXT.getProperty(ApplicationContext.MODE, Mode.PROD.name()));
+            mode = Mode.valueOf(context.getProperty(ApplicationContext.MODE, Mode.PROD.name()));
             if (output) {
                 switch (mode) {
                     case DEV:
@@ -405,8 +383,8 @@ public class JettyCustomServer extends Server {
         versionBuilder.append(ApplicationContext.FRAMEWORK_VERSION);
         versionBuilder.append('\n');
         
-        final String appContext = CONTEXT.getProperty(ApplicationContext.CONTEXT_ROOT, "");
-        final String appVersion = CONTEXT.getProperty(ApplicationContext.VERSION, "0.0.0");
+        final String appContext = context.getProperty(ApplicationContext.CONTEXT_ROOT, "");
+        final String appVersion = context.getProperty(ApplicationContext.VERSION, "0.0.0");
         versionBuilder.append("Application[");
         versionBuilder.append(appContext);
         versionBuilder.append("] Version: ");

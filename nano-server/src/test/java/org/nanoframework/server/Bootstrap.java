@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.ext.shiro;
-
-import org.nanoframework.server.Commands;
-import org.nanoframework.server.JettyCustomServer;
+package org.nanoframework.server;
 
 /**
+ *
  * @author yanghe
- * @date 2015年12月9日 下午5:11:32
+ * @since 1.3.17
  */
-public class ShiroStartup {
-	public static void main(String[] args) {
-	    JettyCustomServer.server().bootstrap(Commands.START.toString());
-	}
+public final class Bootstrap {
+
+    private Bootstrap() {
+        
+    }
+    
+    public static void main(final String[] args) {
+        JettyCustomServer.server().bootstrap(args);
+    }
 }

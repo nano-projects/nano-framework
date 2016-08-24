@@ -15,6 +15,7 @@
  */
 package org.nanoframework.extension.shiro.client;
 
+import org.nanoframework.server.Commands;
 import org.nanoframework.server.JettyCustomServer;
 
 /**
@@ -29,7 +30,7 @@ public final class Bootstrap {
     }
     
     public static void main(final String[] args) {
-        JettyCustomServer.DEFAULT.bootstrap(args);
+        JettyCustomServer.server().bootstrap(Commands.START.toString());
         
     }
 }
