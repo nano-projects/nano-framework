@@ -35,7 +35,7 @@
 					<Property name="jetty.host" />
 				</Set>
 				<Set name="port">
-					<Property name="jetty.port" default="8080" />
+					<Property name="jetty.port" default="7000" />
 				</Set>
 				<Set name="maxIdleTime">300000</Set>
 				<Set name="Acceptors">2</Set>

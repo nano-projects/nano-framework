@@ -183,11 +183,8 @@ public class JettyCustomServer extends Server {
             LOGGER.info("Current thread: {} | Idle thread: {}", super.getThreadPool().getThreads(), super.getThreadPool().getIdleThreads());
             super.join();
         } catch (final Throwable e) {
-            if (e instanceof JettyServerException) {
-                throw (JettyServerException) e;
-            }
-
-            throw new JettyServerException(e.getMessage(), e);
+            LOGGER.error("Bootstrap server error: {}", e.getMessage());
+            System.exit(1);
         }
     }
 
