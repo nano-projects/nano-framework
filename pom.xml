@@ -206,18 +206,6 @@
                 <version>${mybatis-guice-version}</version>
             </dependency>
 
-            <!-- Commons -->
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec-version}</version>
-            </dependency>
-
             <!-- Servlet环境 -->
             <dependency>
                 <groupId>javax.servlet</groupId>
