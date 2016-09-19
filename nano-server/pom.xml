@@ -90,7 +90,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.nanoframework</groupId>
-			<artifactId>nano-ext-concurrent</artifactId>
+			<artifactId>nano-concurrent</artifactId>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
