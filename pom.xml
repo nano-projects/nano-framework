@@ -50,7 +50,6 @@
         <license-maven-plugin.version>2.11</license-maven-plugin.version>
 
         <nano-ext-version>1.3.17-SNAPSHOT</nano-ext-version>
-        <nano-jmx-version>1.3.17-SNAPSHOT</nano-jmx-version>
         <junit-version>4.12</junit-version>
         <slf4j-version>1.7.7</slf4j-version>
         <log4j-version>1.2.17</log4j-version>
@@ -388,33 +387,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- Nano Extension Modules -->
-            <dependency>
-                <groupId>org.nanoframework</groupId>
-                <artifactId>nano-ext-ssh</artifactId>
-                <version>${nano-ext-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.nanoframework</groupId>
-                <artifactId>nano-ext-websocket</artifactId>
-                <version>${nano-ext-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.nanoframework</groupId>
-                <artifactId>nano-ext-shiro</artifactId>
-                <version>${nano-ext-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.nanoframework</groupId>
-                <artifactId>nano-ext-mail</artifactId>
-                <version>${nano-ext-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.nanoframework</groupId>
-                <artifactId>nano-ext-httpclient</artifactId>
-                <version>${nano-ext-version}</version>
-            </dependency>
-
             <!-- Nano ORM Modules -->
             <dependency>
                 <groupId>org.nanoframework</groupId>
@@ -430,18 +402,6 @@
                 <groupId>org.nanoframework</groupId>
                 <artifactId>nano-orm-jedis</artifactId>
                 <version>${project.version}</version>
-            </dependency>
-
-            <!-- Nano JMX Modules -->
-            <dependency>
-                <groupId>org.nanoframework</groupId>
-                <artifactId>nano-jmx-client</artifactId>
-                <version>${nano-jmx-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.nanoframework</groupId>
-                <artifactId>nano-jmx-agent</artifactId>
-                <version>${nano-jmx-version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

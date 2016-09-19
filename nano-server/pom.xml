@@ -96,11 +96,13 @@
 		<dependency>
 			<groupId>org.nanoframework</groupId>
 			<artifactId>nano-ext-websocket</artifactId>
+            <version>${nano-ext-version}</version>
 			<scope>provided</scope>
 		</dependency>
         <dependency>
             <groupId>org.nanoframework</groupId>
             <artifactId>nano-ext-httpclient</artifactId>
+            <version>${nano-ext-version}</version>
             <scope>provided</scope>
         </dependency>
 	</dependencies>
