@@ -65,7 +65,7 @@
         <c3p0-version>0.9.5.2</c3p0-version>
         <druid-version>1.0.18</druid-version>
         <tomcat-jdbc-version>8.0.33</tomcat-jdbc-version>
-        <netty-version>4.1.0.Beta8</netty-version>
+        <netty-version>4.1.3.Final</netty-version>
         <jedis-version>2.8.1</jedis-version>
         <servlet-api-version>3.0.1</servlet-api-version>
         <servlet-jsp-api-version>2.2.1</servlet-jsp-api-version>

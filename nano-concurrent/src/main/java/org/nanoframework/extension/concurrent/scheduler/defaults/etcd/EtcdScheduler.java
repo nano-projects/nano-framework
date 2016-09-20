@@ -273,7 +273,7 @@ public class EtcdScheduler extends BaseScheduler implements EtcdSchedulerOperate
 
             if (uriList.size() > 0) {
                 etcd = new EtcdClient(username, clientId, uriList.toArray(new URI[uriList.size()]));
-                etcd.setRetryHandler(new RetryWithExponentialBackOff(20, maxRetryCount, -1));
+                etcd.setRetryHandler(new RetryWithExponentialBackOff(20, maxRetryCount, 1000));
             }
         }
     }
