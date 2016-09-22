@@ -285,7 +285,7 @@ public class JettyCustomServer extends Server {
                     watchKey.reset();
                 }
             } catch (final InterruptedException e) {
-                LOGGER.info("Stoped File Wather");
+                LOGGER.info("Stoped File Watcher");
             }
         });
     }
