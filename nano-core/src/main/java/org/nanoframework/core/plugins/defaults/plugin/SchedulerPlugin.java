@@ -28,7 +28,7 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  */
 public class SchedulerPlugin implements Plugin {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerPlugin.class);
-    private static final String SCHEDULER_FACTORY_CLASS_NAME = "org.nanoframework.extension.concurrent.scheduler.SchedulerFactory";
+    private static final String SCHEDULER_FACTORY_CLASS_NAME = "org.nanoframework.concurrent.scheduler.SchedulerFactory";
     private static final String SCHEDULER_FACTORY_INSTANCE = "getInstance";
     private static final String SCHEDULER_FACTORY_LOAD = "load";
     private static final String SCHEDULER_FACTORY_STARTALL = "startAll";
