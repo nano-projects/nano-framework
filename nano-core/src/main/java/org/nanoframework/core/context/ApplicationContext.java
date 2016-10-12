@@ -53,6 +53,8 @@ public final class ApplicationContext {
     /** 组件扫描属性 */
     public static final String COMPONENT_BASE_PACKAGE = "context.component-scan.base-package";
     
+    public static final String API_BASE_PACKAGE = "context.api-scan.base-package";
+    
     /**
      * Redis Configure to context.properties.
      * @since 1.3.16

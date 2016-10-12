@@ -22,6 +22,7 @@ import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoader;
 import org.nanoframework.core.plugins.defaults.module.AOPModule;
+import org.nanoframework.core.plugins.defaults.module.APIModule;
 import org.nanoframework.core.plugins.defaults.module.BindModule;
 import org.nanoframework.core.plugins.defaults.module.DataSourceModule;
 import org.nanoframework.core.plugins.defaults.module.JedisModule;
@@ -52,6 +53,7 @@ public class DefaultPluginLoader extends PluginLoader {
         modules.add(new DataSourceModule());
         modules.add(new JedisModule());
         modules.add(new BindModule());
+        modules.add(new APIModule());
     }
 
     @Override

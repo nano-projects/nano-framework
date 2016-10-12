@@ -22,6 +22,8 @@ import javax.servlet.ServletContext;
 
 import org.junit.After;
 import org.junit.Before;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
 
 /**
@@ -30,6 +32,7 @@ import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
  * @since 1.3.15
  */
 public abstract class PluginLoaderInit {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(PluginLoaderInit.class);
     
     @Before
     public void init() {

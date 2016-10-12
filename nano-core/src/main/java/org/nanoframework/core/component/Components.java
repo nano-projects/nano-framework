@@ -21,7 +21,6 @@ import java.lang.reflect.Parameter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.nanoframework.commons.format.ClassCast;
@@ -77,8 +76,8 @@ public final class Components {
         PropertiesLoader.PROPERTIES.values().stream()
         .filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE)))
         .forEach(item -> {
-            Arrays.asList(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE).split(","))
-            .forEach(packageName -> ComponentScan.scan(packageName));
+            final String[] packageNames = item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE).split(",");
+            Arrays.asList(packageNames).forEach(packageName -> ComponentScan.scan(packageName));
         });
 
         final Set<Class<?>> componentClasses = ComponentScan.filter(Component.class);
@@ -88,15 +87,10 @@ public final class Components {
                 LOGGER.info("Inject Component Class: " + clz.getName());
                 final Object obj = Globals.get(Injector.class).getInstance(clz);
                 final Method[] methods = clz.getMethods();
-                final Map<String, Map<RequestMethod, RequestMapper>> mapper = ComponentScan.filter(obj, methods, RequestMapping.class,
-                        clz.isAnnotationPresent(RequestMapping.class) ? clz.getAnnotation(RequestMapping.class).value() : "");
-                
-                for (Entry<String, Map<RequestMethod, RequestMapper>> entry : mapper.entrySet()) {
-                    MapperNode.addLeaf(entry.getKey(), entry.getValue());
-                }
+                final String mapping = clz.isAnnotationPresent(RequestMapping.class) ? clz.getAnnotation(RequestMapping.class).value() : "";
+                final Map<String, Map<RequestMethod, RequestMapper>> mapper = ComponentScan.filter(obj, methods, RequestMapping.class, mapping);
+                mapper.entrySet().forEach(entry -> MapperNode.addLeaf(entry.getKey(), entry.getValue()));
             }
-            ;
-
         }
 
         isLoaded = true;
@@ -195,7 +189,16 @@ public final class Components {
 
         return null;
     }
-
+    
+    /**
+     * 组件服务调用.
+     * @param mapper 组件映射
+     * @return 返回调用结果
+     */
+    public static Object invoke(final RequestMapper mapper) {
+        return invoke(mapper, Maps.newHashMap());
+    }
+ 
     /**
      * 组件服务调用.
      * @param mapper 组件映射

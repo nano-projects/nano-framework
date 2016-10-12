@@ -54,7 +54,7 @@ public class ComponentScan {
      */
     public static Set<Class<?>> filter(final Class<? extends Annotation> annotationClass) {
         if (classes == null) {
-            classes = Sets.newLinkedHashSet();
+            return Collections.emptySet();
         }
         
         if (classes.size() > 0) {
