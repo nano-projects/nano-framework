@@ -1,6 +1,6 @@
 NanoFramework
 ====
-[![Release](https://img.shields.io/badge/release-1.4.0-blue.svg)](https://github.com/nano-projects/nano-framework/releases)
+[![Release](https://img.shields.io/badge/release-1.4.1-blue.svg)](https://github.com/nano-projects/nano-framework/releases)
 [![Build Status](https://travis-ci.org/nano-projects/nano-framework.svg?branch=master)](https://travis-ci.org/nano-projects/nano-framework)
 [![Coverage Status](https://coveralls.io/repos/github/nano-projects/nano-framework/badge.svg)](https://coveralls.io/github/nano-projects/nano-framework)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
@@ -15,9 +15,9 @@ NanoFramework
 安装
 ----
 ```shell
-wget https://github.com/nano-projects/nano-framework/archive/nano-1.4.0.tar.gz
-tar -zxvf nano-1.4.0.tar.gz
-cd nano-framework-nano-1.4.0
+wget https://github.com/nano-projects/nano-framework/archive/nano-1.4.1.tar.gz
+tar -zxvf nano-1.4.1.tar.gz
+cd nano-framework-nano-1.4.1
 mvn clean install -Dmaven.test.skip=true
 ```
 
@@ -27,7 +27,7 @@ mvn clean install -Dmaven.test.skip=true
 <dependency>
     <groupId>org.nanoframework</groupId>
     <artifactId>nano-server</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1</version>
 </dependency>
 ...
 ```
