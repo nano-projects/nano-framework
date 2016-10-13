@@ -23,6 +23,8 @@ import javax.servlet.ServletConfig;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.nanoframework.commons.loader.PropertiesLoader;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.component.scan.ComponentScan;
 import org.nanoframework.core.component.stereotype.Component;
@@ -42,7 +44,8 @@ import com.google.inject.name.Names;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class APIModule extends Module {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(APIModule.class);
+    
     @Override
     public List<Module> load() throws Throwable {
         modules.add(this);
@@ -72,8 +75,14 @@ public class APIModule extends Module {
     protected void bindApi() {
         final Map<Class, List<Class>> bindMap = Maps.newHashMap();
         ComponentScan.filter(API.class).forEach(cls -> {
+            if (cls.isInterface()) {
+                LOGGER.warn("Ignore interface API of {}", cls.getName());
+                return;
+            }
+            
             final Class[] itfs = cls.getInterfaces();
             if (ArrayUtils.isEmpty(itfs)) {
+                LOGGER.warn("Ignore no interface implement API of {}", cls.getName());
                 return;
             }
             
@@ -94,7 +103,9 @@ public class APIModule extends Module {
     protected void bindApi(final Map<Class, List<Class>> bindMap) {
         bindMap.forEach((itf, impls) -> {
             if (impls.size() == 1) {
-                binder().bind(itf).to(impls.get(0));
+                final Class cls = impls.get(0);
+                binder().bind(itf).to(cls);
+                LOGGER.debug("Binding {} to {}", itf.getName(), cls.getName());
             } else {
                 if (itf.isAnnotationPresent(Component.class)) {
                     throw new BindException("Multiple components can not be bound");
@@ -117,6 +128,7 @@ public class APIModule extends Module {
             }
             
             binder().bind(itf).annotatedWith(Names.named(name)).to(cls);
+            LOGGER.debug("Binding {} to {} with name {}", itf.getName(), cls.getName(), name);
         });
     }
 

@@ -55,6 +55,10 @@
     <logger name="org.apache.http" level="error" additivity="false">
         <appender-ref ref="ERROR"/>
     </logger>
+    
+    <logger name="org.nanoframework.core.component.scan" level="info" additivity="false">
+        <appender-ref ref="INFO"/>
+    </logger>
   	
     <root level="debug">  
       	<appender-ref ref="OUT"/>

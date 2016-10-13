@@ -71,7 +71,7 @@ public abstract class PluginLoader {
             throw new PluginLoaderException(e.getMessage(), e);
         }
 
-        logger.info("加载属性文件完成, 耗时: {}ms", System.currentTimeMillis() - time);
+        logger.info("Loading the properties file complete, times: {}ms", System.currentTimeMillis() - time);
     }
 
     private void initModules() throws Throwable {
@@ -80,14 +80,14 @@ public abstract class PluginLoader {
         final List<AbstractModule> loadedModules = Lists.newArrayList();
         final List<Module> modules = this.modules.get();
         for (final Module module : modules) {
-            logger.info("加载Module: {}", module.getClass().getName());
+            logger.info("Loading Module: {}", module.getClass().getName());
             module.config(config);
             loadedModules.addAll(module.load());
         }
 
-        logger.info("开始进行依赖注入");
+        logger.info("Starting inject");
         Globals.set(Injector.class, Guice.createInjector(loadedModules));
-        logger.info("依赖注入完成, 耗时: {}", System.currentTimeMillis() - time);
+        logger.info("Inject Modules complete, times: {}ms", System.currentTimeMillis() - time);
     }
     
     private void initPlugins() throws Throwable {
@@ -97,18 +97,18 @@ public abstract class PluginLoader {
         for (final Plugin plugin : plugins) {
             plugin.config(config);
             if (plugin.load()) {
-                logger.info("加载插件: {}", plugin.getClass().getName());
+                logger.info("Loading Plugin: {}", plugin.getClass().getName());
             }
         }
 
-        logger.info("加载插件完成, 耗时: {}", System.currentTimeMillis() - time);
+        logger.info("Loading Plugins complete, times: {}ms", System.currentTimeMillis() - time);
     }
 
     private void initComponent() throws LoaderException, IOException {
         final long time = System.currentTimeMillis();
-        logger.info("开始加载组件服务");
+        logger.info("Starting inject component");
         Components.load();
-        logger.info("加载组件服务结束, 耗时: {}", System.currentTimeMillis() - time);
+        logger.info("Inject Component complete, times: {}ms", System.currentTimeMillis() - time);
     }
 
     protected abstract void configProperties(Configure<String> properties);
