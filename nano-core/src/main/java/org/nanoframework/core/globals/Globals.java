@@ -15,8 +15,9 @@
  */
 package org.nanoframework.core.globals;
 
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import com.google.common.collect.Maps;
 
 /**
  * 全局变量，针对一些全局的属性做统一管理
@@ -26,7 +27,7 @@ import java.util.concurrent.ConcurrentMap;
  */
 public class Globals {
 
-    private static ConcurrentMap<Class<?>, Object> globals = new ConcurrentHashMap<>();
+    private static ConcurrentMap<Class<?>, Object> globals = Maps.newConcurrentMap();
 
     private Globals() {
     }
