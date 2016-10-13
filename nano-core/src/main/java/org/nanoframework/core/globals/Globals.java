@@ -20,25 +20,24 @@ import java.util.concurrent.ConcurrentMap;
 import com.google.common.collect.Maps;
 
 /**
- * 全局变量，针对一些全局的属性做统一管理
- * 
+ * 全局变量，针对一些全局的属性做统一管理.
  * @author yanghe
  * @since 1.0
  */
-public class Globals {
-
-    private static ConcurrentMap<Class<?>, Object> globals = Maps.newConcurrentMap();
+public final class Globals {
+    private static final ConcurrentMap<Class<?>, Object> GLOBALS = Maps.newConcurrentMap();
 
     private Globals() {
+        
     }
 
-    public static void set(Class<?> clz, Object global) {
-        globals.put(clz, global);
+    public static void set(final Class<?> clz, final Object global) {
+        GLOBALS.put(clz, global);
     }
 
     @SuppressWarnings("unchecked")
-    public static final <T> T get(Class<T> clz) {
-        return (T) globals.get(clz);
+    public static final <T> T get(final Class<T> clz) {
+        return (T) GLOBALS.get(clz);
     }
 
 }
