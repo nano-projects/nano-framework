@@ -26,6 +26,7 @@ import org.nanoframework.core.plugins.defaults.module.APIModule;
 import org.nanoframework.core.plugins.defaults.module.BindModule;
 import org.nanoframework.core.plugins.defaults.module.DataSourceModule;
 import org.nanoframework.core.plugins.defaults.module.JedisModule;
+import org.nanoframework.core.plugins.defaults.module.SysAttrModule;
 import org.nanoframework.core.plugins.defaults.plugin.Log4j2Plugin;
 import org.nanoframework.core.plugins.defaults.plugin.SchedulerPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
@@ -49,6 +50,7 @@ public class DefaultPluginLoader extends PluginLoader {
 
     @Override
     protected void configModules(final Configure<Module> modules) {
+        modules.add(new SysAttrModule());
         modules.add(new AOPModule());
         modules.add(new DataSourceModule());
         modules.add(new JedisModule());
