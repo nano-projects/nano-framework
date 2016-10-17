@@ -50,22 +50,22 @@
         <license-maven-plugin.version>2.11</license-maven-plugin.version>
 
         <junit-version>4.12</junit-version>
-        <slf4j-version>1.7.7</slf4j-version>
-        <log4j2-version>2.5</log4j2-version>
-        <google-guice-version>4.0</google-guice-version>
-        <google-guice-multibindings-version>4.0</google-guice-multibindings-version>
-        <guava-version>16.0.1</guava-version>
+        <slf4j-version>1.7.21</slf4j-version>
+        <log4j2-version>2.7</log4j2-version>
+        <google-guice-version>4.1.0</google-guice-version>
+        <google-guice-multibindings-version>4.1.0</google-guice-multibindings-version>
+        <guava-version>20.0-rc1</guava-version>
         <commons-lang3-version>3.4</commons-lang3-version>
         <commons-codec-version>1.10</commons-codec-version>
         <fastjson-version>1.2.5</fastjson-version>
-        <mybatis-version>3.4.0</mybatis-version>
-        <mybatis-guice-version>3.7.1</mybatis-guice-version>
+        <mybatis-version>3.4.1</mybatis-version>
+        <mybatis-guice-version>3.8</mybatis-guice-version>
         <mysql-connector-version>5.1.29</mysql-connector-version>
         <c3p0-version>0.9.5.2</c3p0-version>
         <druid-version>1.0.18</druid-version>
         <tomcat-jdbc-version>8.0.33</tomcat-jdbc-version>
         <netty-version>4.1.3.Final</netty-version>
-        <jedis-version>2.8.1</jedis-version>
+        <jedis-version>2.9.0</jedis-version>
         <servlet-api-version>3.0.1</servlet-api-version>
         <servlet-jsp-api-version>2.2.1</servlet-jsp-api-version>
         <servlet-jsp-jstl-api-version>1.2.1</servlet-jsp-jstl-api-version>
