@@ -11,7 +11,7 @@ assembly/
 conf/
 *.log
 webRoot/
-jetty.pid
+*.pid
 .checkstyle
 .fbIncludeFilterFile
 coverage-local.sh
