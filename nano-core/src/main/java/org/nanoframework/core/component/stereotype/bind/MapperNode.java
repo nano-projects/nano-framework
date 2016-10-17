@@ -51,7 +51,7 @@ public class MapperNode extends BaseEntity {
         {
             String context = System.getProperty(ApplicationContext.CONTEXT_ROOT);
             if (StringUtils.isBlank(context)) {
-                throw new IllegalArgumentException("无效的/无法获取context.root属性");
+                throw new IllegalArgumentException("无效的context.root属性");
             }
 
             if (context.startsWith("/")) {
@@ -121,7 +121,7 @@ public class MapperNode extends BaseEntity {
     }
 
     public static RequestMapper get(String uri, RequestMethod requestMethod) {
-        Assert.hasLength(uri);
+        Assert.notNull(uri);
         Assert.notNull(requestMethod);
         MapperNode nowNode = ROOT;
         String[] tokens = uri.split("/");
