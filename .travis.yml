@@ -2,5 +2,13 @@ language: java
 jdk:
   - oraclejdk8
   
+services:
+  - docker
+
+install:
+  - docker pull redis:alpine
+  - docker run -d --name redis_6380 -p 6380:6379 redis:alpine
+  - docker run -d --name redis_6381 -p 6381:6379 redis:alpine
+  
 notifications:
   email: false
