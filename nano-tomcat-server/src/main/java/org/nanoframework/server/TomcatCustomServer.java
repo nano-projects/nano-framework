@@ -50,10 +50,10 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.context.ApplicationContext;
+import org.nanoframework.server.cfg.ConnectorConf;
+import org.nanoframework.server.cfg.ExecutorConf;
 import org.nanoframework.server.cmd.Commands;
 import org.nanoframework.server.cmd.Mode;
-import org.nanoframework.server.conf.ConnectorConf;
-import org.nanoframework.server.conf.ExecutorConf;
 import org.nanoframework.server.exception.TomcatServerException;
 
 import com.alibaba.fastjson.JSON;
