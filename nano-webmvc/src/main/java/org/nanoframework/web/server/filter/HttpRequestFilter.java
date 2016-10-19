@@ -33,6 +33,7 @@ import org.nanoframework.core.component.exception.BindRequestParamException;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
+import org.nanoframework.core.component.stereotype.bind.Routes;
 import org.nanoframework.core.context.URLContext;
 import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.support.RedirectModel;
@@ -54,7 +55,7 @@ public class HttpRequestFilter extends AbstractFilter {
 	protected boolean invoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		URLContext urlContext = create((HttpServletRequest) request);
 		String method = ((HttpServletRequest) request).getMethod();
-		RequestMapper mapper = Components.getMapper(urlContext.getNoRootContext(), RequestMethod.valueOf(method));
+		RequestMapper mapper = Routes.route().lookupRoute(urlContext.getNoRootContext(), RequestMethod.valueOf(method));
 		
 		Writer out = null;
 		if(mapper != null) {

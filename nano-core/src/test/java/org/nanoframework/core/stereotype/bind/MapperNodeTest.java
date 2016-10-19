@@ -18,14 +18,15 @@ package org.nanoframework.core.stereotype.bind;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.nanoframework.core.component.stereotype.bind.MapperNode;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
+import org.nanoframework.core.component.stereotype.bind.Routes;
 import org.nanoframework.core.context.ApplicationContext;
+
+import com.google.common.collect.Maps;
 
 /**
  * @author yanghe
@@ -36,16 +37,16 @@ public class MapperNodeTest {
     @Test
     public void addNodeTest() {
         System.setProperty(ApplicationContext.CONTEXT_ROOT, "/jetty");
-        Map<RequestMethod, RequestMapper> mapper = new HashMap<>();
-        mapper.put(RequestMethod.GET, RequestMapper.create().setObject(this).setClz(this.getClass()));
-        MapperNode.addLeaf("/jetty/test/{hello}/get", mapper);
-        MapperNode.addLeaf("/jetty/test/{hello}", mapper);
-        MapperNode.addLeaf("/jetty/test/{hello}/save", mapper);
-        MapperNode.addLeaf("/jetty/test/{hello}/put", mapper);
-        MapperNode.addLeaf("/jetty/test/{hello}/put/{id}", mapper);
-        MapperNode.addLeaf("/jetty/test/hello/put/{id}", mapper);
-        RequestMapper _mapper = MapperNode.get("/jetty/test/hello/put/123qweasdzxc", RequestMethod.GET);
-        assertNotNull(_mapper);
-        assertEquals("123qweasdzxc", _mapper.getParam().get("id"));
+        final Map<RequestMethod, RequestMapper> mapper = Maps.newHashMap();
+        mapper.put(RequestMethod.GET, RequestMapper.create().setInstance(this).setCls(this.getClass()));
+        Routes.route().registerRoute("/jetty/test/{hello}/get", mapper);
+        Routes.route().registerRoute("/jetty/test/{hello}", mapper);
+        Routes.route().registerRoute("/jetty/test/{hello}/save", mapper);
+        Routes.route().registerRoute("/jetty/test/{hello}/put", mapper);
+        Routes.route().registerRoute("/jetty/test/{hello}/put/{id}", mapper);
+        Routes.route().registerRoute("/jetty/test/hello/put/{id:\\d+}/", mapper);
+        RequestMapper rm = Routes.route().lookupRoute("/jetty/test/hello/put/123", RequestMethod.GET);
+        assertNotNull(rm);
+        assertEquals("123", rm.getParam().get("id"));
     }
 }

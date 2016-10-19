@@ -26,7 +26,7 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.StringUtils;
-import org.nanoframework.core.component.scan.ComponentScan;
+import org.nanoframework.core.component.scan.ClassScanner;
 import org.nanoframework.core.component.stereotype.Component;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.inject.API;
@@ -68,13 +68,13 @@ public class APIModule extends Module {
         .filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.API_BASE_PACKAGE)))
         .forEach(item -> {
             final String[] packageNames = item.getProperty(ApplicationContext.API_BASE_PACKAGE).split(",");
-            Arrays.asList(packageNames).forEach(packageName -> ComponentScan.scan(packageName));
+            Arrays.asList(packageNames).forEach(packageName -> ClassScanner.scan(packageName));
         });
     }
     
     protected void bindApi() {
         final Map<Class, List<Class>> bindMap = Maps.newHashMap();
-        ComponentScan.filter(API.class).forEach(cls -> {
+        ClassScanner.filter(API.class).forEach(cls -> {
             if (cls.isInterface()) {
                 LOGGER.warn("Ignore interface API of {}", cls.getName());
                 return;

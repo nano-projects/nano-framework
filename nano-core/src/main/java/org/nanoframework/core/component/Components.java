@@ -32,14 +32,14 @@ import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.component.exception.BindRequestParamException;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
-import org.nanoframework.core.component.scan.ComponentScan;
+import org.nanoframework.core.component.scan.ClassScanner;
 import org.nanoframework.core.component.stereotype.Component;
-import org.nanoframework.core.component.stereotype.bind.MapperNode;
 import org.nanoframework.core.component.stereotype.bind.PathVariable;
 import org.nanoframework.core.component.stereotype.bind.RequestMapper;
 import org.nanoframework.core.component.stereotype.bind.RequestMapping;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 import org.nanoframework.core.component.stereotype.bind.RequestParam;
+import org.nanoframework.core.component.stereotype.bind.Routes;
 import org.nanoframework.core.component.stereotype.bind.ValueConstants;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
@@ -65,8 +65,6 @@ public final class Components {
      * 加载组件服务，并且装载至组件服务映射表中.
      * @throws LoaderException 加载异常类
      * @throws IOException IO异常类
-     * @see ComponentScan#scan(String)
-     * @see ComponentScan#filter(Object, Method[], Class, String)
      */
     public static final void load() throws LoaderException, IOException {
         if (isLoaded) {
@@ -77,19 +75,19 @@ public final class Components {
         .filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE)))
         .forEach(item -> {
             final String[] packageNames = item.getProperty(ApplicationContext.COMPONENT_BASE_PACKAGE).split(",");
-            Arrays.asList(packageNames).forEach(packageName -> ComponentScan.scan(packageName));
+            Arrays.asList(packageNames).forEach(packageName -> ClassScanner.scan(packageName));
         });
 
-        final Set<Class<?>> componentClasses = ComponentScan.filter(Component.class);
-        LOGGER.info("Component size: " + componentClasses.size());
-        if (componentClasses.size() > 0) {
-            for (Class<?> clz : componentClasses) {
-                LOGGER.info("Inject Component Class: " + clz.getName());
-                final Object obj = Globals.get(Injector.class).getInstance(clz);
-                final Method[] methods = clz.getMethods();
-                final String mapping = clz.isAnnotationPresent(RequestMapping.class) ? clz.getAnnotation(RequestMapping.class).value() : "";
-                final Map<String, Map<RequestMethod, RequestMapper>> mapper = ComponentScan.filter(obj, methods, RequestMapping.class, mapping);
-                mapper.entrySet().forEach(entry -> MapperNode.addLeaf(entry.getKey(), entry.getValue()));
+        final Set<Class<?>> classes = ClassScanner.filter(Component.class);
+        LOGGER.info("Component size: {}", classes.size());
+        if (classes.size() > 0) {
+            for (Class<?> cls : classes) {
+                LOGGER.info("Inject Component Class: {}", cls.getName());
+                final Object instance = Globals.get(Injector.class).getInstance(cls);
+                final Method[] methods = cls.getMethods();
+                final String mapping = cls.isAnnotationPresent(RequestMapping.class) ? cls.getAnnotation(RequestMapping.class).value() : "";
+                final Map<String, Map<RequestMethod, RequestMapper>> mappers = Routes.route().matchers(instance, methods, RequestMapping.class, mapping);
+                mappers.forEach((url, mapper) -> Routes.route().registerRoute(url, mapper));
             }
         }
 
@@ -107,8 +105,8 @@ public final class Components {
     }
     
     public static final void destroy() {
-        MapperNode.clear();
-        ComponentScan.clear();
+        Routes.route().clearRoute();
+        ClassScanner.clear();
         isLoaded = false;
     }
 
@@ -214,7 +212,7 @@ public final class Components {
                     parameter.putAll(param);
                 }
                 
-                final Object obj = mapper.getObject();
+                final Object obj = mapper.getInstance();
                 final Method method = (Method) mapper.getMethod();
                 final Object[] bind = Components.bindParam(method, parameter, objs);
                 return method.invoke(obj, bind);
@@ -240,16 +238,6 @@ public final class Components {
         } else {
             throw new ComponentInvokeException("Not found resources!");
         }
-    }
-
-    /**
-     * 获取地址-方法映射.
-     * @param url HTTP调用 - 请求URL
-     * @param method Http请求类型
-     * @return 返回映射
-     */
-    public static final RequestMapper getMapper(final String url, final RequestMethod method) {
-        return MapperNode.get(url, method);
     }
 
 }

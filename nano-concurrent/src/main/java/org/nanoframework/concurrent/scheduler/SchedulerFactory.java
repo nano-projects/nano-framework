@@ -41,7 +41,7 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ObjectCompare;
 import org.nanoframework.commons.util.RuntimeUtil;
-import org.nanoframework.core.component.scan.ComponentScan;
+import org.nanoframework.core.component.scan.ClassScanner;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.concurrent.exception.SchedulerException;
 import org.nanoframework.concurrent.scheduler.defaults.etcd.EtcdOrderWatcherScheduler;
@@ -504,7 +504,7 @@ public class SchedulerFactory {
         final Set<String> exclusions = Sets.newLinkedHashSet();
         PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(BASE_PACKAGE) != null).forEach(item -> {
             final String basePacakge = item.getProperty(BASE_PACKAGE);
-            ComponentScan.scan(basePacakge);
+            ClassScanner.scan(basePacakge);
         });
 
         PropertiesLoader.PROPERTIES.values().stream().forEach(item -> {
@@ -523,7 +523,7 @@ public class SchedulerFactory {
             }
         });
 
-        final Set<Class<?>> componentClasses = ComponentScan.filter(Scheduler.class);
+        final Set<Class<?>> componentClasses = ClassScanner.filter(Scheduler.class);
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Scheduler size: {}", componentClasses.size());
         }

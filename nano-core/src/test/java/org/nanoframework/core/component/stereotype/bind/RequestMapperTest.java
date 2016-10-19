@@ -17,7 +17,6 @@ package org.nanoframework.core.component.stereotype.bind;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.nanoframework.core.component.Components;
 import org.nanoframework.core.component.PluginLoaderInit;
 
 /**
@@ -29,13 +28,13 @@ public class RequestMapperTest extends PluginLoaderInit {
 
     @Test
     public void hasMapperTest() {
-        final RequestMapper mapper = Components.getMapper("/v1/test", RequestMethod.GET);
+        final RequestMapper mapper = Routes.route().lookupRoute("/v1/test", RequestMethod.GET);
         Assert.assertEquals(mapper.hasMethod(RequestMethod.POST), true);
     }
     
     @Test
     public void requestMethodStrsTest() {
-        final RequestMapper mapper = Components.getMapper("/v1/test", RequestMethod.GET);
+        final RequestMapper mapper = Routes.route().lookupRoute("/v1/test", RequestMethod.GET);
         final String[] methods = mapper.getRequestMethodStrs();
         Assert.assertEquals(methods.length, 2);
         Assert.assertEquals(methods[0], RequestMethod.GET.name());

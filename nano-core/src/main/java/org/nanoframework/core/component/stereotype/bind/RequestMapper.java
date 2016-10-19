@@ -25,15 +25,14 @@ import com.google.common.collect.Lists;
 
 /**
  * 组件映射类，存储实例化对象、对象类、方法.
- * 
  * @author yanghe
  * @since 1.0
  */
 public class RequestMapper extends BaseEntity {
     private static final long serialVersionUID = 6571078157462085564L;
 
-    private Object object;
-    private Class<?> clz;
+    private Object instance;
+    private Class<?> cls;
     private Method method;
 
     /** @since 1.2 */
@@ -48,21 +47,21 @@ public class RequestMapper extends BaseEntity {
         return new RequestMapper();
     }
 
-    public Object getObject() {
-        return object;
+    public Object getInstance() {
+        return instance;
     }
 
-    public RequestMapper setObject(Object object) {
-        this.object = object;
+    public RequestMapper setInstance(final Object instance) {
+        this.instance = instance;
         return this;
     }
 
-    public Class<?> getClz() {
-        return clz;
+    public Class<?> getCls() {
+        return cls;
     }
 
-    public RequestMapper setClz(Class<?> clz) {
-        this.clz = clz;
+    public RequestMapper setCls(final Class<?> cls) {
+        this.cls = cls;
         return this;
     }
 
@@ -70,7 +69,7 @@ public class RequestMapper extends BaseEntity {
         return method;
     }
 
-    public RequestMapper setMethod(Method method) {
+    public RequestMapper setMethod(final Method method) {
         this.method = method;
         return this;
     }
@@ -94,7 +93,7 @@ public class RequestMapper extends BaseEntity {
         return ArrayUtils.EMPTY_STRING_ARRAY;
     }
 
-    public RequestMapper setRequestMethods(RequestMethod[] requestMethods) {
+    public RequestMapper setRequestMethods(final RequestMethod[] requestMethods) {
         if (ArrayUtils.isNotEmpty(requestMethods)) {
             this.requestMethods = requestMethods;
         }
@@ -102,7 +101,7 @@ public class RequestMapper extends BaseEntity {
         return this;
     }
 
-    public boolean hasMethod(RequestMethod method) {
+    public boolean hasMethod(final RequestMethod method) {
         if (ArrayUtils.isNotEmpty(requestMethods)) {
             return Lists.newArrayList(requestMethods).contains(method);
         }
@@ -114,7 +113,7 @@ public class RequestMapper extends BaseEntity {
         return param;
     }
 
-    public RequestMapper setParam(Map<String, String> param) {
+    public RequestMapper setParam(final Map<String, String> param) {
         this.param = param;
         return this;
     }
