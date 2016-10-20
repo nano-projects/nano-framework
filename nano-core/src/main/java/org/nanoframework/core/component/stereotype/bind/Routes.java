@@ -57,8 +57,8 @@ public class Routes {
         return INSTANCE;
     }
 
-    public RequestMapper lookupRoute(final String url, final RequestMethod requestMethod) {
-        Map<RequestMethod, RequestMapper> mappers = this.mappers.get(url);
+    public RequestMapper lookup(final String url, final RequestMethod requestMethod) {
+        final Map<RequestMethod, RequestMapper> mappers = this.mappers.get(url);
         if (!CollectionUtils.isEmpty(mappers)) {
             final RequestMapper mapper = mappers.get(requestMethod);
             if (mapper != null) {
@@ -74,12 +74,17 @@ public class Routes {
         String bestPatternMatch = null;
         if (!matchingPatterns.isEmpty()) {
             Collections.sort(matchingPatterns, patternComparator);
-            LOGGER.debug("Matching patterns for request [" + url + "] are " + matchingPatterns);
+            LOGGER.debug("Matching patterns for request [{}] are {}", url, matchingPatterns);
             bestPatternMatch = matchingPatterns.get(0);
         }
 
+        return lookup(url, requestMethod, bestPatternMatch, matchingPatterns, patternComparator);
+    }
+    
+    protected RequestMapper lookup(final String url, final RequestMethod requestMethod, final String bestPatternMatch, 
+            final List<String> matchingPatterns, final Comparator<String> patternComparator) {
         if (bestPatternMatch != null) {
-            mappers = this.mappers.get(bestPatternMatch);
+            Map<RequestMethod, RequestMapper> mappers = this.mappers.get(bestPatternMatch);
             if (mappers == null) {
                 if (!bestPatternMatch.endsWith("/")) {
                     return null;
@@ -97,10 +102,10 @@ public class Routes {
             }
 
             final Map<String, String> uriTemplateVariables = Maps.newLinkedHashMap();
-            for (String matchingPattern : matchingPatterns) {
+            for (final String matchingPattern : matchingPatterns) {
                 if (patternComparator.compare(bestPatternMatch, matchingPattern) == 0) {
-                    Map<String, String> vars = pathMatcher.extractUriTemplateVariables(matchingPattern, url);
-                    Map<String, String> decodedVars = urlPathHelper.decodePathVariables(vars);
+                    final Map<String, String> vars = pathMatcher.extractUriTemplateVariables(matchingPattern, url);
+                    final Map<String, String> decodedVars = urlPathHelper.decodePathVariables(vars);
                     uriTemplateVariables.putAll(decodedVars);
                 }
             }
@@ -108,22 +113,37 @@ public class Routes {
             mapper.setParam(uriTemplateVariables);
             return mapper;
         }
-
+        
         return null;
     }
 
-    public void registerRoute(final String url, final Map<RequestMethod, RequestMapper> mapper) {
+    public void register(final String url, final Map<RequestMethod, RequestMapper> mappers) {
+        if (CollectionUtils.isEmpty(mappers)) {
+            return;
+        }
+        
+        mappers.keySet().forEach(requestMethod -> {
+            final RequestMapper mapped = lookup(url, requestMethod);
+            if (mapped != null) {
+                throw new ComponentServiceRepeatException("Duplicate Restful-style URL definition: " + url);
+            }
+        });
+        
         final Map<RequestMethod, RequestMapper> mappedMapper = this.mappers.get(url);
         if (mappedMapper != null) {
-            if (mappedMapper != mapper) {
-                throw new IllegalStateException("Duplicate Restful style URL definition: " + url);
-            }
+            mappers.forEach((requestMethod, mapper) -> {
+                if (mappedMapper.containsKey(requestMethod)) {
+                    throw new ComponentServiceRepeatException("Duplicate Restful-style URL definition: " + url + " of method [ " + requestMethod + " ]"); 
+                } else {
+                    mappedMapper.put(requestMethod, mapper);
+                }
+            });
         } else {
-            this.mappers.put(url, mapper);
+            this.mappers.put(url, mappers);
         }
     }
 
-    public void clearRoute() {
+    public void clear() {
         this.mappers.clear();
     }
 
@@ -162,9 +182,39 @@ public class Routes {
             mappers.put(requestMethod, mapper);
         }
 
-        final String route = (url + mapping.value()).toLowerCase();
-        LOGGER.debug("Route define: {}.{}:{}", instance.getClass().getName(), method.getName(), route);
-        return new Route(route, mappers);
+        final String route = (url + mapping.value());
+        final String newRoute = execRoutePath(route);
+        LOGGER.debug("Route define: {}.{}:{} {}", instance.getClass().getName(), method.getName(), newRoute, Lists.newArrayList(requestMethods));
+        return new Route(newRoute, mappers);
+    }
+    
+    protected String execRoutePath(final String route) {
+        final String[] rtks = route.split("/");
+        final StringBuilder routeBuilder = new StringBuilder();
+        for (final String rtk : rtks) {
+            if (StringUtils.isEmpty(rtk)) {
+                continue;
+            }
+            
+            if (rtk.startsWith("{") && rtk.endsWith("}")) {
+                routeBuilder.append('/');
+                
+                final int idx = rtk.indexOf(':');
+                if (idx > 0) {
+                    routeBuilder.append(StringUtils.lowerCase(rtk.substring(0, idx)));
+                    routeBuilder.append(rtk.substring(idx));
+                } else {
+                    routeBuilder.append(rtk);
+                }
+            } else if ((rtk.startsWith("{") && !rtk.endsWith("}")) || (!rtk.startsWith("{") && rtk.endsWith("}"))) {
+                throw new IllegalArgumentException("Invalid route definition: " + route);
+            } else {
+                routeBuilder.append('/');
+                routeBuilder.append(StringUtils.lowerCase(rtk));
+            }
+        }
+        
+        return routeBuilder.toString();
     }
 
     protected void routeDefine0(final Route route,

@@ -55,7 +55,7 @@ public class HttpRequestFilter extends AbstractFilter {
 	protected boolean invoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		URLContext urlContext = create((HttpServletRequest) request);
 		String method = ((HttpServletRequest) request).getMethod();
-		RequestMapper mapper = Routes.route().lookupRoute(urlContext.getNoRootContext(), RequestMethod.valueOf(method));
+		RequestMapper mapper = Routes.route().lookup(urlContext.getNoRootContext(), RequestMethod.valueOf(method));
 		
 		Writer out = null;
 		if(mapper != null) {

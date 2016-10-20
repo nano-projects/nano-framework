@@ -54,9 +54,16 @@ public class AntPathMatcher implements PathMatcher {
 
     final Map<String, AntPathStringMatcher> stringMatcherCache = new ConcurrentHashMap<String, AntPathStringMatcher>(256);
 
+    private boolean caseSensitive = false;
+    
     public AntPathMatcher() {
         this.pathSeparator = DEFAULT_PATH_SEPARATOR;
         this.pathSeparatorPatternCache = new PathSeparatorPatternCache(DEFAULT_PATH_SEPARATOR);
+    }
+    
+    public AntPathMatcher(boolean caseSensitive) {
+        this();
+        this.caseSensitive = caseSensitive;
     }
 
     public AntPathMatcher(String pathSeparator) {
@@ -247,7 +254,15 @@ public class AntPathMatcher implements PathMatcher {
     }
 
     private boolean matchStrings(String pattern, String str, Map<String, String> uriTemplateVariables) {
-        return getStringMatcher(pattern).matchStrings(str, uriTemplateVariables);
+        // NANO-413
+        String token = str;
+        if (!caseSensitive) {
+            if (!pattern.startsWith("{") && !pattern.endsWith("}")) {
+                token = StringUtils.lowerCase(str);
+            }
+        }
+        
+        return getStringMatcher(pattern).matchStrings(token, uriTemplateVariables);
     }
 
     protected AntPathStringMatcher getStringMatcher(String pattern) {

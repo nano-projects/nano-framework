@@ -87,7 +87,7 @@ public final class Components {
                 final Method[] methods = cls.getMethods();
                 final String mapping = cls.isAnnotationPresent(RequestMapping.class) ? cls.getAnnotation(RequestMapping.class).value() : "";
                 final Map<String, Map<RequestMethod, RequestMapper>> mappers = Routes.route().matchers(instance, methods, RequestMapping.class, mapping);
-                mappers.forEach((url, mapper) -> Routes.route().registerRoute(url, mapper));
+                mappers.forEach((url, mapper) -> Routes.route().register(url, mapper));
             }
         }
 
@@ -105,7 +105,7 @@ public final class Components {
     }
     
     public static final void destroy() {
-        Routes.route().clearRoute();
+        Routes.route().clear();
         ClassScanner.clear();
         isLoaded = false;
     }

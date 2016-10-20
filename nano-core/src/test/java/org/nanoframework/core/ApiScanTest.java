@@ -35,11 +35,11 @@ public class ApiScanTest extends PluginLoaderInit {
 
     @Test
     public void apiTest() throws LoaderException, IOException {
-        final Object invoke = Components.invoke(Routes.route().lookupRoute("/invoke", RequestMethod.GET));
+        final Object invoke = Components.invoke(Routes.route().lookup("/invoke", RequestMethod.GET));
         LOGGER.debug("[ /invoke ] response: {}", invoke);
         Assert.assertEquals(invoke, "Api Invoke");
         
-        final Object invoke2 = Components.invoke(Routes.route().lookupRoute("/invoke2", RequestMethod.GET));
+        final Object invoke2 = Components.invoke(Routes.route().lookup("/invoke2", RequestMethod.GET));
         LOGGER.debug("[ /invoke2 ] response: {}", invoke2);
         Assert.assertEquals(invoke2, "Api Invoke 2");
     }

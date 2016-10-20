@@ -43,7 +43,7 @@ public class ComponentsTest extends PluginLoaderInit {
     
     @Test
     public void componentTest() throws LoaderException, IOException {
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/test", RequestMethod.GET);
+        final RequestMapper mapper = Routes.route().lookup("/v1/test", RequestMethod.GET);
         Assert.assertNotNull(mapper);
         final RequestMethod[] requestMethods = mapper.getRequestMethods();
         final List<RequestMethod> methods = Lists.asList(requestMethods[0], requestMethods);
@@ -60,7 +60,7 @@ public class ComponentsTest extends PluginLoaderInit {
     @Test
     public void reloadTest() throws LoaderException, IOException {
         Components.reload();
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/reload", RequestMethod.POST);
+        final RequestMapper mapper = Routes.route().lookup("/v1/reload", RequestMethod.POST);
         Assert.assertNotNull(mapper);
         final Object reload = Components.invoke(mapper, null);
         Assert.assertEquals(reload, "Reload");
@@ -68,7 +68,7 @@ public class ComponentsTest extends PluginLoaderInit {
     
     @Test
     public void hasParamTest() {
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/param/hello", RequestMethod.GET);
+        final RequestMapper mapper = Routes.route().lookup("/v1/param/hello", RequestMethod.GET);
         Assert.assertNotNull(mapper);
         final Object hasParam = Components.invoke(mapper, MapBuilder.<String, Object>create().put("param1", "world").build());
         Assert.assertEquals(hasParam, "hello=world");
@@ -76,13 +76,13 @@ public class ComponentsTest extends PluginLoaderInit {
     
     @Test
     public void notFoundRouteTest() {
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/param/hello", RequestMethod.POST);
+        final RequestMapper mapper = Routes.route().lookup("/v1/param/hello", RequestMethod.POST);
         Assert.assertEquals(mapper, null);
     }
     
     @Test
     public void emptyParamTest() {
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/param/hello", RequestMethod.GET);
+        final RequestMapper mapper = Routes.route().lookup("/v1/param/hello", RequestMethod.GET);
         Assert.assertNotNull(mapper);
         try {
             Components.invoke(mapper, null);
@@ -93,7 +93,7 @@ public class ComponentsTest extends PluginLoaderInit {
     
     @Test
     public void beforeAopTest() {
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/aop/before", RequestMethod.PUT);
+        final RequestMapper mapper = Routes.route().lookup("/v1/aop/before", RequestMethod.PUT);
         Assert.assertNotNull(mapper);
         final Object ret = Components.invoke(mapper, MapBuilder.<String, Object>create().put("param", "before").build());
         Assert.assertEquals(ret, "before");
@@ -103,7 +103,7 @@ public class ComponentsTest extends PluginLoaderInit {
     
     @Test
     public void afterAopTest() {
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/aop/after", RequestMethod.PUT);
+        final RequestMapper mapper = Routes.route().lookup("/v1/aop/after", RequestMethod.PUT);
         Assert.assertNotNull(mapper);
         Components.invoke(mapper, null);
         Assert.assertEquals(AfterAOP.RESULT, "OK");
@@ -112,7 +112,7 @@ public class ComponentsTest extends PluginLoaderInit {
     
     @Test
     public void afterAopErrorTest() {
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/aop/after/error", RequestMethod.PUT);
+        final RequestMapper mapper = Routes.route().lookup("/v1/aop/after/error", RequestMethod.PUT);
         Assert.assertNotNull(mapper);
         try {
             Components.invoke(mapper, null);
@@ -127,7 +127,7 @@ public class ComponentsTest extends PluginLoaderInit {
     
     @Test
     public void arrayTest() {
-        final RequestMapper mapper = Routes.route().lookupRoute("/v1/array", RequestMethod.PUT);
+        final RequestMapper mapper = Routes.route().lookup("/v1/array", RequestMethod.PUT);
         final String[] array = { "1", "2", "3" };
         Object value = Components.invoke(mapper, MapBuilder.<String, Object>create().put("ARRAY[]", array).build());
         Assert.assertNotNull(value);

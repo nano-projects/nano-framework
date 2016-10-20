@@ -16,7 +16,9 @@
 package org.nanoframework.server.component;
 
 import org.nanoframework.core.component.stereotype.Component;
+import org.nanoframework.core.component.stereotype.bind.PathVariable;
 import org.nanoframework.core.component.stereotype.bind.RequestMapping;
+import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 import org.nanoframework.server.component.impl.TomcatComponentImpl;
 
 import com.google.inject.ImplementedBy;
@@ -30,6 +32,15 @@ import com.google.inject.ImplementedBy;
 @ImplementedBy(TomcatComponentImpl.class)
 public interface TomcatComponent {
 
-    @RequestMapping("/hello")
+    @RequestMapping(value = "/hello/{val:\\d+}", method = RequestMethod.POST)
     String hello();
+    
+    @RequestMapping(value = "/hello/{val:\\d+}", method = RequestMethod.GET)
+    String hello2();
+    
+    @RequestMapping("/HELLO/{val:[A-Z]+}")
+    String hello2(@PathVariable("val") String val);
+    
+    @RequestMapping("/hello/{val:\\d+}/{ad}")
+    String hello(@PathVariable("val") Integer val, @PathVariable("ad") String ad);
 }

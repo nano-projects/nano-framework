@@ -15,7 +15,7 @@
  */
 package org.nanoframework.core;
 
-import org.nanoframework.core.stereotype.bind.MapperNodeTest;
+import org.nanoframework.core.stereotype.bind.RouteTests;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
@@ -28,7 +28,7 @@ import junit.framework.TestSuite;
 public class CoreTestSuite {
     public static Test suite() {
         TestSuite suite = new TestSuite("Nano Framework Core Test Suite");
-        suite.addTest(new JUnit4TestAdapter(MapperNodeTest.class));
+        suite.addTest(new JUnit4TestAdapter(RouteTests.class));
         return suite;
     }
 }

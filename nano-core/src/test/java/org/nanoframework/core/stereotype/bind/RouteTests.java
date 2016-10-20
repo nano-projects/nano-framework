@@ -32,20 +32,20 @@ import com.google.common.collect.Maps;
  * @author yanghe
  * @date 2015年9月23日 下午9:29:00
  */
-public class MapperNodeTest {
+public class RouteTests {
 
     @Test
-    public void addNodeTest() {
+    public void registerAndLookupTest() {
         System.setProperty(ApplicationContext.CONTEXT_ROOT, "/jetty");
         final Map<RequestMethod, RequestMapper> mapper = Maps.newHashMap();
         mapper.put(RequestMethod.GET, RequestMapper.create().setInstance(this).setCls(this.getClass()));
-        Routes.route().registerRoute("/jetty/test/{hello}/get", mapper);
-        Routes.route().registerRoute("/jetty/test/{hello}", mapper);
-        Routes.route().registerRoute("/jetty/test/{hello}/save", mapper);
-        Routes.route().registerRoute("/jetty/test/{hello}/put", mapper);
-        Routes.route().registerRoute("/jetty/test/{hello}/put/{id}", mapper);
-        Routes.route().registerRoute("/jetty/test/hello/put/{id:\\d+}/", mapper);
-        RequestMapper rm = Routes.route().lookupRoute("/jetty/test/hello/put/123", RequestMethod.GET);
+        Routes.route().register("/jetty/test/{hello}/get", mapper);
+        Routes.route().register("/jetty/test/{hello}", mapper);
+        Routes.route().register("/jetty/test/{hello}/save", mapper);
+        Routes.route().register("/jetty/test/{hello}/put", mapper);
+        Routes.route().register("/jetty/test/{hello}/put/{id}", mapper);
+        Routes.route().register("/jetty/test/hello/put/{id:\\d+}/", mapper);
+        RequestMapper rm = Routes.route().lookup("/jetty/test/hello/put/123", RequestMethod.GET);
         assertNotNull(rm);
         assertEquals("123", rm.getParam().get("id"));
     }

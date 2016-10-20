@@ -26,7 +26,22 @@ public class TomcatComponentImpl implements TomcatComponent {
 
     @Override
     public String hello() {
-        return "Hello World!";
+        return "hello";
+    }
+    
+    @Override
+    public String hello2() {
+        return "hello 2";
+    }
+
+    @Override
+    public String hello2(final String val) {
+        return "hello2 " + val;
+    }
+
+    @Override
+    public String hello(Integer val, String ad) {
+        return "hello " + val + " " + ad;
     }
 
 }
