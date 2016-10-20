@@ -240,6 +240,9 @@ public class JettyCustomServer extends Server {
                 if (mode == Mode.PROD) {
                     LOGGER.error("服务已启动或异常退出，请先删除jetty.pid文件后重试");
                     System.exit(1);
+                } else if (RuntimeUtil.existsProcess(readPidFile())) {
+                    LOGGER.error("服务已启动，请先停止原进程");
+                    System.exit(1);
                 } else {
                     file.delete();
                 }
