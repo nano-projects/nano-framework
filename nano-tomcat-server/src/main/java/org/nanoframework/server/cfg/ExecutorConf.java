@@ -23,6 +23,8 @@ import org.apache.catalina.core.StandardThreadExecutor;
  * @since 1.4.2
  */
 public class ExecutorConf extends AbstractConf {
+    public static final String TOMCAT_EXECUTOR = "context.tomcat.executor";
+    
     private static final long serialVersionUID = 4483458534269995105L;
 
     static {
@@ -143,4 +145,11 @@ public class ExecutorConf extends AbstractConf {
         this.threadRenewalDelay = threadRenewalDelay;
     }
 
+    /* (non-Javadoc)
+     * @see org.nanoframework.server.cfg.AbstractConf#confName()
+     */
+    @Override
+    public String confName() {
+        return TOMCAT_EXECUTOR;
+    }
 }

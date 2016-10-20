@@ -17,14 +17,14 @@ package org.nanoframework.server.cfg;
 
 import org.apache.catalina.connector.Connector;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
 /**
  *
  * @author yanghe
  * @since 1.4.2
  */
 public class ConnectorConf extends AbstractConf {
+    public static final String TOMCAT_CONNECTOR = "context.tomcat.connector";
+    
     private static final long serialVersionUID = -5280315541834101307L;
 
     static {
@@ -43,7 +43,7 @@ public class ConnectorConf extends AbstractConf {
         conf.noCompressionUserAgents = "gozilla, traviata";
         conf.acceptorThreadCount = 2;
         conf.compressableMimeType = "text/html,text/xml,text/plain,text/css,text/javascript,application/javascript";
-        conf.uriEncoding = "UTF-8";
+        conf.URIEncoding = "UTF-8";
         DEF = conf;
     }
 
@@ -61,8 +61,7 @@ public class ConnectorConf extends AbstractConf {
     private String noCompressionUserAgents;
     private Integer acceptorThreadCount;
     private String compressableMimeType;
-    @JSONField(name = "URIEncoding")
-    private String uriEncoding;
+    private String URIEncoding;
     
     private ConnectorConf() {
         
@@ -86,7 +85,7 @@ public class ConnectorConf extends AbstractConf {
         connector.setAttribute("noCompressionUserAgents", noCompressionUserAgents);
         connector.setAttribute("acceptorThreadCount", acceptorThreadCount);
         connector.setAttribute("compressableMimeType", compressableMimeType);
-        connector.setURIEncoding(uriEncoding);
+        connector.setURIEncoding(URIEncoding);
         return connector;
     }
 
@@ -202,12 +201,16 @@ public class ConnectorConf extends AbstractConf {
         this.compressableMimeType = compressableMimeType;
     }
 
-    public String getUriEncoding() {
-        return uriEncoding;
+    public String getURIEncoding() {
+        return URIEncoding;
     }
 
-    public void setUriEncoding(final String uriEncoding) {
-        this.uriEncoding = uriEncoding;
+    public void setURIEncoding(final String URIEncoding) {
+        this.URIEncoding = URIEncoding;
     }
 
+    @Override
+    public String confName() {
+        return TOMCAT_CONNECTOR;
+    }
 }

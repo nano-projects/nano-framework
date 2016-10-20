@@ -15,6 +15,8 @@
  */
 package org.nanoframework.server;
 
+import static org.nanoframework.server.cfg.ExecutorConf.TOMCAT_EXECUTOR;
+import static org.nanoframework.server.cfg.ConnectorConf.TOMCAT_CONNECTOR;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -67,10 +69,6 @@ import com.alibaba.fastjson.TypeReference;
 public class TomcatCustomServer extends Tomcat {
     private static final Logger LOGGER = LoggerFactory.getLogger(TomcatCustomServer.class);
 
-    private static final String TOMCAT_EXECUTOR = "context.tomcat.executor";
-    
-    private static final String TOMCAT_CONNECTOR = "context.tomcat.connector";
-    
     private static final String DEFAULT_TOMCAT_BASE_TEMP_DIR = "tomcat-base";
     
     private static final String TOMCAT_PID_FILE = "tomcat.pid";
@@ -133,7 +131,7 @@ public class TomcatCustomServer extends Tomcat {
     protected void initExecutor() {
         final TypeReference<ExecutorConf> type = new TypeReference<ExecutorConf>() { };
         final ExecutorConf conf = new ExecutorConf(JSON.parseObject(context.getProperty(TOMCAT_EXECUTOR), type)); 
-        LOGGER.debug("Tomcat Executor: {}", conf.toString());
+        LOGGER.debug("{}", conf.toString());
         final Executor executor = conf.init();
         getService().addExecutor(executor);
     }
@@ -142,7 +140,7 @@ public class TomcatCustomServer extends Tomcat {
     protected void initConnector() {
         final TypeReference<ConnectorConf> type = new TypeReference<ConnectorConf>() { };
         final ConnectorConf conf = new ConnectorConf(JSON.parseObject(context.getProperty(TOMCAT_CONNECTOR), type));
-        LOGGER.debug("Tomcat Connector: {}", conf.toString());
+        LOGGER.debug("{}", conf.toString());
         final Connector connector = conf.init();
         final Service service = getService();
         final Executor executor = service.getExecutor(conf.getExecutor());

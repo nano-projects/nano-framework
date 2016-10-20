@@ -20,6 +20,9 @@ import java.util.Arrays;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.entity.BaseEntity;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
 /**
  *
  * @author yanghe
@@ -48,4 +51,25 @@ public abstract class AbstractConf extends BaseEntity {
             }
         });
     }
+    
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder();
+        builder.append('\n');
+        builder.append(confName());
+        builder.append(" = { \n");
+        Arrays.asList(this.attributeNames()).forEach(key -> {
+            final Object value = this.attributeValue(key);
+            builder.append("  \"");
+            builder.append(key);
+            builder.append("\": ");
+            builder.append(JSON.toJSONString(value, SerializerFeature.WriteDateUseDateFormat));
+            builder.append(", \n");
+        });
+        
+        builder.append('}');
+        return builder.toString();
+    }
+    
+    public abstract String confName();
 }
