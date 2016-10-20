@@ -36,9 +36,4 @@ public class ComponentServiceRepeatException extends RuntimeException {
         super(message, cause);
     }
 
-    @Override
-    public String getMessage() {
-        return "组件服务重复异常: " + super.getMessage();
-    }
-
 }

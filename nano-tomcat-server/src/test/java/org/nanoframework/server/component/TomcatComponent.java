@@ -38,8 +38,11 @@ public interface TomcatComponent {
     @RequestMapping(value = "/hello/{val:\\d+}", method = RequestMethod.GET)
     String hello2();
     
-    @RequestMapping("/HELLO/{val:[A-Z]+}")
+    @RequestMapping("/HELLO/{val:[A-G]+}")
     String hello2(@PathVariable("val") String val);
+    
+    @RequestMapping("/HELLO/{val:[E-Z]+}")
+    String hello3(@PathVariable("val") String val);
     
     @RequestMapping("/hello/{val:\\d+}/{ad}")
     String hello(@PathVariable("val") Integer val, @PathVariable("ad") String ad);

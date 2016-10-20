@@ -38,6 +38,11 @@ public class TomcatComponentImpl implements TomcatComponent {
     public String hello2(final String val) {
         return "hello2 " + val;
     }
+    
+    @Override
+    public String hello3(String val) {
+        return "hello3 " + val;
+    }
 
     @Override
     public String hello(Integer val, String ad) {

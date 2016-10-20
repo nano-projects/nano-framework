@@ -40,15 +40,15 @@ public class DispatcherServlet extends HttpServlet {
 		try {
 			final String pluginLoader = this.getInitParameter(ApplicationContext.PLUGIN_LOADER);
 			if(StringUtils.isBlank(pluginLoader)) {
-				LOGGER.debug("使用默认的插件加载器: " + DefaultPluginLoader.class.getName());
+				LOGGER.debug("Use default plugin loader: " + DefaultPluginLoader.class.getName());
 				new DefaultPluginLoader().init(this.getServletConfig());
 			} else {
 				final Class<?> cls = Class.forName(pluginLoader);
 				if(PluginLoader.class.isAssignableFrom(cls)) {
-					LOGGER.debug("使用插件加载器: " + pluginLoader);
+					LOGGER.debug("Use plugin loader: " + pluginLoader);
 					((PluginLoader) cls.newInstance()).init(this.getServletConfig());
 				} else {
-					throw new IllegalArgumentException("插件加载器必须继承PluginLoader类");
+					throw new IllegalArgumentException("The plugin loader must inherit from the PluginLoader class");
 				}
 			}
 		} catch(final Throwable e) {
