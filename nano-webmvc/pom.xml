@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>org.nanoframework</groupId>
 		<artifactId>nano</artifactId>
-		<version>1.4.2</version>
+		<version>1.4.3-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>nano-webmvc</artifactId>
