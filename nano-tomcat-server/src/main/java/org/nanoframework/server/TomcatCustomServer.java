@@ -78,9 +78,9 @@ public class TomcatCustomServer extends Tomcat {
     
     private static final String TOMCAT_PID_FILE = "tomcat.pid";
     
-    private String resourceBase = "./webRoot";
+    private String resourceBase = "webRoot";
     
-    private String defaultWebXmlPath = resourceBase + "/WEB-INF/default.xml";
+    private String defaultWebXmlPath = new File(resourceBase + "/WEB-INF/default.xml").getAbsolutePath();
     
     private Properties context;
     

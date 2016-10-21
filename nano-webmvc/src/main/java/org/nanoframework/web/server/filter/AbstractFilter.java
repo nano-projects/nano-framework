@@ -146,9 +146,19 @@ public abstract class AbstractFilter implements Filter {
                     final String line = scanner.nextLine();
                     final String[] kvs = line.split("&");
                     for (final String kv : kvs) {
+                        if (StringUtils.isBlank(kv)) {
+                            continue;
+                        }
+                        
                         final String[] keyValue = kv.split("=");
                         final String key = StringUtils.lowerCase(keyValue[0]);
-                        final String value = URLDecoder.decode(keyValue[1], Charsets.UTF_8.name());
+                        final String value;
+                        if (keyValue.length > 1) {
+                            value = URLDecoder.decode(keyValue[1], Charsets.UTF_8.name());
+                        } else {
+                            value = "";
+                        }
+                        
                         if (value.length() > 0) {
                             if (key.endsWith("[]")) {
                                 final String[] values = (String[]) parameter.get(key);
