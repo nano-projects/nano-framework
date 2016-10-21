@@ -15,8 +15,9 @@
  */
 package org.nanoframework.server;
 
-import static org.nanoframework.server.cfg.ExecutorConf.TOMCAT_EXECUTOR;
 import static org.nanoframework.server.cfg.ConnectorConf.TOMCAT_CONNECTOR;
+import static org.nanoframework.server.cfg.ExecutorConf.TOMCAT_EXECUTOR;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileWriter;
@@ -38,9 +39,11 @@ import java.util.concurrent.Executors;
 import javax.servlet.ServletException;
 
 import org.apache.catalina.Executor;
+import org.apache.catalina.LifecycleListener;
 import org.apache.catalina.Service;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.core.StandardContext;
+import org.apache.catalina.startup.ContextConfig;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.coyote.AbstractProtocol;
 import org.apache.tomcat.util.scan.Constants;
@@ -67,6 +70,8 @@ import com.alibaba.fastjson.TypeReference;
  * @since 1.4.2
  */
 public class TomcatCustomServer extends Tomcat {
+    public static final String READY = "org.apache.catalina.startup.READY";
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(TomcatCustomServer.class);
 
     private static final String DEFAULT_TOMCAT_BASE_TEMP_DIR = "tomcat-base";
@@ -74,6 +79,8 @@ public class TomcatCustomServer extends Tomcat {
     private static final String TOMCAT_PID_FILE = "tomcat.pid";
     
     private String resourceBase = "./webRoot";
+    
+    private String defaultWebXmlPath = resourceBase + "/WEB-INF/default.xml";
     
     private Properties context;
     
@@ -117,7 +124,15 @@ public class TomcatCustomServer extends Tomcat {
         initExecutor();
         initConnector();
         
-        final StandardContext ctx = (StandardContext) this.addWebapp(contextRoot, new File(this.resourceBase).getAbsolutePath());
+        final ContextConfig conf = new ContextConfig();
+        final StandardContext ctx = (StandardContext) this.addWebapp(getHost(), contextRoot, new File(this.resourceBase).getAbsolutePath(), conf);
+        conf.setDefaultWebXml(defaultWebXmlPath);
+        for (LifecycleListener listen : ctx.findLifecycleListeners()) {
+            if (listen instanceof DefaultWebXmlListener) {
+                ctx.removeLifecycleListener(listen);
+            }
+        }
+        
         ctx.setParentClassLoader(TomcatCustomServer.class.getClassLoader());
         
         //Disable TLD scanning by default
@@ -153,6 +168,7 @@ public class TomcatCustomServer extends Tomcat {
         try {
             writePid2File();
             this.start();
+            System.setProperty(READY, "true");
             this.getServer().await();
         } catch (final Throwable e) {
             LOGGER.error("Bootstrap server error: {}", e.getMessage());

@@ -28,6 +28,7 @@ import java.io.Writer;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,6 +39,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.ContentType;
 import org.nanoframework.commons.util.ObjectUtils;
@@ -123,18 +125,47 @@ public abstract class AbstractFilter implements Filter {
         }
     }
 
-    protected URLContext create(HttpServletRequest request) throws IOException {
+    protected URLContext create(final HttpServletRequest request) throws IOException {
         final Map<String, Object> parameter = new HashMap<>();
         request.getParameterMap().forEach((key, value) -> {
             if (value.length > 0) {
-                if (key.endsWith("[]"))
+                if (key.endsWith("[]")) {
                     parameter.put(key.toLowerCase(), value);
-                else
+                } else {
                     parameter.put(key.toLowerCase(), value[0]);
-
+                }
             }
         });
-
+        
+        // NANO-420: tomcat put、delete等请求参数处理
+        final String contentType = request.getContentType();
+        if (StringUtils.isBlank(contentType)
+                || StringUtils.equals(contentType.split(";")[0], ContentType.APPLICATION_FORM_URLENCODED.split(";")[0])) {
+            try (final Scanner scanner = new Scanner(request.getInputStream())) {
+                while (scanner.hasNextLine()) {
+                    final String line = scanner.nextLine();
+                    final String[] kvs = line.split("&");
+                    for (final String kv : kvs) {
+                        final String[] keyValue = kv.split("=");
+                        final String key = StringUtils.lowerCase(keyValue[0]);
+                        final String value = URLDecoder.decode(keyValue[1], Charsets.UTF_8.name());
+                        if (value.length() > 0) {
+                            if (key.endsWith("[]")) {
+                                final String[] values = (String[]) parameter.get(key);
+                                if (values == null) {
+                                    parameter.put(key, new String[] { value });
+                                } else {
+                                    parameter.put(key, ArrayUtils.add(values, value));
+                                }
+                            } else {
+                                parameter.put(key, value);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         final String uri = URLDecoder.decode(((HttpServletRequest) request).getRequestURI(), Charsets.UTF_8.name());
         final URLContext urlContext = URLContext.create().setContext(uri).setParameter(parameter);
         final String[] uris = uri.split(";");
