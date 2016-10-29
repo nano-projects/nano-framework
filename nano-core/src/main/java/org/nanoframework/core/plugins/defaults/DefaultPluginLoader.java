@@ -15,6 +15,7 @@
  */
 package org.nanoframework.core.plugins.defaults;
 
+import org.nanoframework.commons.util.ReflectUtils;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.plugins.Configure;
@@ -56,6 +57,16 @@ public class DefaultPluginLoader extends PluginLoader {
         modules.add(new JedisModule());
         modules.add(new BindModule());
         modules.add(new APIModule());
+    }
+    
+    @Override
+    protected void configChildrenModules(final Configure<Module> modules) {
+        try {
+            final Module dubboModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.dubbo.DubboModule");
+            modules.add(dubboModule);
+        } catch (final Throwable e) {
+            // ignore
+        }
     }
 
     @Override

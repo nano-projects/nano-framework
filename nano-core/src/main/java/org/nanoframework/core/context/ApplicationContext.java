@@ -55,6 +55,8 @@ public final class ApplicationContext {
     
     public static final String API_BASE_PACKAGE = "context.api-scan.base-package";
     
+    public static final String DUBBO_SERVICE_BASE_PACKAGE = "context.dubbo-service.base-package";
+    
     /**
      * Redis Configure to context.properties.
      * @since 1.3.16
