@@ -57,12 +57,18 @@ public class DefaultPluginLoader extends PluginLoader {
         modules.add(new JedisModule());
         modules.add(new BindModule());
         modules.add(new APIModule());
+        try {
+            final Module dubboModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.dubbo.DubboReferenceModule");
+            modules.add(dubboModule);
+        } catch (final Throwable e) {
+            // ignore
+        }
     }
     
     @Override
     protected void configChildrenModules(final Configure<Module> modules) {
         try {
-            final Module dubboModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.dubbo.DubboModule");
+            final Module dubboModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.dubbo.DubboServiceModule");
             modules.add(dubboModule);
         } catch (final Throwable e) {
             // ignore
