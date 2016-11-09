@@ -52,6 +52,7 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
+import org.nanoframework.commons.util.ResourceUtils;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.context.ApplicationContext;
@@ -80,7 +81,9 @@ public class TomcatCustomServer extends Tomcat {
     
     private String resourceBase = "webRoot";
     
-    private String defaultWebXmlPath = new File(resourceBase + "/WEB-INF/default.xml").getAbsolutePath();
+    private File defaultWebXml = ResourceUtils.getFile("classpath:META-INF/tomcat/web.xml");
+    
+    private File globalWebXml = new File(resourceBase + "/WEB-INF/default.xml");
     
     private Properties context;
     
@@ -126,7 +129,12 @@ public class TomcatCustomServer extends Tomcat {
         
         final ContextConfig conf = new ContextConfig();
         final StandardContext ctx = (StandardContext) this.addWebapp(getHost(), contextRoot, new File(this.resourceBase).getAbsolutePath(), conf);
-        conf.setDefaultWebXml(defaultWebXmlPath);
+        if (globalWebXml.exists()) {
+            conf.setDefaultWebXml(globalWebXml.getAbsolutePath());
+        } else {
+            conf.setDefaultWebXml(defaultWebXml.getAbsolutePath());
+        }
+        
         for (LifecycleListener listen : ctx.findLifecycleListeners()) {
             if (listen instanceof DefaultWebXmlListener) {
                 ctx.removeLifecycleListener(listen);
