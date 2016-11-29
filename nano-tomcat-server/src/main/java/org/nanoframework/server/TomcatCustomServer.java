@@ -52,7 +52,6 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.commons.util.ResourceUtils;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.context.ApplicationContext;
@@ -81,7 +80,7 @@ public class TomcatCustomServer extends Tomcat {
     
     private String resourceBase = "webRoot";
     
-    private File defaultWebXml = ResourceUtils.getFile("classpath:META-INF/tomcat/web.xml");
+    private String defaultWebXml = "/META-INF/tomcat/web.xml";
     
     private File globalWebXml = new File(resourceBase + "/WEB-INF/default.xml");
     
@@ -129,11 +128,8 @@ public class TomcatCustomServer extends Tomcat {
         
         final ContextConfig conf = new ContextConfig();
         final StandardContext ctx = (StandardContext) this.addWebapp(getHost(), contextRoot, new File(this.resourceBase).getAbsolutePath(), conf);
-        if (globalWebXml.exists()) {
-            conf.setDefaultWebXml(globalWebXml.getAbsolutePath());
-        } else {
-            conf.setDefaultWebXml(defaultWebXml.getAbsolutePath());
-        }
+        createGlobalXml();
+        conf.setDefaultWebXml(globalWebXml.getAbsolutePath());
         
         for (LifecycleListener listen : ctx.findLifecycleListeners()) {
             if (listen instanceof DefaultWebXmlListener) {
@@ -170,6 +166,19 @@ public class TomcatCustomServer extends Tomcat {
         ((AbstractProtocol) connector.getProtocolHandler()).setExecutor(executor);
         setConnector(connector);
         service.addConnector(connector);
+    }
+    
+    protected void createGlobalXml() throws IOException {
+        if (!globalWebXml.exists()) {
+            try (final Scanner scanner = new Scanner(TomcatCustomServer.class.getResourceAsStream(defaultWebXml));
+                    final FileWriter writer = new FileWriter(globalWebXml.getAbsolutePath(), false)) {
+                while (scanner.hasNextLine()) {
+                    writer.write(scanner.nextLine() + '\n');
+                }
+                
+                writer.flush();
+            }
+        }
     }
     
     protected void startServer() {
