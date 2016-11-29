@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.nanoframework</groupId>
         <artifactId>nano-orm</artifactId>
-        <version>1.4.3-SNAPSHOT</version>
+        <version>1.4.3</version>
     </parent>
     <artifactId>nano-orm-jedis</artifactId>
     <name>Nano ORM Jedis</name>
