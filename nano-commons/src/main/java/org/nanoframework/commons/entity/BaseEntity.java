@@ -42,11 +42,11 @@ import com.google.common.collect.Maps;
  */
 public abstract class BaseEntity implements Cloneable, Serializable {
     private static final long serialVersionUID = 3188627488044889912L;
-    private static final List<String> FILTER_FIELD_NAMES = Lists.newArrayList("names", "cls", "methods", "fields");
+    private static final transient List<String> FILTER_FIELD_NAMES = Lists.newArrayList("names", "cls", "methods", "fields");
 
-    protected final Map<String, Method> methods = paramMethods();
-    protected final Map<String, Field> fields = paramFields();
-    private String[] names;
+    protected final transient Map<String, Method> methods = paramMethods();
+    protected final transient Map<String, Field> fields = paramFields();
+    private transient String[] names;
 
     /**
      * 获取所有属性名.
