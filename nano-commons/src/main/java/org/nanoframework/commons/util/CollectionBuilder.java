@@ -22,7 +22,9 @@ import java.util.Collection;
  *
  * @author yanghe
  * @since 1.3.7
+ * @deprecated 使用Guava中的Lists替代此类
  */
+@Deprecated
 public class CollectionBuilder<E> {
     private Collection<E> collection;
 

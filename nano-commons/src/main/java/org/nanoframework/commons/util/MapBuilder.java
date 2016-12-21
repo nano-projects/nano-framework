@@ -22,12 +22,14 @@ import java.util.Map;
  *
  * @author yanghe
  * @since 1.3.7
+ * @deprecated 使用Guava中的ImmutableMap替代此类
  */
+@Deprecated
 public class MapBuilder<K, V> {
     private Map<K, V> map;
 
     private MapBuilder() {
-
+        
     }
 
     public static <K, V> MapBuilder<K, V> create() {

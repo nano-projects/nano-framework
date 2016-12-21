@@ -20,24 +20,30 @@ import java.util.Map;
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.CollectionUtils;
 
+import com.google.common.collect.Maps;
+
 /**
  * Http 返回消息对象
  * @author yanghe
  * @since 1.0 
  */
+@SuppressWarnings("rawtypes")
 public class ResultMap extends BaseEntity {
 	private static final long serialVersionUID = -4525859189036534494L;
 	
-	/** 描述 */
+	/** 描述. */
 	private String info;
-	/** 状态码 */
+	/** 状态码. */
 	private int status;
-	/** 消息内容 */
+	/** 消息内容. */
 	private String message;
+	/** 消息结果. */
+    private Map values;
 	
 	public static final String INFO = "info";
 	public static final String STATUS = "status";
 	public static final String MESSAGE = "message";
+	public static final String VALUES = "values";
 	
 	private ResultMap(int status, String message, String info) {
 		this.status = status;
@@ -91,4 +97,52 @@ public class ResultMap extends BaseEntity {
 	public String getMessage() {
 		return message;
 	}
+	
+	/**
+     * @return the values
+     */
+    public Map getValues() {
+        return values;
+    }
+    
+    /**
+     * @param values the values to set
+     */
+    public void setValues(final Map values) {
+        this.values = values;
+    }
+	
+	public <K, V> Builder<K, V> builder() {
+	    return new Builder<>(this);
+	}
+
+    public static class Builder<K, V> {
+        private final ResultMap res;
+        private final Map<K, V> map;
+
+        private Builder(final ResultMap res) {
+            this.res = res;
+            this.map = Maps.newConcurrentMap();
+        }
+        
+        public Builder<K, V> put(final K key, final V value) {
+            map.put(key, value);
+            return this;
+        }
+        
+        public Builder<K, V> putAll(final Map<K, V> map) {
+            this.map.putAll(map);
+            return this;
+        }
+        
+        public Builder<K, V> putIfAbsent(final K key, final V value) {
+            map.putIfAbsent(key, value);
+            return this;
+        }
+
+        public ResultMap build() {
+            this.res.values = map;
+            return res;
+        }
+    }
 }
