@@ -21,8 +21,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
+
+import com.google.common.collect.ImmutableMap;
 
 /**
  *
@@ -33,7 +34,7 @@ public class EnvironmentFilter extends AbstractFilter {
 
     @Override
     protected boolean invoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-        HttpContext.set(MapBuilder.<Class<?>, Object> create().put(HttpServletRequest.class, request).put(HttpServletResponse.class, response).build());
+        HttpContext.set(ImmutableMap.<Class<?>, Object> builder().put(HttpServletRequest.class, request).put(HttpServletResponse.class, response).build());
         return true;
     }
 

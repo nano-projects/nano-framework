@@ -27,7 +27,6 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.ContentType;
-import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.component.exception.BindRequestParamException;
 import org.nanoframework.core.component.exception.ComponentInvokeException;
@@ -39,6 +38,7 @@ import org.nanoframework.web.server.mvc.Model;
 import org.nanoframework.web.server.mvc.support.RedirectModel;
 
 import com.alibaba.fastjson.JSON;
+import com.google.common.collect.ImmutableMap;
 /**
  * Http请求拦截器 <br>
  * 此拦截器为NanoFramework框架的请求主入口 <br>
@@ -65,7 +65,7 @@ public class HttpRequestFilter extends AbstractFilter {
 				}
 				
 				Model model = new RedirectModel();
-				HttpContext.set(MapBuilder.<Class<?>, Object> create()
+				HttpContext.set(ImmutableMap.<Class<?>, Object> builder()
 				        .put(HttpServletRequest.class, request)
 		                .put(HttpServletResponse.class, response)
 		                .put(Model.class, model)
