@@ -21,7 +21,7 @@
 	<parent>
 		<groupId>org.nanoframework</groupId>
 		<artifactId>nano</artifactId>
-		<version>1.4.5-SNAPSHOT</version>
+		<version>1.4.5</version>
 	</parent>
 	<artifactId>nano-jetty-server</artifactId>
 	<name>Nano Embedded Jetty Server</name>
