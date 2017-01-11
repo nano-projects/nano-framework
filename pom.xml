@@ -27,7 +27,7 @@
 
     <groupId>org.nanoframework</groupId>
     <artifactId>nano</artifactId>
-    <version>1.4.5</version>
+    <version>1.4.6-SNAPSHOT</version>
     <packaging>pom</packaging>
     <inceptionYear>2015</inceptionYear>
 
