@@ -39,6 +39,7 @@ import org.nanoframework.web.server.mvc.support.RedirectModel;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 /**
  * Http请求拦截器 <br>
  * 此拦截器为NanoFramework框架的请求主入口 <br>
@@ -106,7 +107,7 @@ public class HttpRequestFilter extends AbstractFilter {
 	    private static ThreadLocal<Map<Class<?>, Object>> CONTEXT = new ThreadLocal<>();
 	    protected static void set(Map<Class<?>, Object> context) {
 	        clear();
-	        CONTEXT.set(context);
+	        CONTEXT.set(Maps.newLinkedHashMap(context));
 	    }
 	    
 	    protected static void clear() {
