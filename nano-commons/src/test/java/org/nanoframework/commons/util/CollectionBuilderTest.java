@@ -26,7 +26,9 @@ import org.junit.Test;
  *
  * @author yanghe
  * @since 1.3.15
+ * @deprecated 使用Guava中的Lists代替此实现类
  */
+@Deprecated
 public class CollectionBuilderTest {
 
     @Test

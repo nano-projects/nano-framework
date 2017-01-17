@@ -26,7 +26,9 @@ import org.junit.Test;
  *
  * @author yanghe
  * @since 1.3.15
+ * @deprecated 现在使用Guava ImmutableMap 来代替次实现类
  */
+@Deprecated
 public class MapBuilderTest {
 
     @Test

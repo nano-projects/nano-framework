@@ -21,12 +21,13 @@ import java.io.IOException;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.nanoframework.commons.exception.Md5Exception;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+
+import com.google.common.collect.Maps;
 
 /**
  * 
@@ -36,19 +37,17 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 public class MD5Utils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MD5Utils.class);
 
-    private static char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-
-    private static MessageDigest MESSAGE_DIGEST;
-
-    private static ConcurrentMap<String, String> FILE_MD5_MAP = new ConcurrentHashMap<String, String>();
-
-    static {
-        try {
-            MESSAGE_DIGEST = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error("MD5FileUtil messagedigest初始化失败", e);
-        }
-    }
+    private static final char[] HEX_DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+    private static final ConcurrentMap<String, String> FILE_MD5_MAP = Maps.newConcurrentMap();
+    private static final ThreadLocal<MessageDigest> MESSAGE_DIGEST = new ThreadLocal<MessageDigest>() {
+        protected MessageDigest initialValue() {
+            try {
+                return MessageDigest.getInstance("MD5");
+            } catch (final Throwable e) {
+                throw new Md5Exception(e.getMessage(), e);
+            }
+        };
+    };
 
     private MD5Utils() {
     }
@@ -65,8 +64,9 @@ public class MD5Utils {
             in = new FileInputStream(file);
             ch = in.getChannel();
             final MappedByteBuffer byteBuffer = ch.map(FileChannel.MapMode.READ_ONLY, 0, file.length());
-            MESSAGE_DIGEST.update(byteBuffer);
-            md5 = bufferToHex(MESSAGE_DIGEST.digest());
+            final MessageDigest digest = MESSAGE_DIGEST.get();
+            digest.update(byteBuffer);
+            md5 = bufferToHex(digest.digest());
 
             FILE_MD5_MAP.put(file.getAbsolutePath(), md5);
         } catch (final Exception e) {
@@ -87,7 +87,6 @@ public class MD5Utils {
         }
 
         return md5;
-
     }
 
     public static String md5(final String s) {
@@ -95,8 +94,13 @@ public class MD5Utils {
     }
 
     public static String md5(final byte[] bytes) {
-        MESSAGE_DIGEST.update(bytes);
-        return bufferToHex(MESSAGE_DIGEST.digest());
+        try {
+            final MessageDigest digest = MESSAGE_DIGEST.get();
+            digest.update(bytes);
+            return bufferToHex(digest.digest());
+        } catch (final Throwable e) {
+            throw new Md5Exception(e.getMessage(), e);
+        }
     }
 
     private static String bufferToHex(final byte bytes[]) {
