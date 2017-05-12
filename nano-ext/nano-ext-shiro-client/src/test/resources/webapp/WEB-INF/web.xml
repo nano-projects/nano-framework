@@ -1,0 +1,97 @@
+<!-- 
+
+    Copyright 2015-2016 the original author or authors.
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+    
+        http://www.apache.org/licenses/LICENSE-2.0
+    
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    
+-->
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee  http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+	version="3.0">
+	<display-name>Nano Shiro Client</display-name>
+
+
+    <filter>
+        <filter-name>authenticationFilter</filter-name>
+        <filter-class>org.nanoframework.extension.shiro.client.authentication.AuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>shiroSessionURL</param-name>
+            <param-value>http://localhost:7000/fancy/sso/v1/session</param-value>
+        </init-param>
+        <init-param>
+            <param-name>shiroSessionBindURL</param-name>
+            <param-value>http://localhost:7000/fancy/sso/v1/session/bind</param-value>
+        </init-param>
+        <init-param>
+            <param-name>serverName</param-name>
+            <param-value>http://localhost:8080</param-value>
+        </init-param>
+        <!-- <init-param>
+            <param-name>ignorePattern</param-name>
+            <param-value>/*/(js|css|images|scripts|random|controls|login|tickets)</param-value> 
+        </init-param> -->
+    </filter>
+    <filter-mapping>
+        <filter-name>authenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <filter-name>ticketServiceValidateFilter</filter-name>
+        <filter-class>org.nanoframework.extension.shiro.client.validation.TicketServiceValidateFilter</filter-class>
+        <init-param>
+            <param-name>shiroSessionURL</param-name>
+            <param-value>http://localhost:7000/fancy/sso/v1/session</param-value>
+        </init-param>
+        <init-param>
+            <param-name>shiroSessionBindURL</param-name>
+            <param-value>http://localhost:7000/fancy/sso/v1/session/bind</param-value>
+        </init-param>
+        <init-param>
+            <param-name>serverName</param-name>
+            <param-value>http://localhost:8080</param-value>
+        </init-param>
+        <!-- <init-param>
+            <param-name>ignorePattern</param-name>
+            <param-value>/*/(js|css|images|scripts|random|controls|login|tickets)</param-value> 
+        </init-param> -->
+    </filter>
+    <filter-mapping>
+        <filter-name>ticketServiceValidateFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+	<filter>
+		<filter-name>httpRequestFilter</filter-name>
+		<filter-class>org.nanoframework.web.server.filter.HttpRequestFilter</filter-class>
+	</filter>
+
+	<filter-mapping>
+		<filter-name>httpRequestFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+	<servlet>
+		<servlet-name>Dispatcher-Servlet</servlet-name>
+		<servlet-class>org.nanoframework.web.server.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>Dispatcher-Servlet</servlet-name>
+		<url-pattern>/dispatcher/*</url-pattern>
+	</servlet-mapping>
+
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

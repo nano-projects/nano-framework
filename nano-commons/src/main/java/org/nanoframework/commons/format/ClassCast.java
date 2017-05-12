@@ -290,14 +290,8 @@ public final class ClassCast {
                             return value;
                         }
 
-                        final TypeReference<Object> type = new TypeReference<Object>() {
-                            public Type getType() {
-                                return cls;
-                            };
-                        };
-
                         try {
-                            return JSON.parseObject((String) value, type);
+                            return JSON.parseObject((String) value, cls);
                         } catch (final Throwable e) {
                             LoggerFactory.getLogger(ClassCast.class).error("ClassCast value error: " + value, e);
                         }
