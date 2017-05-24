@@ -12,8 +12,9 @@ before_script:
 before_install:
   - git clone https://github.com/riveryang/dubbox.git
   - cd dubbox
+  - cp build-notest.sh build-dubbo.sh
   - git checkout dubbo-parent-3.0.0
-  - ./build-notest.sh
+  - ./build-dubbo.sh
   - cd ..
   - rm -rf dubbox
 
