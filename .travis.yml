@@ -12,7 +12,7 @@ before_script:
 before_install:
   - git clone https://github.com/riveryang/dubbox.git
   - cd dubbox
-  - ./build.sh
+  - ./build-notest.sh
   - cd ..
   - rm -rf dubbox
 
