@@ -6,18 +6,18 @@ services:
   - docker
   - docker-compose
 
-install:
-  - docker pull redis:alpine
-  - docker run -d --name redis_6380 -p 6380:6379 redis:alpine
-  - docker run -d --name redis_6381 -p 6381:6379 redis:alpine
-  - docker-compose up -d
-  
-before_script:
+before_install:
   - git clone https://github.com/riveryang/dubbox.git
   - cd dubbox
   - mvn clean install -Dmaven.test.skip=true
   - cd ..
   - rm -rf dubbox
+
+install:
+  - docker pull redis:alpine
+  - docker run -d --name redis_6380 -p 6380:6379 redis:alpine
+  - docker run -d --name redis_6381 -p 6381:6379 redis:alpine
+  - docker-compose up -d
   
 notifications:
   email: false
