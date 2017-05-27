@@ -18,11 +18,12 @@ package org.nanoframework.core.plugins;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServlet;
 
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.commons.util.Assert;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.globals.Globals;
 
@@ -43,10 +44,19 @@ public abstract class PluginLoader {
     private Configure<Module> childrenModules = new Configure<>();
 
     protected ServletConfig config;
+    protected ServletContext context;
+
+    public void init(final HttpServlet servlet) {
+        this.init(servlet.getServletConfig(), servlet.getServletContext());
+    }
 
     public void init(final ServletConfig config) {
-        Assert.notNull(config);
+        this.init(config, null);
+    }
+
+    public void init(final ServletConfig config, final ServletContext context) {
         this.config = config;
+        this.context = context;
 
         try {
             initProperties();
@@ -89,7 +99,7 @@ public abstract class PluginLoader {
         Globals.set(Injector.class, Guice.createInjector(loadedModules));
         logger.info("Inject Modules complete, times: {}ms", System.currentTimeMillis() - time);
     }
-    
+
     private void initChildrenModules() throws Throwable {
         final long time = System.currentTimeMillis();
         configChildrenModules(this.childrenModules);
@@ -106,7 +116,7 @@ public abstract class PluginLoader {
         Globals.set(Injector.class, parent.createChildInjector(loadedModules));
         logger.info("Inject Children Modules complete, times: {}ms", System.currentTimeMillis() - time);
     }
-    
+
     private void initPlugins() throws Throwable {
         final long time = System.currentTimeMillis();
         configPlugin(plugins);
@@ -127,11 +137,11 @@ public abstract class PluginLoader {
         Components.load();
         logger.info("Inject Component complete, times: {}ms", System.currentTimeMillis() - time);
     }
-    
+
     protected abstract void configProperties(Configure<String> properties);
 
     protected abstract void configModules(Configure<Module> modules);
-    
+
     protected abstract void configChildrenModules(Configure<Module> modules);
 
     protected abstract void configPlugin(Configure<Plugin> plugins);

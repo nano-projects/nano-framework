@@ -15,6 +15,8 @@
  */
 package org.nanoframework.core.plugins.defaults;
 
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.ReflectUtils;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.context.ApplicationContext;
@@ -38,6 +40,11 @@ import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
  * @since 1.1
  */
 public class DefaultPluginLoader extends PluginLoader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPluginLoader.class);
+    
+    public static PluginLoader newInstance() {
+        return new DefaultPluginLoader();
+    }
 
     @Override
     protected void configProperties(final Configure<String> properties) {
@@ -61,24 +68,24 @@ public class DefaultPluginLoader extends PluginLoader {
             final Module dubboModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.dubbo.DubboReferenceModule");
             modules.add(dubboModule);
         } catch (final Throwable e) {
-            // ignore
+            LOGGER.warn("创建Module异常: org.nanoframework.extension.dubbo.DubboReferenceModule, {}", e.getMessage());
         }
-        
+
         try {
-            final Module shiroWebModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.shiro.ShiroWebModule");
+            final Module shiroWebModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.shiro.ShiroWebModule", this.context);
             modules.add(shiroWebModule);
         } catch (final Throwable e) {
-            // ignore
+            LOGGER.warn("创建Module异常: org.nanoframework.extension.shiro.ShiroWebModule, {}", e.getMessage());
         }
     }
-    
+
     @Override
     protected void configChildrenModules(final Configure<Module> modules) {
         try {
             final Module dubboModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.dubbo.DubboServiceModule");
             modules.add(dubboModule);
         } catch (final Throwable e) {
-            // ignore
+            LOGGER.warn("创建Module异常: org.nanoframework.extension.dubbo.DubboServiceModule, {}", e.getMessage());
         }
     }
 

@@ -32,24 +32,24 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
  * @date 2015年12月8日 下午7:27:29
  */
 public class ShiroHelloWorldTest {
-	private Logger LOG = LoggerFactory.getLogger(ShiroHelloWorldTest.class);
-	
-	@Test
-	public void helloWorld() {
-		Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
-		SecurityManager manager = factory.getInstance();
-		SecurityUtils.setSecurityManager(manager);
-		Subject subject = SecurityUtils.getSubject();
-		UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
-		
-		try {
-			subject.login(token);
-		} catch(AuthenticationException e) {
-			LOG.error("Authentication Invalid: " + e.getMessage());
-		}
-		
-		Assert.assertEquals(true, subject.isAuthenticated());
-		
-		subject.logout();
-	}
+    private Logger LOG = LoggerFactory.getLogger(ShiroHelloWorldTest.class);
+
+    @Test
+    public void helloWorld() {
+        Factory<SecurityManager> factory = new IniSecurityManagerFactory("classpath:shiro.ini");
+        SecurityManager manager = factory.getInstance();
+        SecurityUtils.setSecurityManager(manager);
+        Subject subject = SecurityUtils.getSubject();
+        UsernamePasswordToken token = new UsernamePasswordToken("admin", "admin");
+
+        try {
+            subject.login(token);
+        } catch (AuthenticationException e) {
+            LOG.error("Authentication Invalid: " + e.getMessage());
+        }
+
+        Assert.assertEquals(true, subject.isAuthenticated());
+
+        subject.logout();
+    }
 }

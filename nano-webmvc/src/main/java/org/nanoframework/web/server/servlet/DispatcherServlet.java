@@ -31,30 +31,30 @@ import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
  * @since 1.0
  */
 public class DispatcherServlet extends HttpServlet {
-	private static final long serialVersionUID = 2341783013239890497L;
-	private Logger LOGGER = LoggerFactory.getLogger(DispatcherServlet.class);
-	
-	@Override
-	public void init() throws ServletException {
-		super.init();
-		try {
-			final String pluginLoader = this.getInitParameter(ApplicationContext.PLUGIN_LOADER);
-			if(StringUtils.isBlank(pluginLoader)) {
-				LOGGER.debug("Use default plugin loader: " + DefaultPluginLoader.class.getName());
-				new DefaultPluginLoader().init(this.getServletConfig());
-			} else {
-				final Class<?> cls = Class.forName(pluginLoader);
-				if(PluginLoader.class.isAssignableFrom(cls)) {
-					LOGGER.debug("Use plugin loader: " + pluginLoader);
-					((PluginLoader) cls.newInstance()).init(this.getServletConfig());
-				} else {
-					throw new IllegalArgumentException("The plugin loader must inherit from the PluginLoader class");
-				}
-			}
-		} catch(final Throwable e) {
-			LOGGER.error(e.getMessage(), e);
-			System.exit(1);
-		}
-	}
-	
+    private static final long serialVersionUID = 2341783013239890497L;
+    private Logger LOGGER = LoggerFactory.getLogger(DispatcherServlet.class);
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        try {
+            final String pluginLoader = this.getInitParameter(ApplicationContext.PLUGIN_LOADER);
+            if (StringUtils.isBlank(pluginLoader)) {
+                LOGGER.debug("Use default plugin loader: " + DefaultPluginLoader.class.getName());
+                DefaultPluginLoader.newInstance().init(this);
+            } else {
+                final Class<?> cls = Class.forName(pluginLoader);
+                if (PluginLoader.class.isAssignableFrom(cls)) {
+                    LOGGER.debug("Use plugin loader: " + pluginLoader);
+                    ((PluginLoader) cls.newInstance()).init(this);
+                } else {
+                    throw new IllegalArgumentException("The plugin loader must inherit from the PluginLoader class");
+                }
+            }
+        } catch (final Throwable e) {
+            LOGGER.error(e.getMessage(), e);
+            System.exit(1);
+        }
+    }
+
 }
