@@ -5,9 +5,9 @@
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
     You may obtain a copy of the License at
-    
+
         http://www.apache.org/licenses/LICENSE-2.0
-    
+
     Unless required by applicable law or agreed to in writing, software
     distributed under the License is distributed on an "AS IS" BASIS,
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,54 +15,53 @@
     limitations under the License.
     
 -->
-<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
-"http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
-	<!-- 配置Mybatis的环境，事务及数据源等等 -->
-	<environments default="${mybatis.environment.id}">
-		<environment id="${mybatis.environment.id}">
-			<transactionManager type="JDBC" />
-			<dataSource type="org.nanoframework.orm.mybatis.plugin.C3P0DataSourceFactory">
-				<property name="dataSourceName" value="${mybatis.environment.id}" />
-				<property name="driverClass" value="${JDBC.driver}" />
-				<property name="jdbcUrl" value="${JDBC.url}" />
-				<property name="user" value="${JDBC.username}" />
-				<property name="password" value="${JDBC.password}" />
-				
-				<property name="initialPoolSize" value="${c3p0.initialPoolSize}" />
-				<property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
-				<property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
-				<property name="maxStatements" value="${c3p0.maxStatements}" />
-				
-				<property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
-				<property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}" />
-				<property name="acquireRetryDelay" value="${c3p0.acquireRetryDelay}" />
-				<property name="autoCommitOnClose" value="${c3p0.autoCommitOnClose}" />
-				<property name="automaticTestTable" value="${c3p0.automaticTestTable}" />
-				<property name="breakAfterAcquireFailure" value="${c3p0.breakAfterAcquireFailure}" />
-				<property name="checkoutTimeout" value="${c3p0.checkoutTimeout}" />
-				<property name="connectionTesterClassName" value="${c3p0.connectionTesterClassName}" />
-				<property name="factoryClassLocation" value="${c3p0.factoryClassLocation}" />
-				<property name="forceIgnoreUnresolvedTransactions" value="${c3p0.forceIgnoreUnresolvedTransactions}" />
-				<property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}" />
-				<property name="maxStatementsPerConnection" value="${c3p0.maxStatementsPerConnection}" />
-				<property name="minPoolSize" value="${c3p0.minPoolSize}" />
-				<property name="numHelperThreads" value="${c3p0.numHelperThreads}" />
-				<property name="overrideDefaultUser" value="${c3p0.overrideDefaultUser}" />
-				<property name="overrideDefaultPassword" value="${c3p0.overrideDefaultPassword}" />
-				<property name="preferredTestQuery" value="${c3p0.preferredTestQuery}" />
-				<property name="propertyCycle" value="${c3p0.propertyCycle}" />
-				<property name="testConnectionOnCheckin" value="${c3p0.testConnectionOnCheckin}" />
-				<property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}" />
-			</dataSource>
-		</environment>
-	</environments>
-	
-	<!-- 指定映射文件或者映射类 -->
-	<!-- 填写需要注入的Mapper包的路径 -->
-	<!-- 现在使用MultiDataSourceModule进行Mapper加载，这样可以同时对多个包进行扫描，并且方便控制
-	<mappers>
-		<package name="${mapper.package.name}"/>
-	</mappers>
-	 -->
+  <!-- 配置Mybatis的环境，事务及数据源等等 -->
+  <environments default="${mybatis.environment.id}">
+    <environment id="${mybatis.environment.id}">
+      <transactionManager type="JDBC" />
+      <dataSource type="org.nanoframework.orm.mybatis.plugin.C3P0DataSourceFactory">
+        <property name="dataSourceName" value="${mybatis.environment.id}" />
+        <property name="driverClass" value="${JDBC.driver}" />
+        <property name="jdbcUrl" value="${JDBC.url}" />
+        <property name="user" value="${JDBC.username}" />
+        <property name="password" value="${JDBC.password}" />
+
+        <property name="initialPoolSize" value="${c3p0.initialPoolSize}" />
+        <property name="maxIdleTime" value="${c3p0.maxIdleTime}" />
+        <property name="maxPoolSize" value="${c3p0.maxPoolSize}" />
+        <property name="maxStatements" value="${c3p0.maxStatements}" />
+
+        <property name="acquireIncrement" value="${c3p0.acquireIncrement}" />
+        <property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}" />
+        <property name="acquireRetryDelay" value="${c3p0.acquireRetryDelay}" />
+        <property name="autoCommitOnClose" value="${c3p0.autoCommitOnClose}" />
+        <property name="automaticTestTable" value="${c3p0.automaticTestTable}" />
+        <property name="breakAfterAcquireFailure" value="${c3p0.breakAfterAcquireFailure}" />
+        <property name="checkoutTimeout" value="${c3p0.checkoutTimeout}" />
+        <property name="connectionTesterClassName" value="${c3p0.connectionTesterClassName}" />
+        <property name="factoryClassLocation" value="${c3p0.factoryClassLocation}" />
+        <property name="forceIgnoreUnresolvedTransactions" value="${c3p0.forceIgnoreUnresolvedTransactions}" />
+        <property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}" />
+        <property name="maxStatementsPerConnection" value="${c3p0.maxStatementsPerConnection}" />
+        <property name="minPoolSize" value="${c3p0.minPoolSize}" />
+        <property name="numHelperThreads" value="${c3p0.numHelperThreads}" />
+        <property name="overrideDefaultUser" value="${c3p0.overrideDefaultUser}" />
+        <property name="overrideDefaultPassword" value="${c3p0.overrideDefaultPassword}" />
+        <property name="preferredTestQuery" value="${c3p0.preferredTestQuery}" />
+        <property name="propertyCycle" value="${c3p0.propertyCycle}" />
+        <property name="testConnectionOnCheckin" value="${c3p0.testConnectionOnCheckin}" />
+        <property name="testConnectionOnCheckout" value="${c3p0.testConnectionOnCheckout}" />
+      </dataSource>
+    </environment>
+  </environments>
+  
+  <!-- 指定映射文件或者映射类 -->
+  <!-- 填写需要注入的Mapper包的路径 -->
+  <!-- 现在使用MultiDataSourceModule进行Mapper加载，这样可以同时对多个包进行扫描，并且方便控制
+  <mappers>
+    <package name="${mapper.package.name}"/>
+  </mappers>
+   -->
 </configuration>

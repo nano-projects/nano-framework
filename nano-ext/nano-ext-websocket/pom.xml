@@ -16,42 +16,45 @@
     limitations under the License.
     
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.nanoframework</groupId>
-        <artifactId>nano-ext</artifactId>
-        <version>1.4.6-SNAPSHOT</version>
-    </parent>
-    <artifactId>nano-ext-websocket</artifactId>
-    <name>Nano Ext Websocket</name>
-    <url>http://maven.apache.org</url>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cs.dir>${project.parent.parent.basedir}</cs.dir>
-    </properties>
-    <dependencies>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-handler</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-codec-http</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.nanoframework</groupId>
-            <artifactId>nano-commons</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.nanoframework</groupId>
-            <artifactId>nano-webmvc</artifactId>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.nanoframework</groupId>
+    <artifactId>nano-ext</artifactId>
+    <version>1.4.6-SNAPSHOT</version>
+  </parent>
+  <artifactId>nano-ext-websocket</artifactId>
+  <name>Nano Ext Websocket</name>
+  <url>http://maven.apache.org</url>
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <cs.dir>${project.parent.parent.basedir}</cs.dir>
+  </properties>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-handler</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-codec-http</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.nanoframework</groupId>
+      <artifactId>nano-commons</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.nanoframework</groupId>
+      <artifactId>nano-webmvc</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

@@ -63,7 +63,12 @@ public class RedisCache<K, V> implements Cache<K, V> {
 		for(Entry<String, RedisClient> item : sessions.entrySet()) {
 			try {
 				RedisClient client = item.getValue();
-				return SerializableUtils.decode(client.hget(cacheName, SerializableUtils.encode(key)));
+				final String encodeKey = SerializableUtils.encode(key);
+				if (StringUtils.isBlank(encodeKey)) {
+				    return null;
+				}
+				
+				return SerializableUtils.decode(client.hget(cacheName, encodeKey));
 			} catch(Exception e) {
 				LOG.error("读取Cache异常[get()][{}]: {}", item.getKey(), e.getMessage());
 			}

@@ -63,6 +63,13 @@ public class DefaultPluginLoader extends PluginLoader {
         } catch (final Throwable e) {
             // ignore
         }
+        
+        try {
+            final Module shiroWebModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.shiro.ShiroWebModule");
+            modules.add(shiroWebModule);
+        } catch (final Throwable e) {
+            // ignore
+        }
     }
     
     @Override

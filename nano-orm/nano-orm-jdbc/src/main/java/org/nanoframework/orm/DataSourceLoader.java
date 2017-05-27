@@ -43,6 +43,7 @@ public abstract class DataSourceLoader {
     public static final String MAPPER_PACKAGE_JDBC = "mapper.package.jdbc";
     public static final String MAPPER_PACKAGE_HELPER = "mapper.package.helper";
     public static final String JDBC_POOL_TYPE = "JDBC.pool.type";
+    public static final String MAPPER_PACKAGE_TYPE_ALIAS = "mapper.package.typeAlias";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceLoader.class);
 

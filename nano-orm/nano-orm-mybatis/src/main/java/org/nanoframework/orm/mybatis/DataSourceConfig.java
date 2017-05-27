@@ -29,76 +29,91 @@ import org.nanoframework.orm.PoolType;
  * @since 1.2
  */
 public class DataSourceConfig extends BaseEntity {
-	private static final long serialVersionUID = -3733512377087727530L;
-	
-	public static final String DEFAULT_MYBATIS_CONFIG_PATH = "/mybatis-config-";
-	public static final String XML_SUFFIX = ".xml";
+    private static final long serialVersionUID = -3733512377087727530L;
 
-	private String[] mapperPackageName;
-	private Properties jdbc;
-	private JdbcHelper helper;
-	private String envId;
-	private String mybatisConfigPath;
-	private PoolType poolType;
+    public static final String DEFAULT_MYBATIS_CONFIG_PATH = "/mybatis-config-";
+    public static final String XML_SUFFIX = ".xml";
 
-	public DataSourceConfig(String[] mapperPackageName, Properties jdbc, PoolType poolType) {
-		Assert.notNull(jdbc);
-		Assert.hasLength(this.envId = jdbc.getProperty(DataSourceLoader.MYBATIS_ENVIRONMENT_ID));
-		Assert.notNull(poolType);
-	    this.mapperPackageName = mapperPackageName;
-		this.jdbc = jdbc;
-		this.poolType = poolType;
+    private String[] mapperPackageName;
+    private Properties jdbc;
+    private JdbcHelper helper;
+    private String envId;
+    private String mybatisConfigPath;
+    private PoolType poolType;
 
-		/** 现在使用poolType进行匹配MyBatis-config配置文件，而非MYBATIS_ENVIRONMENT_PATH属性 */
-		this.mybatisConfigPath = DEFAULT_MYBATIS_CONFIG_PATH + poolType.name().toLowerCase() + XML_SUFFIX;
-	}
+    /**
+     * 
+     * @since 1.4.6
+     */
+    private String[] typeAliasPackageName;
 
-	public String[] getMapperPackageName() {
-        return mapperPackageName;
-	}
-
-	public void setMapperPackageName(String[] mapperPackageName) {
+    public DataSourceConfig(String[] mapperPackageName, String[] typeAliasPackageName, Properties jdbc, PoolType poolType) {
+        Assert.notNull(jdbc);
+        Assert.hasLength(this.envId = jdbc.getProperty(DataSourceLoader.MYBATIS_ENVIRONMENT_ID));
+        Assert.notNull(poolType);
         this.mapperPackageName = mapperPackageName;
-	}
+        this.jdbc = jdbc;
+        this.poolType = poolType;
 
-	public Properties getJdbc() {
-		return jdbc;
-	}
+        /** 现在使用poolType进行匹配MyBatis-config配置文件，而非MYBATIS_ENVIRONMENT_PATH属性 */
+        this.mybatisConfigPath = DEFAULT_MYBATIS_CONFIG_PATH + poolType.name().toLowerCase() + XML_SUFFIX;
+        this.typeAliasPackageName = typeAliasPackageName;
+    }
 
-	public void setJdbc(Properties jdbc) {
-		this.jdbc = jdbc;
-	}
+    public String[] getMapperPackageName() {
+        return mapperPackageName;
+    }
 
-	public JdbcHelper getHelper() {
-		return helper;
-	}
+    public void setMapperPackageName(String[] mapperPackageName) {
+        this.mapperPackageName = mapperPackageName;
+    }
 
-	public void setHelper(JdbcHelper helper) {
-		this.helper = helper;
-	}
+    public Properties getJdbc() {
+        return jdbc;
+    }
 
-	public String getEnvId() {
-		return envId;
-	}
+    public void setJdbc(Properties jdbc) {
+        this.jdbc = jdbc;
+    }
 
-	public void setEnvId(String envId) {
-		this.envId = envId;
-	}
+    public JdbcHelper getHelper() {
+        return helper;
+    }
 
-	public String getMybatisConfigPath() {
-		return mybatisConfigPath;
-	}
+    public void setHelper(JdbcHelper helper) {
+        this.helper = helper;
+    }
 
-	public void setMybatisConfigPath(String mybatisConfigPath) {
-		this.mybatisConfigPath = mybatisConfigPath;
-	}
+    public String getEnvId() {
+        return envId;
+    }
 
-	public PoolType getPoolType() {
-		return poolType;
-	}
+    public void setEnvId(String envId) {
+        this.envId = envId;
+    }
 
-	public void setPoolType(PoolType poolType) {
-		this.poolType = poolType;
-	}
+    public String getMybatisConfigPath() {
+        return mybatisConfigPath;
+    }
+
+    public void setMybatisConfigPath(String mybatisConfigPath) {
+        this.mybatisConfigPath = mybatisConfigPath;
+    }
+
+    public PoolType getPoolType() {
+        return poolType;
+    }
+
+    public void setPoolType(PoolType poolType) {
+        this.poolType = poolType;
+    }
+
+    public String[] getTypeAliasPackageName() {
+        return typeAliasPackageName;
+    }
+
+    public void setTypeAliasPackageName(String[] typeAliasPackageName) {
+        this.typeAliasPackageName = typeAliasPackageName;
+    }
 
 }

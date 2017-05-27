@@ -15,7 +15,6 @@
  */
 package org.nanoframework.orm.mybatis;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
@@ -25,43 +24,46 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.orm.DataSourceLoader;
 import org.nanoframework.orm.ORMType;
 
+import com.google.common.collect.Lists;
+
 /**
  * @author yanghe
  * @since 1.2
  */
 public class MybatisDataSourceLoader extends DataSourceLoader {
-	private Logger LOG = LoggerFactory.getLogger(MybatisDataSourceLoader.class);
-	
-	private long time = System.currentTimeMillis();
-	private List<DataSourceConfig> dsc = new ArrayList<>();
-	
-	public MybatisDataSourceLoader() {
-		load();
-		toModule();
-	}
-	
-	@Override
-	public void load() {
-		load0(ORMType.MYBATIS);
-	}
-	
-	@Override
-	public void toConfig(Properties properties) {
-		Assert.notNull(properties, "数据源属性文件不能为空");
-		String[] mapperPackageName = properties.getProperty(MAPPER_PACKAGE_NAME, "NULL").split(",");
-		DataSourceConfig config = new DataSourceConfig(mapperPackageName, properties, poolType(properties));
-		dsc.add(config);
-		LOG.info("创建数据源依赖注入模块, Mapper包路径: " + mapperPackageName + ", 耗时: " + (System.currentTimeMillis() - time) + "ms");
-	}
+    private static final Logger LOGGER = LoggerFactory.getLogger(MybatisDataSourceLoader.class);
 
-	@Override
-	public void toModule() {
-		for(DataSourceConfig config : dsc) {
-			MultiDataSourceModule module = new MultiDataSourceModule(config);
-			modules.add(module);
-		}
-		
-		modules.add(new MultiTransactionalModule());
-	}
+    private final long time;
+    private final List<DataSourceConfig> dsc = Lists.newArrayList();
+
+    public MybatisDataSourceLoader() {
+        time = System.currentTimeMillis();
+        load();
+        toModule();
+    }
+
+    @Override
+    public void load() {
+        load0(ORMType.MYBATIS);
+    }
+
+    @Override
+    public void toConfig(Properties properties) {
+        Assert.notNull(properties, "数据源属性文件不能为空");
+        final String[] mapperPackageName = properties.getProperty(MAPPER_PACKAGE_NAME, "NULL").split(",");
+        final String[] typeAliasPackageName = properties.getProperty(MAPPER_PACKAGE_TYPE_ALIAS, "").split(",");
+        final DataSourceConfig config = new DataSourceConfig(mapperPackageName, typeAliasPackageName, properties, poolType(properties));
+        dsc.add(config);
+        LOGGER.info("创建数据源依赖注入模块, Mapper包路径: " + mapperPackageName + ", 耗时: " + (System.currentTimeMillis() - time) + "ms");
+    }
+
+    @Override
+    public void toModule() {
+        for (final DataSourceConfig config : dsc) {
+            modules.add(new MultiDataSourceModule(config));
+        }
+
+        modules.add(new MultiTransactionalModule());
+    }
 
 }

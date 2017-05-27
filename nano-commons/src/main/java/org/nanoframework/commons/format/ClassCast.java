@@ -53,6 +53,7 @@ public final class ClassCast {
     private static final String DATE_SQL = "java.sql.Date";
     private static final String TIMESTAMP = "java.sql.Timestamp";
     private static final String BOOLEAN_OBJ = "java.lang.Boolean";
+    private static final String BOOLEAN = "boolean";
     private static final String L_BOOLEAN_OBJ = "[Ljava.lang.Boolean;";
 
     private ClassCast() {
@@ -73,18 +74,23 @@ public final class ClassCast {
         try {
             switch (typeName) {
                 case INTEGER_OBJ:
+                case INT:
                     return Integer.valueOf(value);
 
                 case LONG_OBJ:
+                case LONG:
                     return Long.valueOf(value);
 
                 case DOUBLE_OBJ:
+                case DOUBLE:
                     return Double.valueOf(value);
 
                 case FLOAT_OBJ:
+                case FLOAT:
                     return Float.valueOf(value);
 
                 case BOOLEAN_OBJ:
+                case BOOLEAN:
                     if (ObjectCompare.isInList(value.toUpperCase(), "1", "YES", "Y", "TRUE")) {
                         return Boolean.TRUE;
                     } else if (ObjectCompare.isInList(value.toUpperCase(), "0", "NO", "N", "FALSE")) {
@@ -92,6 +98,7 @@ public final class ClassCast {
                     } else {
                         return Boolean.valueOf(value);
                     }
+
                 case STRING:
                     return value;
 
@@ -102,12 +109,6 @@ public final class ClassCast {
                 case TIMESTAMP:
                     final long time = DateFormat.parse(value, Pattern.TIMESTAMP).getTime();
                     return new Timestamp(time);
-
-                case INT:
-                case LONG:
-                case DOUBLE:
-                case FLOAT:
-                    throw new ClassCastException("只支持对对象数据类型的转换，不支持基本数据类型的转换");
 
                 default:
                     return JSON.parseObject(value, Class.forName(typeName));

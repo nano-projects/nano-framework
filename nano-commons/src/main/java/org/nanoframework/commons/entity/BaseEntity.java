@@ -238,11 +238,12 @@ public abstract class BaseEntity implements Cloneable, Serializable {
     }
 
     /**
-     * 获取实体类所有方法.
+     * 获取对象所有方法.
+     * @param cls 对象类
      * @return 实体类方法列表
      */
-    protected Map<String, Method> paramMethods() {
-        final List<Method> methods = allMethods(Lists.newArrayList(), this.getClass());
+    public static Map<String, Method> paramMethods(Class<?> cls) {
+        final List<Method> methods = allMethods(Lists.newArrayList(), cls);
         final Map<String, Method> methodMap = Maps.newLinkedHashMap();
         for (Method method : methods) {
             if (Modifier.isFinal(method.getModifiers()) || Modifier.isStatic(method.getModifiers())) {
@@ -256,12 +257,20 @@ public abstract class BaseEntity implements Cloneable, Serializable {
     }
 
     /**
+     * 获取实体类所有方法.
+     * @return 实体类方法列表
+     */
+    protected Map<String, Method> paramMethods() {
+        return paramMethods(getClass());
+    }
+
+    /**
      * 递归获取当前类及父类中的所有方法.
      * @param allMethods 实体类方法集合
      * @param clazz 当前类或父类
      * @return 新实体类方法集合
      */
-    protected List<Method> allMethods(final List<Method> allMethods, final Class<?> clazz) {
+    protected static List<Method> allMethods(final List<Method> allMethods, final Class<?> clazz) {
         allMethods.addAll(Arrays.asList(clazz.getDeclaredMethods()));
         if (clazz.getSuperclass() == null) {
             return allMethods;
@@ -269,13 +278,14 @@ public abstract class BaseEntity implements Cloneable, Serializable {
 
         return allMethods(allMethods, clazz.getSuperclass());
     }
-
+    
     /**
-     * 获取实体类的所有属性.
-     * @return 实体类属性列表
+     * 获取对象所有属性.
+     * @param cls 对象类
+     * @return 实体类方法列表
      */
-    protected Map<String, Field> paramFields() {
-        final List<Field> fields = allFields(Lists.newArrayList(), this.getClass());
+    public static Map<String, Field> paramFields(Class<?> cls) {
+        final List<Field> fields = allFields(Lists.newArrayList(), cls);
         final Map<String, Field> fieldMap = Maps.newLinkedHashMap();
         for (Field field : fields) {
             if (Modifier.isFinal(field.getModifiers()) || Modifier.isStatic(field.getModifiers())) {
@@ -293,12 +303,20 @@ public abstract class BaseEntity implements Cloneable, Serializable {
     }
 
     /**
+     * 获取实体类的所有属性.
+     * @return 实体类属性列表
+     */
+    protected Map<String, Field> paramFields() {
+        return paramFields(getClass());
+    }
+
+    /**
      * 递归获取当前类及父类中的所有属性.
      * @param allFields 实体类属性集合
      * @param clazz 当前类或父类
      * @return 新实体类属性集合
      */
-    protected List<Field> allFields(final List<Field> allFields, final Class<?> clazz) {
+    protected static List<Field> allFields(final List<Field> allFields, final Class<?> clazz) {
         allFields.addAll(Arrays.asList(clazz.getDeclaredFields()));
         if (clazz.getSuperclass() == null) {
             return allFields;
@@ -307,7 +325,7 @@ public abstract class BaseEntity implements Cloneable, Serializable {
         return allFields(allFields, clazz.getSuperclass());
     }
     
-    protected boolean filterField(final Field field) {
+    protected static boolean filterField(final Field field) {
         return FILTER_FIELD_NAMES.contains(field.getName());
     }
     
