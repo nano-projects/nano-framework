@@ -28,9 +28,9 @@ import org.nanoframework.core.component.Components;
 import org.nanoframework.core.globals.Globals;
 
 import com.google.common.collect.Lists;
-import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Module;
 
 /**
  * @author yanghe
@@ -87,12 +87,17 @@ public abstract class PluginLoader {
     private void initModules() throws Throwable {
         final long time = System.currentTimeMillis();
         configModules(this.modules);
-        final List<AbstractModule> loadedModules = Lists.newArrayList();
+        final List<Module> loadedModules = Lists.newArrayList();
         final List<Module> modules = this.modules.get();
         for (final Module module : modules) {
             logger.info("Loading Module: {}", module.getClass().getName());
-            module.config(config);
-            loadedModules.addAll(module.load());
+            if (module instanceof org.nanoframework.core.plugins.Module) {
+                final org.nanoframework.core.plugins.Module mdu = (org.nanoframework.core.plugins.Module) module;
+                mdu.config(config);
+                loadedModules.addAll(mdu.load());
+            } else {
+                loadedModules.add(module);
+            }
         }
 
         logger.info("Starting inject");
@@ -103,12 +108,17 @@ public abstract class PluginLoader {
     private void initChildrenModules() throws Throwable {
         final long time = System.currentTimeMillis();
         configChildrenModules(this.childrenModules);
-        final List<AbstractModule> loadedModules = Lists.newArrayList();
+        final List<Module> loadedModules = Lists.newArrayList();
         final List<Module> modules = this.childrenModules.get();
         for (final Module module : modules) {
             logger.info("Loading Module: {}", module.getClass().getName());
-            module.config(config);
-            loadedModules.addAll(module.load());
+            if (module instanceof org.nanoframework.core.plugins.Module) {
+                final org.nanoframework.core.plugins.Module mdu = (org.nanoframework.core.plugins.Module) module;
+                mdu.config(config);
+                loadedModules.addAll(mdu.load());
+            } else {
+                loadedModules.add(module);
+            }
         }
 
         logger.info("Starting inject");

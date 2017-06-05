@@ -21,7 +21,6 @@ import org.nanoframework.commons.util.ReflectUtils;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.plugins.Configure;
-import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoader;
 import org.nanoframework.core.plugins.defaults.module.AOPModule;
@@ -34,6 +33,8 @@ import org.nanoframework.core.plugins.defaults.plugin.Log4j2Plugin;
 import org.nanoframework.core.plugins.defaults.plugin.SchedulerPlugin;
 import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
 
+import com.google.inject.Module;
+
 /**
  * 默认的插件加载器
  * @author yanghe
@@ -41,7 +42,7 @@ import org.nanoframework.core.plugins.defaults.plugin.WebSocketPlugin;
  */
 public class DefaultPluginLoader extends PluginLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPluginLoader.class);
-    
+
     public static PluginLoader newInstance() {
         return new DefaultPluginLoader();
     }
@@ -64,28 +65,21 @@ public class DefaultPluginLoader extends PluginLoader {
         modules.add(new JedisModule());
         modules.add(new BindModule());
         modules.add(new APIModule());
-        try {
-            final Module dubboModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.dubbo.DubboReferenceModule");
-            modules.add(dubboModule);
-        } catch (final Throwable e) {
-            LOGGER.warn("创建Module异常: org.nanoframework.extension.dubbo.DubboReferenceModule, {}", e.getMessage());
-        }
-
-        try {
-            final Module shiroWebModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.shiro.ShiroWebModule", this.context);
-            modules.add(shiroWebModule);
-        } catch (final Throwable e) {
-            LOGGER.warn("创建Module异常: org.nanoframework.extension.shiro.ShiroWebModule, {}", e.getMessage());
-        }
+        createNativeModule(modules, "org.nanoframework.extension.dubbo.DubboReferenceModule");
+        createNativeModule(modules, "org.apache.shiro.guice.aop.ShiroAopModule");
     }
 
     @Override
     protected void configChildrenModules(final Configure<Module> modules) {
+        createNativeModule(modules, "org.nanoframework.extension.dubbo.DubboServiceModule");
+    }
+
+    private void createNativeModule(final Configure<Module> modules, final String className, Object... args) {
         try {
-            final Module dubboModule = (Module) ReflectUtils.newInstance("org.nanoframework.extension.dubbo.DubboServiceModule");
-            modules.add(dubboModule);
+            final Module module = (Module) ReflectUtils.newInstance(className, args);
+            modules.add(module);
         } catch (final Throwable e) {
-            LOGGER.warn("创建Module异常: org.nanoframework.extension.dubbo.DubboServiceModule, {}", e.getMessage());
+            LOGGER.warn("创建Module异常: {}", e.getMessage());
         }
     }
 

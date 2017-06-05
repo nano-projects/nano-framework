@@ -54,7 +54,6 @@
     <slf4j-version>1.7.25</slf4j-version>
     <log4j2-version>2.8.2</log4j2-version>
     <google-guice-version>4.1.0</google-guice-version>
-    <google-guice-multibindings-version>4.1.0</google-guice-multibindings-version>
     <guava-version>21.0</guava-version>
     <commons-lang3-version>3.4</commons-lang3-version>
     <commons-codec-version>1.10</commons-codec-version>
@@ -183,7 +182,12 @@
       <dependency>
         <groupId>com.google.inject.extensions</groupId>
         <artifactId>guice-multibindings</artifactId>
-        <version>${google-guice-multibindings-version}</version>
+        <version>${google-guice-version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.google.inject.extensions</groupId>
+        <artifactId>guice-servlet</artifactId>
+        <version>${google-guice-version}</version>
       </dependency>
       <dependency>
         <groupId>com.google.guava</groupId>
