@@ -71,74 +71,74 @@ import com.alibaba.fastjson.TypeReference;
  */
 public class TomcatCustomServer extends Tomcat {
     public static final String READY = "org.apache.catalina.startup.READY";
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TomcatCustomServer.class);
 
     private static final String DEFAULT_TOMCAT_BASE_TEMP_DIR = "tomcat-base";
-    
+
     private static final String TOMCAT_PID_FILE = "tomcat.pid";
-    
+
     private String resourceBase = "webRoot";
-    
+
     private String defaultWebXml = "/META-INF/tomcat/web.xml";
-    
+
     private File globalWebXml = new File(resourceBase + "/WEB-INF/default.xml");
-    
+
     private Properties context;
-    
+
     static {
         System.setProperty("org.apache.catalina.startup.EXIT_ON_INIT_FAILURE", "true");
     }
-    
+
     private TomcatCustomServer() throws Throwable {
         super();
         loadContext(ApplicationContext.MAIN_CONTEXT);
         init(context.getProperty(ApplicationContext.CONTEXT_ROOT), null);
     }
-    
+
     private TomcatCustomServer(final String contextPath) throws Throwable {
         super();
         loadContext(contextPath);
         init(context.getProperty(ApplicationContext.CONTEXT_ROOT), null);
     }
-    
+
     public static TomcatCustomServer server() throws Throwable {
         return new TomcatCustomServer();
     }
-    
+
     public static TomcatCustomServer server(final String contextPath) throws Throwable {
         return new TomcatCustomServer(contextPath);
     }
-    
+
     protected void loadContext(final String contextPath) {
         Assert.hasLength(contextPath, "无效的context属性文件路径");
         context = PropertiesLoader.load(contextPath);
     }
-    
+
     protected void init(final String contextRoot, final String resourceBase) throws ServletException, IOException {
         final Path basePath = Files.createTempDirectory(DEFAULT_TOMCAT_BASE_TEMP_DIR);
         setBaseDir(basePath.toString());
-        
+
         if (StringUtils.isNotEmpty(resourceBase)) {
             this.resourceBase = resourceBase;
         }
-        
+
         initExecutor();
         initConnector();
-        
+
         final ContextConfig conf = new ContextConfig();
         final StandardContext ctx = (StandardContext) this.addWebapp(getHost(), contextRoot, new File(this.resourceBase).getAbsolutePath(), conf);
         createGlobalXml();
         conf.setDefaultWebXml(globalWebXml.getAbsolutePath());
-        
+
         for (LifecycleListener listen : ctx.findLifecycleListeners()) {
             if (listen instanceof DefaultWebXmlListener) {
                 ctx.removeLifecycleListener(listen);
             }
         }
-        
+
         ctx.setParentClassLoader(TomcatCustomServer.class.getClassLoader());
-        
+
         //Disable TLD scanning by default
         if (System.getProperty(Constants.SKIP_JARS_PROPERTY) == null && System.getProperty(Constants.SKIP_JARS_PROPERTY) == null) {
             LOGGER.debug("disabling TLD scanning");
@@ -146,18 +146,20 @@ public class TomcatCustomServer extends Tomcat {
             jarScanFilter.setTldSkip("*");
         }
     }
-    
+
     protected void initExecutor() {
-        final TypeReference<ExecutorConf> type = new TypeReference<ExecutorConf>() { };
-        final ExecutorConf conf = new ExecutorConf(JSON.parseObject(context.getProperty(TOMCAT_EXECUTOR), type)); 
+        final TypeReference<ExecutorConf> type = new TypeReference<ExecutorConf>() {
+        };
+        final ExecutorConf conf = new ExecutorConf(JSON.parseObject(context.getProperty(TOMCAT_EXECUTOR), type));
         LOGGER.debug("{}", conf.toString());
         final Executor executor = conf.init();
         getService().addExecutor(executor);
     }
-    
+
     @SuppressWarnings("rawtypes")
     protected void initConnector() {
-        final TypeReference<ConnectorConf> type = new TypeReference<ConnectorConf>() { };
+        final TypeReference<ConnectorConf> type = new TypeReference<ConnectorConf>() {
+        };
         final ConnectorConf conf = new ConnectorConf(JSON.parseObject(context.getProperty(TOMCAT_CONNECTOR), type));
         LOGGER.debug("{}", conf.toString());
         final Connector connector = conf.init();
@@ -167,7 +169,7 @@ public class TomcatCustomServer extends Tomcat {
         setConnector(connector);
         service.addConnector(connector);
     }
-    
+
     protected void createGlobalXml() throws IOException {
         if (!globalWebXml.exists()) {
             try (final Scanner scanner = new Scanner(TomcatCustomServer.class.getResourceAsStream(defaultWebXml));
@@ -175,12 +177,12 @@ public class TomcatCustomServer extends Tomcat {
                 while (scanner.hasNextLine()) {
                     writer.write(scanner.nextLine() + '\n');
                 }
-                
+
                 writer.flush();
             }
         }
     }
-    
+
     protected void startServer() {
         try {
             writePid2File();
@@ -192,7 +194,7 @@ public class TomcatCustomServer extends Tomcat {
             System.exit(1);
         }
     }
-    
+
     /**
      * 根据PID优雅停止进程
      * 
@@ -224,7 +226,7 @@ public class TomcatCustomServer extends Tomcat {
             }
         }
     }
-    
+
     protected void startServerDaemon() {
         Executors.newFixedThreadPool(1, (runnable) -> {
             final Thread tomcat = new Thread(runnable);
@@ -249,7 +251,7 @@ public class TomcatCustomServer extends Tomcat {
                     file.delete();
                 }
             }
-            
+
             file.createNewFile();
             file.deleteOnExit();
             watcherPid(file);
@@ -266,12 +268,12 @@ public class TomcatCustomServer extends Tomcat {
             throw new TomcatServerException(e.getMessage(), e);
         }
     }
-    
+
     protected void watcherPid(final File pidFile) throws IOException {
         final WatchService watcher = FileSystems.getDefault().newWatchService();
         final Path path = Paths.get(".");
         path.register(watcher, StandardWatchEventKinds.ENTRY_DELETE);
-        
+
         Executors.newFixedThreadPool(1, (runnable) -> {
             final Thread tomcat = new Thread(runnable);
             tomcat.setName("Tomcat PID Watcher: " + System.currentTimeMillis());
@@ -281,14 +283,14 @@ public class TomcatCustomServer extends Tomcat {
                 for (;;) {
                     final WatchKey watchKey = watcher.take();
                     final List<WatchEvent<?>> events = watchKey.pollEvents();
-                    for(WatchEvent<?> event : events) {
+                    for (WatchEvent<?> event : events) {
                         final String fileName = ((Path) event.context()).toFile().getAbsolutePath();
                         if (pidFile.getAbsolutePath().equals(fileName)) {
                             LOGGER.info("tomcat.pid已被删除，应用进入退出流程");
                             System.exit(0);
                         }
                     }
-                    
+
                     watchKey.reset();
                 }
             } catch (final InterruptedException e) {
@@ -335,12 +337,12 @@ public class TomcatCustomServer extends Tomcat {
                     usage();
                     break;
             }
-            
+
         } else {
             usage();
         }
     }
-    
+
     protected Commands cmd(final String[] args, final Mode mode) {
         Commands cmd;
         try {
@@ -352,10 +354,10 @@ public class TomcatCustomServer extends Tomcat {
                 throw new TomcatServerException("Unknown command in args list");
             }
         }
-        
+
         return cmd;
     }
-    
+
     protected Mode mode(final boolean output) {
         Mode mode;
         try {
@@ -375,19 +377,19 @@ public class TomcatCustomServer extends Tomcat {
                 System.out.println("Unknown Application Mode, setting default Mode: 'PROD'.");
                 System.out.println("Please set <context.mode> in context.properties to set 'DEV' or 'PROD' mode.");
             }
-            
+
             mode = Mode.PROD;
         }
-        
+
         return mode;
     }
-    
+
     protected void version() {
         final StringBuilder versionBuilder = new StringBuilder();
         versionBuilder.append("NanoFramework Version: ");
         versionBuilder.append(ApplicationContext.FRAMEWORK_VERSION);
         versionBuilder.append('\n');
-        
+
         final String appContext = context.getProperty(ApplicationContext.CONTEXT_ROOT, "");
         final String appVersion = context.getProperty(ApplicationContext.VERSION, "0.0.0");
         versionBuilder.append("Application[");
@@ -397,7 +399,7 @@ public class TomcatCustomServer extends Tomcat {
         versionBuilder.append('\n');
         System.out.println(versionBuilder.toString());
     }
-    
+
     protected void usage() {
         final StringBuilder usageBuilder = new StringBuilder();
         usageBuilder.append("Usage: \n\n");
