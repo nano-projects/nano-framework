@@ -56,6 +56,14 @@ public class GitPull {
     public static GitPull create() {
         return new GitPull();
     }
+    
+    public GitPull quickPull() {
+        try {
+            return dir().pull().copy().clean();
+        } catch (final IOException | GitAPIException e) {
+            throw new org.nanoframework.server.exception.GitAPIException(e.getMessage(), e);
+        }
+    }
 
     private boolean init() {
         conf = PropertiesLoader.load(CONF_FILE_PATH);
