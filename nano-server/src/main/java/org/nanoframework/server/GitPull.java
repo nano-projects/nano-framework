@@ -115,13 +115,7 @@ public class GitPull {
 
     public GitPull dir() throws IOException {
         if (enabled) {
-            final String gitPullPath = app.getGitPullPath();
-            final Matcher matcher = Pattern.compile(".*[a-zA-Z]+.*").matcher(gitPullPath);
-            if (!matcher.matches()) {
-                throw new IllegalArgumentException("无效的Git pull资源路径");
-            }
-
-            pullPath = new File(gitPullPath);
+            pullPath = new File(app.getGitPullPath());
             clean();
         }
 
