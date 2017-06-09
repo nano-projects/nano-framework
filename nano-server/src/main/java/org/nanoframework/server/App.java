@@ -52,28 +52,28 @@ public class App extends BaseEntity {
         confEnv = conf.getProperty(CONF_ENV);
         confHost = conf.getProperty(CONF_HOST);
         confRepeatPolicy = conf.getProperty(CONF_REPEAT_POLICY);
-        
+
         if (valid()) {
             throw new IllegalArgumentException("无效的配置中心参数设置");
         }
     }
-    
+
     public static App create(final Properties conf) {
         return new App(conf);
     }
-    
+
     private boolean valid() {
         if (!StringUtils.isNoneBlank(gitRepo, gitPullPath, confPath, confEnv)) {
             return false;
         }
-        
+
         if (!ObjectCompare.isInList(confRepeatPolicy, REPEAT_POLICY)) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     public String getGitRepo() {
         return gitRepo;
     }
