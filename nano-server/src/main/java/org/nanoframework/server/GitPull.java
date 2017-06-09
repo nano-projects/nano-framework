@@ -28,9 +28,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.eclipse.jgit.api.Git;
 import org.eclipse.jgit.api.errors.GitAPIException;
-import org.eclipse.jgit.api.errors.InvalidRemoteException;
-import org.eclipse.jgit.api.errors.TransportException;
 import org.nanoframework.commons.loader.PropertiesLoader;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.StringUtils;
 
 /**
@@ -39,12 +39,15 @@ import org.nanoframework.commons.util.StringUtils;
  * @since 1.4.6
  */
 public class GitPull {
+    private static final Logger LOGGER = LoggerFactory.getLogger(GitPull.class);
+
     private static final String CONF_FILE_PATH = "application.properties";
     private Properties conf;
     private App app;
     private File pullPath;
     private File fullPath;
     private File confPath;
+    private boolean enabled;
 
     private GitPull() {
         if (init()) {
@@ -56,13 +59,17 @@ public class GitPull {
     public static GitPull create() {
         return new GitPull();
     }
-    
+
     public GitPull quickPull() {
-        try {
-            return dir().pull().copy().clean();
-        } catch (final IOException | GitAPIException e) {
-            throw new org.nanoframework.server.exception.GitAPIException(e.getMessage(), e);
+        if (enabled) {
+            try {
+                return dir().pull().copy().clean();
+            } catch (final IOException | GitAPIException e) {
+                throw new org.nanoframework.server.exception.GitAPIException(e.getMessage(), e);
+            }
         }
+
+        return this;
     }
 
     private boolean init() {
@@ -72,6 +79,11 @@ public class GitPull {
         }
 
         app = App.create(conf);
+        enabled = app.getEnabled();
+        if (!enabled) {
+            LOGGER.warn("未启用配置中心功能，配置将从本地进行加载");
+        }
+
         return true;
     }
 
@@ -102,34 +114,42 @@ public class GitPull {
     }
 
     public GitPull dir() throws IOException {
-        final String gitPullPath = app.getGitPullPath();
-        final Matcher matcher = Pattern.compile(".*[a-zA-Z]+.*").matcher(gitPullPath);
-        if (!matcher.matches()) {
-            throw new IllegalArgumentException("无效的Git pull资源路径");
+        if (enabled) {
+            final String gitPullPath = app.getGitPullPath();
+            final Matcher matcher = Pattern.compile(".*[a-zA-Z]+.*").matcher(gitPullPath);
+            if (!matcher.matches()) {
+                throw new IllegalArgumentException("无效的Git pull资源路径");
+            }
+
+            pullPath = new File(gitPullPath);
+            clean();
         }
 
-        pullPath = new File(gitPullPath);
-        clean();
         return this;
     }
 
-    public GitPull pull() throws InvalidRemoteException, TransportException, GitAPIException {
-        Git.cloneRepository().setURI(app.getGitRepo()).setDirectory(pullPath).call();
+    public GitPull pull() throws GitAPIException {
+        if (enabled) {
+            Git.cloneRepository().setURI(app.getGitRepo()).setDirectory(pullPath).call();
+        }
+
         return this;
     }
 
     public GitPull copy() throws IOException {
-        if (fullPath.exists()) {
-            if (confPath.exists() && StringUtils.equals(App.REPEAT_POLICY_CLEAN, app.getConfRepeatPolicy())) {
-                cleanConf();
+        if (enabled) {
+            if (fullPath.exists()) {
+                if (confPath.exists() && StringUtils.equals(App.REPEAT_POLICY_CLEAN, app.getConfRepeatPolicy())) {
+                    cleanConf();
+                }
+
+                FileUtils.copyDirectory(fullPath, confPath);
             }
-            
-            FileUtils.copyDirectory(fullPath, confPath);
         }
-        
+
         return this;
     }
-    
+
     private void cleanConf() throws IOException {
         final File[] files = confPath.listFiles((dir, name) -> !StringUtils.equals(name, CONF_FILE_PATH));
         if (ArrayUtils.isNotEmpty(files)) {
@@ -144,9 +164,12 @@ public class GitPull {
     }
 
     public GitPull clean() throws IOException {
-        if (pullPath != null && pullPath.exists()) {
-            FileUtils.deleteDirectory(pullPath);
+        if (enabled) {
+            if (pullPath != null && pullPath.exists()) {
+                FileUtils.deleteDirectory(pullPath);
+            }
         }
+
         return this;
     }
 }

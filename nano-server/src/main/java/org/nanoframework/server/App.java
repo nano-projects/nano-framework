@@ -20,6 +20,7 @@ import java.util.Properties;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.ObjectCompare;
+import org.nanoframework.commons.util.UUIDUtils;
 
 /**
  *
@@ -30,14 +31,16 @@ public class App extends BaseEntity {
     public static final String REPEAT_POLICY_CLEAN = "CLEAN";
     public static final String REPEAT_POLICY_REPLACE = "REPLACE";
     public static final String[] REPEAT_POLICY = { REPEAT_POLICY_CLEAN, REPEAT_POLICY_REPLACE };
+
     private static final long serialVersionUID = -6160267822834183082L;
+    private static final String ENABLED = "application.enabled";
     private static final String GIT_REPO = "application.git.repo";
-    private static final String GIT_PULL_PATH = "application.git.pull.path";
     private static final String CONF_PATH = "application.conf.path";
     private static final String CONF_ENV = "application.conf.env";
     private static final String CONF_HOST = "application.conf.host";
     private static final String CONF_REPEAT_POLICY = "application.conf.repeat.policy";
 
+    private Boolean enabled;
     private String gitRepo;
     private String gitPullPath;
     private String confPath;
@@ -46,12 +49,13 @@ public class App extends BaseEntity {
     private String confRepeatPolicy;
 
     private App(final Properties conf) {
+        enabled = Boolean.valueOf(conf.getProperty(ENABLED, "false"));
         gitRepo = conf.getProperty(GIT_REPO);
-        gitPullPath = conf.getProperty(GIT_PULL_PATH);
+        gitPullPath = UUIDUtils.create();
         confPath = conf.getProperty(CONF_PATH);
         confEnv = conf.getProperty(CONF_ENV);
         confHost = conf.getProperty(CONF_HOST);
-        confRepeatPolicy = conf.getProperty(CONF_REPEAT_POLICY);
+        confRepeatPolicy = conf.getProperty(CONF_REPEAT_POLICY, REPEAT_POLICY_CLEAN);
 
         if (!valid()) {
             throw new IllegalArgumentException("无效的配置中心参数设置");
@@ -72,6 +76,10 @@ public class App extends BaseEntity {
         }
 
         return true;
+    }
+
+    public Boolean getEnabled() {
+        return enabled;
     }
 
     public String getGitRepo() {

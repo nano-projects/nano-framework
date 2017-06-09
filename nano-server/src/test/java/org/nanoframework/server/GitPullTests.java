@@ -31,6 +31,6 @@ public class GitPullTests {
 
     @Test
     public void pullTest() throws InvalidRemoteException, TransportException, GitAPIException, IOException {
-        GitPull.create().dir().pull().copy().clean();
+        GitPull.create().quickPull();
     }
 }
