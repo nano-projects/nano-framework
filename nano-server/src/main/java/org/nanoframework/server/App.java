@@ -53,7 +53,7 @@ public class App extends BaseEntity {
         confHost = conf.getProperty(CONF_HOST);
         confRepeatPolicy = conf.getProperty(CONF_REPEAT_POLICY);
 
-        if (valid()) {
+        if (!valid()) {
             throw new IllegalArgumentException("无效的配置中心参数设置");
         }
     }
