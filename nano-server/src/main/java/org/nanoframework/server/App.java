@@ -30,7 +30,6 @@ import org.nanoframework.commons.util.UUIDUtils;
 public class App extends BaseEntity {
     public static final String REPEAT_POLICY_CLEAN = "CLEAN";
     public static final String REPEAT_POLICY_REPLACE = "REPLACE";
-    public static final String[] REPEAT_POLICY = { REPEAT_POLICY_CLEAN, REPEAT_POLICY_REPLACE };
 
     private static final long serialVersionUID = -6160267822834183082L;
     private static final String ENABLED = "application.enabled";
@@ -39,6 +38,7 @@ public class App extends BaseEntity {
     private static final String CONF_ENV = "application.conf.env";
     private static final String CONF_HOST = "application.conf.host";
     private static final String CONF_REPEAT_POLICY = "application.conf.repeat.policy";
+    private static final String[] REPEAT_POLICY = { REPEAT_POLICY_CLEAN, REPEAT_POLICY_REPLACE };
 
     private Boolean enabled;
     private String gitRepo;
