@@ -91,11 +91,11 @@
     <module>nano-orm</module>
     <module>nano-concurrent</module>
     <module>nano-webmvc</module>
+    <module>nano-server</module>
     <module>nano-jetty-server</module>
     <module>nano-tomcat-server</module>
     <module>nano-ext</module>
     <module>nano-super</module>
-    <!-- <module>nano-server</module> -->
   </modules>
 
   <scm>
@@ -122,7 +122,7 @@
 
   <dependencyManagement>
     <dependencies>
-            <!-- Test -->
+      <!-- Test -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
@@ -130,7 +130,7 @@
         <scope>test</scope>
       </dependency>
 
-            <!-- Log4j 2 -->
+      <!-- Log4j 2 -->
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
@@ -162,7 +162,7 @@
         <version>${log4j2-version}</version>
       </dependency>
 
-            <!-- Commons -->
+      <!-- Commons -->
       <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-lang3</artifactId>
@@ -174,7 +174,7 @@
         <version>${commons-codec-version}</version>
       </dependency>
 
-            <!-- Google Guice -->
+      <!-- Google Guice -->
       <dependency>
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
@@ -208,7 +208,7 @@
         <version>${mybatis-guice-version}</version>
       </dependency>
 
-            <!-- Servlet环境 -->
+      <!-- Servlet环境 -->
       <dependency>
         <groupId>javax.servlet</groupId>
         <artifactId>javax.servlet-api</artifactId>
@@ -273,7 +273,7 @@
         <version>${jedis-version}</version>
       </dependency>
 
-            <!-- Netty -->
+      <!-- Netty -->
       <dependency>
         <groupId>io.netty</groupId>
         <artifactId>netty-handler</artifactId>
@@ -285,35 +285,35 @@
         <version>${netty-version}</version>
       </dependency>
 
-            <!-- Jetty -->
+      <!-- Jetty -->
       <dependency>
         <groupId>org.eclipse.jetty.aggregate</groupId>
         <artifactId>jetty-all</artifactId>
         <version>${jetty-version}</version>
       </dependency>
 
-            <!-- JSP Support -->
+      <!-- JSP Support -->
       <dependency>
         <groupId>org.glassfish.web</groupId>
         <artifactId>javax.servlet.jsp</artifactId>
         <version>${jsp-support-version}</version>
       </dependency>
 
-            <!-- EL Support -->
+      <!-- EL Support -->
       <dependency>
         <groupId>org.glassfish.web</groupId>
         <artifactId>javax.el</artifactId>
         <version>${jsp-support-version}</version>
       </dependency>
 
-            <!-- Ganymed SSH2 -->
+      <!-- Ganymed SSH2 -->
       <dependency>
         <groupId>ch.ethz.ganymed</groupId>
         <artifactId>ganymed-ssh2</artifactId>
         <version>${ganymed-version}</version>
       </dependency>
 
-            <!-- Shiro Security Framework -->
+      <!-- Shiro Security Framework -->
       <dependency>
         <groupId>org.apache.shiro</groupId>
         <artifactId>shiro-core</artifactId>
