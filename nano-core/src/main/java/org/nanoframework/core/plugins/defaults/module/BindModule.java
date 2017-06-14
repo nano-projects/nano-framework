@@ -33,9 +33,10 @@ import com.google.inject.AbstractModule;
 public class BindModule extends Module {
     private static final List<String> BIND_MODULE_CLASS_NAMES = Lists.newArrayList(
         "org.nanoframework.orm.jdbc.binding.BindJdbcManagerModule",
+        "org.nanoframework.orm.mybatis.binding.BindJdbcManagerModule", 
         "org.nanoframework.orm.jedis.binding.BindRedisClientModule"
     );
-    
+
     @Override
     protected void configure() {
         BIND_MODULE_CLASS_NAMES.forEach(clsName -> install(clsName));
@@ -62,7 +63,7 @@ public class BindModule extends Module {
 
     @Override
     public void config(final ServletConfig config) throws Throwable {
-        
+
     }
 
 }

@@ -35,51 +35,51 @@ import org.nanoframework.orm.jdbc.config.TomcatJdbcConfig;
  * @since 1.2
  */
 public class JdbcDataSourceLoader extends DataSourceLoader {
-	
-	private Map<PoolType, Map<String, JdbcConfig>> configAggs = new HashMap<>();
-	
-	public JdbcDataSourceLoader() {
-		load();
-		toModule();
-	}
-	
-	@Override
-	public void load() {
-		load0(ORMType.JDBC);
-	}
-	
-	@Override
-	public void toConfig(Properties properties) {
-		Assert.notNull(properties, "数据源属性文件不能为空");
-		PoolType poolType = poolType(properties);
-		switch(poolType) {
-			case C3P0: 
-			    toConfig(new C3P0JdbcConfig(properties), poolType);
-				break;
-			case DRUID: 
-			    toConfig(new DruidJdbcConfig(properties), poolType);
-				break;
-			case TOMCAT_JDBC_POOL:
-			    toConfig(new TomcatJdbcConfig(properties), poolType);
+
+    private Map<PoolType, Map<String, JdbcConfig>> configAggs = new HashMap<>();
+
+    public JdbcDataSourceLoader() {
+        load();
+        toModule();
+    }
+
+    @Override
+    public void load() {
+        load0(ORMType.JDBC);
+    }
+
+    @Override
+    public void toConfig(Properties properties) {
+        Assert.notNull(properties, "数据源属性文件不能为空");
+        PoolType poolType = poolType(properties);
+        switch (poolType) {
+            case C3P0:
+                toConfig(new C3P0JdbcConfig(properties), poolType);
                 break;
-		}
-	}
-	
-	private void toConfig(JdbcConfig config, PoolType poolType) {
-	    Map<String, JdbcConfig> configs;
-	    if((configs = configAggs.get(poolType)) == null) {
+            case DRUID:
+                toConfig(new DruidJdbcConfig(properties), poolType);
+                break;
+            case TOMCAT_JDBC_POOL:
+                toConfig(new TomcatJdbcConfig(properties), poolType);
+                break;
+        }
+    }
+
+    private void toConfig(JdbcConfig config, PoolType poolType) {
+        Map<String, JdbcConfig> configs;
+        if ((configs = configAggs.get(poolType)) == null) {
             configs = new LinkedHashMap<>();
             configs.put(config.getEnvironmentId(), config);
             configAggs.put(poolType, configs);
         } else {
             configs.put(config.getEnvironmentId(), config);
         }
-	}
-	
-	@Override
-	public void toModule() {
-		for(Entry<PoolType, Map<String, JdbcConfig>> item : configAggs.entrySet()) {
-			modules.add(new JdbcModule(item.getValue(), item.getKey()));
-		}
-	}
+    }
+
+    @Override
+    public void toModule() {
+        for (Entry<PoolType, Map<String, JdbcConfig>> item : configAggs.entrySet()) {
+            modules.add(new JdbcModule(item.getValue(), item.getKey()));
+        }
+    }
 }
