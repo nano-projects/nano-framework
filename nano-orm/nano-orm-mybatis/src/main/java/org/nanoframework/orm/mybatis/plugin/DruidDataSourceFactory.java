@@ -25,12 +25,12 @@ import org.apache.ibatis.datasource.DataSourceException;
  */
 public class DruidDataSourceFactory extends AbstractDataSourceFactory {
 
-	public DruidDataSourceFactory() {
-		try {
-			Class<?> DruidDataSource = Class.forName("com.alibaba.druid.pool.DruidDataSource");
-			this.dataSource = (DataSource) DruidDataSource.newInstance();
-		} catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-		    throw new DataSourceException(e.getMessage(), e);
-		}
-	}
+    public DruidDataSourceFactory() {
+        try {
+            Class<?> druidDataSource = Class.forName("com.alibaba.druid.pool.DruidDataSource");
+            this.dataSource = (DataSource) druidDataSource.newInstance();
+        } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            throw new DataSourceException(e.getMessage(), e);
+        }
+    }
 }

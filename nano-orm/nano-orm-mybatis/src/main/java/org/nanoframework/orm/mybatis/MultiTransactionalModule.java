@@ -31,14 +31,14 @@ import com.google.inject.matcher.Matcher;
  */
 public class MultiTransactionalModule extends AbstractModule {
 
-	@Override
-	protected void configure() {
+    @Override
+    protected void configure() {
         final MultiTransactionalMethodInterceptor interceptor = new MultiTransactionalMethodInterceptor();
         requestInjection(interceptor);
-        
+
         final Matcher<AnnotatedElement> annotatedElement = annotatedWith(MultiTransactional.class);
         bindInterceptor(any(), annotatedElement, interceptor);
         bindInterceptor(annotatedElement, not(annotatedElement), interceptor);
-	}
+    }
 
 }

@@ -34,96 +34,98 @@ import com.google.common.collect.Maps;
  * @since 1.3.6
  */
 public class TomcatJdbcPoolDataSourceFactory extends AbstractDataSourceFactory {
-    private Class<?> TomcatJdbcDataSource;
-    
-	public TomcatJdbcPoolDataSourceFactory() {
-		try {
-		    TomcatJdbcDataSource = Class.forName("org.apache.tomcat.jdbc.pool.DataSource");
-		    this.dataSource = (DataSource) TomcatJdbcDataSource.newInstance();
-		} catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-		    throw new DataSourceException(e.getMessage(), e);
-		}
-	}
-	
-	@Override
-	public void setProperties(Properties properties) {
-	    try {
-	        Map<String, Object> map = Maps.newHashMap();
-	        properties.forEach((key, value) -> {
-	            if(StringUtils.isNotEmpty((String) value) && ((String) value).startsWith("${") && ((String) value).endsWith("}")) {
+    private Class<?> tomcatJdbcDataSource;
+
+    public TomcatJdbcPoolDataSourceFactory() {
+        try {
+            tomcatJdbcDataSource = Class.forName("org.apache.tomcat.jdbc.pool.DataSource");
+            this.dataSource = (DataSource) tomcatJdbcDataSource.newInstance();
+        } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            throw new DataSourceException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setProperties(final Properties properties) {
+        try {
+            final Map<String, Object> map = Maps.newHashMap();
+            properties.forEach((key, value) -> {
+                if (StringUtils.isNotEmpty((String) value) && ((String) value).startsWith("${") && ((String) value).endsWith("}")) {
                     return;
                 }
-	            
-	            map.put((String) key, value);   
-	        });
-	        
-	        TomcatJdbcConfig config = TomcatJdbcConfig.mapToBean(map, TomcatJdbcConfig.class);
-    	    if(TomcatJdbcDataSource != null) {
-    	        TomcatJdbcDataSource.getMethod("setDriverClassName", String.class).invoke(dataSource, config.getDriver());
-                TomcatJdbcDataSource.getMethod("setUrl", String.class).invoke(dataSource, config.getUrl());
-                TomcatJdbcDataSource.getMethod("setUsername", String.class).invoke(dataSource, config.getUserName());
-                TomcatJdbcDataSource.getMethod("setPassword", String.class).invoke(dataSource, config.getPasswd());
-                
-                if(config.getInitialSize() != null) {
-                    TomcatJdbcDataSource.getMethod("setInitialSize", int.class).invoke(dataSource, config.getInitialSize());
+
+                map.put((String) key, value);
+            });
+
+            final TomcatJdbcConfig config = TomcatJdbcConfig.mapToBean(map, TomcatJdbcConfig.class);
+            if (tomcatJdbcDataSource != null) {
+                tomcatJdbcDataSource.getMethod("setDriverClassName", String.class).invoke(dataSource, config.getDriver());
+                tomcatJdbcDataSource.getMethod("setUrl", String.class).invoke(dataSource, config.getUrl());
+                tomcatJdbcDataSource.getMethod("setUsername", String.class).invoke(dataSource, config.getUserName());
+                tomcatJdbcDataSource.getMethod("setPassword", String.class).invoke(dataSource, config.getPasswd());
+
+                if (config.getInitialSize() != null) {
+                    tomcatJdbcDataSource.getMethod("setInitialSize", int.class).invoke(dataSource, config.getInitialSize());
                 }
-                
-                if(config.getMinIdle() != null) {
-                    TomcatJdbcDataSource.getMethod("setMinIdle", int.class).invoke(dataSource, config.getMinIdle());
+
+                if (config.getMinIdle() != null) {
+                    tomcatJdbcDataSource.getMethod("setMinIdle", int.class).invoke(dataSource, config.getMinIdle());
                 }
-                
-                if(config.getMaxWait() != null) {
-                    TomcatJdbcDataSource.getMethod("setMaxWait", int.class).invoke(dataSource, config.getMaxWait());
+
+                if (config.getMaxWait() != null) {
+                    tomcatJdbcDataSource.getMethod("setMaxWait", int.class).invoke(dataSource, config.getMaxWait());
                 }
-                
-                if(config.getMaxActive() != null) {
-                    TomcatJdbcDataSource.getMethod("setMaxActive", int.class).invoke(dataSource, config.getMaxActive());
+
+                if (config.getMaxActive() != null) {
+                    tomcatJdbcDataSource.getMethod("setMaxActive", int.class).invoke(dataSource, config.getMaxActive());
                 }
-                
-                if(config.getTestWhileIdle() != null) {
-                    TomcatJdbcDataSource.getMethod("setTestWhileIdle", boolean.class).invoke(dataSource, config.getTestWhileIdle());
+
+                if (config.getTestWhileIdle() != null) {
+                    tomcatJdbcDataSource.getMethod("setTestWhileIdle", boolean.class).invoke(dataSource, config.getTestWhileIdle());
                 }
-                
-                if(config.getTestOnBorrow() != null) {
-                    TomcatJdbcDataSource.getMethod("setTestOnBorrow", boolean.class).invoke(dataSource, config.getTestOnBorrow());
+
+                if (config.getTestOnBorrow() != null) {
+                    tomcatJdbcDataSource.getMethod("setTestOnBorrow", boolean.class).invoke(dataSource, config.getTestOnBorrow());
                 }
-                
-                if(config.getValidationInterval() != null) {
-                    TomcatJdbcDataSource.getMethod("setValidationInterval", long.class).invoke(dataSource, config.getValidationInterval());
+
+                if (config.getValidationInterval() != null) {
+                    tomcatJdbcDataSource.getMethod("setValidationInterval", long.class).invoke(dataSource, config.getValidationInterval());
                 }
-                
-                if(config.getTimeBetweenEvictionRunsMillis() != null) {
-                    TomcatJdbcDataSource.getMethod("setTimeBetweenEvictionRunsMillis", int.class).invoke(dataSource, config.getTimeBetweenEvictionRunsMillis());
+
+                if (config.getTimeBetweenEvictionRunsMillis() != null) {
+                    tomcatJdbcDataSource.getMethod("setTimeBetweenEvictionRunsMillis", int.class).invoke(dataSource,
+                            config.getTimeBetweenEvictionRunsMillis());
                 }
-                
-                if(config.getLogAbandoned() != null) {
-                    TomcatJdbcDataSource.getMethod("setLogAbandoned", boolean.class).invoke(dataSource, config.getLogAbandoned());
+
+                if (config.getLogAbandoned() != null) {
+                    tomcatJdbcDataSource.getMethod("setLogAbandoned", boolean.class).invoke(dataSource, config.getLogAbandoned());
                 }
-                
-                if(config.getRemoveAbandoned() != null) {
-                    TomcatJdbcDataSource.getMethod("setRemoveAbandoned", boolean.class).invoke(dataSource, config.getRemoveAbandoned());
+
+                if (config.getRemoveAbandoned() != null) {
+                    tomcatJdbcDataSource.getMethod("setRemoveAbandoned", boolean.class).invoke(dataSource, config.getRemoveAbandoned());
                 }
-                
-                if(config.getRemoveAbandonedTimeout() != null) {
-                    TomcatJdbcDataSource.getMethod("setRemoveAbandonedTimeout", int.class).invoke(dataSource, config.getRemoveAbandonedTimeout());
+
+                if (config.getRemoveAbandonedTimeout() != null) {
+                    tomcatJdbcDataSource.getMethod("setRemoveAbandonedTimeout", int.class).invoke(dataSource, config.getRemoveAbandonedTimeout());
                 }
-                
-                if(config.getMinEvictableIdleTimeMillis() != null) {
-                    TomcatJdbcDataSource.getMethod("setMinEvictableIdleTimeMillis", int.class).invoke(dataSource, config.getMinEvictableIdleTimeMillis());
+
+                if (config.getMinEvictableIdleTimeMillis() != null) {
+                    tomcatJdbcDataSource.getMethod("setMinEvictableIdleTimeMillis", int.class).invoke(dataSource,
+                            config.getMinEvictableIdleTimeMillis());
                 }
-                
-                if(config.getJdbcInterceptors() != null) {
-                    TomcatJdbcDataSource.getMethod("setJdbcInterceptors", String.class).invoke(dataSource, config.getJdbcInterceptors());
+
+                if (config.getJdbcInterceptors() != null) {
+                    tomcatJdbcDataSource.getMethod("setJdbcInterceptors", String.class).invoke(dataSource, config.getJdbcInterceptors());
                 }
-                
-                if(config.getJmxEnabled() != null) {
-                    TomcatJdbcDataSource.getMethod("setJmxEnabled", boolean.class).invoke(dataSource, config.getJmxEnabled());
+
+                if (config.getJmxEnabled() != null) {
+                    tomcatJdbcDataSource.getMethod("setJmxEnabled", boolean.class).invoke(dataSource, config.getJmxEnabled());
                 }
-    	    } else {
-    	        throw new DataSourceException("Unknown class [ org.apache.tomcat.jdbc.pool.DataSource ]");
-    	    }
-	    } catch(IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-	        throw new DataSourceException(e.getMessage(), e);
-	    }
-	}
+            } else {
+                throw new DataSourceException("Unknown class [ org.apache.tomcat.jdbc.pool.DataSource ]");
+            }
+        } catch (final IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+            throw new DataSourceException(e.getMessage(), e);
+        }
+    }
 }

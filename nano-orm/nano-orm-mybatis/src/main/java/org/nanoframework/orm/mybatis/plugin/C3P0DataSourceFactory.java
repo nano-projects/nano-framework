@@ -27,13 +27,13 @@ import org.apache.ibatis.datasource.DataSourceException;
  */
 public class C3P0DataSourceFactory extends AbstractDataSourceFactory {
 
-	public C3P0DataSourceFactory() {
-		try {
-			Class<?> ComboPooledDataSource = Class.forName("com.mchange.v2.c3p0.ComboPooledDataSource");
-			this.dataSource = (DataSource) ComboPooledDataSource.newInstance();
-		} catch(ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-		    throw new DataSourceException(e.getMessage(), e);
-		}
-	}
-	
+    public C3P0DataSourceFactory() {
+        try {
+            Class<?> comboPooledDataSource = Class.forName("com.mchange.v2.c3p0.ComboPooledDataSource");
+            this.dataSource = (DataSource) comboPooledDataSource.newInstance();
+        } catch (final ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            throw new DataSourceException(e.getMessage(), e);
+        }
+    }
+
 }

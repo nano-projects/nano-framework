@@ -30,49 +30,49 @@ import org.apache.ibatis.reflection.SystemMetaObject;
  * @since 1.2
  */
 public class AbstractDataSourceFactory implements DataSourceFactory {
-	protected DataSource dataSource;
-	
-	@Override
-	public void setProperties(Properties properties) {
-		Properties driverProperties = new Properties();
-		MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
-		for (Object key : properties.keySet()) {
-			String propertyName = (String) key;
-			if (metaDataSource.hasSetter(propertyName)) {
-				String value = (String) properties.get(propertyName);
-				/**　对没有设置值的属性跳过设置 */
-				if(StringUtils.isNotEmpty(value) && value.startsWith("${") && value.endsWith("}")) {
-					continue ;
-				}
-				
-				Object convertedValue = convertValue(metaDataSource, propertyName, value);
-				metaDataSource.setValue(propertyName, convertedValue);
-			} else {
-				throw new DataSourceException("Unknown DataSource property: " + propertyName);
-			}
-		}
-		
-		if (driverProperties.size() > 0) {
-			metaDataSource.setValue("driverProperties", driverProperties);
-		}
-	}
+    protected DataSource dataSource;
 
-	@Override
-	public DataSource getDataSource() {
-		return dataSource;
-	}
+    @Override
+    public void setProperties(final Properties properties) {
+        final Properties driverProperties = new Properties();
+        final MetaObject metaDataSource = SystemMetaObject.forObject(dataSource);
+        for (final Object key : properties.keySet()) {
+            final String propertyName = (String) key;
+            if (metaDataSource.hasSetter(propertyName)) {
+                final String value = (String) properties.get(propertyName);
+                /**　对没有设置值的属性跳过设置 */
+                if (StringUtils.isNotEmpty(value) && value.startsWith("${") && value.endsWith("}")) {
+                    continue;
+                }
 
-	private Object convertValue(MetaObject metaDataSource, String propertyName, String value) {
-		Object convertedValue = value;
-		Class<?> targetType = metaDataSource.getSetterType(propertyName);
-		if (targetType == Integer.class || targetType == int.class) {
-			convertedValue = Integer.valueOf(value);
-		} else if (targetType == Long.class || targetType == long.class) {
-			convertedValue = Long.valueOf(value);
-		} else if (targetType == Boolean.class || targetType == boolean.class) {
-			convertedValue = Boolean.valueOf(value);
-		}
-		return convertedValue;
-	}
+                final Object convertedValue = convertValue(metaDataSource, propertyName, value);
+                metaDataSource.setValue(propertyName, convertedValue);
+            } else {
+                throw new DataSourceException("Unknown DataSource property: " + propertyName);
+            }
+        }
+
+        if (driverProperties.size() > 0) {
+            metaDataSource.setValue("driverProperties", driverProperties);
+        }
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return dataSource;
+    }
+
+    private Object convertValue(final MetaObject metaDataSource, final String propertyName, final String value) {
+        Object convertedValue = value;
+        final Class<?> targetType = metaDataSource.getSetterType(propertyName);
+        if (targetType == Integer.class || targetType == int.class) {
+            convertedValue = Integer.valueOf(value);
+        } else if (targetType == Long.class || targetType == long.class) {
+            convertedValue = Long.valueOf(value);
+        } else if (targetType == Boolean.class || targetType == boolean.class) {
+            convertedValue = Boolean.valueOf(value);
+        }
+        return convertedValue;
+    }
 
 }

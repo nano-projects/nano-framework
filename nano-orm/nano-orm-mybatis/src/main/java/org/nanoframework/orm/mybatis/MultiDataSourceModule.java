@@ -22,33 +22,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.inject.Provider;
 import javax.sql.DataSource;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.session.SqlSessionManager;
-import org.apache.ibatis.type.TypeAliasRegistry;
-import org.nanoframework.commons.entity.BaseEntity;
-import org.nanoframework.commons.format.ClassCast;
 import org.nanoframework.commons.io.ClassPathResource;
 import org.nanoframework.commons.io.Resource;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ResourceUtils;
-import org.nanoframework.commons.util.StringUtils;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
@@ -61,18 +53,26 @@ import com.google.inject.Scopes;
  * @since 1.2
  */
 public class MultiDataSourceModule extends AbstractModule {
+
     private String envId;
     private Properties jdbc;
     private String mybatisConfigPath;
     private String[] mapperPackageName;
-    private String[] typeAliasPackageName;
 
+    /**
+     * 
+     * @param conf DataSourceConfig
+     */
     public MultiDataSourceModule(final DataSourceConfig conf) {
-        Assert.notNull(this.jdbc = conf.getJdbc());
-        Assert.hasLength(this.envId = conf.getEnvId());
-        Assert.hasLength(this.mybatisConfigPath = conf.getMybatisConfigPath());
-        Assert.notEmpty(this.mapperPackageName = conf.getMapperPackageName());
-        this.typeAliasPackageName = conf.getTypeAliasPackageName();
+        jdbc = conf.getJdbc();
+        envId = conf.getEnvId();
+        mybatisConfigPath = conf.getMybatisConfigPath();
+        mapperPackageName = conf.getMapperPackageName();
+
+        Assert.notNull(jdbc);
+        Assert.hasLength(envId);
+        Assert.hasLength(mybatisConfigPath);
+        Assert.notEmpty(mapperPackageName);
     }
 
     @Override
@@ -81,90 +81,47 @@ public class MultiDataSourceModule extends AbstractModule {
         try {
             InputStream input;
             try {
-                final Resource resource = new ClassPathResource(mybatisConfigPath);
+                Resource resource = new ClassPathResource(mybatisConfigPath);
                 input = resource.getInputStream();
                 if (input == null) {
                     input = new FileInputStream(ResourceUtils.getFile(mybatisConfigPath));
                 }
-            } catch (IOException e) {
+            } catch (final IOException e) {
                 throw new LoaderException("加载文件异常: " + e.getMessage());
             }
 
             reader = new InputStreamReader(input);
-            final SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(reader, envId, jdbc);
-            final SqlSessionManager sessionManager = SqlSessionManager.newInstance(sessionFactory);
+            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(reader, envId, jdbc);
+            SqlSessionManager sessionManager = SqlSessionManager.newInstance(sessionFactory);
             GlobalSqlSession.set(envId, sessionManager);
 
-            final Configuration conf = sessionFactory.getConfiguration();
-            registryMapper(conf, sessionManager);
-            registryTypeAlias(conf);
-            setConfigureSettings(conf);
+            Configuration configuration = sessionFactory.getConfiguration();
 
+            MapperRegistry registry = configuration.getMapperRegistry();
+            for (String pkg : mapperPackageName) {
+                Set<Class<?>> classes = getClasses(pkg);
+                if (!CollectionUtils.isEmpty(classes)) {
+                    for (Class<?> cls : classes) {
+                        if (!registry.hasMapper(cls)) {
+                            registry.addMapper(cls);
+                        }
+                    }
+                }
+            }
+
+            // bind mappers
+            Collection<Class<?>> mapperClasses = registry.getMappers();
+            for (Class<?> mapperType : mapperClasses) {
+                bindMapper(mapperType, sessionManager);
+            }
         } finally {
             if (reader != null) {
                 try {
                     reader.close();
                 } catch (final IOException e) {
-                    // ignore
                 }
             }
         }
-    }
-
-    final void registryMapper(final Configuration conf, final SqlSessionManager sessionManager) {
-        final MapperRegistry mapperRegistry = conf.getMapperRegistry();
-        for (final String pkg : mapperPackageName) {
-            final Set<Class<?>> classes = getClasses(StringUtils.trim(pkg));
-            if (!CollectionUtils.isEmpty(classes)) {
-                for (final Class<?> cls : classes) {
-                    if (!mapperRegistry.hasMapper(cls)) {
-                        mapperRegistry.addMapper(cls);
-                    }
-                }
-            }
-        }
-
-        // bind mappers
-        final Collection<Class<?>> mapperClasses = mapperRegistry.getMappers();
-        for (final Class<?> mapperType : mapperClasses) {
-            bindMapper(mapperType, sessionManager);
-        }
-    }
-
-    final void registryTypeAlias(final Configuration conf) {
-        final TypeAliasRegistry typeAliasRegistry = conf.getTypeAliasRegistry();
-        if (ArrayUtils.isNotEmpty(typeAliasPackageName)) {
-            for (final String pkg : typeAliasPackageName) {
-                typeAliasRegistry.registerAliases(StringUtils.trim(pkg));
-            }
-        }
-    }
-
-    final void setConfigureSettings(final Configuration conf) {
-        final String prefix = "mybatis.settings.";
-        final Map<String, Method> methods = BaseEntity.paramMethods(conf.getClass());
-        final Map<String, Field> fields = BaseEntity.paramFields(conf.getClass());
-        jdbc.keySet().stream().filter(key -> StringUtils.startsWith((String) key, prefix)).forEach(key -> {
-            try {
-                final String keyStr = (String) key;
-                final String fieldName = keyStr.replace(prefix, StringUtils.EMPTY);
-                final Field field = fields.get(fieldName);
-                if (field != null) {
-                    final String methodName = "set" + fieldName.substring(0, 1).toUpperCase() + fieldName.substring(1);
-                    final Method method = methods.get(methodName);
-                    if (method != null) {
-                        final String value = jdbc.getProperty(keyStr);
-                        if (StringUtils.isNotBlank(value)) {
-                            final Object castValue = ClassCast.cast(value, field.getType().getName());
-                            method.invoke(conf, castValue);
-                        }
-                    }
-                }
-            } catch (final Throwable e) {
-                // ignore
-            }
-        });
-
     }
 
     /**

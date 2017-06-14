@@ -15,13 +15,14 @@
  */
 package org.nanoframework.orm.mybatis;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.ibatis.session.SqlSessionManager;
+
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 /**
  * 全局MyBatis数据源管理类<br>
@@ -33,37 +34,38 @@ import org.apache.ibatis.session.SqlSessionManager;
  * @see MultiDataSourceModule
  */
 public class GlobalSqlSession {
-	private static ConcurrentMap<String, SqlSessionManager> globals = new ConcurrentHashMap<>();
+    private static ConcurrentMap<String, SqlSessionManager> globals = Maps.newConcurrentMap();
 
-	private GlobalSqlSession() { }
+    private GlobalSqlSession() {
+    }
 
-	public static void set(String type, SqlSessionManager global) {
-		globals.put(type, global);
+    public static void set(final String type, final SqlSessionManager global) {
+        globals.put(type, global);
+    }
 
-	}
+    public static final SqlSessionManager get(final String type) {
+        return globals.get(type);
+    }
 
-	public static final SqlSessionManager get(String type) {
-		return globals.get(type);
-	}
-	
-	public static final SqlSessionManager[] get(String... types) {
-		if(types.length > 0) {
-			List<SqlSessionManager> managers = new ArrayList<>();
-			for(String type : types) {
-				SqlSessionManager manager = globals.get(type);
-				if(manager == null) 
-					throw new IllegalArgumentException("无效的数据源名称: " + type);
-				
-				managers.add(manager);
-			}
-			
-			return managers.toArray(new SqlSessionManager[managers.size()]);
-		}
-		
-		return null;
-	}
+    public static final SqlSessionManager[] get(final String... types) {
+        if (types.length > 0) {
+            final List<SqlSessionManager> managers = Lists.newArrayList();
+            for (final String type : types) {
+                final SqlSessionManager manager = globals.get(type);
+                if (manager == null) {
+                    throw new IllegalArgumentException("无效的数据源名称: " + type);
+                }
 
-	public static final Set<String> keys() {
-		return globals.keySet();
-	}
+                managers.add(manager);
+            }
+
+            return managers.toArray(new SqlSessionManager[managers.size()]);
+        }
+
+        return null;
+    }
+
+    public static final Set<String> keys() {
+        return globals.keySet();
+    }
 }

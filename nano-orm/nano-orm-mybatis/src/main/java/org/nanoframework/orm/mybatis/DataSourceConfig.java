@@ -47,7 +47,7 @@ public class DataSourceConfig extends BaseEntity {
      */
     private String[] typeAliasPackageName;
 
-    public DataSourceConfig(String[] mapperPackageName, String[] typeAliasPackageName, Properties jdbc, PoolType poolType) {
+    public DataSourceConfig(final String[] mapperPackageName, final String[] typeAliasPackageName, final Properties jdbc, final PoolType poolType) {
         Assert.notNull(jdbc);
         Assert.hasLength(this.envId = jdbc.getProperty(DataSourceLoader.MYBATIS_ENVIRONMENT_ID));
         Assert.notNull(poolType);
@@ -72,7 +72,7 @@ public class DataSourceConfig extends BaseEntity {
         return jdbc;
     }
 
-    public void setJdbc(Properties jdbc) {
+    public void setJdbc(final Properties jdbc) {
         this.jdbc = jdbc;
     }
 
@@ -80,7 +80,7 @@ public class DataSourceConfig extends BaseEntity {
         return helper;
     }
 
-    public void setHelper(JdbcHelper helper) {
+    public void setHelper(final JdbcHelper helper) {
         this.helper = helper;
     }
 
@@ -88,7 +88,7 @@ public class DataSourceConfig extends BaseEntity {
         return envId;
     }
 
-    public void setEnvId(String envId) {
+    public void setEnvId(final String envId) {
         this.envId = envId;
     }
 
@@ -96,7 +96,7 @@ public class DataSourceConfig extends BaseEntity {
         return mybatisConfigPath;
     }
 
-    public void setMybatisConfigPath(String mybatisConfigPath) {
+    public void setMybatisConfigPath(final String mybatisConfigPath) {
         this.mybatisConfigPath = mybatisConfigPath;
     }
 
@@ -104,7 +104,7 @@ public class DataSourceConfig extends BaseEntity {
         return poolType;
     }
 
-    public void setPoolType(PoolType poolType) {
+    public void setPoolType(final PoolType poolType) {
         this.poolType = poolType;
     }
 
@@ -112,7 +112,7 @@ public class DataSourceConfig extends BaseEntity {
         return typeAliasPackageName;
     }
 
-    public void setTypeAliasPackageName(String[] typeAliasPackageName) {
+    public void setTypeAliasPackageName(final String[] typeAliasPackageName) {
         this.typeAliasPackageName = typeAliasPackageName;
     }
 

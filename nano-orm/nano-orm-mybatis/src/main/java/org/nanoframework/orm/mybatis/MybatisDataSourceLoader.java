@@ -48,7 +48,7 @@ public class MybatisDataSourceLoader extends DataSourceLoader {
     }
 
     @Override
-    public void toConfig(Properties properties) {
+    public void toConfig(final Properties properties) {
         Assert.notNull(properties, "数据源属性文件不能为空");
         final String[] mapperPackageName = properties.getProperty(MAPPER_PACKAGE_NAME, "NULL").split(",");
         final String[] typeAliasPackageName = properties.getProperty(MAPPER_PACKAGE_TYPE_ALIAS, "").split(",");
