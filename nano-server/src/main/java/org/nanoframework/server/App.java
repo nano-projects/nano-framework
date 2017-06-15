@@ -34,6 +34,7 @@ public class App extends BaseEntity {
     private static final long serialVersionUID = -6160267822834183082L;
     private static final String ENABLED = "application.enabled";
     private static final String GIT_REPO = "application.git.repo";
+    private static final String GIT_REPO_BRANCH = "application.git.repo.branch";
     private static final String CONF_PATH = "application.conf.path";
     private static final String CONF_ENV = "application.conf.env";
     private static final String CONF_HOST = "application.conf.host";
@@ -42,6 +43,7 @@ public class App extends BaseEntity {
 
     private Boolean enabled;
     private String gitRepo;
+    private String gitRepoBranch;
     private String gitPullPath;
     private String confPath;
     private String confEnv;
@@ -51,6 +53,7 @@ public class App extends BaseEntity {
     private App(final Properties conf) {
         enabled = Boolean.valueOf(conf.getProperty(ENABLED, "false"));
         gitRepo = conf.getProperty(GIT_REPO);
+        gitRepoBranch = conf.getProperty(GIT_REPO_BRANCH);
         gitPullPath = UUIDUtils.create();
         confPath = conf.getProperty(CONF_PATH);
         confEnv = conf.getProperty(CONF_ENV);
@@ -84,6 +87,10 @@ public class App extends BaseEntity {
 
     public String getGitRepo() {
         return gitRepo;
+    }
+
+    public String getGitRepoBranch() {
+        return gitRepoBranch;
     }
 
     public String getGitPullPath() {

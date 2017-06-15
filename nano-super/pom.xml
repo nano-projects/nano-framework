@@ -69,6 +69,11 @@
       </dependency>
       <dependency>
         <groupId>org.nanoframework</groupId>
+        <artifactId>nano-server</artifactId>
+        <version>${nano.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nanoframework</groupId>
         <artifactId>nano-concurrent</artifactId>
         <version>${nano.version}</version>
       </dependency>

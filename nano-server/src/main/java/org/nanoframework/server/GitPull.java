@@ -17,9 +17,13 @@ package org.nanoframework.server;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.Inet4Address;
 import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URL;
-import java.net.UnknownHostException;
+import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
@@ -29,7 +33,10 @@ import org.eclipse.jgit.api.errors.GitAPIException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.ObjectCompare;
 import org.nanoframework.commons.util.StringUtils;
+
+import com.google.common.collect.Lists;
 
 /**
  *
@@ -38,12 +45,12 @@ import org.nanoframework.commons.util.StringUtils;
  */
 public class GitPull {
     private static final Logger LOGGER = LoggerFactory.getLogger(GitPull.class);
-
     private static final String CONF_FILE_PATH = "application.properties";
+    private static final String[] HOST_FILTERS = { "localhost", "127.0.0.1" };
     private Properties conf;
     private App app;
     private File pullPath;
-    private File fullPath;
+    private List<File> fullPath = Lists.newArrayList();
     private File confPath;
     private boolean enabled;
 
@@ -58,7 +65,15 @@ public class GitPull {
         return new GitPull();
     }
 
-    public GitPull quickPull() {
+    public GitPull quickPull(String... args) {
+        if (!ArrayUtils.isEmpty(args)) {
+            for (final String arg : args) {
+                if (StringUtils.equals("stop", StringUtils.lowerCase(arg))) {
+                    return this;
+                }
+            }
+        }
+
         if (enabled) {
             try {
                 return dir().pull().copy().clean();
@@ -71,7 +86,12 @@ public class GitPull {
     }
 
     private boolean init() {
-        conf = PropertiesLoader.load(CONF_FILE_PATH);
+        try {
+            conf = PropertiesLoader.load(CONF_FILE_PATH);
+        } catch (final Throwable e) {
+            // ignore
+        }
+
         if (conf == null) {
             return false;
         }
@@ -86,22 +106,44 @@ public class GitPull {
     }
 
     private void initFullPath() {
-        final String host;
+        final String[] hosts;
         final String confHost = app.getConfHost();
         if (StringUtils.isNotBlank(confHost)) {
-            host = confHost;
+            hosts = new String[] { confHost };
         } else {
-            try {
-                host = InetAddress.getLocalHost().getHostAddress();
-            } catch (final UnknownHostException e) {
-                throw new org.nanoframework.server.exception.UnknownHostException(e.getMessage());
-            }
+            hosts = getHostAddresses();
         }
 
         final StringBuilder fullPath = new StringBuilder();
         fullPath.append(app.getGitPullPath()).append(File.separatorChar).append(app.getConfPath()).append(File.separatorChar).append(app.getConfEnv())
-                .append(File.separatorChar).append(host);
-        this.fullPath = new File(fullPath.toString());
+                .append(File.separatorChar);
+        for (final String host : hosts) {
+            this.fullPath.add(new File(fullPath.toString() + host));
+        }
+    }
+
+    private String[] getHostAddresses() {
+        try {
+            final List<String> hostAddrs = Lists.newArrayList();
+            final Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces();
+            while (nis.hasMoreElements()) {
+                final NetworkInterface ni = nis.nextElement();
+                final Enumeration<InetAddress> addrs = ni.getInetAddresses();
+                while (addrs.hasMoreElements()) {
+                    final InetAddress addr = addrs.nextElement();
+                    if (addr instanceof Inet4Address) {
+                        final String hostAddr = addr.getHostAddress();
+                        if (!ObjectCompare.isInList(hostAddr, HOST_FILTERS)) {
+                            hostAddrs.add(hostAddr);
+                        }
+                    }
+                }
+            }
+
+            return hostAddrs.toArray(new String[hostAddrs.size()]);
+        } catch (final SocketException e) {
+            throw new org.nanoframework.server.exception.UnknownHostException(e.getMessage());
+        }
     }
 
     private void initConfPath() {
@@ -122,7 +164,7 @@ public class GitPull {
 
     public GitPull pull() throws GitAPIException {
         if (enabled) {
-            Git.cloneRepository().setURI(app.getGitRepo()).setDirectory(pullPath).call();
+            Git.cloneRepository().setURI(app.getGitRepo()).setDirectory(pullPath).setBranch(app.getGitRepoBranch()).call();
         }
 
         return this;
@@ -130,12 +172,15 @@ public class GitPull {
 
     public GitPull copy() throws IOException {
         if (enabled) {
-            if (fullPath.exists()) {
-                if (confPath.exists() && StringUtils.equals(App.REPEAT_POLICY_CLEAN, app.getConfRepeatPolicy())) {
-                    cleanConf();
-                }
+            for (final File path : fullPath) {
+                if (path.exists()) {
+                    if (confPath.exists() && StringUtils.equals(App.REPEAT_POLICY_CLEAN, app.getConfRepeatPolicy())) {
+                        cleanConf();
+                    }
 
-                FileUtils.copyDirectory(fullPath, confPath);
+                    FileUtils.copyDirectory(path, confPath);
+                    break;
+                }
             }
         }
 
