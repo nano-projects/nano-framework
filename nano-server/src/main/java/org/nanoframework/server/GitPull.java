@@ -164,7 +164,15 @@ public class GitPull {
 
     public GitPull pull() throws GitAPIException {
         if (enabled) {
-            Git.cloneRepository().setURI(app.getGitRepo()).setDirectory(pullPath).setBranch(app.getGitRepoBranch()).call();
+            final String branch;
+            final String gitRepoBranch = app.getGitRepoBranch();
+            if (StringUtils.isNotBlank(gitRepoBranch)) {
+                branch = gitRepoBranch;
+            } else {
+                branch = null;
+            }
+
+            Git.cloneRepository().setURI(app.getGitRepo()).setDirectory(pullPath).setBranch(branch).call();
         }
 
         return this;
