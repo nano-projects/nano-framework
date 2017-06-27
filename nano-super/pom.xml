@@ -118,6 +118,11 @@
         <artifactId>nano-ext-httpclient</artifactId>
         <version>${nano.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.nanoframework</groupId>
+        <artifactId>nano-ext-dubbo</artifactId>
+        <version>${nano.version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
