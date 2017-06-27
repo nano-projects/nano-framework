@@ -36,7 +36,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <cs.dir>${project.basedir}</cs.dir>
-    <nano.version>1.4.6-SNAPSHOT</nano.version>
+    <nano.version>1.4.6</nano.version>
   </properties>
 
   <dependencyManagement>
