@@ -51,7 +51,7 @@ public abstract class BaseScheduler implements Runnable, Cloneable {
     private static Map<String, AtomicLong> index = Maps.newHashMap();
     private SchedulerAnalysis analysis = SchedulerAnalysis.newInstance();
     private SchedulerFactory factory = SchedulerFactory.getInstance();
-    
+
     public BaseScheduler() {
     }
 
@@ -103,13 +103,14 @@ public abstract class BaseScheduler implements Runnable, Cloneable {
     public void process() {
         if (config.getBeforeAfterOnly()) {
             try {
-                if (!isRunning)
+                if (!isRunning) {
                     try {
                         before();
                     } catch (final Throwable e) {
                         analysis.beforeException.incrementAndGet();
                         throw e;
                     }
+                }
 
                 try {
                     execute();
@@ -118,17 +119,18 @@ public abstract class BaseScheduler implements Runnable, Cloneable {
                     throw e;
                 }
 
-                if (!isRunning)
+                if (!isRunning) {
                     try {
                         after();
                     } catch (final Throwable e) {
                         analysis.afterException.incrementAndGet();
                         throw e;
                     }
+                }
 
-                if (!isRunning)
+                if (!isRunning) {
                     isRunning = true;
-
+                }
             } catch (final Throwable e) {
                 LOGGER.error("任务运行异常: " + e.getMessage(), e);
                 thisWait(100);

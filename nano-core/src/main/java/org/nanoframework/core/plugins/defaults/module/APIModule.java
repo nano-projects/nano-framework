@@ -45,7 +45,7 @@ import com.google.inject.name.Names;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class APIModule extends Module {
     private static final Logger LOGGER = LoggerFactory.getLogger(APIModule.class);
-    
+
     @Override
     public List<Module> load() throws Throwable {
         modules.add(this);
@@ -62,16 +62,15 @@ public class APIModule extends Module {
         scanApi();
         bindApi();
     }
-    
+
     protected void scanApi() {
-        PropertiesLoader.PROPERTIES.values().stream()
-        .filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.API_BASE_PACKAGE)))
-        .forEach(item -> {
-            final String[] packageNames = item.getProperty(ApplicationContext.API_BASE_PACKAGE).split(",");
-            Arrays.asList(packageNames).forEach(packageName -> ClassScanner.scan(packageName));
-        });
+        PropertiesLoader.PROPERTIES.values().stream().filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.API_BASE_PACKAGE)))
+                .forEach(item -> {
+                    final String[] packageNames = item.getProperty(ApplicationContext.API_BASE_PACKAGE).split(",");
+                    Arrays.asList(packageNames).forEach(packageName -> ClassScanner.scan(packageName));
+                });
     }
-    
+
     protected void bindApi() {
         final Map<Class, List<Class>> bindMap = Maps.newHashMap();
         ClassScanner.filter(API.class).forEach(cls -> {
@@ -79,43 +78,49 @@ public class APIModule extends Module {
                 LOGGER.warn("Ignore interface API of {}", cls.getName());
                 return;
             }
-            
+
             final Class[] itfs = cls.getInterfaces();
             if (ArrayUtils.isEmpty(itfs)) {
                 LOGGER.warn("Ignore no interface implement API of {}", cls.getName());
                 return;
             }
-            
+
             for (final Class itf : itfs) {
                 List<Class> implList = bindMap.get(itf);
                 if (implList == null) {
                     implList = Lists.newArrayList();
                     bindMap.put(itf, implList);
                 }
-                
+
                 implList.add(cls);
             }
         });
-        
+
         bindApi(bindMap);
     }
-    
+
     protected void bindApi(final Map<Class, List<Class>> bindMap) {
         bindMap.forEach((itf, impls) -> {
             if (impls.size() == 1) {
                 final Class cls = impls.get(0);
                 binder().bind(itf).to(cls);
+
+                final String apiName = ((API) cls.getAnnotation(API.class)).value();
+                if (StringUtils.isNotBlank(apiName)) {
+                    binder().bind(itf).annotatedWith(Names.named(apiName)).to(cls);
+                }
+
                 LOGGER.debug("Binding {} to {}", itf.getName(), cls.getName());
             } else {
                 if (itf.isAnnotationPresent(Component.class)) {
                     throw new BindException("Multiple components can not be bound");
                 }
-                
+
                 bindApiWithName(itf, impls);
             }
         });
     }
-    
+
     protected void bindApiWithName(final Class itf, final List<Class> impls) {
         impls.forEach(cls -> {
             final String apiName = ((API) cls.getAnnotation(API.class)).value();
@@ -126,7 +131,7 @@ public class APIModule extends Module {
                 final String clsName = cls.getSimpleName();
                 name = clsName.substring(0, 1).toLowerCase() + clsName.substring(1, clsName.length());
             }
-            
+
             binder().bind(itf).annotatedWith(Names.named(name)).to(cls);
             LOGGER.debug("Binding {} to {} with name {}", itf.getName(), cls.getName(), name);
         });
