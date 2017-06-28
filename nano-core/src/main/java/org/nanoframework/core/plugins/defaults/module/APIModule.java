@@ -103,11 +103,11 @@ public class APIModule extends Module {
         bindMap.forEach((itf, impls) -> {
             if (impls.size() == 1) {
                 final Class cls = impls.get(0);
-                binder().bind(itf).to(cls);
-
                 final String apiName = ((API) cls.getAnnotation(API.class)).value();
                 if (StringUtils.isNotBlank(apiName)) {
                     binder().bind(itf).annotatedWith(Names.named(apiName)).to(cls);
+                } else {
+                    binder().bind(itf).to(cls);
                 }
 
                 LOGGER.debug("Binding {} to {}", itf.getName(), cls.getName());
