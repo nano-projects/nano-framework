@@ -35,7 +35,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <cs.dir>${project.basedir}</cs.dir>
-    <nano.version>1.4.7</nano.version>
+    <nano.version>1.4.8-SNAPSHOT</nano.version>
 
     <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
     <checkstyle.version>6.7</checkstyle.version>
