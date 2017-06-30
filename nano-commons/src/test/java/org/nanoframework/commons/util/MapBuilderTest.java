@@ -33,7 +33,7 @@ public class MapBuilderTest {
 
     @Test
     public void buildTest() {
-        final Map<String, Integer> map = MapBuilder.<String, Integer>create().put("1", 1).put("2", 2).build();
+        final Map<String, Integer> map = MapBuilder.<String, Integer>builder().put("1", 1).put("2", 2).build();
         Assert.assertEquals(map.size(), 2);
         
         final Map<String, Integer> concurrentMap = MapBuilder.<String, Integer>create(ReflectUtils.convert(ConcurrentHashMap.class)).put("1", 1).build();

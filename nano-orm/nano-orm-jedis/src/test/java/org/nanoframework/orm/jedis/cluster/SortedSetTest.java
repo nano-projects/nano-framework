@@ -33,7 +33,7 @@ public class SortedSetTest extends RedisClientInitialize {
     @Test
     public void sortedTest() {
         try {
-            Assert.assertEquals(redisClient.zadd("sortedTest", MapBuilder.<Object, Double>create()
+            Assert.assertEquals(redisClient.zadd("sortedTest", MapBuilder.<Object, Double>builder()
                     .put("1", 1D)
                     .put("2", 2D)
                     .put("3", 3D)

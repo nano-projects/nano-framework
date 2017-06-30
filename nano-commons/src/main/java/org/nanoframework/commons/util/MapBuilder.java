@@ -15,16 +15,15 @@
  */
 package org.nanoframework.commons.util;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 /**
  *
  * @author yanghe
  * @since 1.3.7
- * @deprecated 使用Guava中的ImmutableMap替代此类
  */
-@Deprecated
 public class MapBuilder<K, V> {
     private Map<K, V> map;
 
@@ -32,9 +31,9 @@ public class MapBuilder<K, V> {
         
     }
 
-    public static <K, V> MapBuilder<K, V> create() {
+    public static <K, V> MapBuilder<K, V> builder() {
         MapBuilder<K, V> build = new MapBuilder<>();
-        build.map = new HashMap<>();
+        build.map = Maps.newHashMap();
         return build;
     }
 

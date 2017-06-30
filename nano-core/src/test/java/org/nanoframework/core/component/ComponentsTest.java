@@ -40,7 +40,7 @@ import com.google.common.collect.Maps;
  * @since 1.3.15
  */
 public class ComponentsTest extends PluginLoaderInit {
-    
+
     @Test
     public void componentTest() throws LoaderException, IOException {
         final RequestMapper mapper = Routes.route().lookup("/v1/test", RequestMethod.GET);
@@ -50,13 +50,13 @@ public class ComponentsTest extends PluginLoaderInit {
         Assert.assertEquals(methods.contains(RequestMethod.GET), true);
         Assert.assertEquals(methods.contains(RequestMethod.POST), true);
         Assert.assertEquals(mapper.getInstance() instanceof TestComponent, true);
-        
+
         final Object ret = Components.invoke(mapper, Maps.newHashMap());
         Assert.assertNotNull(ret);
         Assert.assertEquals(ret, "OK");
-        
+
     }
-    
+
     @Test
     public void reloadTest() throws LoaderException, IOException {
         Components.reload();
@@ -65,21 +65,21 @@ public class ComponentsTest extends PluginLoaderInit {
         final Object reload = Components.invoke(mapper, null);
         Assert.assertEquals(reload, "Reload");
     }
-    
+
     @Test
     public void hasParamTest() {
         final RequestMapper mapper = Routes.route().lookup("/v1/param/hello", RequestMethod.GET);
         Assert.assertNotNull(mapper);
-        final Object hasParam = Components.invoke(mapper, MapBuilder.<String, Object>create().put("param1", "world").build());
+        final Object hasParam = Components.invoke(mapper, MapBuilder.<String, Object> builder().put("param1", "world").build());
         Assert.assertEquals(hasParam, "hello=world");
     }
-    
+
     @Test
     public void notFoundRouteTest() {
         final RequestMapper mapper = Routes.route().lookup("/v1/param/hello", RequestMethod.POST);
         Assert.assertEquals(mapper, null);
     }
-    
+
     @Test
     public void emptyParamTest() {
         final RequestMapper mapper = Routes.route().lookup("/v1/param/hello", RequestMethod.GET);
@@ -90,17 +90,17 @@ public class ComponentsTest extends PluginLoaderInit {
             Assert.assertEquals(e instanceof ComponentInvokeException, true);
         }
     }
-    
+
     @Test
     public void beforeAopTest() {
         final RequestMapper mapper = Routes.route().lookup("/v1/aop/before", RequestMethod.PUT);
         Assert.assertNotNull(mapper);
-        final Object ret = Components.invoke(mapper, MapBuilder.<String, Object>create().put("param", "before").build());
+        final Object ret = Components.invoke(mapper, MapBuilder.<String, Object> builder().put("param", "before").build());
         Assert.assertEquals(ret, "before");
         Assert.assertEquals(BeforeAOP.RESULT, "before");
         BeforeAOP.RESULT = null;
     }
-    
+
     @Test
     public void afterAopTest() {
         final RequestMapper mapper = Routes.route().lookup("/v1/aop/after", RequestMethod.PUT);
@@ -109,7 +109,7 @@ public class ComponentsTest extends PluginLoaderInit {
         Assert.assertEquals(AfterAOP.RESULT, "OK");
         AfterAOP.RESULT = null;
     }
-    
+
     @Test
     public void afterAopErrorTest() {
         final RequestMapper mapper = Routes.route().lookup("/v1/aop/after/error", RequestMethod.PUT);
@@ -120,16 +120,16 @@ public class ComponentsTest extends PluginLoaderInit {
             Assert.assertEquals(e instanceof ComponentInvokeException, true);
             Assert.assertEquals(e.getCause() instanceof UnsupportedAccessException, true);
         }
-        
+
         Assert.assertEquals(AfterAOP.RESULT instanceof UnsupportedAccessException, true);
         AfterAOP.RESULT = null;
     }
-    
+
     @Test
     public void arrayTest() {
         final RequestMapper mapper = Routes.route().lookup("/v1/array", RequestMethod.PUT);
         final String[] array = { "1", "2", "3" };
-        Object value = Components.invoke(mapper, MapBuilder.<String, Object>create().put("ARRAY[]", array).build());
+        Object value = Components.invoke(mapper, MapBuilder.<String, Object> builder().put("ARRAY[]", array).build());
         Assert.assertNotNull(value);
         Assert.assertEquals(JSON.toJSONString(array), value);
     }

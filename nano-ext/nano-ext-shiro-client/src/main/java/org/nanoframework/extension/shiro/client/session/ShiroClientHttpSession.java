@@ -88,8 +88,8 @@ public class ShiroClientHttpSession extends ShiroHttpSession {
     public void setAttribute(String s, Object o) {
         super.setAttribute(s, o);
         final String url = this.url + '/' + ATTRIBUTE;
-        final String attribute = SerializableUtils.encode(MapBuilder.<Object, Object> create().put(s, o).build());
-        if(!syncSession(url, MapBuilder.<String, String> create().put(ATTRIBUTE, attribute).build())) {
+        final String attribute = SerializableUtils.encode(MapBuilder.<Object, Object> builder().put(s, o).build());
+        if(!syncSession(url, MapBuilder.<String, String> builder().put(ATTRIBUTE, attribute).build())) {
             LOGGER.warn("UnSync Session Attribute: {}", s);
         }
     }
@@ -98,7 +98,7 @@ public class ShiroClientHttpSession extends ShiroHttpSession {
     public void setMaxInactiveInterval(int i) {
         super.setMaxInactiveInterval(i);
         final String url = this.url + '/' + MAX_INACTIVE_INTERVAL;
-        if(!syncSession(url, MapBuilder.<String, String> create().put(MAX_INACTIVE_INTERVAL, String.valueOf(i)).build())) {
+        if(!syncSession(url, MapBuilder.<String, String> builder().put(MAX_INACTIVE_INTERVAL, String.valueOf(i)).build())) {
             LOGGER.warn("UnSync Session MaxInactiveInterval: {}", i);
         }
     }

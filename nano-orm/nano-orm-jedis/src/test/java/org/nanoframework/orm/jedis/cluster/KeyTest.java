@@ -54,7 +54,7 @@ public class KeyTest extends RedisClientInitialize {
     @Test
     public void setAndDelKeysTest() {
         try {
-            final Map<String, Object> map = MapBuilder.<String, Object>create()
+            final Map<String, Object> map = MapBuilder.<String, Object>builder()
                     .put("setAndDelKeysTest-0", "0")
                     .put("setAndDelKeysTest-1", "1")
                     .put("setAndDelKeysTest-2", "2")
@@ -287,12 +287,12 @@ public class KeyTest extends RedisClientInitialize {
             Assert.assertEquals(redisClient.setByNX("setnxTest", Lists.newArrayList("setByNX-1")), false);
             Assert.assertEquals(redisClient.del("setnxTest"), 1);
             
-            final Map<String, Boolean> values = redisClient.setByNX(MapBuilder.<String, Object>create().put("setnxTest-0", "setByNX-0").put("setnxTest-1", "setByNX-1").build());
+            final Map<String, Boolean> values = redisClient.setByNX(MapBuilder.<String, Object>builder().put("setnxTest-0", "setByNX-0").put("setnxTest-1", "setByNX-1").build());
             Assert.assertEquals(values.size(), 2);
             Assert.assertEquals(values.get("setnxTest-0"), true);
             Assert.assertEquals(values.get("setnxTest-1"), true);
             
-            final Map<String, Boolean> values1 = redisClient.setByNX(MapBuilder.<String, Object>create().put("setnxTest-1", "setByNX-1").put("setnxTest-2", "setByNX-2").build());
+            final Map<String, Boolean> values1 = redisClient.setByNX(MapBuilder.<String, Object>builder().put("setnxTest-1", "setByNX-1").put("setnxTest-2", "setByNX-2").build());
             Assert.assertEquals(values1.size(), 2);
             Assert.assertEquals(values1.get("setnxTest-1"), false);
             Assert.assertEquals(values1.get("setnxTest-2"), true);

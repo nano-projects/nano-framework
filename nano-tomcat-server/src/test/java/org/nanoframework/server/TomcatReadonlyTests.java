@@ -52,7 +52,7 @@ public class TomcatReadonlyTests {
     @Test
     public void putTest() throws IOException {
         final HttpClient client = Globals.get(Injector.class).getInstance(HttpClient.class);
-        HttpResponse res = client.put("http://localhost:7000/tomcat/put/hello", MapBuilder.<String, String>create().put("spec", "&").put("value", "world").build());
+        HttpResponse res = client.put("http://localhost:7000/tomcat/put/hello", MapBuilder.<String, String>builder().put("spec", "&").put("value", "world").build());
         Map<String, String> result = JSON.parseObject(res.entity, new TypeReference<Map<String, String>>() { });
         Assert.assertEquals(result.get("message"), "hello&world");
     }
@@ -68,7 +68,7 @@ public class TomcatReadonlyTests {
     @Test
     public void putJsonTest() throws IOException {
         final HttpClient client = Globals.get(Injector.class).getInstance(HttpClient.class);
-        final String json = JSON.toJSONString(MapBuilder.<String, String[]>create().put("value", new String[]{"1", "2", "3"}).build());
+        final String json = JSON.toJSONString(MapBuilder.<String, String[]>builder().put("value", new String[]{"1", "2", "3"}).build());
         HttpResponse res = client.put("http://localhost:7000/tomcat/put/json/hello", json);
         Map<String, String> result = JSON.parseObject(res.entity, new TypeReference<Map<String, String>>() { });
         Assert.assertEquals(result.get("message"), "hello=[\"1\",\"2\",\"3\"]");
@@ -77,7 +77,7 @@ public class TomcatReadonlyTests {
     @Test
     public void deleteTest() throws IOException {
         final HttpClient client = Globals.get(Injector.class).getInstance(HttpClient.class);
-        HttpResponse res = client.delete("http://localhost:7000/tomcat/del/hello", MapBuilder.<String, String>create().put("spec", " del ").put("value", "world").build());
+        HttpResponse res = client.delete("http://localhost:7000/tomcat/del/hello", MapBuilder.<String, String>builder().put("spec", " del ").put("value", "world").build());
         Map<String, String> result = JSON.parseObject(res.entity, new TypeReference<Map<String, String>>() { });
         Assert.assertEquals(result.get("message"), "hello del world");
     }
@@ -85,7 +85,7 @@ public class TomcatReadonlyTests {
     @Test
     public void postTest() throws IOException {
         final HttpClient client = Globals.get(Injector.class).getInstance(HttpClient.class);
-        HttpResponse res = client.post("http://localhost:7000/tomcat/post/hello", MapBuilder.<String, String>create().put("spec", "&").put("value", "world").build());
+        HttpResponse res = client.post("http://localhost:7000/tomcat/post/hello", MapBuilder.<String, String>builder().put("spec", "&").put("value", "world").build());
         Map<String, String> result = JSON.parseObject(res.entity, new TypeReference<Map<String, String>>() { });
         Assert.assertEquals(result.get("message"), "hello&world");
     }

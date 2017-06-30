@@ -56,7 +56,7 @@ public class HashTest extends RedisClientInitialize {
     @Test
     public void hmTest() {
         try {
-            Assert.assertEquals(redisClient.hmset("hmTest", MapBuilder.<String, Object>create()
+            Assert.assertEquals(redisClient.hmset("hmTest", MapBuilder.<String, Object>builder()
                     .put("1", 1).put("2", 2).put("3", 3).build()), true);
             
             final Map<String, Integer> values = redisClient.hmget("hmTest", new String[]{"1", "2"}, new TypeReference<Integer>(){ });
@@ -86,7 +86,7 @@ public class HashTest extends RedisClientInitialize {
     public void hsetnxTest() {
         try {
             Assert.assertEquals(redisClient.hsetByNX("hsetnxTest", "1", 1), true);
-            final Map<String, Boolean> response = redisClient.hsetByNX("hsetnxTest", MapBuilder.<String, Object>create()
+            final Map<String, Boolean> response = redisClient.hsetByNX("hsetnxTest", MapBuilder.<String, Object>builder()
                     .put("1", 1)
                     .put("2", 2)
                     .put("3", 3)

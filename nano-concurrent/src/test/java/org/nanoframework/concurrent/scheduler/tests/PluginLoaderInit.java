@@ -41,7 +41,7 @@ public abstract class PluginLoaderInit {
     
     @Before
     public void init() throws Throwable {
-        final Map<String, String> map = MapBuilder.<String, String>create().put("context", "/test-context.properties").build();
+        final Map<String, String> map = MapBuilder.<String, String>builder().put("context", "/test-context.properties").build();
         new DefaultPluginLoader().init(new ServletConfig() {
             
             @Override

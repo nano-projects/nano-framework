@@ -28,6 +28,7 @@ import org.nanoframework.core.plugins.defaults.module.APIModule;
 import org.nanoframework.core.plugins.defaults.module.BindModule;
 import org.nanoframework.core.plugins.defaults.module.DataSourceModule;
 import org.nanoframework.core.plugins.defaults.module.JedisModule;
+import org.nanoframework.core.plugins.defaults.module.SPIModule;
 import org.nanoframework.core.plugins.defaults.module.SysAttrModule;
 import org.nanoframework.core.plugins.defaults.plugin.Log4j2Plugin;
 import org.nanoframework.core.plugins.defaults.plugin.SchedulerPlugin;
@@ -72,6 +73,7 @@ public class DefaultPluginLoader extends PluginLoader {
     @Override
     protected void configChildrenModules(final Configure<Module> modules) {
         createNativeModule(modules, "org.nanoframework.extension.dubbo.DubboServiceModule");
+        modules.add(new SPIModule());
     }
 
     private void createNativeModule(final Configure<Module> modules, final String className, Object... args) {
