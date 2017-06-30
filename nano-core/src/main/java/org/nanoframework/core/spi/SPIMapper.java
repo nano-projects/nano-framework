@@ -27,14 +27,18 @@ public class SPIMapper extends BaseEntity {
     private static final long serialVersionUID = -2120348787803208033L;
 
     private Class spi;
+    private String spiClsName;
     private String name;
     private Class instance;
+    private String instanceClsName;
     private Boolean lazy;
 
     private SPIMapper(final Class spi, final String name, final Class instance) {
         this.spi = spi;
+        this.spiClsName = spi.getName();
         this.name = name;
         this.instance = instance;
+        this.instanceClsName = instance.getName();
         lazy();
     }
 
@@ -50,12 +54,20 @@ public class SPIMapper extends BaseEntity {
         return spi;
     }
 
+    public String getSpiClsName() {
+        return spiClsName;
+    }
+
     public String getName() {
         return name;
     }
 
     public Class getInstance() {
         return instance;
+    }
+
+    public String getInstanceClsName() {
+        return instanceClsName;
     }
 
     public Boolean getLazy() {

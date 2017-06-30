@@ -15,6 +15,8 @@
  */
 package org.nanoframework.core.spi;
 
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.core.globals.Globals;
 
 import com.google.inject.Injector;
@@ -26,6 +28,7 @@ import com.google.inject.Provider;
  * @since 1.4.8
  */
 public class SPIProvider implements Provider<Object> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SPIProvider.class);
 
     private SPIMapper spi;
     private Injector injector;
@@ -38,6 +41,7 @@ public class SPIProvider implements Provider<Object> {
     @SuppressWarnings("unchecked")
     @Override
     public Object get() {
+        LOGGER.debug("创建SPI实现, 接口定义: {}, 绑定名称: {}, 实现类: {}", spi.getSpiClsName(), spi.getName(), spi.getInstanceClsName());
         return injector.getInstance(spi.getInstance());
     }
 

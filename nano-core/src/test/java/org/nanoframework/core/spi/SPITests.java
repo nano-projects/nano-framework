@@ -17,10 +17,12 @@ package org.nanoframework.core.spi;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -69,11 +71,15 @@ public class SPITests {
     @Test
     public void getSPIFilesTest() throws URISyntaxException, IOException {
         final SPILoader loader = new SPILoader();
-        final List<File> files = loader.getSPIFiles(loader.getResources());
-        Assert.assertTrue(files.size() > 0);
+        final SPIResource resource = loader.getSPIResource(loader.getResources());
+        Assert.assertTrue(resource != SPIResource.EMPTY);
+        final List<File> files = resource.getFiles();
         for (final File spiFile : files) {
             Assert.assertTrue(spiFiles.contains(spiFile.getName()));
         }
+
+        final Map<String, List<InputStream>> streams = resource.getStreams();
+        Assert.assertTrue(streams.isEmpty());
     }
 
     @Test

@@ -20,6 +20,8 @@ import java.util.Map;
 
 import javax.servlet.ServletConfig;
 
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.core.plugins.Module;
@@ -37,6 +39,7 @@ import com.google.inject.name.Names;
  * @since 1.4.8
  */
 public class SPIModule extends Module {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SPIModule.class);
 
     @Override
     public List<Module> load() throws Throwable {
@@ -58,15 +61,27 @@ public class SPIModule extends Module {
             spiMappers.forEach((spiCls, spis) -> {
                 if (!spiCls.isAnnotationPresent(Lazy.class)) {
                     spis.forEach(spi -> {
+                        final String spiClsName = spi.getSpiClsName();
+                        final String name = spi.getName();
+                        final String instanceClsName = spi.getInstanceClsName();
                         if (!spi.getLazy()) {
                             final Object instance = injector.getInstance(spi.getInstance());
-                            binder().bind(spi.getSpi()).annotatedWith(Names.named(spi.getName())).toInstance(instance);
+                            binder().bind(spi.getSpi()).annotatedWith(Names.named(name)).toInstance(instance);
+                            LOGGER.debug("绑定即时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
                         } else {
                             binder().bind(spi.getSpi()).annotatedWith(Names.named(spi.getName())).toProvider(new SPIProvider(spi));
+                            LOGGER.debug("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
                         }
                     });
                 } else {
-                    spis.forEach(spi -> binder().bind(spi.getSpi()).annotatedWith(Names.named(spi.getName())).toProvider(new SPIProvider(spi)));
+                    spis.forEach(spi -> {
+                        final String spiClsName = spi.getSpiClsName();
+                        final String name = spi.getName();
+                        final String instanceClsName = spi.getInstanceClsName();
+
+                        binder().bind(spi.getSpi()).annotatedWith(Names.named(spi.getName())).toProvider(new SPIProvider(spi));
+                        LOGGER.debug("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
+                    });
                 }
             });
         }

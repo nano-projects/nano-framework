@@ -78,10 +78,8 @@ public class PropertiesLoader {
      * 通过输入流加载属性文件.
      * @param input 文件输入流
      * @return 返回加载后的Properties
-     * @throws LoaderException Loader异常
-     * @throws IOException IO异常
      */
-    private static final Properties load(final InputStream input) {
+    public static final Properties load(final InputStream input) {
         if (input == null) {
             throw new LoaderException("输入流为空");
         }

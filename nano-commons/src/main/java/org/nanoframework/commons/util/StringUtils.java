@@ -122,7 +122,7 @@ public abstract class StringUtils extends org.apache.commons.lang3.StringUtils {
      * <p>More specifically, this method returns {@code true} if the
      * {@code CharSequence} is not {@code null}, its length is greater than
      * 0, and it contains at least one non-whitespace character.
-     * <p><pre class="code">
+     * <pre class="code">
      * StringUtils.hasText(null) = false
      * StringUtils.hasText("") = false
      * StringUtils.hasText(" ") = false
