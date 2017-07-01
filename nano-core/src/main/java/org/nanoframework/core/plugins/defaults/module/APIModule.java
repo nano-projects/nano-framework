@@ -35,6 +35,7 @@ import org.nanoframework.core.plugins.Module;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.inject.Binder;
 import com.google.inject.name.Names;
 
 /**
@@ -43,13 +44,12 @@ import com.google.inject.name.Names;
  * @since 1.4.2
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class APIModule extends Module {
+public class APIModule implements Module {
     private static final Logger LOGGER = LoggerFactory.getLogger(APIModule.class);
 
     @Override
     public List<Module> load() throws Throwable {
-        modules.add(this);
-        return modules;
+        return Lists.newArrayList(this);
     }
 
     @Override
@@ -58,9 +58,9 @@ public class APIModule extends Module {
     }
 
     @Override
-    protected void configure() {
+    public void configure(final Binder binder) {
         scanApi();
-        bindApi();
+        bindApi(binder);
     }
 
     protected void scanApi() {
@@ -71,7 +71,7 @@ public class APIModule extends Module {
                 });
     }
 
-    protected void bindApi() {
+    protected void bindApi(final Binder binder) {
         final Map<Class, List<Class>> bindMap = Maps.newHashMap();
         ClassScanner.filter(API.class).forEach(cls -> {
             if (cls.isInterface()) {
@@ -96,18 +96,18 @@ public class APIModule extends Module {
             }
         });
 
-        bindApi(bindMap);
+        bindApi(binder, bindMap);
     }
 
-    protected void bindApi(final Map<Class, List<Class>> bindMap) {
+    protected void bindApi(final Binder binder, final Map<Class, List<Class>> bindMap) {
         bindMap.forEach((itf, impls) -> {
             if (impls.size() == 1) {
                 final Class cls = impls.get(0);
                 final String apiName = ((API) cls.getAnnotation(API.class)).value();
                 if (StringUtils.isNotBlank(apiName)) {
-                    binder().bind(itf).annotatedWith(Names.named(apiName)).to(cls);
+                    binder.bind(itf).annotatedWith(Names.named(apiName)).to(cls);
                 } else {
-                    binder().bind(itf).to(cls);
+                    binder.bind(itf).to(cls);
                 }
 
                 LOGGER.debug("Binding {} to {}", itf.getName(), cls.getName());
@@ -116,12 +116,12 @@ public class APIModule extends Module {
                     throw new BindException("Multiple components can not be bound");
                 }
 
-                bindApiWithName(itf, impls);
+                bindApiWithName(binder, itf, impls);
             }
         });
     }
 
-    protected void bindApiWithName(final Class itf, final List<Class> impls) {
+    protected void bindApiWithName(final Binder binder, final Class itf, final List<Class> impls) {
         impls.forEach(cls -> {
             final String apiName = ((API) cls.getAnnotation(API.class)).value();
             final String name;
@@ -132,7 +132,7 @@ public class APIModule extends Module {
                 name = clsName.substring(0, 1).toLowerCase() + clsName.substring(1, clsName.length());
             }
 
-            binder().bind(itf).annotatedWith(Names.named(name)).to(cls);
+            binder.bind(itf).annotatedWith(Names.named(name)).to(cls);
             LOGGER.debug("Binding {} to {} with name {}", itf.getName(), cls.getName(), name);
         });
     }

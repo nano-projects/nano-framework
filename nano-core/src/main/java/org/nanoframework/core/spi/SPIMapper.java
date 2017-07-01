@@ -25,13 +25,15 @@ import org.nanoframework.commons.entity.BaseEntity;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class SPIMapper extends BaseEntity {
     private static final long serialVersionUID = -2120348787803208033L;
-
-    private Class spi;
-    private String spiClsName;
-    private String name;
-    private Class instance;
-    private String instanceClsName;
-    private Boolean lazy;
+    private static final Integer DEFAULT_ORDER = 0;
+    
+    private final Class spi;
+    private final String spiClsName;
+    private final String name;
+    private final Class instance;
+    private final String instanceClsName;
+    private final Boolean lazy;
+    private final Integer order;
 
     private SPIMapper(final Class spi, final String name, final Class instance) {
         this.spi = spi;
@@ -39,11 +41,13 @@ public class SPIMapper extends BaseEntity {
         this.name = name;
         this.instance = instance;
         this.instanceClsName = instance.getName();
-        lazy();
-    }
-
-    private void lazy() {
-        lazy = instance.isAnnotationPresent(Lazy.class);
+        this.lazy = instance.isAnnotationPresent(Lazy.class);
+        if (instance.isAnnotationPresent(Order.class)) {
+            final Order order = (Order) instance.getAnnotation(Order.class);
+            this.order = order.value();
+        } else {
+            this.order = DEFAULT_ORDER;
+        }
     }
 
     public static SPIMapper create(final Class spi, final String name, final Class instance) {
@@ -74,4 +78,7 @@ public class SPIMapper extends BaseEntity {
         return lazy;
     }
 
+    public Integer getOrder() {
+        return order;
+    }
 }

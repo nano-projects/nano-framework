@@ -20,7 +20,13 @@ import static com.google.inject.matcher.Matchers.any;
 import static com.google.inject.matcher.Matchers.not;
 
 import java.lang.reflect.AnnotatedElement;
+import java.util.List;
 
+import javax.servlet.ServletConfig;
+
+import org.nanoframework.core.plugins.Module;
+
+import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matcher;
 
@@ -29,7 +35,7 @@ import com.google.inject.matcher.Matcher;
  * @author yanghe
  * @since 1.2
  */
-public class MultiTransactionalModule extends AbstractModule {
+public class MultiTransactionalModule extends AbstractModule implements Module {
 
     @Override
     protected void configure() {
@@ -39,6 +45,16 @@ public class MultiTransactionalModule extends AbstractModule {
         final Matcher<AnnotatedElement> annotatedElement = annotatedWith(MultiTransactional.class);
         bindInterceptor(any(), annotatedElement, interceptor);
         bindInterceptor(annotatedElement, not(annotatedElement), interceptor);
+    }
+
+    @Override
+    public List<Module> load() throws Throwable {
+        return Lists.newArrayList(this);
+    }
+
+    @Override
+    public void config(final ServletConfig config) throws Throwable {
+        
     }
 
 }

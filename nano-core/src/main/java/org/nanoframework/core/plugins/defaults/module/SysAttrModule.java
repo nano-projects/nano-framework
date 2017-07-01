@@ -21,6 +21,8 @@ import javax.servlet.ServletConfig;
 
 import org.nanoframework.core.plugins.Module;
 
+import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 import com.google.inject.name.Names;
 
 /**
@@ -28,11 +30,10 @@ import com.google.inject.name.Names;
  * @author yanghe
  * @since 1.4.2
  */
-public class SysAttrModule extends Module {
+public class SysAttrModule implements Module {
 
     public List<Module> load() throws Throwable {
-        modules.add(this);
-        return modules;
+        return Lists.newArrayList(this);
     }
 
     @Override
@@ -41,8 +42,8 @@ public class SysAttrModule extends Module {
     }
 
     @Override
-    protected void configure() {
-        Names.bindProperties(binder(), System.getProperties());
+    public void configure(final Binder binder) {
+        Names.bindProperties(binder, System.getProperties());
     }
 
 }

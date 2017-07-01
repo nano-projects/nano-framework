@@ -80,10 +80,11 @@ public final class Components {
 
         final Set<Class<?>> classes = ClassScanner.filter(Component.class);
         LOGGER.info("Component size: {}", classes.size());
-        if (classes.size() > 0) {
-            for (Class<?> cls : classes) {
+        if (!CollectionUtils.isEmpty(classes)) {
+            final Injector injector = Globals.get(Injector.class);
+            for (final Class<?> cls : classes) {
                 LOGGER.info("Inject Component Class: {}", cls.getName());
-                final Object instance = Globals.get(Injector.class).getInstance(cls);
+                final Object instance = injector.getInstance(cls);
                 final Method[] methods = cls.getMethods();
                 final String mapping = cls.isAnnotationPresent(RequestMapping.class) ? cls.getAnnotation(RequestMapping.class).value() : "";
                 final Map<String, Map<RequestMethod, RequestMapper>> mappers = Routes.route().matchers(instance, methods, RequestMapping.class, mapping);

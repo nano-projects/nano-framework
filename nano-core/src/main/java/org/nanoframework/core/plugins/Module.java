@@ -19,17 +19,16 @@ import java.util.List;
 
 import javax.servlet.ServletConfig;
 
-import com.google.common.collect.Lists;
-import com.google.inject.AbstractModule;
+import org.nanoframework.core.spi.Lazy;
+import org.nanoframework.core.spi.SPI;
 
 /**
  * @author yanghe
  * @since 1.1
  */
-public abstract class Module extends AbstractModule {
-    protected List<Module> modules = Lists.newLinkedList();
-
-    public abstract List<Module> load() throws Throwable;
-
-    public abstract void config(ServletConfig config) throws Throwable;
+@SPI
+@Lazy
+public interface Module extends com.google.inject.Module {
+    List<Module> load() throws Throwable;
+    void config(ServletConfig config) throws Throwable;
 }

@@ -18,7 +18,7 @@ package org.nanoframework.orm.jedis.sharded;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
@@ -32,9 +32,8 @@ import org.nanoframework.orm.jedis.cluster.ListTest;
  */
 public class ShardedListTest extends ListTest {
     
-    @Before
-    @Override
-    public void before() throws LoaderException, IOException {
+    @BeforeClass
+    public static void before() throws LoaderException, IOException {
         if (redisClient == null) {
             try {
                 Properties prop = PropertiesLoader.load("/redis-test.properties");

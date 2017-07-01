@@ -15,7 +15,7 @@
  */
 package org.nanoframework.orm;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
@@ -24,16 +24,18 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
+import org.nanoframework.core.plugins.Module;
+import org.nanoframework.core.spi.SPI;
 import org.nanoframework.orm.jdbc.DataSourceException;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.google.inject.Module;
 
 /**
  * @author yanghe
  * @since 1.2
  */
+@SPI
 public abstract class DataSourceLoader {
     public static final String JDBC_ENVIRONMENT_ID = "JDBC.environment.id";
     public static final String MYBATIS_ENVIRONMENT_ID = "mybatis.environment.id";
@@ -47,7 +49,7 @@ public abstract class DataSourceLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataSourceLoader.class);
 
-    protected List<Module> modules = Lists.newArrayList();
+    protected Collection<Module> modules = Lists.newArrayList();
     protected Map<String, Properties> newLoadProperties = Maps.newHashMap();
 
     public abstract void load();
@@ -126,11 +128,11 @@ public abstract class DataSourceLoader {
         return null;
     }
 
-    public Map<String, Properties> getLoadProperties() {
+    public Map<String, Properties> getProperties() {
         return newLoadProperties;
     }
 
-    public List<Module> getModules() {
+    public Collection<Module> getModules() {
         return modules;
     }
 }

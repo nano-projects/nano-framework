@@ -62,6 +62,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+    <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
     </dependency>
@@ -71,7 +77,7 @@
     </dependency>
     <dependency>
       <groupId>org.nanoframework</groupId>
-      <artifactId>nano-commons</artifactId>
+      <artifactId>nano-core</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

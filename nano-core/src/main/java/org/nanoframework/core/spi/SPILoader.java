@@ -91,6 +91,7 @@ public class SPILoader {
 
             streams = spiResource.getStreams();
             loader.getSPIMapperWithStream(streams, spiMappers);
+            loader.sortSPIMapper(spiMappers);
 
             SPI_MAPPERS.clear();
             SPI_MAPPERS.putAll(spiMappers);
@@ -114,6 +115,21 @@ public class SPILoader {
         }
 
         return Collections.unmodifiableMap(SPI_MAPPERS);
+    }
+
+    public static Set<String> spiNames(final Class<?> spiCls) {
+        if (!LOADED.get()) {
+            loading();
+        }
+
+        final List<SPIMapper> spiMappers = SPI_MAPPERS.get(spiCls);
+        if (!CollectionUtils.isEmpty(spiMappers)) {
+            final Set<String> spiNames = Sets.newLinkedHashSet();
+            spiMappers.forEach(spiMapper -> spiNames.add(spiMapper.getName()));
+            return Collections.unmodifiableSet(spiNames);
+        }
+
+        return Collections.emptySet();
     }
 
     protected Enumeration<URL> getResources() throws IOException {
@@ -258,8 +274,7 @@ public class SPILoader {
                     instanceCls = Class.forName(instanceClsName);
                 } else {
                     instanceCls = Class.forName(spiName);
-                    final String simpleInstanceClsName = instanceCls.getSimpleName();
-                    spiName = simpleInstanceClsName.substring(0, 1).toLowerCase() + simpleInstanceClsName.substring(1);
+                    spiName = instanceCls.getSimpleName();
                     LOGGER.info("默认SPI定义: {} = {}", spiName, instanceCls.getName());
                 }
 
@@ -285,6 +300,22 @@ public class SPILoader {
         } catch (final ClassNotFoundException e) {
             return null;
         }
+    }
+
+    private void sortSPIMapper(final Map<Class<?>, List<SPIMapper>> spiMappers) {
+        spiMappers.forEach((spiCls, spis) -> {
+            Collections.sort(spis, (before, after) -> {
+                final Integer beforeOrder = before.getOrder();
+                final Integer afterOrder = after.getOrder();
+                if (beforeOrder > afterOrder) {
+                    return 1;
+                } else if (beforeOrder < afterOrder) {
+                    return -1;
+                }
+
+                return 0;
+            });
+        });
     }
 
     private void closeStream(final Collection<List<InputStream>> streams) {

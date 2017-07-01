@@ -1,0 +1,2 @@
+org.nanoframework.orm.jdbc.binding.BindJdbcManagerModule
+org.nanoframework.orm.DataSourceModule

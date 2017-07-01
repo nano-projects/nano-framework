@@ -23,6 +23,8 @@ import org.nanoframework.core.component.aop.Before;
 import org.nanoframework.core.component.aop.BeforeAOP;
 
 import com.alibaba.fastjson.JSON;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
 /**
  *
@@ -31,39 +33,43 @@ import com.alibaba.fastjson.JSON;
  */
 public class TestComponentImpl implements TestComponent {
 
+    @Inject
+    @Named("context.version")
+    private String context;
+
     @Override
     public String test() {
         return "OK";
     }
-    
+
     @Override
     public String reload() {
         return "Reload";
     }
-    
+
     @Override
     public String hasParam(final String param0, final String param1) {
         return param0 + '=' + param1;
     }
-    
+
     @Before(BeforeAOP.class)
     @Override
     public String beforeAop(final String param) {
         return param;
     }
-    
+
     @After(AfterAOP.class)
     @Override
     public String afterAop() {
         return "OK";
     }
-    
+
     @After(AfterAOP.class)
     @Override
     public String afterAopError() {
         throw new UnsupportedAccessException();
     }
-    
+
     @Override
     public String arrayTest(String[] array) {
         return JSON.toJSONString(array);

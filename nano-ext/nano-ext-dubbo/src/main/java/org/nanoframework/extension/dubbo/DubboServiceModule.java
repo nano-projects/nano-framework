@@ -33,6 +33,7 @@ import org.nanoframework.core.plugins.Module;
 import com.alibaba.dubbo.config.ServiceConfig;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 import com.google.inject.Injector;
 
 /**
@@ -40,13 +41,12 @@ import com.google.inject.Injector;
  * @author yanghe
  * @since 1.4.1
  */
-public class DubboServiceModule extends Module {
+public class DubboServiceModule implements Module {
     private static final Logger LOGGER = LoggerFactory.getLogger(DubboServiceModule.class);
     
     @Override
     public List<Module> load() throws Throwable {
-        modules.add(this);
-        return modules;
+        return Lists.newArrayList(this);
     }
     
     @Override
@@ -55,7 +55,7 @@ public class DubboServiceModule extends Module {
     }
 
     @Override
-    protected void configure() {
+    public void configure(final Binder binder) {
         scanDubboService();
         bindDubboService();
     }

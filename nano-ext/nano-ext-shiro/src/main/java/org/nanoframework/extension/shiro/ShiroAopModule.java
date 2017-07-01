@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins.defaults.module;
+package org.nanoframework.extension.shiro;
+
+import java.util.List;
+
+import javax.servlet.ServletConfig;
+
+import org.nanoframework.core.plugins.Module;
+
+import com.google.common.collect.Lists;
 
 /**
  *
  * @author yanghe
- * @since 1.3.16
+ * @since 1.4.8
  */
-public class BindModuleException extends RuntimeException {
-    private static final long serialVersionUID = 1362133459062971118L;
+public class ShiroAopModule extends org.apache.shiro.guice.aop.ShiroAopModule implements Module {
 
-    public BindModuleException() {
-        super();
+    @Override
+    public List<Module> load() throws Throwable {
+        return Lists.newArrayList(this);
     }
 
-    public BindModuleException(final String message) {
-        super(message);
+    @Override
+    public void config(ServletConfig config) throws Throwable {
+
     }
 
-    public BindModuleException(final String message, final Throwable cause) {
-        super(message, cause);
-    }
-
-    public BindModuleException(final Throwable cause) {
-        super(cause);
-    }
 }

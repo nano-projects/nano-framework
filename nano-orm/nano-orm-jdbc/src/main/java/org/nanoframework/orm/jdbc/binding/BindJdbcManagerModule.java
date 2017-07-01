@@ -17,20 +17,37 @@ package org.nanoframework.orm.jdbc.binding;
 
 import static com.google.inject.name.Names.named;
 
-import com.google.inject.AbstractModule;
+import java.util.List;
+
+import javax.servlet.ServletConfig;
+
+import org.nanoframework.core.plugins.Module;
+
+import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 
 /**
  *
  * @author yanghe
  * @since 1.3.16
  */
-public class BindJdbcManagerModule extends AbstractModule {
+public class BindJdbcManagerModule implements Module {
     private static final String JDBC_NAMED_PRIFIX = "jdbc:";
 
     @Override
-    protected void configure() {
-        GlobalJdbcManager.keys().forEach(jdbcName -> bind(JdbcManager.class).annotatedWith(named(JDBC_NAMED_PRIFIX + jdbcName))
+    public void configure(Binder binder) {
+        GlobalJdbcManager.keys().forEach(jdbcName -> binder.bind(JdbcManager.class).annotatedWith(named(JDBC_NAMED_PRIFIX + jdbcName))
                 .toInstance(GlobalJdbcManager.get(jdbcName)));
+    }
+
+    @Override
+    public List<Module> load() throws Throwable {
+        return Lists.newArrayList(this);
+    }
+
+    @Override
+    public void config(final ServletConfig config) throws Throwable {
+        
     }
 
 }

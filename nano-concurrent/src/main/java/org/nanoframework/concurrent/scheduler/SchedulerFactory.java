@@ -611,7 +611,6 @@ public class SchedulerFactory {
         FACTORY.stoppingScheduler.clear();
         FACTORY.stoppedScheduler.clear();
         group.clear();
-        SERVICE.shutdown();
         LoggerFactory.getLogger(this.getClass()).info("停止任务调度完成, 耗时: {}ms", System.currentTimeMillis() - time);
     }
 

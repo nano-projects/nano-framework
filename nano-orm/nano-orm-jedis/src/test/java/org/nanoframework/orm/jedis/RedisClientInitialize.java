@@ -18,7 +18,7 @@ package org.nanoframework.orm.jedis;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 
@@ -28,10 +28,10 @@ import org.nanoframework.commons.loader.PropertiesLoader;
  * @since 1.3.16
  */
 public class RedisClientInitialize {
-    protected RedisClient redisClient;
+    protected static RedisClient redisClient;
     
-    @Before
-    public void before() throws LoaderException, IOException {
+    @BeforeClass
+    public static void before() throws LoaderException, IOException {
         if (redisClient == null) {
             try {
                 Properties prop = PropertiesLoader.load("/redis-test.properties");

@@ -22,6 +22,8 @@ import javax.servlet.ServletConfig;
 import org.nanoframework.core.plugins.Module;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 import com.google.inject.matcher.Matchers;
 
 /**
@@ -29,11 +31,10 @@ import com.google.inject.matcher.Matchers;
  * @author yanghe
  * @since 1.4.1
  */
-public class DubboReferenceModule extends Module {
+public class DubboReferenceModule implements Module {
     @Override
     public List<Module> load() throws Throwable {
-        modules.add(this);
-        return modules;
+        return Lists.newArrayList(this);
     }
     
     @Override
@@ -42,8 +43,8 @@ public class DubboReferenceModule extends Module {
     }
 
     @Override
-    protected void configure() {
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(Reference.class), new DubboReferenceInterceptor());
+    public void configure(final Binder binder) {
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Reference.class), new DubboReferenceInterceptor());
     }
     
 }

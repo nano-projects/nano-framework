@@ -34,11 +34,11 @@ public class ApiComponentImpl implements ApiComponent, ApiComponent2 {
     @Inject
     @Named("apiServiceImpl")
     private ApiService apiService;
-    
+
     @Inject
     @Named("apiService2")
     private ApiService apiService2;
-    
+
     @Override
     public String invoke() {
         return apiService.invoke();

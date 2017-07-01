@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins.defaults.module;
+package org.nanoframework.orm.jedis;
 
 import java.util.List;
 import java.util.Properties;
@@ -30,16 +30,18 @@ import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.plugins.PluginLoaderException;
 
 import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 
 /**
  * @author yanghe
  * @since 1.1
  */
-public class JedisModule extends Module {
-    private Logger LOGGER = LoggerFactory.getLogger(JedisModule.class);
+public class JedisModule implements Module {
     public static final String DEFAULT_REDIS_PARAMETER_NAME = "redis";
+    private static final Logger LOGGER = LoggerFactory.getLogger(JedisModule.class);
     private static final String DEFAULT_REDIS_PATH = "/redis.properties";
-    private List<Properties> properties = Lists.newArrayList();
+    private final List<Module> modules = Lists.newArrayList();
+    private final List<Properties> properties = Lists.newArrayList();
 
     @Override
     public List<Module> load() throws Throwable {
@@ -70,7 +72,7 @@ public class JedisModule extends Module {
                 properties.add(PropertiesLoader.load(path));
             }
         }
-        
+
         final String contextRedis = System.getProperty(ApplicationContext.CONTEXT_REDIS);
         if (StringUtils.isNotBlank(contextRedis)) {
             final String[] paths = contextRedis.split(";");
@@ -78,7 +80,7 @@ public class JedisModule extends Module {
                 properties.add(PropertiesLoader.load(path));
             }
         }
-        
+
         if (CollectionUtils.isEmpty(properties)) {
             try {
                 properties.add(PropertiesLoader.load(DEFAULT_REDIS_PATH));
@@ -89,8 +91,8 @@ public class JedisModule extends Module {
     }
 
     @Override
-    protected void configure() {
-        
+    public void configure(final Binder binder) {
+
     }
 
 }

@@ -1,0 +1,3 @@
+org.nanoframework.core.plugins.defaults.module.AOPModule
+org.nanoframework.core.plugins.defaults.module.APIModule
+org.nanoframework.core.plugins.defaults.module.SysAttrModule

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins.defaults.plugin;
+package org.nanoframework.extension.shiro;
 
 import java.lang.reflect.Constructor;
 

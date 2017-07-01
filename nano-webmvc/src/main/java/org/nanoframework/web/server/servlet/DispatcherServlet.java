@@ -18,12 +18,9 @@ package org.nanoframework.web.server.servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
-import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.plugins.PluginLoader;
-import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
 
 /**
  * 
@@ -38,19 +35,7 @@ public class DispatcherServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            final String pluginLoader = this.getInitParameter(ApplicationContext.PLUGIN_LOADER);
-            if (StringUtils.isBlank(pluginLoader)) {
-                LOGGER.debug("Use default plugin loader: " + DefaultPluginLoader.class.getName());
-                DefaultPluginLoader.newInstance().init(this);
-            } else {
-                final Class<?> cls = Class.forName(pluginLoader);
-                if (PluginLoader.class.isAssignableFrom(cls)) {
-                    LOGGER.debug("Use plugin loader: " + pluginLoader);
-                    ((PluginLoader) cls.newInstance()).init(this);
-                } else {
-                    throw new IllegalArgumentException("The plugin loader must inherit from the PluginLoader class");
-                }
-            }
+            new PluginLoader().init(this);
         } catch (final Throwable e) {
             LOGGER.error(e.getMessage(), e);
             System.exit(1);

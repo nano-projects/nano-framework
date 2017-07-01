@@ -24,7 +24,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
+import org.nanoframework.core.plugins.PluginLoader;
 
 /**
  *
@@ -36,7 +36,7 @@ public abstract class PluginLoaderInit {
     
     @Before
     public void init() {
-        new DefaultPluginLoader().init(new ServletConfig() {
+        new PluginLoader().init(new ServletConfig() {
             
             @Override
             public String getServletName() {

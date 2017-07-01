@@ -23,10 +23,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.Collection;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
 import javax.inject.Provider;
+import javax.servlet.ServletConfig;
 import javax.sql.DataSource;
 
 import org.apache.ibatis.binding.MapperRegistry;
@@ -41,7 +43,9 @@ import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ResourceUtils;
+import org.nanoframework.core.plugins.Module;
 
+import com.google.common.collect.Lists;
 import com.google.inject.AbstractModule;
 import com.google.inject.Scopes;
 
@@ -52,7 +56,7 @@ import com.google.inject.Scopes;
  * @author yanghe
  * @since 1.2
  */
-public class MultiDataSourceModule extends AbstractModule {
+public class MultiDataSourceModule extends AbstractModule implements Module {
 
     private String envId;
     private Properties jdbc;
@@ -165,6 +169,16 @@ public class MultiDataSourceModule extends AbstractModule {
         Assert.notNull(test, "Parameter 'test' must not be null");
         Assert.notNull(packageName, "Parameter 'packageName' must not be null");
         return new ResolverUtil<Object>().find(test, packageName).getClasses();
+    }
+
+    @Override
+    public List<Module> load() throws Throwable {
+        return Lists.newArrayList(this);
+    }
+
+    @Override
+    public void config(final ServletConfig config) throws Throwable {
+        
     }
 
 }

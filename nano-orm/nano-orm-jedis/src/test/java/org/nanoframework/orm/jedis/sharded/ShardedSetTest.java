@@ -21,7 +21,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.junit.Assert;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
@@ -38,8 +38,8 @@ import com.google.common.collect.Lists;
  * @since 0.0.1
  */
 public class ShardedSetTest extends SetTest {
-    @Before
-    public void before() throws LoaderException, IOException {
+    @BeforeClass
+    public static void before() throws LoaderException, IOException {
         if (redisClient == null) {
             try {
                 Properties prop = PropertiesLoader.load("/redis-test.properties");

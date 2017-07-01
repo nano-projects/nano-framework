@@ -1,0 +1,2 @@
+org.nanoframework.extension.dubbo.DubboReferenceModule
+org.nanoframework.extension.dubbo.DubboServiceModule

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.core.component.Components;
-import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
+import org.nanoframework.core.plugins.PluginLoader;
 
 import com.google.inject.Guice;
 
@@ -41,7 +41,7 @@ public class DubboServiceExportTest {
     
     @BeforeClass
     public static void init() {
-        new DefaultPluginLoader().init(new ServletConfig() {
+        new PluginLoader().init(new ServletConfig() {
             
             @Override
             public String getServletName() {

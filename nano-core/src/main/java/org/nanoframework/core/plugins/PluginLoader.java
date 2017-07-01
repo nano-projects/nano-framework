@@ -16,6 +16,7 @@
 package org.nanoframework.core.plugins;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -24,24 +25,27 @@ import javax.servlet.http.HttpServlet;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.core.component.Components;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
+import org.nanoframework.core.plugins.defaults.module.SPIModule;
+import org.nanoframework.core.spi.SPILoader;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
 import com.google.inject.Module;
+import com.google.inject.name.Names;
 
 /**
  * @author yanghe
  * @since 1.1
  */
-public abstract class PluginLoader {
-    private Logger logger = LoggerFactory.getLogger(PluginLoader.class);
-    private Configure<String> properties = new Configure<>();
-    private Configure<Plugin> plugins = new Configure<>();
-    private Configure<Module> modules = new Configure<>();
-    private Configure<Module> childrenModules = new Configure<>();
+public class PluginLoader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PluginLoader.class);
 
     protected ServletConfig config;
     protected ServletContext context;
@@ -60,8 +64,8 @@ public abstract class PluginLoader {
 
         try {
             initProperties();
+            initRootInjector();
             initModules();
-            initChildrenModules();
             initPlugins();
             initComponent();
 
@@ -73,87 +77,59 @@ public abstract class PluginLoader {
     private void initProperties() {
         final long time = System.currentTimeMillis();
         try {
-            configProperties(properties);
-            for (final String path : properties.get()) {
-                PropertiesLoader.load(path, true);
+            final String context = config.getInitParameter(ApplicationContext.CONTEXT);
+            if (StringUtils.isNotBlank(context)) {
+                PropertiesLoader.load(context, true);
+            } else {
+                PropertiesLoader.load(ApplicationContext.MAIN_CONTEXT, true);
             }
         } catch (final Throwable e) {
             throw new PluginLoaderException(e.getMessage(), e);
         }
 
-        logger.info("Loading the properties file complete, times: {}ms", System.currentTimeMillis() - time);
+        LOGGER.info("Loading the properties file complete, times: {}ms", System.currentTimeMillis() - time);
+    }
+
+    private void initRootInjector() {
+        final Injector injector = Guice.createInjector();
+        Globals.set(Injector.class, injector);
+        Globals.set(Injector.class, injector.createChildInjector(new SPIModule()));
     }
 
     private void initModules() throws Throwable {
-        final long time = System.currentTimeMillis();
-        configModules(this.modules);
-        final List<Module> loadedModules = Lists.newArrayList();
-        final List<Module> modules = this.modules.get();
-        for (final Module module : modules) {
-            logger.info("Loading Module: {}", module.getClass().getName());
-            if (module instanceof org.nanoframework.core.plugins.Module) {
-                final org.nanoframework.core.plugins.Module mdu = (org.nanoframework.core.plugins.Module) module;
-                mdu.config(config);
-                loadedModules.addAll(mdu.load());
-            } else {
-                loadedModules.add(module);
+        final Set<String> moduleNames = SPILoader.spiNames(org.nanoframework.core.plugins.Module.class);
+        if (!CollectionUtils.isEmpty(moduleNames)) {
+            final Injector injector = Globals.get(Injector.class);
+            final List<Module> loadedModules = Lists.newArrayList();
+            for (final String moduleName : moduleNames) {
+                final org.nanoframework.core.plugins.Module module = injector
+                        .getInstance(Key.get(org.nanoframework.core.plugins.Module.class, Names.named(moduleName)));
+                module.config(config);
+                loadedModules.addAll(module.load());
             }
+
+            Globals.set(Injector.class, injector.createChildInjector(loadedModules));
         }
-
-        logger.info("Starting inject");
-        Globals.set(Injector.class, Guice.createInjector(loadedModules));
-        logger.info("Inject Modules complete, times: {}ms", System.currentTimeMillis() - time);
-    }
-
-    private void initChildrenModules() throws Throwable {
-        final long time = System.currentTimeMillis();
-        configChildrenModules(this.childrenModules);
-        final List<Module> loadedModules = Lists.newArrayList();
-        final List<Module> modules = this.childrenModules.get();
-        for (final Module module : modules) {
-            logger.info("Loading Module: {}", module.getClass().getName());
-            if (module instanceof org.nanoframework.core.plugins.Module) {
-                final org.nanoframework.core.plugins.Module mdu = (org.nanoframework.core.plugins.Module) module;
-                mdu.config(config);
-                loadedModules.addAll(mdu.load());
-            } else {
-                loadedModules.add(module);
-            }
-        }
-
-        logger.info("Starting inject");
-        final Injector parent = Globals.get(Injector.class);
-        Globals.set(Injector.class, parent.createChildInjector(loadedModules));
-        logger.info("Inject Children Modules complete, times: {}ms", System.currentTimeMillis() - time);
     }
 
     private void initPlugins() throws Throwable {
-        final long time = System.currentTimeMillis();
-        configPlugin(plugins);
-        final List<Plugin> plugins = this.plugins.get();
-        for (final Plugin plugin : plugins) {
-            plugin.config(config);
-            if (plugin.load()) {
-                logger.info("Loading Plugin: {}", plugin.getClass().getName());
+        final Set<String> pluginNames = SPILoader.spiNames(Plugin.class);
+        if (!CollectionUtils.isEmpty(pluginNames)) {
+            final Injector injector = Globals.get(Injector.class);
+            for (final String pluginName : pluginNames) {
+                final Plugin plugin = injector.getInstance(Key.get(Plugin.class, Names.named(pluginName)));
+                plugin.config(config);
+                if (plugin.load()) {
+                    LOGGER.info("Loading Plugin: {}", plugin.getClass().getName());
+                }
             }
         }
-
-        logger.info("Loading Plugins complete, times: {}ms", System.currentTimeMillis() - time);
     }
 
     private void initComponent() throws Throwable {
         final long time = System.currentTimeMillis();
-        logger.info("Starting inject component");
+        LOGGER.info("Starting inject component");
         Components.load();
-        logger.info("Inject Component complete, times: {}ms", System.currentTimeMillis() - time);
+        LOGGER.info("Inject Component complete, times: {}ms", System.currentTimeMillis() - time);
     }
-
-    protected abstract void configProperties(Configure<String> properties);
-
-    protected abstract void configModules(Configure<Module> modules);
-
-    protected abstract void configChildrenModules(Configure<Module> modules);
-
-    protected abstract void configPlugin(Configure<Plugin> plugins);
-
 }

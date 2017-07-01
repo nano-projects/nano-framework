@@ -17,30 +17,45 @@ package org.nanoframework.orm.mybatis.binding;
 
 import static com.google.inject.name.Names.named;
 
+import java.util.List;
+
+import javax.servlet.ServletConfig;
+
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionManager;
+import org.nanoframework.core.plugins.Module;
 import org.nanoframework.orm.mybatis.GlobalSqlSession;
 
-import com.google.inject.AbstractModule;
+import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 
 /**
  *
  * @author yanghe
  * @since 1.3.16
  */
-public class BindJdbcManagerModule extends AbstractModule {
+public class BindSqlSessionModule implements Module {
     private static final String JDBC_NAMED_PRIFIX = "mybatis:";
 
     @Override
-    protected void configure() {
+    public void configure(final Binder binder) {
         GlobalSqlSession.keys().forEach(jdbcName -> {
             final SqlSessionManager manager = GlobalSqlSession.get(jdbcName);
             final String named = JDBC_NAMED_PRIFIX + jdbcName;
 
-            bind(SqlSession.class).annotatedWith(named(named)).toInstance(manager);
-            bind(SqlSessionManager.class).annotatedWith(named(named)).toInstance(manager);
+            binder.bind(SqlSession.class).annotatedWith(named(named)).toInstance(manager);
+            binder.bind(SqlSessionManager.class).annotatedWith(named(named)).toInstance(manager);
         });
+    }
 
+    @Override
+    public List<Module> load() throws Throwable {
+        return Lists.newArrayList(this);
+    }
+
+    @Override
+    public void config(final ServletConfig config) throws Throwable {
+        
     }
 
 }

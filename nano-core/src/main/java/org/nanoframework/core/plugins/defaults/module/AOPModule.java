@@ -33,34 +33,35 @@ import org.nanoframework.core.component.aop.BeforeMore;
 import org.nanoframework.core.component.aop.BeforeMoreInterceptor;
 import org.nanoframework.core.plugins.Module;
 
+import com.google.common.collect.Lists;
+import com.google.inject.Binder;
 import com.google.inject.matcher.Matchers;
 
 /**
  * @author yanghe
  * @since 1.1
  */
-public class AOPModule extends Module {
+public class AOPModule implements Module {
 
     @Override
-    protected void configure() {
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new BeforeInterceptor());
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(After.class), new AfterInterceptor());
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfter.class), new BeforeAndAfterInterceptor());
+    public void configure(final Binder binder) {
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Before.class), new BeforeInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(After.class), new AfterInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfter.class), new BeforeAndAfterInterceptor());
 
         // Interceptor More
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeMore.class), new BeforeMoreInterceptor());
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(AfterMore.class), new AfterMoreInterceptor());
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfterMore.class), new BeforeAndAfterMoreInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeMore.class), new BeforeMoreInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(AfterMore.class), new AfterMoreInterceptor());
+        binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(BeforeAndAfterMore.class), new BeforeAndAfterMoreInterceptor());
     }
 
     @Override
     public List<Module> load() throws Throwable {
-        modules.add(this);
-        return modules;
+        return Lists.newArrayList(this);
     }
 
     @Override
-    public void config(ServletConfig config) throws Throwable {
+    public void config(final ServletConfig config) throws Throwable {
 
     }
 }

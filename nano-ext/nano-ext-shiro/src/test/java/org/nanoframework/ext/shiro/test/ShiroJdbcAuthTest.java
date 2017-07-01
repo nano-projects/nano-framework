@@ -32,11 +32,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.core.plugins.Configure;
-import org.nanoframework.core.plugins.Plugin;
 import org.nanoframework.core.plugins.PluginLoader;
-import org.nanoframework.core.plugins.defaults.DefaultPluginLoader;
-import org.nanoframework.core.plugins.defaults.plugin.ShiroPlugin;
 
 import com.google.common.collect.ImmutableMap;
 
@@ -50,15 +46,8 @@ public class ShiroJdbcAuthTest {
     @Ignore
     @Before
     public void before() {
-        PluginLoader loader = new DefaultPluginLoader() {
-            @Override
-            protected void configPlugin(Configure<Plugin> plugins) {
-                super.configPlugin(plugins);
-                plugins.add(new ShiroPlugin());
-            }
-        };
-
-        ServletConfig config = new ServletConfig() {
+        final PluginLoader loader = new PluginLoader();
+        final ServletConfig config = new ServletConfig() {
             private Map<String, String> map = ImmutableMap.<String, String> builder().put("context", "/context.properties")
                     .put("shiro-ini", "classpath:shiro-jdbc.ini").build();
 
