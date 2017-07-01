@@ -41,7 +41,7 @@ public class SPIProvider implements Provider<Object> {
     @SuppressWarnings("unchecked")
     @Override
     public Object get() {
-        LOGGER.debug("创建SPI实现, 接口定义: {}, 绑定名称: {}, 实现类: {}", spi.getSpiClsName(), spi.getName(), spi.getInstanceClsName());
+        LOGGER.info("创建SPI实现, 接口定义: {}, 绑定名称: {}, 实现类: {}", spi.getSpiClsName(), spi.getName(), spi.getInstanceClsName());
         return injector.getInstance(spi.getInstance());
     }
 

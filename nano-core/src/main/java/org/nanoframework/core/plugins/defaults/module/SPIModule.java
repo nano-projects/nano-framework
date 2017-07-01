@@ -55,7 +55,7 @@ public class SPIModule extends Module {
     @SuppressWarnings("unchecked")
     @Override
     protected void configure() {
-        final Map<Class<?>, List<SPIMapper>> spiMappers = SPILoader.spiMappers();
+        final Map<Class<?>, List<SPIMapper>> spiMappers = SPILoader.spis();
         if (!CollectionUtils.isEmpty(spiMappers)) {
             final Injector injector = Globals.get(Injector.class);
             spiMappers.forEach((spiCls, spis) -> {
@@ -67,10 +67,10 @@ public class SPIModule extends Module {
                         if (!spi.getLazy()) {
                             final Object instance = injector.getInstance(spi.getInstance());
                             binder().bind(spi.getSpi()).annotatedWith(Names.named(name)).toInstance(instance);
-                            LOGGER.debug("绑定即时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
+                            LOGGER.info("绑定即时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
                         } else {
                             binder().bind(spi.getSpi()).annotatedWith(Names.named(spi.getName())).toProvider(new SPIProvider(spi));
-                            LOGGER.debug("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
+                            LOGGER.info("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
                         }
                     });
                 } else {
@@ -80,7 +80,7 @@ public class SPIModule extends Module {
                         final String instanceClsName = spi.getInstanceClsName();
 
                         binder().bind(spi.getSpi()).annotatedWith(Names.named(spi.getName())).toProvider(new SPIProvider(spi));
-                        LOGGER.debug("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
+                        LOGGER.info("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
                     });
                 }
             });

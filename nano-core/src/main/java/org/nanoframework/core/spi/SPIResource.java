@@ -32,8 +32,8 @@ public class SPIResource extends BaseEntity {
     public static final SPIResource EMPTY = SPIResource.create(Collections.emptyList(), Collections.emptyMap());
     private static final long serialVersionUID = 2184606147032384544L;
 
-    private List<File> files;
-    private Map<String, List<InputStream>> streams;
+    private final List<File> files;
+    private final Map<String, List<InputStream>> streams;
 
     private SPIResource(final List<File> files, final Map<String, List<InputStream>> streams) {
         this.files = files;

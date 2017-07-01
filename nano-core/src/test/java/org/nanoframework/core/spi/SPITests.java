@@ -54,7 +54,7 @@ public class SPITests {
     private static SpiService testService;
 
     @Inject
-    @Named("testService2")
+    @Named("testService2Impl")
     private static SpiService testService2;
 
     @Inject

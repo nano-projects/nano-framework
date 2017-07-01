@@ -56,44 +56,10 @@ import com.google.common.collect.Sets;
 public class SPILoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(SPILoader.class);
     private static final String SPI_DIR = "META-INF/nano/spi";
-    private static Map<Class<?>, List<SPIMapper>> SPI_MAPPERS = Maps.newHashMap();
-    private static AtomicBoolean LOADED = new AtomicBoolean(false);
-    private static ReentrantLock LOCK = new ReentrantLock();
-    private static Set<JarFile> JAR_FILES = Sets.newHashSet();
-
-    public static Set<Class<?>> spis() {
-        if (!LOADED.get()) {
-            loading();
-        }
-
-        return Collections.unmodifiableSet(SPI_MAPPERS.keySet());
-    }
-
-    public static Map<Class<?>, List<SPIMapper>> spiMappers() {
-        if (!LOADED.get()) {
-            loading();
-        }
-
-        return Collections.unmodifiableMap(SPI_MAPPERS);
-    }
-
-    public static List<SPIMapper> spiMappers(final String spiClsName) {
-        if (!LOADED.get()) {
-            loading();
-        }
-
-        return Collections.unmodifiableList(SPI_MAPPERS.get(spiClsName));
-    }
-
-    public static List<SPIMapper> allSpiMappers() {
-        if (!LOADED.get()) {
-            loading();
-        }
-
-        final List<SPIMapper> all = Lists.newArrayList();
-        SPI_MAPPERS.values().forEach(spiMappers -> all.addAll(spiMappers));
-        return Collections.unmodifiableList(all);
-    }
+    private static final Map<Class<?>, List<SPIMapper>> SPI_MAPPERS = Maps.newHashMap();
+    private static final AtomicBoolean LOADED = new AtomicBoolean(false);
+    private static final ReentrantLock LOCK = new ReentrantLock();
+    private static final Set<JarFile> JAR_FILES = Sets.newHashSet();
 
     protected SPILoader() {
 
@@ -140,6 +106,14 @@ public class SPILoader {
 
             lock.unlock();
         }
+    }
+
+    public static Map<Class<?>, List<SPIMapper>> spis() {
+        if (!LOADED.get()) {
+            loading();
+        }
+
+        return Collections.unmodifiableMap(SPI_MAPPERS);
     }
 
     protected Enumeration<URL> getResources() throws IOException {
@@ -276,11 +250,21 @@ public class SPILoader {
         }
 
         define.keySet().forEach(name -> {
-            final String instanceClsName = define.getProperty((String) name);
+            String spiName = (String) name;
+            final String instanceClsName = define.getProperty(spiName);
             try {
-                final Class<?> instanceCls = Class.forName(instanceClsName);
+                final Class<?> instanceCls;
+                if (StringUtils.isNotBlank(instanceClsName)) {
+                    instanceCls = Class.forName(instanceClsName);
+                } else {
+                    instanceCls = Class.forName(spiName);
+                    final String simpleInstanceClsName = instanceCls.getSimpleName();
+                    spiName = simpleInstanceClsName.substring(0, 1).toLowerCase() + simpleInstanceClsName.substring(1);
+                    LOGGER.info("默认SPI定义: {} = {}", spiName, instanceCls.getName());
+                }
+
                 if (spiCls.isAssignableFrom(instanceCls)) {
-                    final SPIMapper spiMapper = SPIMapper.create(spiCls, (String) name, instanceCls);
+                    final SPIMapper spiMapper = SPIMapper.create(spiCls, spiName, instanceCls);
                     if (!spiMappers.containsKey(spiCls)) {
                         spiMappers.put(spiCls, Lists.newArrayList(spiMapper));
                     } else {
