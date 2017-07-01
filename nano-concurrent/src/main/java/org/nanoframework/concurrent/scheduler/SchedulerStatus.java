@@ -29,16 +29,16 @@ public class SchedulerStatus extends BaseEntity {
     private String group;
     private String id;
     private Status status;
-    private long executing;
-    private long beforeException;
-    private long executeException;
-    private long afterException;
+    private Long executing;
+    private Long beforeException;
+    private Long executeException;
+    private Long afterException;
     private String performCycle;
 
     public SchedulerStatus() {
     }
 
-    public SchedulerStatus(String group, String id, Status status, SchedulerAnalysis analysis) {
+    public SchedulerStatus(final String group, final String id, final Status status, final SchedulerAnalysis analysis) {
         this.group = group;
         this.id = id;
         this.status = status;
@@ -53,7 +53,7 @@ public class SchedulerStatus extends BaseEntity {
         return key;
     }
 
-    public void setKey(Long key) {
+    public void setKey(final Long key) {
         this.key = key;
     }
 
@@ -61,7 +61,7 @@ public class SchedulerStatus extends BaseEntity {
         return group;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(final String group) {
         this.group = group;
     }
 
@@ -69,7 +69,7 @@ public class SchedulerStatus extends BaseEntity {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -77,39 +77,39 @@ public class SchedulerStatus extends BaseEntity {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(final Status status) {
         this.status = status;
     }
 
-    public long getExecuting() {
+    public Long getExecuting() {
         return executing;
     }
 
-    public void setExecuting(long executing) {
+    public void setExecuting(final Long executing) {
         this.executing = executing;
     }
 
-    public long getBeforeException() {
+    public Long getBeforeException() {
         return beforeException;
     }
 
-    public void setBeforeException(long beforeException) {
+    public void setBeforeException(final Long beforeException) {
         this.beforeException = beforeException;
     }
 
-    public long getExecuteException() {
+    public Long getExecuteException() {
         return executeException;
     }
 
-    public void setExecuteException(long executeException) {
+    public void setExecuteException(final Long executeException) {
         this.executeException = executeException;
     }
 
-    public long getAfterException() {
+    public Long getAfterException() {
         return afterException;
     }
 
-    public void setAfterException(long afterException) {
+    public void setAfterException(final Long afterException) {
         this.afterException = afterException;
     }
 
@@ -117,7 +117,7 @@ public class SchedulerStatus extends BaseEntity {
         return performCycle;
     }
 
-    public void setPerformCycle(String performCycle) {
+    public void setPerformCycle(final String performCycle) {
         this.performCycle = performCycle;
     }
 

@@ -48,7 +48,7 @@ public class SPIModule extends Module {
     }
 
     @Override
-    public void config(ServletConfig config) throws Throwable {
+    public void config(final ServletConfig config) throws Throwable {
 
     }
 

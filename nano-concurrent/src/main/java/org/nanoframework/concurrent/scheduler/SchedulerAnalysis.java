@@ -19,8 +19,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.nanoframework.concurrent.scheduler.defaults.etcd.EtcdScheduler;
-
 /**
  * @author yanghe
  * @since 1.3
@@ -65,9 +63,6 @@ public class SchedulerAnalysis {
     }
 
     public String performCycle() {
-        if (!EtcdScheduler.SCHEDULER_ANALYSIS_ENABLE)
-            return DISABLED;
-
         return performCycle.get(Cycle.LESS_100).get() + ", " + performCycle.get(Cycle.BETWEEN_101_500).get() + ", "
                 + performCycle.get(Cycle.BETWEEN_501_1000).get() + ", " + performCycle.get(Cycle.BETWEEN_1001_2000).get() + ", "
                 + performCycle.get(Cycle.BETWEEN_2001_5000).get() + ", " + performCycle.get(Cycle.BETWEEN_5001_10000).get() + ", "
@@ -80,15 +75,25 @@ public class SchedulerAnalysis {
     }
 
     public enum Cycle {
-        LESS_100("~100"), BETWEEN_101_500("101~500"), BETWEEN_501_1000("501~1000"), BETWEEN_1001_2000("1001~2000"), BETWEEN_2001_5000(
-                "2001~5000"), BETWEEN_5001_10000("5001~10000"), BETWEEN_10001_20000("10001~20000"), BETWEEN_20001_30000(
-                        "20001~30000"), BETWEEN_30001_45000("30001~45000"), BETWEEN_45001_60000("45001~60000"), BETWEEN_60001_120000(
-                                "60001~120000"), BETWEEN_120001_180000("120001~180000"), BETWEEN_180001_300000(
-                                        "180001~300000"), BETWEEN_300001_600000("300001~600000"), GREATER_600001("600001~");
+        LESS_100("~100"), 
+        BETWEEN_101_500("101~500"), 
+        BETWEEN_501_1000("501~1000"), 
+        BETWEEN_1001_2000("1001~2000"), 
+        BETWEEN_2001_5000("2001~5000"), 
+        BETWEEN_5001_10000("5001~10000"), 
+        BETWEEN_10001_20000("10001~20000"), 
+        BETWEEN_20001_30000("20001~30000"), 
+        BETWEEN_30001_45000("30001~45000"), 
+        BETWEEN_45001_60000("45001~60000"), 
+        BETWEEN_60001_120000("60001~120000"), 
+        BETWEEN_120001_180000("120001~180000"), 
+        BETWEEN_180001_300000("180001~300000"), 
+        BETWEEN_300001_600000("300001~600000"), 
+        GREATER_600001("600001~");
 
         private final String value;
 
-        private Cycle(String value) {
+        Cycle(final String value) {
             this.value = value;
         }
 
@@ -96,7 +101,7 @@ public class SchedulerAnalysis {
             return this.value;
         }
 
-        public static Cycle calculate(long time) {
+        public static Cycle calculate(final long time) {
             if (time <= 100) {
                 return LESS_100;
             } else if (time >= 101 && time <= 500) {

@@ -23,7 +23,7 @@ package org.nanoframework.commons.support.logging;
 public interface Logger {
 
     boolean isErrorEnabled();
-    
+
     void error(String message, Throwable e);
 
     void error(String message);
@@ -53,7 +53,7 @@ public interface Logger {
     void info(String message, Throwable cause);
 
     boolean isDebugEnabled();
-    
+
     void debug(String message);
 
     void debug(String message, Throwable e);
@@ -61,15 +61,15 @@ public interface Logger {
     void debug(String message, Object... args);
 
     void debug(Throwable cause);
-    
+
     boolean isTraceEnabled();
-    
+
     void trace(String message);
-    
+
     void trace(String message, Object... args);
-    
+
     void trace(Throwable cause);
-    
+
     void trace(String message, Throwable cause);
 
 }
