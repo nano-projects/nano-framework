@@ -71,9 +71,5 @@
       <artifactId>nano-core</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.mousio</groupId>
-      <artifactId>etcd4j</artifactId>
-    </dependency>
   </dependencies>
 </project>

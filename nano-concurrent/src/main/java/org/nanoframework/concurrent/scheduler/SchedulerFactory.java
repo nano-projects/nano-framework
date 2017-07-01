@@ -65,7 +65,7 @@ public class SchedulerFactory {
     private static final Object LOCK = new Object();
     private static AtomicBoolean LOADED = new AtomicBoolean(false);
 
-    private static final ThreadPoolExecutor service = (ThreadPoolExecutor) Executors.newCachedThreadPool(THREAD_FACTORY);
+    private static final ThreadPoolExecutor SERVICE = (ThreadPoolExecutor) Executors.newCachedThreadPool(THREAD_FACTORY);
 
     private final ConcurrentMap<String, BaseScheduler> startedScheduler = new ConcurrentHashMap<>();
     private final ConcurrentMap<String, BaseScheduler> stoppingScheduler = new ConcurrentHashMap<>();
@@ -228,7 +228,7 @@ public class SchedulerFactory {
 
                 bind(scheduler);
                 THREAD_FACTORY.setBaseScheduler(scheduler);
-                service.execute(scheduler);
+                SERVICE.execute(scheduler);
             });
 
             stoppedScheduler.clear();
@@ -245,7 +245,7 @@ public class SchedulerFactory {
 
                         bind(scheduler);
                         THREAD_FACTORY.setBaseScheduler(scheduler);
-                        service.execute(scheduler);
+                        SERVICE.execute(scheduler);
                         keys.add(id);
                     }
                 }
@@ -264,7 +264,7 @@ public class SchedulerFactory {
 
             bind(scheduler);
             THREAD_FACTORY.setBaseScheduler(scheduler);
-            service.execute(scheduler);
+            SERVICE.execute(scheduler);
             stoppedScheduler.remove(id);
         }
     }
@@ -542,7 +542,7 @@ public class SchedulerFactory {
                         conf.setId(clz.getSimpleName() + '-' + baseScheduler.getIndex(clz.getSimpleName()));
                         conf.setName(DEFAULT_SCHEDULER_NAME_PREFIX + conf.getId());
                         conf.setGroup(clz.getSimpleName());
-                        conf.setService(service);
+                        conf.setService(SERVICE);
                         conf.setBeforeAfterOnly(scheduler.beforeAfterOnly());
                         conf.setRunNumberOfTimes(scheduler.runNumberOfTimes());
                         conf.setInterval(scheduler.interval());
@@ -611,6 +611,7 @@ public class SchedulerFactory {
         FACTORY.stoppingScheduler.clear();
         FACTORY.stoppedScheduler.clear();
         group.clear();
+        SERVICE.shutdown();
         LoggerFactory.getLogger(this.getClass()).info("停止任务调度完成, 耗时: {}ms", System.currentTimeMillis() - time);
     }
 

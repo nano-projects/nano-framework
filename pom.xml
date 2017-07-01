@@ -75,7 +75,6 @@
     <shiro-version>1.4.0</shiro-version>
     <jose4j-version>0.5.1</jose4j-version>
     <validation-api-version>1.1.0.Final</validation-api-version>
-    <etcd4j-version>2.12.0</etcd4j-version>
     <jgit-version>4.8.0.201705170830-rc1</jgit-version>
     <commons-io-version>2.5</commons-io-version>
   </properties>
@@ -339,12 +338,6 @@
         <groupId>javax.validation</groupId>
         <artifactId>validation-api</artifactId>
         <version>${validation-api-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.mousio</groupId>
-        <artifactId>etcd4j</artifactId>
-        <version>${etcd4j-version}</version>
       </dependency>
 
       <dependency>

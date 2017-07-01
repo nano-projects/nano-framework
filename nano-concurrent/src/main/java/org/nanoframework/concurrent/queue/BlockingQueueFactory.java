@@ -15,11 +15,9 @@
  */
 package org.nanoframework.concurrent.queue;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -27,33 +25,32 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
 /**
  * 阻塞队列工厂类.
  * @author yanghe
  * @since 1.0
  */
 public class BlockingQueueFactory {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlockingQueueFactory.class);
     private static BlockingQueueFactory FACTORY;
     private static final Object LOCK = new Object();
-
-    private Logger LOG = LoggerFactory.getLogger(BlockingQueueFactory.class);
+    public static final int DEFAULT_QUEUE_SIZE = 10000;
 
     private ConcurrentMap<String, BlockingQueue<Object>> queueMap;
 
-    public static final int DEFAULT_QUEUE_SIZE = 10000;
-
     private BlockingQueueFactory() {
-        queueMap = new ConcurrentHashMap<>();
-
+        queueMap = Maps.newConcurrentMap();
     }
 
     public static BlockingQueueFactory getInstance() {
         if (FACTORY == null) {
             synchronized (LOCK) {
-                if (FACTORY == null)
+                if (FACTORY == null) {
                     FACTORY = new BlockingQueueFactory();
-
+                }
             }
         }
 
@@ -61,108 +58,95 @@ public class BlockingQueueFactory {
     }
 
     /**
-     * 根据Key获取阻塞队列
-     * 
+     * 根据Key获取阻塞队列.
      * @param key 队列Key
      * @return 返回阻塞队列
      * @throws RuntimeException 运行时异常
      */
-    public BlockingQueue<Object> getQueue(String key) throws RuntimeException {
+    public BlockingQueue<Object> getQueue(final String key) throws RuntimeException {
         if (!queueMap.containsKey(key)) {
             synchronized (LOCK) {
-                if (!queueMap.containsKey(key))
+                if (!queueMap.containsKey(key)) {
                     initQueue(key);
+                }
             }
-
         }
 
         return queueMap.get(key);
-
     }
 
     /**
-     * 初始化队列
+     * 初始化队列.
      * @param key 队列Key
      * @param size 队列大小
      */
-    public void initQueue(String key, int size) {
+    public void initQueue(final String key, final int size) {
         if (size <= 0) {
-            throw new IllegalArgumentException("队列大小不能小于等于0, 队列Key: [ " + key + " ]");
+            throw new IllegalArgumentException("队列大小不能小于等于0, 队列Key: " + key);
         }
 
-        BlockingQueue<Object> queue = new ArrayBlockingQueue<>(size);
+        final BlockingQueue<Object> queue = new ArrayBlockingQueue<>(size);
         queueMap.put(key, queue);
-        LOG.debug("初始化队列: [ " + key + " ] , 大小: [ " + size + " ]");
-
+        LOGGER.debug("初始化队列: {}, 大小: {}", key, size);
     }
 
     /**
-     * 初始化队列
+     * 初始化队列.
      * @param key 队列Key
      */
-    public void initQueue(String key) {
-        BlockingQueue<Object> queue = new ArrayBlockingQueue<>(DEFAULT_QUEUE_SIZE);
+    public void initQueue(final String key) {
+        final BlockingQueue<Object> queue = new ArrayBlockingQueue<>(DEFAULT_QUEUE_SIZE);
         queueMap.put(key, queue);
-        LOG.debug("初始化队列: [ " + key + " ] , 大小: [ " + DEFAULT_QUEUE_SIZE + " ] <默认值>");
-
+        LOGGER.debug("初始化队列: {}, 大小: {} <默认值>", key, DEFAULT_QUEUE_SIZE);
     }
 
     /**
-     * 向工厂中添加队列
-     * 
+     * 向工厂中添加队列.
      * @param key 队列Key
      * @param queue 队列
      */
-    public void setQueue(String key, ArrayBlockingQueue<Object> queue) {
+    public void setQueue(final String key, final ArrayBlockingQueue<Object> queue) {
         if (getQueue(key) != null) {
-            BlockingQueue<Object> theQueue = getQueue(key);
+            final BlockingQueue<Object> theQueue = getQueue(key);
             theQueue.addAll(queue);
         } else {
             queueMap.put(key, queue);
-
         }
-
     }
 
     /**
-     * 向队列中添加元素
-     * 
+     * 向队列中添加元素.
      * @param key 队列Key
      * @param bean 对象
      * @throws InterruptedException 中断异常
      */
-    public void put(String key, Object bean) throws InterruptedException {
+    public void put(final String key, final Object bean) throws InterruptedException {
         getQueue(key).put(bean);
-
     }
 
     /**
-     * 从队列中获取元素
-     * 
+     * 从队列中获取元素.
      * @param key 队列Key
      * @return 返回对象
      * @throws InterruptedException 中断异常
      */
-    public Object take(String key) throws InterruptedException {
+    public Object take(final String key) throws InterruptedException {
         return getQueue(key).take();
-
     }
 
     /**
-     * 向队列中添加元素
-     * 
+     * 向队列中添加元素.
      * @param key 队列Key
      * @param bean 对象
      * @return 返回添加结果
      */
-    public boolean offer(String key, Object bean) {
+    public boolean offer(final String key, final Object bean) {
         return getQueue(key).offer(bean);
 
     }
 
     /**
-     * 在设定时间内向队列中添加元素，超时抛出中断异常
-     * 
+     * 在设定时间内向队列中添加元素，超时抛出中断异常.
      * @param key 队列Key
      * @param bean 对象
      * @param time 超时时间
@@ -170,24 +154,23 @@ public class BlockingQueueFactory {
      * @return 返回添加结果
      * @throws InterruptedException 中断异常
      */
-    public boolean offer(String key, Object bean, Long time, TimeUnit unit) throws InterruptedException {
+    public boolean offer(final String key, final Object bean, final Long time, final TimeUnit unit) throws InterruptedException {
         return getQueue(key).offer(bean, time, unit);
-
     }
 
     /**
-     * 从队列中获取元素
+     * 从队列中获取元素.
      * @param <T> the value type
      * @param key 队列key
      * @return T
      */
     @SuppressWarnings("unchecked")
-    public <T> T poll(String key) {
+    public <T> T poll(final String key) {
         return (T) getQueue(key).poll();
     }
 
     /**
-     * 在设定时间内从队列中获取元素，超时抛出中断异常
+     * 在设定时间内从队列中获取元素，超时抛出中断异常.
      * @param <T> the value type
      * @param key 队列Key
      * @param time 超时时间
@@ -196,38 +179,37 @@ public class BlockingQueueFactory {
      * @throws InterruptedException 中断异常
      */
     @SuppressWarnings("unchecked")
-    public <T> T poll(String key, Long time, TimeUnit unit) throws InterruptedException {
+    public <T> T poll(final String key, final Long time, final TimeUnit unit) throws InterruptedException {
         return (T) getQueue(key).poll(time, unit);
-
     }
 
     @SuppressWarnings("unchecked")
-    public <T> List<T> poll(String key, int size, long time, TimeUnit unit) {
-        List<T> batch = new ArrayList<>();
+    public <T> List<T> poll(final String key, final int size, final long time, final TimeUnit unit) {
+        final List<T> batch = Lists.newArrayList();
         try {
-            while (batch.size() < size)
+            while (batch.size() < size) {
                 batch.add((T) getQueue(key).poll(time, unit));
-        } catch (InterruptedException e) {
+            }
+        } catch (final InterruptedException e) {
+            // ignore
         }
 
         return batch;
     }
 
     public static final int howManyElementInQueues() {
-        BlockingQueueFactory factory = getInstance();
+        final BlockingQueueFactory factory = getInstance();
         if (factory.queueMap != null) {
-            if (factory.queueMap.size() == 0)
+            if (factory.queueMap.size() == 0) {
                 return 0;
-
-            else {
-                AtomicInteger size = new AtomicInteger();
+            } else {
+                final AtomicInteger size = new AtomicInteger();
                 factory.queueMap.values().stream().filter(queue -> queue != null && queue.size() > 0).forEach(queue -> size.addAndGet(queue.size()));
                 return size.get();
-
             }
-        } else
-            return 0;
+        }
 
+        return 0;
     }
 
 }
