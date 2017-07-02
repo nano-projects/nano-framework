@@ -37,7 +37,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-import com.google.inject.Module;
 import com.google.inject.name.Names;
 
 /**
@@ -97,13 +96,12 @@ public class PluginLoader {
     }
 
     private void initModules() throws Throwable {
-        final Set<String> moduleNames = SPILoader.spiNames(org.nanoframework.core.plugins.Module.class);
+        final Set<String> moduleNames = SPILoader.spiNames(Module.class);
         if (!CollectionUtils.isEmpty(moduleNames)) {
             final Injector injector = Globals.get(Injector.class);
             final List<Module> loadedModules = Lists.newArrayList();
             for (final String moduleName : moduleNames) {
-                final org.nanoframework.core.plugins.Module module = injector
-                        .getInstance(Key.get(org.nanoframework.core.plugins.Module.class, Names.named(moduleName)));
+                final Module module = injector.getInstance(Key.get(Module.class, Names.named(moduleName)));
                 module.config(config);
                 loadedModules.addAll(module.load());
             }

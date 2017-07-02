@@ -13,33 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.scheduler.longwait;
+package org.nanoframework.concurrent.scheduler.single;
 
-import org.junit.Assert;
-import org.junit.Test;
 import org.nanoframework.concurrent.scheduler.SchedulerFactory;
 
 /**
+ * 
  *
  * @author yanghe
- * @since 1.3.15
+ * @since 1.4.8
  */
-public class SchedulerTest extends PluginLoaderInit {
+public class SchedulerShutdownHook implements Runnable {
+    private final SchedulerFactory factory;
 
-    @Test
-    public void schedulerTest() throws InterruptedException {
-        // wait scheduler to running status
-        Thread.sleep(1500);
+    public SchedulerShutdownHook(final SchedulerFactory factory) {
+        this.factory = factory;
+    }
 
-        final SchedulerFactory factory = SchedulerFactory.getInstance();
-        Assert.assertEquals(factory.getStartedSchedulerSize(), 1);
-
-        factory.close(LongWaitScheduler.class.getSimpleName() + "-0");
-
-        Thread.sleep(3000);
-
-        Assert.assertEquals(factory.getStartedSchedulerSize(), 0);
-        Assert.assertEquals(factory.getStoppingSchedulerSize(), 0);
+    @Override
+    public void run() {
+        factory.destory();
     }
 
 }

@@ -42,11 +42,12 @@ import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ObjectCompare;
 import org.nanoframework.commons.util.RuntimeUtil;
 import org.nanoframework.concurrent.exception.SchedulerException;
+import org.nanoframework.concurrent.scheduler.single.SchedulerShutdownHook;
+import org.nanoframework.concurrent.scheduler.single.StatusMonitorScheduler;
 import org.nanoframework.core.component.scan.ClassScanner;
 import org.nanoframework.core.globals.Globals;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 
@@ -82,9 +83,10 @@ public class SchedulerFactory {
         synchronized (LOCK) {
             if (FACTORY == null) {
                 FACTORY = new SchedulerFactory();
-                final StatusMonitorScheduler statusMonitor = FACTORY.new StatusMonitorScheduler();
+                final StatusMonitorScheduler statusMonitor = new StatusMonitorScheduler(THREAD_FACTORY, FACTORY.stoppingScheduler,
+                        FACTORY.stoppedScheduler);
                 statusMonitor.getConfig().getService().execute(statusMonitor);
-                Runtime.getRuntime().addShutdownHook(new Thread(FACTORY.new ShutdownHook()));
+                Runtime.getRuntime().addShutdownHook(new Thread(new SchedulerShutdownHook(FACTORY)));
             }
         }
 
@@ -501,7 +503,6 @@ public class SchedulerFactory {
             for (final Class<?> clz : schedulerClasses) {
                 if (BaseScheduler.class.isAssignableFrom(clz)) {
                     LOGGER.info("Inject Scheduler Class: {}", clz.getName());
-
                     final Scheduler scheduler = clz.getAnnotation(Scheduler.class);
                     if (!ObjectCompare.isInListByRegEx(clz.getSimpleName(), includes)
                             || ObjectCompare.isInListByRegEx(clz.getSimpleName(), exclusions)) {
@@ -615,61 +616,4 @@ public class SchedulerFactory {
         LoggerFactory.getLogger(this.getClass()).info("停止任务调度完成, 耗时: {}ms", System.currentTimeMillis() - time);
     }
 
-    protected class StatusMonitorScheduler extends BaseScheduler {
-        private final ConcurrentMap<String, BaseScheduler> closed;
-
-        public StatusMonitorScheduler() {
-            final SchedulerConfig conf = new SchedulerConfig();
-            conf.setId("StatusMonitorScheduler-0");
-            conf.setName("StatusMonitorScheduler");
-            conf.setGroup("StatusMonitorScheduler");
-            THREAD_FACTORY.setBaseScheduler(this);
-            conf.setService((ThreadPoolExecutor) Executors.newFixedThreadPool(1, THREAD_FACTORY));
-            conf.setInterval(50L);
-            conf.setTotal(1);
-            conf.setDaemon(Boolean.TRUE);
-            setConfig(conf);
-            setClose(false);
-            closed = Maps.newConcurrentMap();
-        }
-
-        @Override
-        public void before() throws SchedulerException {
-            stoppingScheduler.forEach((id, scheduler) -> {
-                if (scheduler.isClosed()) {
-                    closed.put(id, scheduler);
-                }
-            });
-        }
-
-        @Override
-        public void execute() throws SchedulerException {
-            closed.forEach((id, scheduler) -> {
-                if (!scheduler.isRemove()) {
-                    stoppedScheduler.put(id, scheduler);
-                }
-
-                stoppingScheduler.remove(id, scheduler);
-            });
-        }
-
-        @Override
-        public void after() throws SchedulerException {
-            closed.clear();
-        }
-
-        @Override
-        public void destroy() throws SchedulerException {
-
-        }
-
-    }
-
-    protected class ShutdownHook implements Runnable {
-        @Override
-        public void run() {
-            destory();
-        }
-
-    }
 }

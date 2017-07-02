@@ -15,6 +15,7 @@
  */
 package org.nanoframework.orm;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -40,13 +41,13 @@ import com.google.inject.name.Names;
  */
 @Order(2000)
 public class DataSourceModule implements Module {
-    private List<Module> modules = Lists.newArrayList();
 
     @Override
     public List<Module> load() throws Throwable {
         final Injector injector = Globals.get(Injector.class);
         final Set<String> dataSourceLoaderNames = SPILoader.spiNames(DataSourceLoader.class);
         if (!CollectionUtils.isEmpty(dataSourceLoaderNames)) {
+            final List<Module> modules = Lists.newArrayList();
             dataSourceLoaderNames.forEach(dataSourceLoaderName -> {
                 final DataSourceLoader loader = injector.getInstance(Key.get(DataSourceLoader.class, Names.named(dataSourceLoaderName)));
                 try {
@@ -58,9 +59,11 @@ public class DataSourceModule implements Module {
                     }
                 }
             });
+
+            return modules;
         }
 
-        return modules;
+        return Collections.emptyList();
     }
 
     @Override

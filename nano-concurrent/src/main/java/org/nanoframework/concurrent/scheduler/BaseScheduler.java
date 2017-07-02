@@ -24,6 +24,7 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.concurrent.exception.SchedulerException;
+import org.nanoframework.concurrent.scheduler.single.SchedulerAnalysis;
 
 import com.google.common.collect.Maps;
 

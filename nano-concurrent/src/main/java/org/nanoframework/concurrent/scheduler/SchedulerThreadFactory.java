@@ -26,20 +26,20 @@ public class SchedulerThreadFactory implements ThreadFactory {
     private BaseScheduler baseScheduler;
 
     @Override
-    public Thread newThread(Runnable runnable) {
+    public Thread newThread(final Runnable runnable) {
         if (baseScheduler == null) {
-            Thread thread = new Thread(runnable);
+            final Thread thread = new Thread(runnable);
             thread.setName("Scheduler-Thread-" + System.currentTimeMillis());
             return thread;
         }
 
-        Thread thread = new Thread(baseScheduler);
+        final Thread thread = new Thread(baseScheduler);
         thread.setName(baseScheduler.getConfig().getName());
         thread.setDaemon(baseScheduler.getConfig().getDaemon());
         return thread;
     }
 
-    public void setBaseScheduler(BaseScheduler baseScheduler) {
+    public void setBaseScheduler(final BaseScheduler baseScheduler) {
         this.baseScheduler = baseScheduler;
     }
 }
