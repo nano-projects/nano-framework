@@ -28,6 +28,7 @@ import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.plugins.PluginLoaderException;
+import org.nanoframework.core.spi.Order;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Binder;
@@ -36,6 +37,7 @@ import com.google.inject.Binder;
  * @author yanghe
  * @since 1.1
  */
+@Order(1000)
 public class JedisModule implements Module {
     public static final String DEFAULT_REDIS_PARAMETER_NAME = "redis";
     private static final Logger LOGGER = LoggerFactory.getLogger(JedisModule.class);

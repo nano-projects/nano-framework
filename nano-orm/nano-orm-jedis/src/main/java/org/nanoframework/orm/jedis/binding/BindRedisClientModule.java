@@ -22,6 +22,7 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 
 import org.nanoframework.core.plugins.Module;
+import org.nanoframework.core.spi.Order;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
 
@@ -33,6 +34,7 @@ import com.google.inject.Binder;
  * @author yanghe
  * @since 1.3.16
  */
+@Order(1100)
 public class BindRedisClientModule implements Module {
     private static final String REDIS_NAMED_PRIFIX = "redis:";
 

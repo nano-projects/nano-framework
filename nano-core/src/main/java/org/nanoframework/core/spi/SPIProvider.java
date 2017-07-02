@@ -30,19 +30,17 @@ import com.google.inject.Provider;
 public class SPIProvider implements Provider<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SPIProvider.class);
 
-    private SPIMapper spi;
-    private Injector injector;
+    private final SPIMapper spi;
 
-    public SPIProvider(SPIMapper spi) {
+    public SPIProvider(final SPIMapper spi) {
         this.spi = spi;
-        this.injector = Globals.get(Injector.class);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Object get() {
         LOGGER.info("创建SPI实现, 接口定义: {}, 绑定名称: {}, 实现类: {}", spi.getSpiClsName(), spi.getName(), spi.getInstanceClsName());
-        return injector.getInstance(spi.getInstance());
+        return Globals.get(Injector.class).getInstance(spi.getInstance());
     }
 
 }

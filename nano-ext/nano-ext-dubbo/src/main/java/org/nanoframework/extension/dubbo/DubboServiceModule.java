@@ -29,6 +29,7 @@ import org.nanoframework.core.component.scan.ClassScanner;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.core.plugins.Module;
+import org.nanoframework.core.spi.Order;
 
 import com.alibaba.dubbo.config.ServiceConfig;
 import com.alibaba.dubbo.config.annotation.Service;
@@ -41,6 +42,7 @@ import com.google.inject.Injector;
  * @author yanghe
  * @since 1.4.1
  */
+@Order(3100)
 public class DubboServiceModule implements Module {
     private static final Logger LOGGER = LoggerFactory.getLogger(DubboServiceModule.class);
     

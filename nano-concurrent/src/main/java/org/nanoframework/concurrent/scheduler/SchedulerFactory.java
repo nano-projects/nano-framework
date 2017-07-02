@@ -487,17 +487,18 @@ public class SchedulerFactory {
             }
         });
 
-        final Set<Class<?>> componentClasses = ClassScanner.filter(Scheduler.class);
+        final Set<Class<?>> schedulerClasses = ClassScanner.filter(Scheduler.class);
         if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Scheduler size: {}", componentClasses.size());
+            LOGGER.info("Scheduler size: {}", schedulerClasses.size());
         }
 
-        if (componentClasses.size() > 0) {
+        if (schedulerClasses.size() > 0) {
             if (includes.isEmpty()) {
                 includes.add(".");
             }
 
-            for (final Class<?> clz : componentClasses) {
+            final Injector injector = Globals.get(Injector.class);
+            for (final Class<?> clz : schedulerClasses) {
                 if (BaseScheduler.class.isAssignableFrom(clz)) {
                     LOGGER.info("Inject Scheduler Class: {}", clz.getName());
 
@@ -537,7 +538,7 @@ public class SchedulerFactory {
                     }
 
                     for (int p = 0; p < parallel; p++) {
-                        final BaseScheduler baseScheduler = (BaseScheduler) Globals.get(Injector.class).getInstance(clz);
+                        final BaseScheduler baseScheduler = (BaseScheduler) injector.getInstance(clz);
                         final SchedulerConfig conf = new SchedulerConfig();
                         conf.setId(clz.getSimpleName() + '-' + baseScheduler.getIndex(clz.getSimpleName()));
                         conf.setName(DEFAULT_SCHEDULER_NAME_PREFIX + conf.getId());

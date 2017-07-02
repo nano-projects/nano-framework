@@ -25,6 +25,7 @@ import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.plugins.PluginLoaderException;
+import org.nanoframework.core.spi.Order;
 import org.nanoframework.core.spi.SPILoader;
 
 import com.google.common.collect.Lists;
@@ -37,6 +38,7 @@ import com.google.inject.name.Names;
  * @author yanghe
  * @since 1.1
  */
+@Order(2000)
 public class DataSourceModule implements Module {
     private List<Module> modules = Lists.newArrayList();
 

@@ -20,6 +20,7 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 
 import org.nanoframework.core.plugins.Module;
+import org.nanoframework.core.spi.Order;
 
 import com.alibaba.dubbo.config.annotation.Reference;
 import com.google.common.collect.Lists;
@@ -31,6 +32,7 @@ import com.google.inject.matcher.Matchers;
  * @author yanghe
  * @since 1.4.1
  */
+@Order(4100)
 public class DubboReferenceModule implements Module {
     @Override
     public List<Module> load() throws Throwable {

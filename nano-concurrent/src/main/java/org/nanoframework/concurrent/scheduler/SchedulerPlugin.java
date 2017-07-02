@@ -28,28 +28,17 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  */
 public class SchedulerPlugin implements Plugin {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerPlugin.class);
-    private static final String SCHEDULER_FACTORY_CLASS_NAME = "org.nanoframework.concurrent.scheduler.SchedulerFactory";
-    private static final String SCHEDULER_FACTORY_INSTANCE = "getInstance";
-    private static final String SCHEDULER_FACTORY_LOAD = "load";
-    private static final String SCHEDULER_FACTORY_STARTALL = "startAll";
-    
+
     @Override
     public boolean load() throws Throwable {
         try {
-            final Class<?> schedulerFactoryCls = Class.forName(SCHEDULER_FACTORY_CLASS_NAME);
-            final Object schedulerFactory = schedulerFactoryCls.getMethod(SCHEDULER_FACTORY_INSTANCE).invoke(schedulerFactoryCls);
-            
             final long time = System.currentTimeMillis();
             LOGGER.info("开始加载任务调度");
-            schedulerFactoryCls.getMethod(SCHEDULER_FACTORY_LOAD).invoke(schedulerFactoryCls);
-            schedulerFactoryCls.getMethod(SCHEDULER_FACTORY_STARTALL).invoke(schedulerFactory);
+            SchedulerFactory.load();
+            SchedulerFactory.getInstance().startAll();
             LOGGER.info("加载任务调度结束, 耗时: {}ms", System.currentTimeMillis() - time);
         } catch (final Throwable e) {
-            if (!(e instanceof ClassNotFoundException)) {
-                throw new PluginLoaderException(e.getMessage(), e);
-            }
-            
-            return false;
+            throw new PluginLoaderException(e.getMessage(), e);
         }
 
         return true;

@@ -22,6 +22,7 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 
 import org.nanoframework.core.plugins.Module;
+import org.nanoframework.core.spi.Order;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Binder;
@@ -31,6 +32,7 @@ import com.google.inject.Binder;
  * @author yanghe
  * @since 1.3.16
  */
+@Order(2100)
 public class BindJdbcManagerModule implements Module {
     private static final String JDBC_NAMED_PRIFIX = "jdbc:";
 

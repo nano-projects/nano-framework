@@ -24,6 +24,7 @@ import javax.servlet.ServletConfig;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionManager;
 import org.nanoframework.core.plugins.Module;
+import org.nanoframework.core.spi.Order;
 import org.nanoframework.orm.mybatis.GlobalSqlSession;
 
 import com.google.common.collect.Lists;
@@ -34,6 +35,7 @@ import com.google.inject.Binder;
  * @author yanghe
  * @since 1.3.16
  */
+@Order(2200)
 public class BindSqlSessionModule implements Module {
     private static final String JDBC_NAMED_PRIFIX = "mybatis:";
 
