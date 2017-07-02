@@ -67,7 +67,7 @@ public class Log4j2Plugin implements Plugin {
         if (resource != null) {
             try {
                 final Class<?> logManager = Class.forName("org.apache.logging.log4j.LogManager");
-                final Object context = logManager.getMethod("getContext", boolean.class).invoke(logManager, false);
+                final Object context = logManager.getMethod("getContext", boolean.class).invoke(logManager, Boolean.FALSE);
                 final Class<?> loggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
                 loggerContext.getMethod("setConfigLocation", URI.class).invoke(context, resource);
                 loggerContext.getMethod("reconfigure").invoke(context);
