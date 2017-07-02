@@ -31,42 +31,48 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  * @since 1.3.7
  */
 public class Log4j2Plugin implements Plugin {
-    public static final String DEFAULT_LOG4J2_PARAMETER_NAME = "log4j2";
+    private static final String DEFAULT_LOG4J2_PARAMETER_NAME = "log4j2";
+    private static final String META_INF_RESOURCE = "META-INF/log4j2.xml";
     private String log4j2;
 
     @Override
     public boolean load() throws Throwable {
         if (StringUtils.isNotBlank(log4j2)) {
-            final URL url = this.getClass().getResource(log4j2);
-            if (url != null && load0(url.toURI())) {
-                return true;
-            }
+            return load(log4j2);
+        } else {
+            return load(META_INF_RESOURCE);
+        }
+    }
 
-            final File file = ResourceUtils.getFile(log4j2);
-            if (file != null && load0(file.toURI())) {
-                return true;
-            }
+    private boolean load(final String name) throws Throwable {
+        final URL url = this.getClass().getResource(name);
+        if (url != null && load0(url.toURI())) {
+            return true;
+        }
 
-            final URI uri = ResourceUtils.getURL(log4j2).toURI();
-            if (uri != null && load0(uri)) {
-                return true;
-            }
+        final File file = ResourceUtils.getFile(name);
+        if (file != null && load0(file.toURI())) {
+            return true;
+        }
 
+        final URI uri = ResourceUtils.getURL(name).toURI();
+        if (uri != null && load0(uri)) {
+            return true;
         }
 
         return false;
     }
 
-    protected boolean load0(URI resource) {
+    protected boolean load0(final URI resource) {
         if (resource != null) {
             try {
-                Class<?> LogManager = Class.forName("org.apache.logging.log4j.LogManager");
-                Object context = LogManager.getMethod("getContext", boolean.class).invoke(LogManager, Boolean.FALSE);
-                Class<?> LoggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
-                LoggerContext.getMethod("setConfigLocation", URI.class).invoke(context, resource);
-                LoggerContext.getMethod("reconfigure").invoke(context);
+                final Class<?> logManager = Class.forName("org.apache.logging.log4j.LogManager");
+                final Object context = logManager.getMethod("getContext", boolean.class).invoke(logManager, false);
+                final Class<?> loggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
+                loggerContext.getMethod("setConfigLocation", URI.class).invoke(context, resource);
+                loggerContext.getMethod("reconfigure").invoke(context);
                 return true;
-            } catch (Exception e) {
+            } catch (final Throwable e) {
                 if (!(e instanceof ClassNotFoundException)) {
                     throw new PluginLoaderException(e.getMessage(), e);
                 }
@@ -79,7 +85,7 @@ public class Log4j2Plugin implements Plugin {
     }
 
     @Override
-    public void config(ServletConfig config) throws Throwable {
+    public void config(final ServletConfig config) throws Throwable {
         log4j2 = config.getInitParameter(DEFAULT_LOG4J2_PARAMETER_NAME);
     }
 

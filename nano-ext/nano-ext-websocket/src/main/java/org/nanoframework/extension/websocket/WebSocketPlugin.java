@@ -13,9 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins.defaults.plugin;
-
-import java.lang.reflect.InvocationTargetException;
+package org.nanoframework.extension.websocket;
 
 import javax.servlet.ServletConfig;
 
@@ -28,30 +26,24 @@ import org.nanoframework.core.plugins.Plugin;
  * @since 1.1
  */
 public class WebSocketPlugin implements Plugin {
-
-    private Logger LOG = LoggerFactory.getLogger(WebSocketPlugin.class);
+    private Logger LOGGER = LoggerFactory.getLogger(WebSocketPlugin.class);
 
     @Override
     public boolean load() throws Throwable {
         try {
-            Class<?> websocket = Class.forName("org.nanoframework.extension.websocket.WebSocketFactory");
             long time = System.currentTimeMillis();
-            LOG.info("开始加载WebSocket服务");
-            websocket.getMethod("load").invoke(websocket);
-            LOG.info("加载WebSocket服务完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
-        } catch (ClassNotFoundException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                | SecurityException e) {
-            if (!(e instanceof ClassNotFoundException))
-                throw new RuntimeException(e);
-
-            return false;
+            LOGGER.info("开始加载WebSocket服务");
+            WebSocketFactory.load();
+            LOGGER.info("加载WebSocket服务完成, 耗时: " + (System.currentTimeMillis() - time) + "ms");
+        } catch (final Throwable e) {
+            throw new WebSocketException(e.getMessage(), e);
         }
 
         return true;
     }
 
     @Override
-    public void config(ServletConfig config) throws Throwable {
+    public void config(final ServletConfig config) throws Throwable {
 
     }
 
