@@ -206,7 +206,7 @@ public class SPILoader {
             final JarEntry entry = entries.nextElement();
             if (StringUtils.startsWith(entry.getName(), SPI_DIR) && !entry.isDirectory()) {
                 final String fileName = entry.getName();
-                LOGGER.debug("从Jar中读取SPI文件定义: {}", fileName);
+                LOGGER.debug("从Jar中读取SPI文件定义: {}!/{}", jarFile.getName(), fileName);
 
                 final String[] fileNameSection = fileName.split("/");
                 final String spiFileName = fileNameSection[fileNameSection.length - 1];
@@ -275,7 +275,7 @@ public class SPILoader {
                 } else {
                     instanceCls = Class.forName(spiName);
                     spiName = instanceCls.getSimpleName();
-                    LOGGER.info("默认SPI定义: {} = {}", spiName, instanceCls.getName());
+                    LOGGER.debug("默认SPI定义: {} = {}", spiName, instanceCls.getName());
                 }
 
                 if (spiCls.isAssignableFrom(instanceCls)) {

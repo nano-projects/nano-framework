@@ -55,10 +55,10 @@ public class SPIModule implements Module {
                         if (!spi.getLazy()) {
                             final Object instance = injector.getInstance(spi.getInstance());
                             binder.bind(spi.getSpi()).annotatedWith(Names.named(name)).toInstance(instance);
-                            LOGGER.info("绑定即时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
+                            LOGGER.debug("绑定即时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
                         } else {
                             binder.bind(spi.getSpi()).annotatedWith(Names.named(spi.getName())).toProvider(new SPIProvider(spi));
-                            LOGGER.info("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
+                            LOGGER.debug("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
                         }
                     });
                 } else {
@@ -67,7 +67,7 @@ public class SPIModule implements Module {
                         final String name = spi.getName();
                         final String instanceClsName = spi.getInstanceClsName();
                         binder.bind(spi.getSpi()).annotatedWith(Names.named(spi.getName())).toProvider(new SPIProvider(spi));
-                        LOGGER.info("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
+                        LOGGER.debug("绑定延时SPI, 接口定义: {}, 绑定名称: {}, 实现类: {}", spiClsName, name, instanceClsName);
                     });
                 }
             });
