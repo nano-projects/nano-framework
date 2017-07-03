@@ -75,7 +75,10 @@ public class SPITests {
         Assert.assertTrue(resource != SPIResource.EMPTY);
         final List<File> files = resource.getFiles();
         for (final File spiFile : files) {
-            Assert.assertTrue(spiFiles.contains(spiFile.getName()));
+            // Test SPI file only.
+            if (spiFile.getAbsolutePath().indexOf("test-classes") > -1) {
+                Assert.assertTrue(spiFiles.contains(spiFile.getName()));
+            }
         }
 
         final Map<String, List<InputStream>> streams = resource.getStreams();
