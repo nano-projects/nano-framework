@@ -200,14 +200,21 @@ public class SPILoader {
     private void findSPIFilesWithJar(final URL url, final Map<String, List<InputStream>> streams)
             throws FileNotFoundException, MalformedURLException, IOException {
         final JarFile jarFile = new JarFile(ResourceUtils.getFile(ResourceUtils.extractJarFileURL(url)));
-        final String jarName = jarFile.getName();
-        final String jarSimpleName = jarName.substring(jarName.lastIndexOf('/'));
+        final String jarName = jarFile.getName().replaceAll("\\", "/");
+        final int idx = jarName.lastIndexOf('/');
+        final String jarSimpleName;
+        if (idx < 0) {
+            jarSimpleName = jarName;
+        } else {
+            jarSimpleName = jarName.substring(idx);
+        }
+
         JAR_FILES.add(jarFile);
         final Enumeration<JarEntry> entries = jarFile.entries();
         while (entries.hasMoreElements()) {
             final JarEntry entry = entries.nextElement();
             if (StringUtils.startsWith(entry.getName(), SPI_DIR) && !entry.isDirectory()) {
-                final String fileName = entry.getName();
+                final String fileName = entry.getName().replaceAll("\\", "/");
                 LOGGER.debug("从Jar中读取SPI文件定义: {}!/{}", jarSimpleName, fileName);
 
                 final String[] fileNameSection = fileName.split("/");
