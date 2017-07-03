@@ -46,7 +46,7 @@ public class ClassScanner {
         if (classes == null) {
             return Collections.emptySet();
         }
-        
+
         if (classes.size() > 0) {
             final Set<Class<?>> annClasses = Sets.newLinkedHashSet();
             classes.stream().filter(clz -> clz.isAnnotationPresent(annotationClass)).forEach(clz -> annClasses.add(clz));
@@ -66,10 +66,10 @@ public class ClassScanner {
         if (classes == null) {
             classes = Sets.newHashSet();
         }
-        
+
         classes.addAll(getClasses(packageName));
     }
-    
+
     public static void clear() {
         if (classes != null) {
             classes.clear();
