@@ -32,10 +32,4 @@ public interface SchedulerLoader {
      * 加载任务.
      */
     void load();
-
-    /**
-     * 
-     * 注册任务.
-     */
-    void registry();
 }

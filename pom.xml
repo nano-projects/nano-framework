@@ -15,7 +15,9 @@
     See the License for the specific language governing permissions and
     limitations under the License.
     
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -77,6 +79,7 @@
     <validation-api-version>1.1.0.Final</validation-api-version>
     <jgit-version>4.8.0.201705170830-rc1</jgit-version>
     <commons-io-version>2.5</commons-io-version>
+    <consul-client-version>0.16.1</consul-client-version>
   </properties>
 
   <issueManagement>
@@ -350,6 +353,12 @@
         <groupId>commons-io</groupId>
         <artifactId>commons-io</artifactId>
         <version>${commons-io-version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.orbitz.consul</groupId>
+        <artifactId>consul-client</artifactId>
+        <version>${consul-client-version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

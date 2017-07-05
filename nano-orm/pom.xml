@@ -16,35 +16,37 @@
     limitations under the License.
     
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.nanoframework</groupId>
-		<artifactId>nano</artifactId>
-		<version>1.4.9-SNAPSHOT</version>
-	</parent>
+  <parent>
+    <groupId>org.nanoframework</groupId>
+    <artifactId>nano</artifactId>
+    <version>1.4.9-SNAPSHOT</version>
+  </parent>
 
-	<artifactId>nano-orm</artifactId>
-	<packaging>pom</packaging>
-	<inceptionYear>2015</inceptionYear>
+  <artifactId>nano-orm</artifactId>
+  <packaging>pom</packaging>
+  <inceptionYear>2015</inceptionYear>
 
-	<name>Nano ORM</name>
-	<url>http://maven.apache.org</url>
+  <name>Nano ORM</name>
+  <url>http://maven.apache.org</url>
 
-	<properties>
-		<cs.dir>${project.parent.basedir}</cs.dir>
-	</properties>
+  <properties>
+    <cs.dir>${project.parent.basedir}</cs.dir>
+  </properties>
 
-	<modules>
-		<module>nano-orm-jdbc</module>
-		<module>nano-orm-mybatis</module>
-		<module>nano-orm-jedis</module>
-	</modules>
+  <modules>
+    <module>nano-orm-jdbc</module>
+    <module>nano-orm-mybatis</module>
+    <module>nano-orm-jedis</module>
+    <module>nano-orm-consul</module>
+  </modules>
 
-	<dependencyManagement>
-		<dependencies>
-			
-		</dependencies>
-	</dependencyManagement>
+  <dependencyManagement>
+    <dependencies>
+
+    </dependencies>
+  </dependencyManagement>
 </project>

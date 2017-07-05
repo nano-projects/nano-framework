@@ -79,9 +79,4 @@ public class SchedulerClusterLoader implements SchedulerLoader {
         LOGGER.info("Scheduler Cluster size: {}", clses.size());
         return clses;
     }
-
-    @Override
-    public void registry() {
-
-    }
 }

@@ -13,36 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.scheduler.cluster;
-
-import javax.servlet.ServletConfig;
-
-import org.nanoframework.concurrent.scheduler.loader.SchedulerLoader;
-import org.nanoframework.core.plugins.Plugin;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+package org.nanoframework.orm.consul.exception;
 
 /**
  *
  * @author yanghe
- * @since 1.4.8
+ * @since 1.4.9
  */
-public class SchedulerClusterPlugin implements Plugin {
+public class ConsulException extends RuntimeException {
+    private static final long serialVersionUID = -5836008704632479642L;
 
-    @Inject
-    @Named("cluster")
-    private SchedulerLoader loader;
-
-    @Override
-    public boolean load() throws Throwable {
-        loader.load();
-        return true;
-    }
-
-    @Override
-    public void config(final ServletConfig config) throws Throwable {
+    public ConsulException() {
 
     }
 
+    public ConsulException(final String message) {
+        super(message);
+    }
+
+    public ConsulException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+
+    public ConsulException(final Throwable cause) {
+        super(cause);
+    }
 }

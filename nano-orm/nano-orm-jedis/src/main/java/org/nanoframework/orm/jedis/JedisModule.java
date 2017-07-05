@@ -48,18 +48,16 @@ public class JedisModule implements Module {
     @Override
     public List<Module> load() throws Throwable {
         try {
-            final Class<?> redisClientPool = Class.forName("org.nanoframework.orm.jedis.RedisClientPool");
             final long time = System.currentTimeMillis();
-            final Object pool = redisClientPool.getField("POOL").get(redisClientPool);
-            pool.getClass().getMethod("initRedisConfig", List.class).invoke(pool, properties);
-            pool.getClass().getMethod("createJedis").invoke(pool);
-            pool.getClass().getMethod("bindGlobal").invoke(pool);
+            final RedisClientPool pool = RedisClientPool.POOL;
+            pool.initRedisConfig(properties);
+            pool.createJedis();
+            pool.bindGlobal();
             LOGGER.info("加载Redis配置, 耗时: " + (System.currentTimeMillis() - time) + "ms");
         } catch (final Throwable e) {
             if (!(e instanceof ClassNotFoundException)) {
                 throw new PluginLoaderException(e.getMessage(), e);
             }
-
         }
 
         return modules;

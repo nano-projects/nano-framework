@@ -62,6 +62,13 @@ public final class ApplicationContext {
      * @since 1.3.16
      */
     public static final String CONTEXT_REDIS = "context.redis";
+    
+    /**
+     * 
+     * Consul Configure to context.properties.
+     * @since 1.4.9
+     */
+    public static final String CONTEXT_CONSUL = "context.consul";
 
     /**
      *
