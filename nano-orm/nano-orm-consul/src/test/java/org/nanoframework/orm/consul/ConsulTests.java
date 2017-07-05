@@ -15,12 +15,17 @@
  */
 package org.nanoframework.orm.consul;
 
+import java.math.BigInteger;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
 
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.orbitz.consul.AgentClient;
@@ -35,7 +40,13 @@ import com.orbitz.consul.OperatorClient;
 import com.orbitz.consul.PreparedQueryClient;
 import com.orbitz.consul.SessionClient;
 import com.orbitz.consul.StatusClient;
+import com.orbitz.consul.async.ConsulResponseCallback;
+import com.orbitz.consul.cache.ConsulCache.Listener;
+import com.orbitz.consul.cache.KVCache;
+import com.orbitz.consul.model.ConsulResponse;
 import com.orbitz.consul.model.health.ServiceHealth;
+import com.orbitz.consul.model.kv.Value;
+import com.orbitz.consul.option.QueryOptions;
 
 /**
  *
@@ -43,6 +54,7 @@ import com.orbitz.consul.model.health.ServiceHealth;
  * @since 1.4.9
  */
 public class ConsulTests extends AbstractConsulTests {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsulTests.class);
 
     @Inject
     @Named("consul:test")
@@ -88,6 +100,11 @@ public class ConsulTests extends AbstractConsulTests {
     @Named("consul.operator:test")
     private OperatorClient operatorClient;
 
+    private static final String KEY = "key";
+    private static final String VALUE = "value";
+    private static final String NEW_VALUE = "newValue";
+    private static final String DELETED = "deleted";
+
     @Test
     public void connectTest() {
         injects();
@@ -124,15 +141,92 @@ public class ConsulTests extends AbstractConsulTests {
     @Test
     public void keyValueReadAndWriteTest() {
         injects();
-        final String key = "key";
-        final String value = "value";
-        keyValueClient.putValue(key, value);
-        final String v = keyValueClient.getValueAsString(key).get();
-        Assert.assertEquals(v, value);
+        keyValueClient.putValue(KEY, VALUE);
+        final String v = keyValueClient.getValueAsString(KEY).get();
+        Assert.assertEquals(v, VALUE);
 
-        keyValueClient.deleteKey(key);
-        final String deleted = "deleted";
-        final String delValue = keyValueClient.getValueAsString(key).or(deleted);
-        Assert.assertEquals(delValue, deleted);
+        keyValueClient.deleteKey(KEY);
+        final String delValue = keyValueClient.getValueAsString(KEY).or(DELETED);
+        Assert.assertEquals(delValue, DELETED);
+    }
+
+    @Test
+    public void blockingCallTest() throws InterruptedException {
+        injects();
+        keyValueClient.putValue(KEY, VALUE);
+        final StringBuilder builder = new StringBuilder();
+        final ConsulResponseCallback<Optional<Value>> callback = new ConsulResponseCallback<Optional<Value>>() {
+            final AtomicReference<BigInteger> index = new AtomicReference<BigInteger>(null);
+
+            @Override
+            public void onComplete(final ConsulResponse<Optional<Value>> consulResponse) {
+                if (consulResponse.getResponse().isPresent()) {
+                    final Value v = consulResponse.getResponse().get();
+                    builder.setLength(0);
+                    builder.append(v.getValueAsString().get());
+                }
+
+                index.set(consulResponse.getIndex());
+                watch();
+            }
+
+            void watch() {
+                keyValueClient.getValue(KEY, QueryOptions.blockMinutes(5, index.get()).build(), this);
+            }
+
+            @Override
+            public void onFailure(final Throwable throwable) {
+                LOGGER.error("Error encountered", throwable);
+                watch();
+            }
+        };
+
+        keyValueClient.getValue(KEY, QueryOptions.blockMinutes(5, new BigInteger("0")).build(), callback);
+
+        Thread.sleep(1000);
+
+        keyValueClient.putValue(KEY, NEW_VALUE);
+
+        Thread.sleep(500);
+
+        Assert.assertEquals(builder.toString(), NEW_VALUE);
+
+        keyValueClient.deleteKey(KEY);
+        final String delValue = keyValueClient.getValueAsString(KEY).or(DELETED);
+        Assert.assertEquals(delValue, DELETED);
+    }
+
+    @Test
+    public void subscribeKVTest() throws Exception {
+        injects();
+
+        final StringBuilder builder = new StringBuilder();
+        final KVCache cache = KVCache.newCache(keyValueClient, KEY);
+        final Listener<String, Value> listener = values -> {
+            values.values().forEach(v -> {
+                builder.setLength(0);
+                builder.append(v.getValueAsString().get());
+            });
+        };
+
+        cache.addListener(listener);
+
+        cache.start();
+
+        Thread.sleep(1000);
+
+        keyValueClient.putValue(KEY, VALUE);
+
+        Thread.sleep(500);
+
+        Assert.assertEquals(VALUE, builder.toString());
+
+        keyValueClient.deleteKey(KEY);
+        final String delValue = keyValueClient.getValueAsString(KEY).or(DELETED);
+        Assert.assertEquals(delValue, DELETED);
+
+        cache.removeListener(listener);
+        Assert.assertTrue(CollectionUtils.isEmpty(cache.getListeners()));
+        cache.stop();
     }
 }
