@@ -203,6 +203,7 @@ public class ConsulTests extends AbstractConsulTests {
         final StringBuilder builder = new StringBuilder();
         final KVCache cache = KVCache.newCache(keyValueClient, KEY);
         final Listener<String, Value> listener = values -> {
+            LOGGER.debug("{}", values);
             values.values().forEach(v -> {
                 builder.setLength(0);
                 builder.append(v.getValueAsString().get());
