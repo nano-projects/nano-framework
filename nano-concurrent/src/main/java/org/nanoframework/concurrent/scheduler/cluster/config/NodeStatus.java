@@ -23,13 +23,13 @@ import com.alibaba.fastjson.annotation.JSONType;
  * @since 1.4.9
  */
 @JSONType(serializeEnumAsJavaBean = true)
-public enum Status {
+public enum NodeStatus {
     DOWN(0, "离线"), UP(1, "在线"), UNKNOWN(9, "未知状态");
 
     private final int code;
     private final String description;
 
-    Status(final int code, final String description) {
+    NodeStatus(final int code, final String description) {
         this.code = code;
         this.description = description;
     }
@@ -47,7 +47,7 @@ public enum Status {
         return description;
     }
 
-    public static Status of(final int code) {
+    public static NodeStatus of(final int code) {
         switch (code) {
             case 0:
                 return DOWN;
@@ -58,7 +58,7 @@ public enum Status {
         }
     }
 
-    public static Status of(final String name) {
+    public static NodeStatus of(final String name) {
         switch (name) {
             case "DOWN":
                 return DOWN;

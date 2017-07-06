@@ -18,6 +18,7 @@ package org.nanoframework.concurrent.scheduler.cluster.storage.listener;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -25,15 +26,17 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.StringUtils;
-import org.nanoframework.concurrent.scheduler.cluster.BaseClusterScheduler;
 import org.nanoframework.concurrent.scheduler.cluster.config.Configure;
 import org.nanoframework.concurrent.scheduler.cluster.config.Node;
-import org.nanoframework.concurrent.scheduler.cluster.config.Status;
+import org.nanoframework.concurrent.scheduler.cluster.config.NodeStatus;
 import org.nanoframework.concurrent.scheduler.cluster.config.Worker;
+import org.nanoframework.concurrent.scheduler.cluster.config.WorkerStatus;
+import org.nanoframework.core.globals.Globals;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+import com.google.inject.Injector;
 import com.orbitz.consul.cache.ConsulCache.Listener;
 import com.orbitz.consul.model.kv.Value;
 
@@ -51,18 +54,19 @@ public class SchedulerListener implements Listener<String, Value> {
     private static final int ATTRIBUTE_INDEX = 4;
     private static final String NODE = "Node";
     private static final String WORKER = "Worker";
+    private static final String LEADER = "Leader";
+    private static final String EMPTY_ARRAY = "[]";
 
     private final ConcurrentMap<String, Value> lastResponse = Maps.newConcurrentMap();
     private final ConcurrentMap<String, Value> news = Maps.newConcurrentMap();
     private final ConcurrentMap<String, Value> modified = Maps.newConcurrentMap();
     private final ConcurrentMap<String, Value> removed = Maps.newConcurrentMap();
 
-    private final Class<? extends BaseClusterScheduler> cls;
-    private final Configure config;
+    private Configure config;
 
-    public SchedulerListener(Class<? extends BaseClusterScheduler> cls) {
-        this.cls = cls;
-        this.config = new Configure(cls);
+    public SchedulerListener init(final Configure config) {
+        this.config = config;
+        return this;
     }
 
     @Override
@@ -115,7 +119,7 @@ public class SchedulerListener implements Listener<String, Value> {
         final String[] tokens = key.split(SEPARATOR);
         final int tokenLength = tokens.length;
         final int offset;
-        if (StringUtils.isBlank(tokens[tokenLength - 1])) {
+        if (!StringUtils.isBlank(tokens[tokenLength - 1])) {
             offset = 1;
         } else {
             offset = 2;
@@ -141,17 +145,35 @@ public class SchedulerListener implements Listener<String, Value> {
     }
 
     private void setType(final String[] tokens) {
+        final Injector injector = Globals.get(Injector.class);
         final String typeName = tokens[TYPE_NAME_INDEX];
         final String typeId = tokens[TYPE_ID_INDEX];
         switch (typeName) {
             case NODE:
                 if (!config.hasNode(typeId)) {
-                    config.addNode(typeId, new Node(typeId));
+                    final Node node = injector.getInstance(Node.class);
+                    node.setId(typeId);
+                    config.addNode(typeId, node);
+                    LOGGER.debug("同步节点配置: {}", typeId);
                 }
                 break;
             case WORKER:
                 if (!config.hasWorker(typeId)) {
-                    config.addWorker(typeId, new Worker(typeId));
+                    final Worker worker = injector.getInstance(Worker.class);
+                    worker.setId(typeId);
+                    worker.setScheduler(injector.getInstance(config.getCls()));
+                    config.addWorker(typeId, worker);
+                    LOGGER.debug("同步工作线程配置: {}", typeId);
+                }
+                break;
+            case LEADER:
+                final String id = config.getCurrentNode().getId();
+                if (StringUtils.equals(id, typeId)) {
+                    config.setLeader(Boolean.TRUE);
+                    LOGGER.debug("同步节点状态: leader");
+                } else {
+                    config.setLeader(Boolean.FALSE);
+                    LOGGER.debug("同步节点状态: slave");
                 }
                 break;
             default:
@@ -177,42 +199,58 @@ public class SchedulerListener implements Listener<String, Value> {
                 break;
         }
     }
-    
+
     private void setNodeAttribute(final String nodeId, final String attributeName, final Optional<String> value) {
         final Node node = config.getNode(nodeId);
-        switch (attributeName) {
-            case Node.STATUS:
-                node.setStatus(Status.of(Integer.parseInt(value.or(String.valueOf(Status.UNKNOWN.code())))));
-                break;
-            case Node.WORKER_IDS:
-                final String[] workerIds = JSON.parseObject(value.or("[]"), String[].class);
-                if (ArrayUtils.isEmpty(workerIds)) {
-                    node.removeWorkers();
-                } else {
-                    for (final String workerId : workerIds) {
-                        node.removeWorker(workerId);
+        try {
+            switch (attributeName) {
+                case Node.WORKER_IDS:
+                    final Set<String> workerIds = JSON.parseObject(value.or(EMPTY_ARRAY), Node.WORKER_IDS_TYPE);
+                    if (CollectionUtils.isEmpty(workerIds)) {
+                        node.removeWorkers();
+                    } else {
+                        node.getWorkerIds().iterator().forEachRemaining(workerId -> {
+                            if (!workerIds.contains(workerId)) {
+                                node.removeWorker(workerId);
+                            }
+                        });
+    
+                        workerIds.stream().filter(workerId -> !node.hasWorker(workerId))
+                                .forEach(workerId -> node.addWorker(workerId, config.getWorker(workerId)));
                     }
-                }
-            default:
-                node.setAttributeValue(attributeName, value.orNull());
-                break;
+                case Node.STATUS:
+                    node.setStatus(NodeStatus.of(Integer.parseInt(value.or(String.valueOf(NodeStatus.UNKNOWN.code())))));
+                    break;
+                default:
+                    node.setAttributeValue(attributeName, value.orNull());
+                    break;
+            }
+        } finally {
+            LOGGER.debug("同步工作线程配置: {}, 修改属性: {} = {}", nodeId, attributeName, value.or(""));
         }
     }
-    
+
     private void setWorkerAttribute(final String workerId, final String attributeName, final Optional<String> value) {
         final Worker worker = config.getWorker(workerId);
         final String v = value.orNull();
-        switch (attributeName) {
-            case Worker.NODE_ID:
-                if (StringUtils.isBlank(v)) {
-                    worker.setNode(null);
-                } else {
-                    worker.setNode(config.getNode(v));
-                }
-                break;
-            default:
-                worker.setAttributeValue(attributeName, v);
-                break;
+        try {
+            switch (attributeName) {
+                case Worker.NODE_ID:
+                    if (StringUtils.isBlank(v)) {
+                        worker.setNode(null);
+                    } else {
+                        worker.setNode(config.getNode(v));
+                    }
+                    break;
+                case Node.STATUS:
+                    worker.setStatus(WorkerStatus.of(Integer.parseInt(value.or(String.valueOf(WorkerStatus.UNKNOWN.code())))));
+                    break;
+                default:
+                    worker.setAttributeValue(attributeName, v);
+                    break;
+            }
+        } finally {
+            LOGGER.debug("同步工作线程配置: {}, 修改属性: {} = {}", workerId, attributeName, v);
         }
     }
 
@@ -248,9 +286,9 @@ public class SchedulerListener implements Listener<String, Value> {
     }
 
     private void removeAll() {
-        config.setClusterId(null);
         config.removeNodes();
         config.removeWorkers();
+        LOGGER.debug("移除所有配置");
     }
 
     private void removeTypes(final String[] tokens) {
@@ -258,9 +296,11 @@ public class SchedulerListener implements Listener<String, Value> {
         switch (typeName) {
             case NODE:
                 config.removeNodes();
+                LOGGER.debug("移除所有节点配置");
                 break;
             case WORKER:
                 config.removeWorkers();
+                LOGGER.debug("移除所有工作线程配置");
                 break;
             default:
                 LOGGER.warn("Unknown type name configure.");
@@ -274,9 +314,11 @@ public class SchedulerListener implements Listener<String, Value> {
         switch (typeName) {
             case NODE:
                 config.removeNode(typeId);
+                LOGGER.debug("移除节点配置: {}", typeId);
                 break;
             case WORKER:
                 config.removeWorker(typeId);
+                LOGGER.debug("移除工作线程配置: {}", typeId);
                 break;
             default:
                 LOGGER.warn("Unknown type name configure.");
@@ -308,10 +350,6 @@ public class SchedulerListener implements Listener<String, Value> {
                 LOGGER.warn("Unknown type name configure.");
                 break;
         }
-    }
-
-    public Class<? extends BaseClusterScheduler> getCls() {
-        return cls;
     }
 
     public Configure getConfig() {

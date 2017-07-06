@@ -29,21 +29,24 @@ import org.nanoframework.concurrent.scheduler.cluster.BaseClusterScheduler;
 public class Worker extends BaseEntity {
     /** node field. */
     public static final String NODE_ID = "nodeId";
+    /** status field. */
+    public static final String STATUS = "status";
     private static final long serialVersionUID = 6329815738228489691L;
 
-    private final String id;
+    private String id;
     private Long upTime;
     private Long runTime;
+    private WorkerStatus status;
     private Node node;
     private Map<String, Object> cfg;
     private BaseClusterScheduler scheduler;
 
-    public Worker(final String id) {
-        this.id = id;
-    }
-
     public String getId() {
         return id;
+    }
+
+    public void setId(final String id) {
+        this.id = id;
     }
 
     public Long getUpTime() {
@@ -60,6 +63,14 @@ public class Worker extends BaseEntity {
 
     public void setRunTime(final Long runTime) {
         this.runTime = runTime;
+    }
+
+    public WorkerStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(final WorkerStatus status) {
+        this.status = status;
     }
 
     public Node getNode() {

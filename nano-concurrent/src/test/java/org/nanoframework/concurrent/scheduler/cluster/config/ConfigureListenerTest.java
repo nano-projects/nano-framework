@@ -15,23 +15,21 @@
  */
 package org.nanoframework.concurrent.scheduler.cluster.config;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import java.security.SecureRandom;
 
-import org.apache.commons.codec.binary.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.junit.Assert;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.concurrent.scheduler.cluster.AbstractConsulTests;
+import org.nanoframework.concurrent.scheduler.cluster.TestScheduler;
+import org.nanoframework.concurrent.scheduler.cluster.storage.listener.SchedulerListener;
 
-import com.google.common.collect.Maps;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.orbitz.consul.KeyValueClient;
-import com.orbitz.consul.cache.ConsulCache.Listener;
 import com.orbitz.consul.cache.KVCache;
-import com.orbitz.consul.model.kv.Value;
 
 /**
  *
@@ -40,75 +38,85 @@ import com.orbitz.consul.model.kv.Value;
  */
 public class ConfigureListenerTest extends AbstractConsulTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigureListenerTest.class);
-    
+
     @Inject
     @Named("consul.kv:test")
     private KeyValueClient keyValueClient;
 
+    @Inject
+    private SecureRandom random;
+
     @Test
-    public void subscribeSchedulerTest() throws Exception {
+    public void configureTest() throws Exception {
         injects();
-        final KVCache cache = KVCache.newCache(keyValueClient, "org.nanoframework.scheduler.TestScheduler");
-        final Listener<String, Value> listener = new Listener<String, Value>() {
-            final ConcurrentMap<String, Value> lastResponse = Maps.newConcurrentMap();
-            final ConcurrentMap<String, Value> news = Maps.newConcurrentMap();
-            final ConcurrentMap<String, Value> modified = Maps.newConcurrentMap();
-            final ConcurrentMap<String, Value> removed = Maps.newConcurrentMap();
+        final String clusterId = "test";
+        final String schedulerClassName = TestScheduler.class.getName();
 
-            @Override
-            public void notify(final Map<String, Value> newValues) {
-                news.clear();
-                modified.clear();
-                removed.clear();
-                if (!CollectionUtils.isEmpty(lastResponse)) {
-                    newValues.forEach((key, value) -> {
-                        if (lastResponse.containsKey(key)) {
-                            final Value oldValue = lastResponse.get(key);
-                            if (!StringUtils.equals(oldValue.getValueAsString().or(""), value.getValueAsString().or(""))) {
-                                modified.put(key, value);
-                            }
-                        } else {
-                            news.put(key, value);
-                        }
-                    });
+        final Configure configure = injector.getInstance(Configure.class);
+        configure.setClusterId(clusterId);
+        configure.setCls(TestScheduler.class);
 
-                    lastResponse.forEach((key, value) -> {
-                        if (!newValues.containsKey(key)) {
-                            removed.put(key, value);
-                        }
-                    });
+        final Node curNode = createNode0(clusterId, schedulerClassName);
+        configure.setCurrentNode(curNode);
+        configure.addNode(curNode.getId(), curNode);
 
-                    lastResponse.clear();
-                    lastResponse.putAll(newValues);
-                } else {
-                    news.putAll(newValues);
-                    lastResponse.clear();
-                    lastResponse.putAll(newValues);
-                }
-
-                LOGGER.debug("news: ");
-                news.forEach((key, value) -> {
-                    LOGGER.debug("{}: {}", key, value.getValueAsString().or(""));
-                });
-
-                LOGGER.debug("modified: ");
-                modified.forEach((key, value) -> {
-                    LOGGER.debug("{}: {}", key, value.getValueAsString().or(""));
-                });
-
-                LOGGER.debug("removed: ");
-                removed.forEach((key, value) -> {
-                    LOGGER.debug("{}: {}", key, value.getValueAsString().or(""));
-                });
-            }
-
-        };
-
-        cache.addListener(listener);
-
+        final KVCache cache = KVCache.newCache(keyValueClient, schedulerClassName);
+        cache.addListener(injector.getInstance(SchedulerListener.class).init(configure));
         cache.start();
 
+        createNode1(clusterId, schedulerClassName);
         Thread.sleep(1000);
+
+        final String[] nodeIds = configure.getNodeIds().toArray(new String[0]);
+        final String nodeId = nodeIds[random.nextInt(nodeIds.length)];
+        setLeader(clusterId, schedulerClassName, nodeId);
+        Thread.sleep(1000);
+
+        if (StringUtils.equals(configure.getCurrentNode().getId(), nodeId)) {
+            Assert.assertTrue(configure.getLeader());
+        } else {
+            Assert.assertFalse(configure.getLeader());
+        }
+
         cache.stop();
+
+        LOGGER.debug("{}", configure);
+        keyValueClient.deleteKeys(schedulerClassName);
+    }
+
+    private Node createNode0(final String clusterId, final String schedulerClassName) {
+        final Node node = injector.getInstance(Node.class);
+        node.setId("node0");
+        node.setHost("localhost");
+        node.setStatus(NodeStatus.UP);
+        node.setUpTime(System.currentTimeMillis());
+        node.setLiveTime(node.getUpTime());
+        syncNode(node, clusterId, schedulerClassName);
+        return node;
+    }
+
+    private Node createNode1(final String clusterId, final String schedulerClassName) {
+        final Node node = injector.getInstance(Node.class);
+        node.setId("node1");
+        node.setHost("localhost");
+        node.setStatus(NodeStatus.UP);
+        node.setUpTime(System.currentTimeMillis());
+        node.setLiveTime(node.getUpTime());
+        syncNode(node, clusterId, schedulerClassName);
+        return node;
+    }
+
+    private void syncNode(final Node node, final String clusterId, final String schedulerClassName) {
+        final String nodePath = schedulerClassName + '/' + clusterId + "/Node/" + node.getId();
+        keyValueClient.putValue(nodePath + "/");
+        keyValueClient.putValue(nodePath + "/host", node.getHost());
+        keyValueClient.putValue(nodePath + "/status", String.valueOf(node.getStatus().code()));
+        keyValueClient.putValue(nodePath + "/upTime", String.valueOf(node.getUpTime()));
+        keyValueClient.putValue(nodePath + "/liveTime", String.valueOf(node.getLiveTime()));
+    }
+
+    private void setLeader(final String clusterId, final String schedulerClassName, final String nodeId) {
+        final String nodePath = schedulerClassName + '/' + clusterId + "/Leader/" + nodeId;
+        keyValueClient.putValue(nodePath + "/");
     }
 }

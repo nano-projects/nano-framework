@@ -19,8 +19,12 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.nanoframework.commons.entity.BaseEntity;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 
+import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Maps;
 
 /**
@@ -29,25 +33,34 @@ import com.google.common.collect.Maps;
  * @since 1.4.9
  */
 public class Node extends BaseEntity {
-    /** status field. */
-    public static final String STATUS = "status";
     /** workers keys. */
     public static final String WORKER_IDS = "workerIds";
+    /** status field. */
+    public static final String STATUS = "status";
+    /** workers fastjson type. */
+    public static final TypeReference<Set<String>> WORKER_IDS_TYPE = new TypeReference<Set<String>>() {
+    };
     private static final long serialVersionUID = -4484992348486825071L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(Node.class);
 
-    private final String id;
+    private String id;
     private String host;
-    private Status status;
+    private NodeStatus status;
     private Long upTime;
     private Long liveTime;
     private Map<String, Worker> workers = Maps.newHashMap();
 
-    public Node(final String id) {
-        this.id = id;
-    }
-
     public String getId() {
         return id;
+    }
+
+    public void setId(final String id) {
+        if (StringUtils.equals(this.id, id)) {
+            return;
+        }
+
+        this.id = id;
+        LOGGER.debug("同步任务调度节点: {}", id);
     }
 
     public String getHost() {
@@ -55,15 +68,25 @@ public class Node extends BaseEntity {
     }
 
     public void setHost(final String host) {
+        if (StringUtils.equals(this.host, host)) {
+            return;
+        }
+
         this.host = host;
+        LOGGER.debug("同步任务调度节点: {}, host: {}", id, host);
     }
 
-    public Status getStatus() {
+    public NodeStatus getStatus() {
         return status;
     }
 
-    public void setStatus(final Status status) {
+    public void setStatus(final NodeStatus status) {
+        if (this.status == status) {
+            return;
+        }
+
         this.status = status;
+        LOGGER.debug("同步任务调度节点: {}, status: {}", id, status);
     }
 
     public Long getUpTime() {
@@ -71,7 +94,12 @@ public class Node extends BaseEntity {
     }
 
     public void setUpTime(final Long upTime) {
+        if (StringUtils.equals(String.valueOf(this.upTime), String.valueOf(upTime))) {
+            return;
+        }
+
         this.upTime = upTime;
+        LOGGER.debug("同步任务调度节点: {}, upTime: {}", id, upTime);
     }
 
     public Long getLiveTime() {
@@ -79,7 +107,12 @@ public class Node extends BaseEntity {
     }
 
     public void setLiveTime(final Long liveTime) {
+        if (StringUtils.equals(String.valueOf(this.liveTime), String.valueOf(liveTime))) {
+            return;
+        }
+
         this.liveTime = liveTime;
+        LOGGER.debug("同步任务调度节点: {}, liveTime: {}", id, liveTime);
     }
 
     public Worker getWorker(final String workerId) {
@@ -106,4 +139,7 @@ public class Node extends BaseEntity {
         workers.remove(workerId);
     }
 
+    public Map<String, Worker> getWorkers() {
+        return Collections.unmodifiableMap(workers);
+    }
 }

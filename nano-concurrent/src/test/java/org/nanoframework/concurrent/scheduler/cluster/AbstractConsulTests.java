@@ -63,6 +63,8 @@ public abstract class AbstractConsulTests {
             return null;
         }
     };
+    
+    protected Injector injector;
 
     @BeforeClass
     public static void setup() throws Throwable {
@@ -82,8 +84,7 @@ public abstract class AbstractConsulTests {
     }
 
     protected void injects() {
-        final Injector injector = Globals.get(Injector.class);
-        injector.createChildInjector(binder -> binder.requestInjection(this));
+        injector = Globals.get(Injector.class).createChildInjector(binder -> binder.requestInjection(this));
     }
 
 }

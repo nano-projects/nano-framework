@@ -32,12 +32,26 @@ import com.google.common.collect.Maps;
 public class Configure extends BaseEntity {
     private static final long serialVersionUID = -6582459356567595335L;
 
-    private final Class<? extends BaseClusterScheduler> cls;
+    private Boolean leader = Boolean.FALSE;
+    private Class<? extends BaseClusterScheduler> cls;
     private String clusterId;
+    private Node currentNode;
     private final Map<String, Node> nodes = Maps.newHashMap();
     private final Map<String, Worker> workers = Maps.newHashMap();
 
-    public Configure(Class<? extends BaseClusterScheduler> cls) {
+    public Boolean getLeader() {
+        return leader;
+    }
+
+    public void setLeader(final Boolean leader) {
+        this.leader = leader;
+    }
+
+    public Class<? extends BaseClusterScheduler> getCls() {
+        return cls;
+    }
+
+    public void setCls(final Class<? extends BaseClusterScheduler> cls) {
         this.cls = cls;
     }
 
@@ -47,6 +61,14 @@ public class Configure extends BaseEntity {
 
     public void setClusterId(final String clusterId) {
         this.clusterId = clusterId;
+    }
+
+    public Node getCurrentNode() {
+        return currentNode;
+    }
+
+    public void setCurrentNode(final Node currentNode) {
+        this.currentNode = currentNode;
     }
 
     public Node getNode(final String nodeId) {
@@ -97,8 +119,11 @@ public class Configure extends BaseEntity {
         workers.remove(workerId);
     }
 
-    public Class<? extends BaseClusterScheduler> getCls() {
-        return cls;
+    public Map<String, Node> getNodes() {
+        return Collections.unmodifiableMap(nodes);
     }
 
+    public Map<String, Worker> getWorkers() {
+        return Collections.unmodifiableMap(workers);
+    }
 }
