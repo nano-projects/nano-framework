@@ -1,1 +1,1 @@
-# cluster=org.nanoframework.concurrent.scheduler.cluster.loader.SchedulerClusterLoader
+# cluster=org.nanoframework.concurrent.scheduler.cluster.loader.ClusterSchedulerLoader

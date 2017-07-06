@@ -15,34 +15,14 @@
  */
 package org.nanoframework.concurrent.scheduler.cluster;
 
-import javax.servlet.ServletConfig;
-
-import org.nanoframework.concurrent.scheduler.loader.SchedulerLoader;
-import org.nanoframework.core.plugins.Plugin;
-
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
+import org.nanoframework.concurrent.scheduler.BaseScheduler;
 
 /**
  *
  * @author yanghe
- * @since 1.4.8
+ * @since 1.4.9
  */
-public class SchedulerClusterPlugin implements Plugin {
+public abstract class BaseClusterScheduler extends BaseScheduler {
 
-    @Inject
-    @Named("cluster")
-    private SchedulerLoader loader;
-
-    @Override
-    public boolean load() throws Throwable {
-        loader.load();
-        return true;
-    }
-
-    @Override
-    public void config(final ServletConfig config) throws Throwable {
-
-    }
 
 }

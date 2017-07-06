@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.concurrent.scheduler.cluster.SchedulerCluster;
+import org.nanoframework.concurrent.scheduler.cluster.ClusterScheduler;
 import org.nanoframework.concurrent.scheduler.loader.SchedulerLoader;
 import org.nanoframework.core.component.scan.ClassScanner;
 
@@ -33,8 +33,8 @@ import com.google.inject.Singleton;
  * @since 1.4.8
  */
 @Singleton
-public class SchedulerClusterLoader implements SchedulerLoader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerClusterLoader.class);
+public class ClusterSchedulerLoader implements SchedulerLoader {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterSchedulerLoader.class);
     private static final String BASE_PACKAGE = "context.scheduler-cluster-scan.base-package";
     private final AtomicBoolean loaded = new AtomicBoolean(false);
 
@@ -75,7 +75,7 @@ public class SchedulerClusterLoader implements SchedulerLoader {
     }
 
     protected Set<Class<?>> filterSchedulerClusterClasses() {
-        final Set<Class<?>> clses = ClassScanner.filter(SchedulerCluster.class);
+        final Set<Class<?>> clses = ClassScanner.filter(ClusterScheduler.class);
         LOGGER.info("Scheduler Cluster size: {}", clses.size());
         return clses;
     }

@@ -47,7 +47,7 @@ public class SchedulerConfig extends BaseEntity {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -55,7 +55,7 @@ public class SchedulerConfig extends BaseEntity {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -63,7 +63,7 @@ public class SchedulerConfig extends BaseEntity {
         return group;
     }
 
-    public void setGroup(String group) {
+    public void setGroup(final String group) {
         this.group = group;
     }
 
@@ -71,7 +71,7 @@ public class SchedulerConfig extends BaseEntity {
         return service;
     }
 
-    public void setService(ThreadPoolExecutor service) {
+    public void setService(final ThreadPoolExecutor service) {
         this.service = service;
     }
 
@@ -79,7 +79,7 @@ public class SchedulerConfig extends BaseEntity {
         return beforeAfterOnly;
     }
 
-    public void setBeforeAfterOnly(Boolean beforeAfterOnly) {
+    public void setBeforeAfterOnly(final Boolean beforeAfterOnly) {
         this.beforeAfterOnly = beforeAfterOnly;
     }
 
@@ -87,9 +87,10 @@ public class SchedulerConfig extends BaseEntity {
         return runNumberOfTimes;
     }
 
-    public void setRunNumberOfTimes(Integer runNumberOfTimes) {
-        if (runNumberOfTimes == null || runNumberOfTimes < 0)
+    public void setRunNumberOfTimes(final Integer runNumberOfTimes) {
+        if (runNumberOfTimes == null || runNumberOfTimes < 0) {
             throw new SchedulerException("运行次数不能小于0.");
+        }
 
         this.runNumberOfTimes = runNumberOfTimes;
     }
@@ -98,7 +99,7 @@ public class SchedulerConfig extends BaseEntity {
         return interval;
     }
 
-    public void setInterval(Long interval) {
+    public void setInterval(final Long interval) {
         this.interval = interval;
     }
 
@@ -106,7 +107,7 @@ public class SchedulerConfig extends BaseEntity {
         return num;
     }
 
-    public void setNum(Integer num) {
+    public void setNum(final Integer num) {
         this.num = num;
     }
 
@@ -114,7 +115,7 @@ public class SchedulerConfig extends BaseEntity {
         return total;
     }
 
-    public void setTotal(Integer total) {
+    public void setTotal(final Integer total) {
         this.total = total;
     }
 
@@ -122,7 +123,7 @@ public class SchedulerConfig extends BaseEntity {
         return cron;
     }
 
-    public void setCron(CronExpression cron) {
+    public void setCron(final CronExpression cron) {
         this.cron = cron;
     }
 
@@ -130,7 +131,7 @@ public class SchedulerConfig extends BaseEntity {
         return daemon;
     }
 
-    public void setDaemon(Boolean daemon) {
+    public void setDaemon(final Boolean daemon) {
         this.daemon = daemon;
     }
 
@@ -138,7 +139,7 @@ public class SchedulerConfig extends BaseEntity {
         return lazy;
     }
 
-    public void setLazy(Boolean lazy) {
+    public void setLazy(final Boolean lazy) {
         this.lazy = lazy;
     }
 
@@ -146,7 +147,7 @@ public class SchedulerConfig extends BaseEntity {
         return defined;
     }
 
-    public void setDefined(String[] defined) {
+    public void setDefined(final String[] defined) {
         this.defined = defined;
     }
 
