@@ -1,2 +1,2 @@
 org.nanoframework.concurrent.scheduler.SchedulerPlugin
-# org.nanoframework.concurrent.scheduler.cluster.ClusterSchedulerPlugin
+org.nanoframework.concurrent.scheduler.cluster.ClusterSchedulerPlugin

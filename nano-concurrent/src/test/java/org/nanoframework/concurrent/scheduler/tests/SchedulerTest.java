@@ -32,69 +32,69 @@ public class SchedulerTest extends PluginLoaderInit {
     public void schedulerTest() throws InterruptedException {
         // wait scheduler to running status
         Thread.sleep(1500);
-        
+
         final SchedulerFactory factory = SchedulerFactory.getInstance();
         Assert.assertEquals(factory.getStartedSchedulerSize(), 4);
         final BaseScheduler scheduler = factory.getStartedScheduler().iterator().next();
         final SchedulerConfig conf = scheduler.getConfig();
-        
+
         Assert.assertTrue(scheduler instanceof TestScheduler || scheduler instanceof Test2Scheduler);
         Assert.assertFalse(scheduler.isClose());
         Assert.assertFalse(scheduler.isClosed());
-        
+
         factory.close(conf.getId());
-        
+
         Assert.assertTrue(scheduler.isClose());
-        
+
         // wait scheduler to closed status
         Thread.sleep(1000);
-        
+
         Assert.assertTrue(scheduler.isClosed());
         Assert.assertFalse(scheduler.isRemove());
-        
+
         factory.removeScheduler(scheduler);
-        
+
         // If the list is only one scheduler, do not delete the scheduler
         Assert.assertTrue(scheduler.isRemove());
-        
+
         factory.append(conf.getGroup(), 1, true);
         factory.startAll();
         Thread.sleep(1000);
-        
+
         factory.closeGroup(conf.getGroup());
-        
+
         // wait scheduler group to closed status
         Thread.sleep(5000);
-        
+
         Assert.assertEquals(factory.getStartedSchedulerSize(), 2);
-        
+
         factory.startAll();
-        
+
         Thread.sleep(2000);
-        
+
         Assert.assertEquals(factory.getStartedSchedulerSize(), 4);
-        
+
         factory.removeGroup(conf.getGroup());
-        
+
         Assert.assertEquals(factory.getStartedSchedulerSize(), 2);
         Assert.assertEquals(factory.getStoppedSchedulerSize(), 0);
-        
+
         factory.append(conf.getGroup(), 1, true);
         factory.startAll();
         Thread.sleep(1000);
-        
+
         factory.closeAll();
-        
+
         // wait scheduler to closed status
         Thread.sleep(5000);
-        
+
         Assert.assertEquals(factory.getStartedSchedulerSize(), 0);
-        
+
         factory.startGroup(conf.getGroup());
         // wait scheduler to running status
         Thread.sleep(1500);
-        
+
         Assert.assertEquals(factory.getStartedSchedulerSize(), 2);
     }
-    
+
 }

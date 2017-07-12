@@ -32,7 +32,12 @@ public class SchedulerTest extends PluginLoaderInit {
         Thread.sleep(1500);
 
         final SchedulerFactory factory = SchedulerFactory.getInstance();
-        Assert.assertEquals(factory.getStartedSchedulerSize(), 1);
+        try {
+            Assert.assertEquals(factory.getStartedSchedulerSize(), 1);
+        } catch (final Throwable e) {
+            factory.getStartedScheduler().forEach(s -> LOGGER.debug(s.getConfig().getId()));
+            throw e;
+        }
 
         factory.close(LongWaitScheduler.class.getSimpleName() + "-0");
 

@@ -13,34 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.scheduler.cluster;
+package org.nanoframework.concurrent.scheduler.cluster.consts;
 
 /**
  *
  * @author yanghe
  * @since 1.4.9
  */
-@ClusterScheduler
-public class TestScheduler extends BaseClusterScheduler {
+public final class Keys {
+    public static final String CLUSTER_SCHEDULER_ENABLED = "context.cluster.scheduler.enabled";
 
-    @Override
-    public void before() {
+    public static final String BASE_PACKAGE = "context.cluster.scheduler-scan.base-package";
 
-    }
+    public static final String CLUSTER_ID = "context.cluster.scheduler.id";
 
-    @Override
-    public void execute() {
+    public static final String NODE_ID = "context.cluster.scheduler.node.id";
 
-    }
-
-    @Override
-    public void after() {
+    private Keys() {
 
     }
-
-    @Override
-    public void destroy() {
-
-    }
-
 }

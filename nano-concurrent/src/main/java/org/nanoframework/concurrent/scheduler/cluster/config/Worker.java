@@ -34,8 +34,9 @@ public class Worker extends BaseEntity {
     private static final long serialVersionUID = 6329815738228489691L;
 
     private String id;
-    private Long upTime;
-    private Long runTime;
+    private String cls;
+    private Long uptime;
+    private Long runtime;
     private WorkerStatus status;
     private Node node;
     private Map<String, Object> cfg;
@@ -49,20 +50,28 @@ public class Worker extends BaseEntity {
         this.id = id;
     }
 
-    public Long getUpTime() {
-        return upTime;
+    public String getCls() {
+        return cls;
     }
 
-    public void setUpTime(final Long upTime) {
-        this.upTime = upTime;
+    public void setCls(final String cls) {
+        this.cls = cls;
     }
 
-    public Long getRunTime() {
-        return runTime;
+    public Long getUptime() {
+        return uptime;
     }
 
-    public void setRunTime(final Long runTime) {
-        this.runTime = runTime;
+    public void setUptime(final Long uptime) {
+        this.uptime = uptime;
+    }
+
+    public Long getRuntime() {
+        return runtime;
+    }
+
+    public void setRuntime(final Long runtime) {
+        this.runtime = runtime;
     }
 
     public WorkerStatus getStatus() {

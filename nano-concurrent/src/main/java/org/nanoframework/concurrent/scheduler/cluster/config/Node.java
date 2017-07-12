@@ -21,11 +21,17 @@ import java.util.Set;
 
 import org.apache.commons.codec.binary.StringUtils;
 import org.nanoframework.commons.entity.BaseEntity;
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.concurrent.scheduler.cluster.BaseClusterScheduler;
+import org.nanoframework.concurrent.scheduler.cluster.consts.ConsulSources;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import com.orbitz.consul.KeyValueClient;
 
 /**
  * 任务对应的节点配置.
@@ -37,18 +43,28 @@ public class Node extends BaseEntity {
     public static final String WORKER_IDS = "workerIds";
     /** status field. */
     public static final String STATUS = "status";
+    /** Scheduler ability */
+    public static final String SCHEDULER_ABILITY = "schedulerAbility";
     /** workers fastjson type. */
-    public static final TypeReference<Set<String>> WORKER_IDS_TYPE = new TypeReference<Set<String>>() {
+    public static final TypeReference<Set<String>> SET_STRING_TYPE = new TypeReference<Set<String>>() {
     };
     private static final long serialVersionUID = -4484992348486825071L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(Node.class);
+
+    @Inject
+    @Named(ConsulSources.KV_SCHEDULER_CLUSTER)
+    private KeyValueClient kvClient;
 
     private String id;
     private String host;
     private NodeStatus status;
-    private Long upTime;
-    private Long liveTime;
-    private Map<String, Worker> workers = Maps.newHashMap();
+    private Long uptime;
+    private Long livetime;
+    private final Map<String, Worker> workers = Maps.newHashMap();
+    private final Set<Class<? extends BaseClusterScheduler>> clses = Sets.newHashSet();
+    private final Set<String> notFoundClses = Sets.newHashSet();
+
+    @Inject
+    private Configure config;
 
     public String getId() {
         return id;
@@ -60,7 +76,7 @@ public class Node extends BaseEntity {
         }
 
         this.id = id;
-        LOGGER.debug("同步任务调度节点: {}", id);
+        kvClient.putValue(config.getClusterId() + "/Node/" + id + '/');
     }
 
     public String getHost() {
@@ -73,7 +89,7 @@ public class Node extends BaseEntity {
         }
 
         this.host = host;
-        LOGGER.debug("同步任务调度节点: {}, host: {}", id, host);
+        kvClient.putValue(config.getClusterId() + "/Node/" + id + "/host", host);
     }
 
     public NodeStatus getStatus() {
@@ -85,34 +101,38 @@ public class Node extends BaseEntity {
             return;
         }
 
+        syncStatus(status);
+    }
+    
+    public void syncStatus(final NodeStatus status) {
         this.status = status;
-        LOGGER.debug("同步任务调度节点: {}, status: {}", id, status);
+        kvClient.putValue(config.getClusterId() + "/Node/" + id + "/status", String.valueOf(status.code()));
     }
 
-    public Long getUpTime() {
-        return upTime;
+    public Long getUptime() {
+        return uptime;
     }
 
-    public void setUpTime(final Long upTime) {
-        if (StringUtils.equals(String.valueOf(this.upTime), String.valueOf(upTime))) {
+    public void setUptime(final Long uptime) {
+        if (StringUtils.equals(String.valueOf(this.uptime), String.valueOf(uptime))) {
             return;
         }
 
-        this.upTime = upTime;
-        LOGGER.debug("同步任务调度节点: {}, upTime: {}", id, upTime);
+        this.uptime = uptime;
+        kvClient.putValue(config.getClusterId() + "/Node/" + id + "/uptime", String.valueOf(uptime));
     }
 
-    public Long getLiveTime() {
-        return liveTime;
+    public Long getLivetime() {
+        return livetime;
     }
 
-    public void setLiveTime(final Long liveTime) {
-        if (StringUtils.equals(String.valueOf(this.liveTime), String.valueOf(liveTime))) {
+    public void setLivetime(final Long livetime) {
+        if (StringUtils.equals(String.valueOf(this.livetime), String.valueOf(livetime))) {
             return;
         }
 
-        this.liveTime = liveTime;
-        LOGGER.debug("同步任务调度节点: {}, liveTime: {}", id, liveTime);
+        this.livetime = livetime;
+        kvClient.putValue(config.getClusterId() + "/Node/" + id + "/livetime", String.valueOf(livetime));
     }
 
     public Worker getWorker(final String workerId) {
@@ -141,5 +161,47 @@ public class Node extends BaseEntity {
 
     public Map<String, Worker> getWorkers() {
         return Collections.unmodifiableMap(workers);
+    }
+
+    public void setSchedulerAbility(final Set<Class<? extends BaseClusterScheduler>> clses) {
+        if (!CollectionUtils.isEmpty(clses)) {
+            this.clses.addAll(clses);
+            kvClient.putValue(config.getClusterId() + "/Node/" + id + "/schedulerAbility", JSON.toJSONString(clses));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void addSchedulerAbility(final String clsName) {
+        try {
+            if (notFoundClses.contains(clsName)) {
+                return;
+            }
+
+            final Class<? extends BaseClusterScheduler> cls = (Class<? extends BaseClusterScheduler>) Class.forName(clsName);
+            clses.add(cls);
+        } catch (final ClassNotFoundException e) {
+            notFoundClses.add(clsName);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public boolean hasSchedulerAbility(final String clsName) {
+        try {
+            if (notFoundClses.contains(clsName)) {
+                return false;
+            }
+
+            final Class<? extends BaseClusterScheduler> cls = (Class<? extends BaseClusterScheduler>) Class.forName(clsName);
+            return clses.contains(cls);
+        } catch (final ClassNotFoundException e) {
+            notFoundClses.add(clsName);
+            return false;
+        }
+    }
+
+    public Set<String> getSchedulerAbility() {
+        final Set<String> clsNames = Sets.newHashSet();
+        this.clses.forEach(cls -> clsNames.add(cls.getName()));
+        return Collections.unmodifiableSet(clsNames);
     }
 }

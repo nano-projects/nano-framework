@@ -18,7 +18,7 @@ package org.nanoframework.concurrent.scheduler;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.nanoframework.commons.entity.BaseEntity;
-import org.nanoframework.concurrent.exception.SchedulerException;
+import org.nanoframework.concurrent.scheduler.exception.SchedulerException;
 
 /**
  * 

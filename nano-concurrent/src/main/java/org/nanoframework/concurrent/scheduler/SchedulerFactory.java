@@ -41,7 +41,7 @@ import org.nanoframework.commons.util.Assert;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ObjectCompare;
 import org.nanoframework.commons.util.RuntimeUtil;
-import org.nanoframework.concurrent.exception.SchedulerException;
+import org.nanoframework.concurrent.scheduler.exception.SchedulerException;
 import org.nanoframework.concurrent.scheduler.single.SchedulerShutdownHook;
 import org.nanoframework.concurrent.scheduler.single.StatusMonitorScheduler;
 import org.nanoframework.core.component.scan.ClassScanner;
@@ -461,6 +461,11 @@ public class SchedulerFactory {
         if (LOADED.get()) {
             throw new LoaderException("Scheduler已经加载，这里不再进行重复的加载");
         }
+        
+        FACTORY.startedScheduler.clear();
+        FACTORY.stoppingScheduler.clear();
+        FACTORY.stoppedScheduler.clear();
+        FACTORY.group.clear();
 
         if (PropertiesLoader.PROPERTIES.size() == 0) {
             throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
@@ -609,9 +614,9 @@ public class SchedulerFactory {
         }
 
         LOADED.set(false);
-        FACTORY.startedScheduler.clear();
-        FACTORY.stoppingScheduler.clear();
-        FACTORY.stoppedScheduler.clear();
+        startedScheduler.clear();
+        stoppingScheduler.clear();
+        stoppedScheduler.clear();
         group.clear();
         LoggerFactory.getLogger(this.getClass()).info("停止任务调度完成, 耗时: {}ms", System.currentTimeMillis() - time);
     }

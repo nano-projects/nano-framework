@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,33 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.exception;
+package org.nanoframework.concurrent.scheduler.exception;
 
 /**
- * 调度任务异常.
+ *
  * @author yanghe
- * @since 1.0
+ * @since 1.4.9
  */
 public class SchedulerException extends RuntimeException {
-    private static final long serialVersionUID = -2775206802007728986L;
+    private static final long serialVersionUID = -4218576362421747924L;
 
     public SchedulerException() {
-
+        super();
     }
 
-    public SchedulerException(String message) {
+    public SchedulerException(final String message) {
         super(message);
-
     }
 
-    public SchedulerException(String message, Throwable cause) {
+    public SchedulerException(final String message, final Throwable cause) {
         super(message, cause);
-
     }
 
-    @Override
-    public String getMessage() {
-        return "调度任务异常: " + super.getMessage();
+    public SchedulerException(final Throwable cause) {
+        super(cause);
     }
-
 }

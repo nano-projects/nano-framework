@@ -13,13 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.scheduler.cluster.storage.listener;
+package org.nanoframework.concurrent.scheduler.cluster.lock;
+
+import org.nanoframework.concurrent.scheduler.cluster.consts.Keys;
+
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 
 /**
  *
  * @author yanghe
  * @since 1.4.9
  */
-public class SchedulerListenerFactory {
+@Singleton
+public class ElectionLocker extends AbstractConsulLocker {
 
+    @Inject
+    public ElectionLocker(@Named(Keys.CLUSTER_ID) String clusterId) {
+        super("Election-" + clusterId, clusterId);
+    }
 }

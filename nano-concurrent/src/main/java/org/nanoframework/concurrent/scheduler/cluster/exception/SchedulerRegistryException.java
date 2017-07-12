@@ -13,34 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.scheduler.cluster;
+package org.nanoframework.concurrent.scheduler.cluster.exception;
+
+import org.nanoframework.concurrent.scheduler.exception.SchedulerException;
 
 /**
  *
  * @author yanghe
  * @since 1.4.9
  */
-@ClusterScheduler
-public class TestScheduler extends BaseClusterScheduler {
+public class SchedulerRegistryException extends SchedulerException {
+    private static final long serialVersionUID = -5927822817950135933L;
 
-    @Override
-    public void before() {
-
+    public SchedulerRegistryException() {
+        super();
     }
 
-    @Override
-    public void execute() {
-
+    public SchedulerRegistryException(final String message) {
+        super(message);
     }
 
-    @Override
-    public void after() {
-
+    public SchedulerRegistryException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 
-    @Override
-    public void destroy() {
-
+    public SchedulerRegistryException(final Throwable cause) {
+        super(cause);
     }
-
 }

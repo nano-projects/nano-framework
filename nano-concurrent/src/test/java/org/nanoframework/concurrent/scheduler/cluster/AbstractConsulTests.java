@@ -17,13 +17,20 @@ package org.nanoframework.concurrent.scheduler.cluster;
 
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.util.CollectionUtils;
+import org.nanoframework.commons.util.MapBuilder;
+import org.nanoframework.concurrent.scheduler.SchedulerFactory;
+import org.nanoframework.core.component.Components;
+import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.plugins.defaults.module.SPIModule;
@@ -42,6 +49,8 @@ import com.google.inject.name.Names;
  */
 public abstract class AbstractConsulTests {
     private static final ServletConfig config = new ServletConfig() {
+        final Map<String, String> maps = MapBuilder.<String, String> builder()
+                .put(ApplicationContext.CONTEXT, "/cluster-scheduler-context.properties").build();
 
         @Override
         public String getServletName() {
@@ -60,14 +69,15 @@ public abstract class AbstractConsulTests {
 
         @Override
         public String getInitParameter(final String name) {
-            return null;
+            return maps.get(name);
         }
     };
-    
+
     protected Injector injector;
 
     @BeforeClass
     public static void setup() throws Throwable {
+        PropertiesLoader.load("/cluster-scheduler-context.properties", true);
         final Injector injector = Guice.createInjector().createChildInjector(new SPIModule());
         Globals.set(Injector.class, injector);
         final Set<String> moduleNames = SPILoader.spiNames(Module.class);
@@ -81,6 +91,14 @@ public abstract class AbstractConsulTests {
 
             Globals.set(Injector.class, injector.createChildInjector(loadedModules));
         }
+    }
+
+    @AfterClass
+    public static void destory() {
+        SchedulerFactory.getInstance().destory();
+        Components.destroy();
+        PropertiesLoader.PROPERTIES.clear();
+        System.getProperties().keySet().iterator().forEachRemaining(key -> System.setProperty((String) key, ""));
     }
 
     protected void injects() {

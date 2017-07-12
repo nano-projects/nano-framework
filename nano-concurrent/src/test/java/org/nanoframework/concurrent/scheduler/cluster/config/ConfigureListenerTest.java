@@ -16,6 +16,7 @@
 package org.nanoframework.concurrent.scheduler.cluster.config;
 
 import java.security.SecureRandom;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -23,9 +24,12 @@ import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.concurrent.scheduler.cluster.AbstractConsulTests;
+import org.nanoframework.concurrent.scheduler.cluster.BaseClusterScheduler;
+import org.nanoframework.concurrent.scheduler.cluster.Test2Scheduler;
 import org.nanoframework.concurrent.scheduler.cluster.TestScheduler;
 import org.nanoframework.concurrent.scheduler.cluster.storage.listener.SchedulerListener;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import com.orbitz.consul.KeyValueClient;
@@ -40,7 +44,7 @@ public class ConfigureListenerTest extends AbstractConsulTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigureListenerTest.class);
 
     @Inject
-    @Named("consul.kv:test")
+    @Named("consul.kv:scheduler-cluster")
     private KeyValueClient keyValueClient;
 
     @Inject
@@ -50,73 +54,76 @@ public class ConfigureListenerTest extends AbstractConsulTests {
     public void configureTest() throws Exception {
         injects();
         final String clusterId = "test";
-        final String schedulerClassName = TestScheduler.class.getName();
-
         final Configure configure = injector.getInstance(Configure.class);
         configure.setClusterId(clusterId);
-        configure.setCls(TestScheduler.class);
 
-        final Node curNode = createNode0(clusterId, schedulerClassName);
+        final Node curNode = createNode0(clusterId, configure);
         configure.setCurrentNode(curNode);
         configure.addNode(curNode.getId(), curNode);
 
-        final KVCache cache = KVCache.newCache(keyValueClient, schedulerClassName);
-        cache.addListener(injector.getInstance(SchedulerListener.class).init(configure));
+        final KVCache cache = KVCache.newCache(keyValueClient, clusterId);
+        final SchedulerListener listener = injector.getInstance(SchedulerListener.class);
+        cache.addListener(listener);
         cache.start();
 
-        createNode1(clusterId, schedulerClassName);
+        createNode1(clusterId, configure);
         Thread.sleep(1000);
 
         final String[] nodeIds = configure.getNodeIds().toArray(new String[0]);
         final String nodeId = nodeIds[random.nextInt(nodeIds.length)];
-        setLeader(clusterId, schedulerClassName, nodeId);
+        setLeader(clusterId, nodeId);
         Thread.sleep(1000);
 
-        if (StringUtils.equals(configure.getCurrentNode().getId(), nodeId)) {
-            Assert.assertTrue(configure.getLeader());
+        if (StringUtils.equals(curNode.getId(), nodeId)) {
+            Assert.assertTrue(curNode.getStatus() == NodeStatus.LEADER);
         } else {
-            Assert.assertFalse(configure.getLeader());
+            Assert.assertTrue(curNode.getStatus() == NodeStatus.FOLLOWING);
         }
 
+        createWorker0(clusterId, configure);
+
+        cache.removeListener(listener);
         cache.stop();
 
         LOGGER.debug("{}", configure);
-        keyValueClient.deleteKeys(schedulerClassName);
+        keyValueClient.deleteKeys(clusterId);
     }
 
-    private Node createNode0(final String clusterId, final String schedulerClassName) {
+    private Node createNode0(final String clusterId, final Configure configure) {
         final Node node = injector.getInstance(Node.class);
         node.setId("node0");
         node.setHost("localhost");
-        node.setStatus(NodeStatus.UP);
-        node.setUpTime(System.currentTimeMillis());
-        node.setLiveTime(node.getUpTime());
-        syncNode(node, clusterId, schedulerClassName);
+        node.setStatus(NodeStatus.LOOKING);
+        node.setUptime(System.currentTimeMillis());
+        node.setLivetime(node.getUptime());
+
+        final Set<Class<? extends BaseClusterScheduler>> clses = Sets.newHashSet();
+        clses.add(TestScheduler.class);
+        node.setSchedulerAbility(clses);
         return node;
     }
 
-    private Node createNode1(final String clusterId, final String schedulerClassName) {
+    private Node createNode1(final String clusterId, final Configure configure) {
         final Node node = injector.getInstance(Node.class);
         node.setId("node1");
         node.setHost("localhost");
-        node.setStatus(NodeStatus.UP);
-        node.setUpTime(System.currentTimeMillis());
-        node.setLiveTime(node.getUpTime());
-        syncNode(node, clusterId, schedulerClassName);
+        node.setStatus(NodeStatus.LOOKING);
+        node.setUptime(System.currentTimeMillis());
+        node.setLivetime(node.getUptime());
+
+        final Set<Class<? extends BaseClusterScheduler>> clses = Sets.newHashSet();
+        clses.add(TestScheduler.class);
+        clses.add(Test2Scheduler.class);
+        node.setSchedulerAbility(clses);
         return node;
     }
 
-    private void syncNode(final Node node, final String clusterId, final String schedulerClassName) {
-        final String nodePath = schedulerClassName + '/' + clusterId + "/Node/" + node.getId();
-        keyValueClient.putValue(nodePath + "/");
-        keyValueClient.putValue(nodePath + "/host", node.getHost());
-        keyValueClient.putValue(nodePath + "/status", String.valueOf(node.getStatus().code()));
-        keyValueClient.putValue(nodePath + "/upTime", String.valueOf(node.getUpTime()));
-        keyValueClient.putValue(nodePath + "/liveTime", String.valueOf(node.getLiveTime()));
+    private void setLeader(final String clusterId, final String nodeId) {
+        final String leaderPath = clusterId + "/Leader";
+        keyValueClient.putValue(leaderPath, nodeId);
     }
 
-    private void setLeader(final String clusterId, final String schedulerClassName, final String nodeId) {
-        final String nodePath = schedulerClassName + '/' + clusterId + "/Leader/" + nodeId;
-        keyValueClient.putValue(nodePath + "/");
+    private void createWorker0(final String clusterId, final Configure configure) {
+
     }
 }

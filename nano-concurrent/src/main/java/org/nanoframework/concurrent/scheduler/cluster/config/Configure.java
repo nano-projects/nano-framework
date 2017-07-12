@@ -20,39 +20,31 @@ import java.util.Map;
 import java.util.Set;
 
 import org.nanoframework.commons.entity.BaseEntity;
-import org.nanoframework.concurrent.scheduler.cluster.BaseClusterScheduler;
+import org.nanoframework.commons.util.CollectionUtils;
 
 import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.inject.Singleton;
 
 /**
  * 任务配置.
  * @author yanghe
  * @since 1.4.9
  */
+@Singleton
 public class Configure extends BaseEntity {
     private static final long serialVersionUID = -6582459356567595335L;
 
-    private Boolean leader = Boolean.FALSE;
-    private Class<? extends BaseClusterScheduler> cls;
     private String clusterId;
     private Node currentNode;
+    private String leader;
     private final Map<String, Node> nodes = Maps.newHashMap();
     private final Map<String, Worker> workers = Maps.newHashMap();
+    private final Set<String> filterSchedulers = Sets.newHashSet();
+    private final Set<String> schedulers = Sets.newHashSet();
 
-    public Boolean getLeader() {
-        return leader;
-    }
+    public Configure() {
 
-    public void setLeader(final Boolean leader) {
-        this.leader = leader;
-    }
-
-    public Class<? extends BaseClusterScheduler> getCls() {
-        return cls;
-    }
-
-    public void setCls(final Class<? extends BaseClusterScheduler> cls) {
-        this.cls = cls;
     }
 
     public String getClusterId() {
@@ -69,6 +61,14 @@ public class Configure extends BaseEntity {
 
     public void setCurrentNode(final Node currentNode) {
         this.currentNode = currentNode;
+    }
+
+    public String getLeader() {
+        return leader;
+    }
+
+    public void setLeader(final String leader) {
+        this.leader = leader;
     }
 
     public Node getNode(final String nodeId) {
@@ -95,6 +95,10 @@ public class Configure extends BaseEntity {
         nodes.remove(nodeId);
     }
 
+    public Map<String, Node> getNodes() {
+        return Collections.unmodifiableMap(nodes);
+    }
+
     public Worker getWorker(final String workerId) {
         return workers.get(workerId);
     }
@@ -119,11 +123,29 @@ public class Configure extends BaseEntity {
         workers.remove(workerId);
     }
 
-    public Map<String, Node> getNodes() {
-        return Collections.unmodifiableMap(nodes);
-    }
-
     public Map<String, Worker> getWorkers() {
         return Collections.unmodifiableMap(workers);
+    }
+
+    public boolean hasFilterScheduler(final String className) {
+        return filterSchedulers.contains(className);
+    }
+
+    public void addFilterScheduler(final String className) {
+        filterSchedulers.add(className);
+    }
+
+    public void addScheduler(final Set<String> schedulers) {
+        if (!CollectionUtils.isEmpty(schedulers)) {
+            this.schedulers.addAll(schedulers);
+        }
+    }
+
+    public boolean hasScheduler(final String scheduler) {
+        return schedulers.contains(scheduler);
+    }
+
+    public Set<String> getScheduler() {
+        return Collections.unmodifiableSet(schedulers);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.plugins;
-
-import java.util.List;
-
-import org.nanoframework.commons.util.Assert;
-
-import com.google.common.collect.Lists;
+package org.nanoframework.concurrent.scheduler.cluster.consts;
 
 /**
+ *
  * @author yanghe
- * @since 1.1
+ * @since 1.4.9
  */
-public class Configure<T> {
-    private final List<T> configs = Lists.newLinkedList();
+public final class ConsulSources {
 
-    public void add(T config) {
-        Assert.notNull(config);
-        configs.add(config);
-    }
+    public static final String KV_SCHEDULER_CLUSTER = "consul.kv:scheduler-cluster";
 
-    public List<T> get() {
-        return configs;
+    public static final String SESSION_SCHEDULER_CLUSTER = "consul.session:scheduler-cluster";
+
+    private ConsulSources() {
+
     }
 }

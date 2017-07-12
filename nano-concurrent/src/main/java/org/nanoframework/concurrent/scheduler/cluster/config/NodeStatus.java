@@ -15,44 +15,32 @@
  */
 package org.nanoframework.concurrent.scheduler.cluster.config;
 
-import com.alibaba.fastjson.annotation.JSONType;
-
 /**
  * 节点状态.
  * @author yanghe
  * @since 1.4.9
  */
-@JSONType(serializeEnumAsJavaBean = true)
 public enum NodeStatus {
-    DOWN(0, "离线"), UP(1, "在线"), UNKNOWN(9, "未知状态");
+    LOOKING(1), LEADER(2), FOLLOWING(3), UNKNOWN(9);
 
     private final int code;
-    private final String description;
 
-    NodeStatus(final int code, final String description) {
+    NodeStatus(final int code) {
         this.code = code;
-        this.description = description;
     }
 
     public int code() {
         return code;
     }
 
-    public String description() {
-        return description;
-    }
-
-    @Override
-    public String toString() {
-        return description;
-    }
-
     public static NodeStatus of(final int code) {
         switch (code) {
-            case 0:
-                return DOWN;
             case 1:
-                return UP;
+                return LOOKING;
+            case 2:
+                return LEADER;
+            case 3:
+                return FOLLOWING;
             default:
                 return UNKNOWN;
         }
@@ -60,12 +48,19 @@ public enum NodeStatus {
 
     public static NodeStatus of(final String name) {
         switch (name) {
-            case "DOWN":
-                return DOWN;
-            case "UP":
-                return UP;
+            case "LOOKING":
+                return LOOKING;
+            case "LEADER":
+                return LEADER;
+            case "FOLLOWING":
+                return FOLLOWING;
             default:
                 return UNKNOWN;
         }
+    }
+
+    @Override
+    public String toString() {
+        return super.toString();
     }
 }

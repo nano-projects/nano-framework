@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,21 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.scheduler.longwait;
-
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
-import org.nanoframework.concurrent.scheduler.BaseScheduler;
-import org.nanoframework.concurrent.scheduler.Scheduler;
+package org.nanoframework.concurrent.scheduler.cluster;
 
 /**
  *
  * @author yanghe
- * @since 1.3.16
+ * @since 1.4.9
  */
-@Scheduler(parallel = 1, cron = "0 0 0 * * ?")
-public class LongWaitScheduler extends BaseScheduler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LongWaitScheduler.class);
+@ClusterScheduler
+public class Test2Scheduler extends BaseClusterScheduler {
 
     @Override
     public void before() {
@@ -36,7 +30,7 @@ public class LongWaitScheduler extends BaseScheduler {
 
     @Override
     public void execute() {
-        LOGGER.debug("Execute: {} at {}", getConfig().getId(), System.currentTimeMillis());
+
     }
 
     @Override
@@ -46,7 +40,7 @@ public class LongWaitScheduler extends BaseScheduler {
 
     @Override
     public void destroy() {
-        LOGGER.debug("Closed: {}", getConfig().getId());
+
     }
 
 }

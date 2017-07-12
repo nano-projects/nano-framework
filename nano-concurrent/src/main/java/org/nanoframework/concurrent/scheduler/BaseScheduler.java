@@ -17,13 +17,14 @@ package org.nanoframework.concurrent.scheduler;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.concurrent.exception.SchedulerException;
+import org.nanoframework.concurrent.scheduler.exception.SchedulerException;
 import org.nanoframework.concurrent.scheduler.single.SchedulerAnalysis;
 
 import com.google.common.collect.Maps;
@@ -176,17 +177,19 @@ public abstract class BaseScheduler implements Runnable, Cloneable {
      * 逻辑调用结束后处理阶段
      */
     private void finallyProcess() {
-        if (config.getService() == null) {
+        final ThreadPoolExecutor service = config.getService();
+        if (service == null) {
             throw new SchedulerException("ThreadPoolExecutor不能为空");
         }
 
-        if (!close && !config.getService().isShutdown()) {
-            long interval = delay();
-            if (config.getRunNumberOfTimes() == 0) {
+        if (!close && !service.isShutdown()) {
+            final long interval = delay();
+            final int runNumberOfTimes = config.getRunNumberOfTimes();
+            if (runNumberOfTimes == 0) {
                 thisWait(interval);
             } else {
                 nowTimes++;
-                if (nowTimes < config.getRunNumberOfTimes()) {
+                if (nowTimes < runNumberOfTimes) {
                     thisWait(interval);
                 } else {
                     close = true;

@@ -13,34 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.scheduler.cluster;
+package org.nanoframework.concurrent.scheduler;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.nanoframework.concurrent.scheduler.cluster.config.ConfigureListenerTest;
+import org.nanoframework.concurrent.scheduler.cluster.loader.LoaderTest;
 
 /**
  *
  * @author yanghe
  * @since 1.4.9
  */
-@ClusterScheduler
-public class TestScheduler extends BaseClusterScheduler {
-
-    @Override
-    public void before() {
-
-    }
-
-    @Override
-    public void execute() {
-
-    }
-
-    @Override
-    public void after() {
-
-    }
-
-    @Override
-    public void destroy() {
-
-    }
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+    ConfigureListenerTest.class,
+    LoaderTest.class,
+    org.nanoframework.concurrent.scheduler.longwait.SchedulerTest.class,
+    org.nanoframework.concurrent.scheduler.tests.SchedulerTest.class
+})
+public class SchedulerSuite {
 
 }

@@ -26,7 +26,9 @@ import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.StringUtils;
+import org.nanoframework.concurrent.scheduler.cluster.BaseClusterScheduler;
 import org.nanoframework.concurrent.scheduler.cluster.config.Configure;
+import org.nanoframework.concurrent.scheduler.cluster.config.Election;
 import org.nanoframework.concurrent.scheduler.cluster.config.Node;
 import org.nanoframework.concurrent.scheduler.cluster.config.NodeStatus;
 import org.nanoframework.concurrent.scheduler.cluster.config.Worker;
@@ -36,7 +38,9 @@ import org.nanoframework.core.globals.Globals;
 import com.alibaba.fastjson.JSON;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 import com.orbitz.consul.cache.ConsulCache.Listener;
 import com.orbitz.consul.model.kv.Value;
 
@@ -45,16 +49,24 @@ import com.orbitz.consul.model.kv.Value;
  * @author yanghe
  * @since 1.4.9
  */
+@Singleton
 public class SchedulerListener implements Listener<String, Value> {
+    public static final String NODE = "Node";
+    public static final String WORKER = "Worker";
+    public static final String LEADER = "Leader";
+    public static final String ELECTION = "Election";
+    public static final String VOTES = "Votes";
+    public static final String VOTERS = "Voters";
+    public static final String SEPARATOR = "/";
+    public static final char SEPARATOR_CHAR = '/';
+
     private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerListener.class);
-    private static final String SEPARATOR = "/";
-    private static final int CLUSTER_ID_INDEX = 1;
-    private static final int TYPE_NAME_INDEX = 2;
-    private static final int TYPE_ID_INDEX = 3;
-    private static final int ATTRIBUTE_INDEX = 4;
-    private static final String NODE = "Node";
-    private static final String WORKER = "Worker";
-    private static final String LEADER = "Leader";
+    private static final int CLUSTER_ID_INDEX = 0;
+    private static final int TYPE_NAME_INDEX = 1;
+    private static final int TYPE_ID_INDEX = 2;
+    private static final int ATTRIBUTE_INDEX = 3;
+    private static final int WORKER_ID_INDEX = 3;
+    private static final int WORKER_ATTRIBUTE_INDEX = 4;
     private static final String EMPTY_ARRAY = "[]";
 
     private final ConcurrentMap<String, Value> lastResponse = Maps.newConcurrentMap();
@@ -62,12 +74,11 @@ public class SchedulerListener implements Listener<String, Value> {
     private final ConcurrentMap<String, Value> modified = Maps.newConcurrentMap();
     private final ConcurrentMap<String, Value> removed = Maps.newConcurrentMap();
 
+    @Inject
     private Configure config;
 
-    public SchedulerListener init(final Configure config) {
-        this.config = config;
-        return this;
-    }
+    @Inject
+    private Election election;
 
     @Override
     public void notify(final Map<String, Value> values) {
@@ -130,11 +141,15 @@ public class SchedulerListener implements Listener<String, Value> {
                 case CLUSTER_ID_INDEX:
                     config.setClusterId(tokens[CLUSTER_ID_INDEX]);
                     break;
+                case TYPE_NAME_INDEX:
+                    setTypeName(tokens, value);
+                    break;
                 case TYPE_ID_INDEX:
-                    setType(tokens);
+                    setType(tokens, value);
                     break;
                 case ATTRIBUTE_INDEX:
-                    setType(tokens);
+                case WORKER_ATTRIBUTE_INDEX:
+                    setType(tokens, value);
                     setAttribute(tokens, value);
                     break;
                 default:
@@ -144,41 +159,122 @@ public class SchedulerListener implements Listener<String, Value> {
         }
     }
 
-    private void setType(final String[] tokens) {
-        final Injector injector = Globals.get(Injector.class);
+    private void setTypeName(final String[] tokens, final Value value) {
         final String typeName = tokens[TYPE_NAME_INDEX];
-        final String typeId = tokens[TYPE_ID_INDEX];
         switch (typeName) {
-            case NODE:
-                if (!config.hasNode(typeId)) {
-                    final Node node = injector.getInstance(Node.class);
-                    node.setId(typeId);
-                    config.addNode(typeId, node);
-                    LOGGER.debug("同步节点配置: {}", typeId);
-                }
-                break;
-            case WORKER:
-                if (!config.hasWorker(typeId)) {
-                    final Worker worker = injector.getInstance(Worker.class);
-                    worker.setId(typeId);
-                    worker.setScheduler(injector.getInstance(config.getCls()));
-                    config.addWorker(typeId, worker);
-                    LOGGER.debug("同步工作线程配置: {}", typeId);
-                }
-                break;
             case LEADER:
-                final String id = config.getCurrentNode().getId();
-                if (StringUtils.equals(id, typeId)) {
-                    config.setLeader(Boolean.TRUE);
-                    LOGGER.debug("同步节点状态: leader");
-                } else {
-                    config.setLeader(Boolean.FALSE);
-                    LOGGER.debug("同步节点状态: slave");
-                }
+                setLeader(value);
+                break;
+            case ELECTION:
+                setElectionInitiator(value);
                 break;
             default:
-                LOGGER.warn("Unknown type name configure.");
                 break;
+        }
+    }
+
+    private void setLeader(final Value value) {
+        final String id = value.getValueAsString().orNull();
+        if (id != null) {
+            config.setLeader(id);
+            config.getNodes().forEach((nodeId, node) -> {
+                if (StringUtils.equals(nodeId, id)) {
+                    node.setStatus(NodeStatus.LEADER);
+                } else {
+                    node.setStatus(NodeStatus.FOLLOWING);
+                }
+            });
+        }
+
+        LOGGER.debug("同步节点状态, Leader节点: {}", id);
+    }
+
+    private void setElectionInitiator(final Value value) {
+        final String id = value.getValueAsString().orNull();
+        if (StringUtils.isNotBlank(id)) {
+            election.setInitiator(id);
+            election.start();
+        } else {
+            election.setInitiator(null);
+        }
+    }
+
+    private void setType(final String[] tokens, final Value value) {
+        final String typeName = tokens[TYPE_NAME_INDEX];
+        switch (typeName) {
+            case NODE:
+                initNode(tokens);
+                break;
+            case WORKER:
+                initWorker(tokens);
+                break;
+            case VOTERS:
+                addVoters(tokens);
+                break;
+            case VOTES:
+                addVotes(value);
+                break;
+            default:
+                LOGGER.warn("Unknown type name configure. {}", StringUtils.join(tokens, SEPARATOR_CHAR));
+                break;
+        }
+    }
+
+    private void initNode(final String[] tokens) {
+        final Injector injector = Globals.get(Injector.class);
+        final String nodeId = tokens[TYPE_ID_INDEX];
+        if (!config.hasNode(nodeId)) {
+            final Node node = injector.getInstance(Node.class);
+            node.setId(nodeId);
+            config.addNode(nodeId, node);
+            LOGGER.debug("同步节点配置: {}", nodeId);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void initWorker(final String[] tokens) {
+        final Injector injector = Globals.get(Injector.class);
+        final String schedulerClassName = tokens[TYPE_ID_INDEX];
+
+        final int tokenLength = tokens.length;
+        final int offset;
+        if (!StringUtils.isBlank(tokens[tokenLength - 1])) {
+            offset = 1;
+        } else {
+            offset = 2;
+        }
+
+        if (tokenLength - offset >= WORKER_ID_INDEX) {
+            final String workerId = tokens[WORKER_ID_INDEX];
+            if (!config.hasWorker(workerId)) {
+                try {
+                    final Class<? extends BaseClusterScheduler> cls = (Class<? extends BaseClusterScheduler>) Class.forName(schedulerClassName);
+                    final Worker worker = injector.getInstance(Worker.class);
+                    worker.setId(workerId);
+                    worker.setScheduler(injector.getInstance(cls));
+                    config.addWorker(schedulerClassName, worker);
+                    LOGGER.debug("同步工作线程配置: {}", schedulerClassName);
+                } catch (final ClassNotFoundException e) {
+                    LOGGER.warn("此节点无任务实现: {}", schedulerClassName);
+                    config.addFilterScheduler(schedulerClassName);
+                }
+            }
+        }
+    }
+
+    private void addVoters(final String[] tokens) {
+        final String voter = tokens[TYPE_ID_INDEX];
+        if (StringUtils.isNotBlank(voter)) {
+            election.addVoter(voter);
+        }
+    }
+
+    private void addVotes(final Value value) {
+        final String vote = value.getValueAsString().orNull();
+        if (StringUtils.isNotBlank(vote)) {
+            if (election.isInitiator()) {
+                election.addVote(vote);
+            }
         }
     }
 
@@ -192,7 +288,20 @@ public class SchedulerListener implements Listener<String, Value> {
                 setNodeAttribute(typeId, attributeName, val);
                 break;
             case WORKER:
-                setWorkerAttribute(typeId, attributeName, val);
+                final int tokenLength = tokens.length;
+                final int offset;
+                if (!StringUtils.isBlank(tokens[tokenLength - 1])) {
+                    offset = 1;
+                } else {
+                    offset = 2;
+                }
+
+                if (tokenLength - offset >= WORKER_ATTRIBUTE_INDEX) {
+                    final String workerId = tokens[WORKER_ID_INDEX];
+                    final String workerAttributeName = tokens[WORKER_ATTRIBUTE_INDEX];
+                    setWorkerAttribute(workerId, workerAttributeName, val);
+                }
+
                 break;
             default:
                 LOGGER.warn("Unknown type name configure.");
@@ -205,7 +314,7 @@ public class SchedulerListener implements Listener<String, Value> {
         try {
             switch (attributeName) {
                 case Node.WORKER_IDS:
-                    final Set<String> workerIds = JSON.parseObject(value.or(EMPTY_ARRAY), Node.WORKER_IDS_TYPE);
+                    final Set<String> workerIds = JSON.parseObject(value.or(EMPTY_ARRAY), Node.SET_STRING_TYPE);
                     if (CollectionUtils.isEmpty(workerIds)) {
                         node.removeWorkers();
                     } else {
@@ -214,19 +323,26 @@ public class SchedulerListener implements Listener<String, Value> {
                                 node.removeWorker(workerId);
                             }
                         });
-    
+
                         workerIds.stream().filter(workerId -> !node.hasWorker(workerId))
                                 .forEach(workerId -> node.addWorker(workerId, config.getWorker(workerId)));
                     }
                 case Node.STATUS:
                     node.setStatus(NodeStatus.of(Integer.parseInt(value.or(String.valueOf(NodeStatus.UNKNOWN.code())))));
                     break;
+                case Node.SCHEDULER_ABILITY:
+                    final Set<String> clsNames = JSON.parseObject(value.or(EMPTY_ARRAY), Node.SET_STRING_TYPE);
+                    if (!CollectionUtils.isEmpty(clsNames)) {
+                        clsNames.forEach(clsName -> node.addSchedulerAbility(clsName));
+                        config.addScheduler(clsNames);
+                    }
+                    break;
                 default:
                     node.setAttributeValue(attributeName, value.orNull());
                     break;
             }
         } finally {
-            LOGGER.debug("同步工作线程配置: {}, 修改属性: {} = {}", nodeId, attributeName, value.or(""));
+            LOGGER.debug("同步节点配置: {}, 修改属性: {} = {}", nodeId, attributeName, value.or(EMPTY));
         }
     }
 
@@ -279,7 +395,7 @@ public class SchedulerListener implements Listener<String, Value> {
                     removeAttribute(tokens);
                     break;
                 default:
-                    LOGGER.warn("Unknown configure.");
+                    LOGGER.warn("Unknown configure. {}", StringUtils.join(tokens, SEPARATOR_CHAR));
                     break;
             }
         }
@@ -302,8 +418,16 @@ public class SchedulerListener implements Listener<String, Value> {
                 config.removeWorkers();
                 LOGGER.debug("移除所有工作线程配置");
                 break;
+            case VOTERS:
+                election.clearVoters();
+                LOGGER.debug("清理选民");
+                break;
+            case VOTES:
+                election.clearVotes();
+                LOGGER.debug("清理选票");
+                break;
             default:
-                LOGGER.warn("Unknown type name configure.");
+                LOGGER.warn("Unknown type name configure. {}", StringUtils.join(tokens, SEPARATOR_CHAR));
                 break;
         }
     }
@@ -313,15 +437,19 @@ public class SchedulerListener implements Listener<String, Value> {
         final String typeId = tokens[TYPE_ID_INDEX];
         switch (typeName) {
             case NODE:
-                config.removeNode(typeId);
-                LOGGER.debug("移除节点配置: {}", typeId);
+                if (config.hasNode(typeId)) {
+                    config.removeNode(typeId);
+                    LOGGER.debug("移除节点配置: {}", typeId);
+                }
                 break;
             case WORKER:
-                config.removeWorker(typeId);
-                LOGGER.debug("移除工作线程配置: {}", typeId);
+                if (config.hasWorker(typeId)) {
+                    config.removeWorker(typeId);
+                    LOGGER.debug("移除工作线程配置: {}", typeId);
+                }
                 break;
             default:
-                LOGGER.warn("Unknown type name configure.");
+                LOGGER.warn("Unknown type name configure. {}", StringUtils.join(tokens, SEPARATOR_CHAR));
                 break;
         }
     }
@@ -332,22 +460,26 @@ public class SchedulerListener implements Listener<String, Value> {
         final String attributeName = tokens[ATTRIBUTE_INDEX];
         switch (typeName) {
             case NODE:
-                final Node node = config.getNode(typeId);
-                switch (attributeName) {
-                    case Node.STATUS:
-                        node.setStatus(null);
-                        break;
-                    default:
-                        node.setAttributeValue(attributeName, null);
-                        break;
+                if (config.hasNode(typeId)) {
+                    final Node node = config.getNode(typeId);
+                    switch (attributeName) {
+                        case Node.STATUS:
+                            node.setStatus(null);
+                            break;
+                        default:
+                            node.setAttributeValue(attributeName, null);
+                            break;
+                    }
                 }
                 break;
             case WORKER:
-                final Worker worker = config.getWorker(typeId);
-                worker.setAttributeValue(attributeName, null);
+                if (config.hasWorker(typeId)) {
+                    final Worker worker = config.getWorker(typeId);
+                    worker.setAttributeValue(attributeName, null);
+                }
                 break;
             default:
-                LOGGER.warn("Unknown type name configure.");
+                LOGGER.warn("Unknown type name configure. {}", StringUtils.join(tokens, SEPARATOR_CHAR));
                 break;
         }
     }

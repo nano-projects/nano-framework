@@ -19,10 +19,10 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-import org.nanoframework.concurrent.exception.SchedulerException;
 import org.nanoframework.concurrent.scheduler.BaseScheduler;
 import org.nanoframework.concurrent.scheduler.SchedulerConfig;
 import org.nanoframework.concurrent.scheduler.SchedulerThreadFactory;
+import org.nanoframework.concurrent.scheduler.exception.SchedulerException;
 
 import com.google.common.collect.Maps;
 

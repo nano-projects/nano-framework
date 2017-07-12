@@ -21,8 +21,8 @@ import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
@@ -38,39 +38,40 @@ import org.nanoframework.core.plugins.PluginLoader;
  */
 public abstract class PluginLoaderInit {
     protected static final Logger LOGGER = LoggerFactory.getLogger(PluginLoaderInit.class);
-    
-    @Before
-    public void init() throws Throwable {
-        final Map<String, String> map = MapBuilder.<String, String>builder().put("context", "/longwait-context.properties").build();
+
+    @BeforeClass
+    public static void init() throws Throwable {
+        final Map<String, String> map = MapBuilder.<String, String> builder().put("context", "/longwait-context.properties").build();
         new PluginLoader().init(new ServletConfig() {
-            
+
             @Override
             public String getServletName() {
                 return null;
             }
-            
+
             @Override
             public ServletContext getServletContext() {
                 return null;
             }
-            
+
             @Override
             public Enumeration<String> getInitParameterNames() {
                 return null;
             }
-            
+
             @Override
             public String getInitParameter(final String name) {
                 return map.get(name);
             }
         });
     }
-    
-    @After
-    public void clear() throws Throwable {
+
+    @AfterClass
+    public static void clear() throws Throwable {
         SchedulerFactory.getInstance().destory();
         Components.destroy();
         PropertiesLoader.PROPERTIES.clear();
+        System.getProperties().keySet().iterator().forEachRemaining(key -> System.setProperty((String) key, ""));
     }
-    
+
 }
