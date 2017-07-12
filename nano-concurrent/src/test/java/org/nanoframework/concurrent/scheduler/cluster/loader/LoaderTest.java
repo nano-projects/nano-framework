@@ -23,6 +23,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.nanoframework.commons.loader.PropertiesLoader;
@@ -31,6 +32,7 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.concurrent.scheduler.SchedulerFactory;
 import org.nanoframework.concurrent.scheduler.cluster.config.Configure;
+import org.nanoframework.concurrent.scheduler.cluster.config.NodeStatus;
 import org.nanoframework.concurrent.scheduler.cluster.consts.ConsulSources;
 import org.nanoframework.concurrent.scheduler.cluster.lock.ElectionLocker;
 import org.nanoframework.core.component.Components;
@@ -114,6 +116,8 @@ public class LoaderTest {
         try {
             Thread.sleep(30_000);
             LOGGER.debug("{}", configure);
+            Assert.assertEquals(configure.getCurrentNode().getStatus(), NodeStatus.LEADER);
+
             kvClient.deleteKeys(configure.getClusterId());
             locker.unlock();
         } catch (final Throwable e) {

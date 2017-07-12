@@ -461,11 +461,13 @@ public class SchedulerFactory {
         if (LOADED.get()) {
             throw new LoaderException("Scheduler已经加载，这里不再进行重复的加载");
         }
-        
-        FACTORY.startedScheduler.clear();
-        FACTORY.stoppingScheduler.clear();
-        FACTORY.stoppedScheduler.clear();
-        FACTORY.group.clear();
+
+        if (FACTORY != null) {
+            FACTORY.startedScheduler.clear();
+            FACTORY.stoppingScheduler.clear();
+            FACTORY.stoppedScheduler.clear();
+            FACTORY.group.clear();
+        }
 
         if (PropertiesLoader.PROPERTIES.size() == 0) {
             throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
