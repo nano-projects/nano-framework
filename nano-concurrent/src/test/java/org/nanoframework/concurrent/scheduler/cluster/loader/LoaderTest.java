@@ -107,7 +107,6 @@ public class LoaderTest {
         SchedulerFactory.getInstance().destory();
         Components.destroy();
         PropertiesLoader.PROPERTIES.clear();
-        loader.close();
         System.getProperties().keySet().iterator().forEachRemaining(key -> System.setProperty((String) key, ""));
     }
 
@@ -118,6 +117,7 @@ public class LoaderTest {
             LOGGER.debug("{}", configure);
             Assert.assertEquals(configure.getCurrentNode().getStatus(), NodeStatus.LEADER);
 
+            loader.close();
             kvClient.deleteKeys(configure.getClusterId());
             locker.unlock();
         } catch (final Throwable e) {

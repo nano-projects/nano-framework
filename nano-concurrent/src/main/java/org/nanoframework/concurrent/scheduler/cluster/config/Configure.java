@@ -71,6 +71,15 @@ public class Configure extends BaseEntity {
         this.leader = leader;
     }
 
+    public void clearLeader() {
+        this.leader = null;
+        nodes.forEach((nodeId, node) -> {
+            if (node.getStatus() == NodeStatus.LEADER) {
+                node.setStatus(NodeStatus.UNKNOWN);
+            }
+        });
+    }
+
     public Node getNode(final String nodeId) {
         return nodes.get(nodeId);
     }
@@ -145,7 +154,7 @@ public class Configure extends BaseEntity {
         return schedulers.contains(scheduler);
     }
 
-    public Set<String> getScheduler() {
+    public Set<String> getSchedulers() {
         return Collections.unmodifiableSet(schedulers);
     }
 }

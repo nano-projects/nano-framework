@@ -374,7 +374,7 @@ public class SchedulerListener implements Listener<String, Value> {
         final String[] tokens = key.split(SEPARATOR);
         final int tokenLength = tokens.length;
         final int offset;
-        if (StringUtils.isBlank(tokens[tokenLength - 1])) {
+        if (StringUtils.isNotBlank(tokens[tokenLength - 1])) {
             offset = 1;
         } else {
             offset = 2;
@@ -384,6 +384,7 @@ public class SchedulerListener implements Listener<String, Value> {
             switch (tokenLength - offset) {
                 case CLUSTER_ID_INDEX:
                     removeAll();
+                    LOGGER.warn("Route with: {}", StringUtils.join(tokens, SEPARATOR_CHAR));
                     break;
                 case TYPE_NAME_INDEX:
                     removeTypes(tokens);
@@ -426,6 +427,14 @@ public class SchedulerListener implements Listener<String, Value> {
                 election.clearVotes();
                 LOGGER.debug("清理选票");
                 break;
+            case ELECTION:
+                election.setInitiator(null);
+                LOGGER.debug("清理发起选举人");
+                break;
+            case LEADER:
+                config.clearLeader();
+                LOGGER.debug("清理Leader");
+                break;
             default:
                 LOGGER.warn("Unknown type name configure. {}", StringUtils.join(tokens, SEPARATOR_CHAR));
                 break;
@@ -447,6 +456,9 @@ public class SchedulerListener implements Listener<String, Value> {
                     config.removeWorker(typeId);
                     LOGGER.debug("移除工作线程配置: {}", typeId);
                 }
+                break;
+            case VOTERS:
+            case VOTES:
                 break;
             default:
                 LOGGER.warn("Unknown type name configure. {}", StringUtils.join(tokens, SEPARATOR_CHAR));
