@@ -15,7 +15,9 @@
  */
 package org.nanoframework.core.plugins;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletConfig;
@@ -31,9 +33,11 @@ import org.nanoframework.core.component.Components;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
 import org.nanoframework.core.plugins.defaults.module.SPIModule;
+import org.nanoframework.core.spi.Level;
 import org.nanoframework.core.spi.SPILoader;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
@@ -99,14 +103,51 @@ public class PluginLoader {
         final Set<String> moduleNames = SPILoader.spiNames(Module.class);
         if (!CollectionUtils.isEmpty(moduleNames)) {
             final Injector injector = Globals.get(Injector.class);
-            final List<Module> loadedModules = Lists.newArrayList();
+            final Map<Integer, List<Module>> modules = Maps.newHashMap();
             for (final String moduleName : moduleNames) {
                 final Module module = injector.getInstance(Key.get(Module.class, Names.named(moduleName)));
-                module.config(config);
-                loadedModules.addAll(module.load());
+                final Level level = module.getClass().getAnnotation(Level.class);
+                if (level != null) {
+                    addModules(modules, level.value(), module);
+                } else {
+                    addModules(modules, 0, module);
+                }
             }
 
-            Globals.set(Injector.class, injector.createChildInjector(loadedModules));
+            loadModules(modules);
+        }
+    }
+
+    private void addModules(final Map<Integer, List<Module>> modules, final Integer level, final Module module) {
+        if (modules.containsKey(level)) {
+            modules.get(level).add(module);
+        } else {
+            modules.put(level, Lists.newArrayList(module));
+        }
+    }
+
+    private void loadModules(final Map<Integer, List<Module>> loadingModules) throws Throwable {
+        final List<Integer> levels = Lists.newArrayList();
+        loadingModules.keySet().forEach(level -> levels.add(level));
+        Collections.sort(levels);
+        for (final Integer level : levels) {
+            final List<Module> modules = loadingModules.get(level);
+            if (!CollectionUtils.isEmpty(modules)) {
+                final List<Module> mdus = Lists.newArrayList();
+                for (final Module module : modules) {
+                    module.config(config);
+                    mdus.addAll(module.load());
+                }
+
+                if (!CollectionUtils.isEmpty(mdus)) {
+                    if (level.intValue() == 0) {
+                        mdus.add(0, new SPIModule());
+                        Globals.set(Injector.class, Guice.createInjector(mdus));
+                    } else {
+                        Globals.set(Injector.class, Globals.get(Injector.class).createChildInjector(mdus));
+                    }
+                }
+            }
         }
     }
 

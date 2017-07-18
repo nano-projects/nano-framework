@@ -23,8 +23,6 @@ import org.nanoframework.core.component.aop.Before;
 import org.nanoframework.core.component.aop.BeforeAOP;
 
 import com.alibaba.fastjson.JSON;
-import com.google.inject.Inject;
-import com.google.inject.name.Named;
 
 /**
  *
@@ -32,10 +30,6 @@ import com.google.inject.name.Named;
  * @since 1.3.15
  */
 public class TestComponentImpl implements TestComponent {
-
-    @Inject
-    @Named("context.version")
-    private String context;
 
     @Override
     public String test() {

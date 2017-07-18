@@ -18,10 +18,13 @@ package org.nanoframework.core.plugins.defaults.module;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.ServletConfig;
+
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.core.globals.Globals;
+import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.spi.Lazy;
 import org.nanoframework.core.spi.SPILoader;
 import org.nanoframework.core.spi.SPIMapper;
@@ -29,7 +32,6 @@ import org.nanoframework.core.spi.SPIProvider;
 
 import com.google.inject.Binder;
 import com.google.inject.Injector;
-import com.google.inject.Module;
 import com.google.inject.name.Names;
 
 /**
@@ -72,6 +74,16 @@ public class SPIModule implements Module {
                 }
             });
         }
+    }
+
+    @Override
+    public List<Module> load() throws Throwable {
+        return null;
+    }
+
+    @Override
+    public void config(final ServletConfig config) throws Throwable {
+        
     }
 
 }

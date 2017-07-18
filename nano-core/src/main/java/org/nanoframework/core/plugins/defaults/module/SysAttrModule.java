@@ -20,6 +20,7 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 
 import org.nanoframework.core.plugins.Module;
+import org.nanoframework.core.spi.Order;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Binder;
@@ -30,6 +31,7 @@ import com.google.inject.name.Names;
  * @author yanghe
  * @since 1.4.2
  */
+@Order(-100)
 public class SysAttrModule implements Module {
 
     public List<Module> load() throws Throwable {

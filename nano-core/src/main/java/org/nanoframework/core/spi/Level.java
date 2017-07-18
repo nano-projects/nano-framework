@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,22 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.core.component;
+package org.nanoframework.core.spi;
 
-import org.nanoframework.core.component.impl.ApiComponentImpl;
-import org.nanoframework.core.component.stereotype.Component;
-import org.nanoframework.core.component.stereotype.bind.RequestMapping;
-
-import com.google.inject.ImplementedBy;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  *
  * @author yanghe
- * @since 1.4.2
+ * @since 1.4.9
  */
-@Component
-@ImplementedBy(ApiComponentImpl.class)
-public interface ApiComponent2 {
-    @RequestMapping("/invoke2")
-    String invoke2();
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.TYPE })
+public @interface Level {
+
+    /**
+     * 
+     * @return 级别，值越小，越早加载
+     */
+    int value() default 0;
 }
