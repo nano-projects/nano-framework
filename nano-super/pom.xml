@@ -80,6 +80,16 @@
         <artifactId>nano-concurrent</artifactId>
         <version>${nano.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.nanoframework</groupId>
+        <artifactId>nano-concurrent-cluster</artifactId>
+        <version>${nano.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.nanoframework</groupId>
+        <artifactId>nano-concurrent-rocketmq</artifactId>
+        <version>${nano.version}</version>
+      </dependency>
 
     <!-- Nano ORM Modules -->
       <dependency>

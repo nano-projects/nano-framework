@@ -23,9 +23,6 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
-import org.nanoframework.commons.util.Charsets;
-import org.nanoframework.commons.util.StringUtils;
-
 /**
  * 
  * @author yanghe
@@ -37,11 +34,12 @@ public final class CryptUtil {
     private static final String SHA_MODE = "SHA1PRNG";
     private static final int CRYPT_KEY_SIZE = 128;
     private static final int HEX = 16;
+    private static final String UTF8 = "UTF-8";
 
     private CryptUtil() {
-        
+
     }
-    
+
     /**
      * 使用默认密钥对明文进行AES加密，并返回密文内容.
      * @param content 明文
@@ -59,7 +57,7 @@ public final class CryptUtil {
      */
     public static String encrypt(final String content, final String passwd) {
         final String password;
-        if (StringUtils.isEmpty(passwd)) {
+        if (passwd == null || passwd.trim().length() == 0) {
             password = DEFAULT_PASSWORD;
         } else {
             password = passwd;
@@ -68,7 +66,7 @@ public final class CryptUtil {
         try {
             final KeyGenerator kgen = KeyGenerator.getInstance(CRYPT_MODE);
             final SecureRandom random = SecureRandom.getInstance(SHA_MODE);
-            random.setSeed(password.getBytes(Charsets.UTF_8));
+            random.setSeed(password.getBytes(UTF8));
             kgen.init(CRYPT_KEY_SIZE, random);
 
             final SecretKey secretKey = kgen.generateKey();
@@ -76,7 +74,7 @@ public final class CryptUtil {
             final SecretKeySpec key = new SecretKeySpec(enCodeFormat, CRYPT_MODE);
 
             final Cipher cipher = Cipher.getInstance(CRYPT_MODE);// 创建密码器
-            final byte[] byteContent = (content).getBytes(Charsets.UTF_8);
+            final byte[] byteContent = (content).getBytes(UTF8);
             cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化
             final byte[] result = cipher.doFinal(byteContent);//加密
             return encrypt0(result);
@@ -118,7 +116,7 @@ public final class CryptUtil {
      */
     public static String decrypt(final String data, final String passwd) {
         final String password;
-        if (StringUtils.isEmpty(passwd)) {
+        if (passwd == null || passwd.trim().length() == 0) {
             password = DEFAULT_PASSWORD;
         } else {
             password = passwd;
@@ -137,13 +135,13 @@ public final class CryptUtil {
             final byte[] content = parseHexStr2Byte(new String(Base64.getDecoder().decode(cryptData.getBytes())));
             final KeyGenerator kgen = KeyGenerator.getInstance(CRYPT_MODE);
             final SecureRandom random = SecureRandom.getInstance(SHA_MODE);
-            random.setSeed(password.getBytes(Charsets.UTF_8));
+            random.setSeed(password.getBytes(UTF8));
             kgen.init(CRYPT_KEY_SIZE, random);
-            
+
             final SecretKey secretKey = kgen.generateKey();
             final byte[] enCodeFormat = secretKey.getEncoded();
             final SecretKeySpec key = new SecretKeySpec(enCodeFormat, CRYPT_MODE);
-            
+
             final Cipher cipher = Cipher.getInstance(CRYPT_MODE);//创建密码器
             cipher.init(Cipher.DECRYPT_MODE, key);//初始化
             final byte[] result = cipher.doFinal(content);//解密
