@@ -91,7 +91,7 @@
         <version>${nano.version}</version>
       </dependency>
 
-    <!-- Nano ORM Modules -->
+      <!-- Nano ORM Modules -->
       <dependency>
         <groupId>org.nanoframework</groupId>
         <artifactId>nano-orm-jdbc</artifactId>
@@ -112,8 +112,13 @@
         <artifactId>nano-orm-consul</artifactId>
         <version>${nano.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.nanoframework</groupId>
+        <artifactId>nano-orm-rocketmq</artifactId>
+        <version>${nano.version}</version>
+      </dependency>
 
-    <!-- Nano Extension Modules -->
+      <!-- Nano Extension Modules -->
       <dependency>
         <groupId>org.nanoframework</groupId>
         <artifactId>nano-ext-websocket</artifactId>

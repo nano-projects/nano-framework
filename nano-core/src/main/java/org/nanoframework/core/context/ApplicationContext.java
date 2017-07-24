@@ -69,6 +69,13 @@ public final class ApplicationContext {
      * @since 1.4.9
      */
     public static final String CONTEXT_CONSUL = "context.consul";
+    
+    /**
+     * 
+     * RocketMQ Configure to context.properties.
+     * @since 1.4.9
+     */
+    public static final String CONTEXT_ROCKETMQ = "context.rocketmq";
 
     /**
      *

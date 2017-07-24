@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.nanoframework</groupId>
-    <artifactId>nano</artifactId>
+    <artifactId>nano-concurrent-parent</artifactId>
     <version>1.4.9-SNAPSHOT</version>
   </parent>
   <artifactId>nano-concurrent</artifactId>
@@ -28,7 +28,7 @@
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <cs.dir>${project.parent.basedir}</cs.dir>
+    <cs.dir>${project.parent.parent.basedir}</cs.dir>
   </properties>
   <dependencies>
     <dependency>

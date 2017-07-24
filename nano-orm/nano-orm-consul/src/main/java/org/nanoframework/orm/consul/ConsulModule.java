@@ -54,7 +54,7 @@ import com.orbitz.consul.StatusClient;
  * @since 1.4.9
  */
 public class ConsulModule implements Module {
-    public static final String DEFAULT_CONSUL_PARAMETER_NAME = "consul";
+    private static final String DEFAULT_CONSUL_PARAMETER_NAME = "consul";
     private static final String DEFAULT_CONSUL_PATH = "/consul.properties";
     private static final String CONSUL_PREFIX = "consul:";
     private static final String CONSUL_AGENT_CLIENT_PREFIX = "consul.agent:";

@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <inceptionYear>2015</inceptionYear>
 
-  <name>Nano ORM</name>
+  <name>Nano Concurrent Parent</name>
   <url>http://maven.apache.org</url>
 
   <properties>
