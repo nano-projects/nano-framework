@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
@@ -31,12 +33,15 @@ import javax.inject.Provider;
 import javax.servlet.ServletConfig;
 import javax.sql.DataSource;
 
+import org.apache.commons.codec.binary.StringUtils;
 import org.apache.ibatis.binding.MapperRegistry;
 import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.session.Configuration;
 import org.apache.ibatis.session.SqlSessionFactory;
 import org.apache.ibatis.session.SqlSessionFactoryBuilder;
 import org.apache.ibatis.session.SqlSessionManager;
+import org.apache.ibatis.type.TypeAliasRegistry;
+import org.nanoframework.commons.format.ClassCast;
 import org.nanoframework.commons.io.ClassPathResource;
 import org.nanoframework.commons.io.Resource;
 import org.nanoframework.commons.loader.LoaderException;
@@ -57,11 +62,11 @@ import com.google.inject.Scopes;
  * @since 1.2
  */
 public class MultiDataSourceModule extends AbstractModule implements Module {
-
     private String envId;
     private Properties jdbc;
     private String mybatisConfigPath;
     private String[] mapperPackageName;
+    private String[] typeAliasPackageName;
 
     /**
      * 
@@ -72,6 +77,7 @@ public class MultiDataSourceModule extends AbstractModule implements Module {
         envId = conf.getEnvId();
         mybatisConfigPath = conf.getMybatisConfigPath();
         mapperPackageName = conf.getMapperPackageName();
+        typeAliasPackageName = conf.getTypeAliasPackageName();
 
         Assert.notNull(jdbc);
         Assert.hasLength(envId);
@@ -95,23 +101,29 @@ public class MultiDataSourceModule extends AbstractModule implements Module {
             }
 
             reader = new InputStreamReader(input);
-            SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(reader, envId, jdbc);
-            SqlSessionManager sessionManager = SqlSessionManager.newInstance(sessionFactory);
+            final SqlSessionFactory sessionFactory = new SqlSessionFactoryBuilder().build(reader, envId, jdbc);
+            final SqlSessionManager sessionManager = SqlSessionManager.newInstance(sessionFactory);
             GlobalSqlSession.set(envId, sessionManager);
 
-            Configuration configuration = sessionFactory.getConfiguration();
-
-            MapperRegistry registry = configuration.getMapperRegistry();
-            for (String pkg : mapperPackageName) {
-                Set<Class<?>> classes = getClasses(pkg);
+            final Configuration configuration = sessionFactory.getConfiguration();
+            final MapperRegistry registry = configuration.getMapperRegistry();
+            for (final String pkg : mapperPackageName) {
+                final Set<Class<?>> classes = getClasses(pkg);
                 if (!CollectionUtils.isEmpty(classes)) {
-                    for (Class<?> cls : classes) {
+                    for (final Class<?> cls : classes) {
                         if (!registry.hasMapper(cls)) {
                             registry.addMapper(cls);
                         }
                     }
                 }
             }
+
+            final TypeAliasRegistry typeAliasRegistry = configuration.getTypeAliasRegistry();
+            for (final String pkg : typeAliasPackageName) {
+                typeAliasRegistry.registerAliases(pkg);
+            }
+
+            settings(jdbc, configuration);
 
             // bind mappers
             Collection<Class<?>> mapperClasses = registry.getMappers();
@@ -126,6 +138,25 @@ public class MultiDataSourceModule extends AbstractModule implements Module {
                 }
             }
         }
+    }
+
+    protected void settings(final Properties proerties, final Configuration conf) {
+        final String prefix = "mybatis.settings.";
+        final List<Field> fields = allFields(Lists.newArrayList(), Configuration.class);
+        proerties.keySet().stream().filter(key -> ((String) key).startsWith(prefix)).forEach(k -> {
+            final String key = (String) k;
+            final String value = proerties.getProperty(key);
+            final String name = key.substring(prefix.length());
+            fields.stream().filter(field -> StringUtils.equals(field.getName(), name)).forEach(field -> {
+                try {
+                    final Object val = ClassCast.cast(value, field.getType().getName());
+                    field.setAccessible(true);
+                    field.set(conf, val);
+                } catch (final Throwable e) {
+                    // ignore
+                }
+            });
+        });
     }
 
     /**
@@ -171,6 +202,15 @@ public class MultiDataSourceModule extends AbstractModule implements Module {
         return new ResolverUtil<Object>().find(test, packageName).getClasses();
     }
 
+    private List<Field> allFields(final List<Field> allFields, final Class<?> cls) {
+        allFields.addAll(Arrays.asList(cls.getDeclaredFields()));
+        if (cls.getSuperclass() == null) {
+            return allFields;
+        }
+
+        return allFields(allFields, cls.getSuperclass());
+    }
+
     @Override
     public List<Module> load() throws Throwable {
         return Lists.newArrayList(this);
@@ -178,7 +218,7 @@ public class MultiDataSourceModule extends AbstractModule implements Module {
 
     @Override
     public void config(final ServletConfig config) throws Throwable {
-        
+
     }
 
 }
