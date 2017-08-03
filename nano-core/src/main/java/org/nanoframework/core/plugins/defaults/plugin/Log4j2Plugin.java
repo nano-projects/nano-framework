@@ -32,16 +32,15 @@ import org.nanoframework.core.plugins.PluginLoaderException;
  */
 public class Log4j2Plugin implements Plugin {
     private static final String DEFAULT_LOG4J2_PARAMETER_NAME = "log4j2";
-    private static final String META_INF_RESOURCE = "META-INF/log4j2.xml";
     private String log4j2;
 
     @Override
     public boolean load() throws Throwable {
         if (StringUtils.isNotBlank(log4j2)) {
             return load(log4j2);
-        } else {
-            return load(META_INF_RESOURCE);
         }
+
+        return false;
     }
 
     private boolean load(final String name) throws Throwable {
@@ -70,7 +69,6 @@ public class Log4j2Plugin implements Plugin {
                 final Object context = logManager.getMethod("getContext", boolean.class).invoke(logManager, Boolean.FALSE);
                 final Class<?> loggerContext = Class.forName("org.apache.logging.log4j.core.LoggerContext");
                 loggerContext.getMethod("setConfigLocation", URI.class).invoke(context, resource);
-                loggerContext.getMethod("reconfigure").invoke(context);
                 return true;
             } catch (final Throwable e) {
                 if (!(e instanceof ClassNotFoundException)) {

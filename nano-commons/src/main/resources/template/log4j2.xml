@@ -15,56 +15,56 @@
     See the License for the specific language governing permissions and
     limitations under the License.
     
--->  
-<configuration status="OFF">  
-  <appenders>  
-    <Console name="OUT" target="SYSTEM_OUT">  
-      <PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %c{1.}.%M(%F:%L) >>> %m %n"/>  
-    </Console> 
+-->
+<configuration status="OFF">
+  <appenders>
+    <Console name="OUT" target="SYSTEM_OUT">
+      <PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %c{1.}.%M(%F:%L) >>> %m %n" />
+    </Console>
     <RollingFile name="INFO" fileName="logs/info.log" filePattern="logs/info/$${date:yyyy-MM}/info-%d{yyyy-MM-dd}-%i.log">
-    	<PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %c{1.}.%M(%F:%L) >>> %m %n"/> 
-    	<SizeBasedTriggeringPolicy size="100 MB" />
-    	<LevelRangeFilter minLevel="info" maxLevel="info" onMatch="ACCEPT" />
+      <PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %c{1.}.%M(%F:%L) >>> %m %n" />
+      <SizeBasedTriggeringPolicy size="100 MB" />
+      <LevelRangeFilter minLevel="info" maxLevel="info" onMatch="ACCEPT" />
     </RollingFile>
     <RollingFile name="DEBUG" fileName="logs/debug.log" filePattern="logs/debug/$${date:yyyy-MM}/debug-%d{yyyy-MM-dd}-%i.log">
-    	<PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %c{1.}.%M(%F:%L) >>> %m %n"/> 
-    	<SizeBasedTriggeringPolicy size="100 MB" />
-    	<LevelRangeFilter minLevel="debug" maxLevel="debug" onMatch="ACCEPT" />
+      <PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %c{1.}.%M(%F:%L) >>> %m %n" />
+      <SizeBasedTriggeringPolicy size="100 MB" />
+      <LevelRangeFilter minLevel="debug" maxLevel="debug" onMatch="ACCEPT" />
     </RollingFile>
     <RollingFile name="ERROR" fileName="logs/error.log" filePattern="logs/error/$${date:yyyy-MM}/error-%d{yyyy-MM-dd}-%i.log">
-    	<PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %c{1.}.%M(%F:%L) >>> %m %n"/> 
-    	<SizeBasedTriggeringPolicy size="100 MB" />
-    	<LevelRangeFilter minLevel="error" maxLevel="error" onMatch="ACCEPT" />
+      <PatternLayout pattern="[%-5p] %d{yyyy-MM-dd HH:mm:ss,SSS} %c{1.}.%M(%F:%L) >>> %m %n" />
+      <SizeBasedTriggeringPolicy size="100 MB" />
+      <LevelRangeFilter minLevel="error" maxLevel="error" onMatch="ACCEPT" />
     </RollingFile>
-  </appenders>  
+  </appenders>
 
-  <loggers>  
-  	<logger name="org.eclipse.jetty" level="error" additivity="false">
-  		<appender-ref ref="OUT"/>
-  		<appender-ref ref="ERROR"/>
-  	</logger>
-    
+  <loggers>
+    <logger name="org.eclipse.jetty" level="error" additivity="false">
+      <appender-ref ref="OUT" />
+      <appender-ref ref="ERROR" />
+    </logger>
+
     <logger name="org.apache.ibatis.transaction.jdbc" level="error" additivity="false">
-        <appender-ref ref="ERROR"/>
+      <appender-ref ref="ERROR" />
     </logger>
-    
+
     <logger name="com.alibaba.druid.support.logging" level="error" additivity="false">
-        <appender-ref ref="ERROR"/>
+      <appender-ref ref="ERROR" />
     </logger>
-    
+
     <logger name="org.apache.http" level="error" additivity="false">
-        <appender-ref ref="ERROR"/>
+      <appender-ref ref="ERROR" />
     </logger>
-    
+
     <logger name="org.nanoframework.core.component.scan" level="info" additivity="false">
-        <appender-ref ref="INFO"/>
+      <appender-ref ref="INFO" />
     </logger>
-  	
-    <root level="debug">  
-      	<appender-ref ref="OUT"/>
-        <appender-ref ref="INFO"/>
-        <appender-ref ref="DEBUG"/>
-        <appender-ref ref="ERROR"/>
-    </root>  
-  </loggers>  
+
+    <root level="info">
+      <appender-ref ref="OUT" />
+      <appender-ref ref="INFO" />
+      <appender-ref ref="DEBUG" />
+      <appender-ref ref="ERROR" />
+    </root>
+  </loggers>
 </configuration>  
