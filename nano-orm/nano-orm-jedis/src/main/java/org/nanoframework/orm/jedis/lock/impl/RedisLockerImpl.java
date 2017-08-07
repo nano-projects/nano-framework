@@ -46,7 +46,7 @@ public class RedisLockerImpl implements RedisLocker {
     }
 
     @Override
-    public void lock(String key, int timeout) throws TimeoutException {
+    public void lock(final String key, final int timeout) throws TimeoutException {
         final long time = System.currentTimeMillis();
         final long longtime = timeout * 1000;
         while (!tryLock(key, timeout)) {
@@ -63,7 +63,7 @@ public class RedisLockerImpl implements RedisLocker {
     }
 
     @Override
-    public boolean tryLock(String key) {
+    public boolean tryLock(final String key) {
         return tryLock(key, timeout);
     }
 
