@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
@@ -40,10 +40,10 @@ import com.alibaba.fastjson.JSON;
 public class ExtendRedisClientTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendRedisClientTest.class);
 
-    protected RedisClientExt redisClient;
+    protected static RedisClientExt redisClient;
 
-    @Before
-    public void before() throws LoaderException, IOException {
+    @BeforeClass
+    public static void before() throws LoaderException, IOException {
         if (redisClient == null) {
             try {
                 Properties prop = PropertiesLoader.load("/redis-test.properties");
@@ -55,7 +55,7 @@ public class ExtendRedisClientTest {
             }
         }
     }
-    
+
     @Test
     public void spec1Test() {
         try {
@@ -66,11 +66,11 @@ public class ExtendRedisClientTest {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void spec2Test() {
         try {
@@ -79,11 +79,11 @@ public class ExtendRedisClientTest {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void spec3Test() {
         try {
@@ -93,9 +93,9 @@ public class ExtendRedisClientTest {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
 }

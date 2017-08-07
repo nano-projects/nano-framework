@@ -31,7 +31,7 @@ import org.nanoframework.orm.jedis.cluster.HashTest;
  * @since 0.0.1
  */
 public class ShardedHashTest extends HashTest {
-    
+
     @BeforeClass
     public static void before() throws LoaderException, IOException {
         if (redisClient == null) {
@@ -45,5 +45,5 @@ public class ShardedHashTest extends HashTest {
             }
         }
     }
-    
+
 }

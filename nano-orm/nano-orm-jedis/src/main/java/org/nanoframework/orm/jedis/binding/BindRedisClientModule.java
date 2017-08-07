@@ -25,6 +25,8 @@ import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.spi.Order;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
+import org.nanoframework.orm.jedis.lock.RedisLocker;
+import org.nanoframework.orm.jedis.lock.impl.RedisLockerImpl;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Binder;
@@ -37,11 +39,15 @@ import com.google.inject.Binder;
 @Order(1100)
 public class BindRedisClientModule implements Module {
     private static final String REDIS_NAMED_PRIFIX = "redis:";
+    private static final String REDIS_LOCK_NAMED_PREFIX = "redis.lock:";
 
     @Override
     public void configure(final Binder binder) {
-        GlobalRedisClient.keys().forEach(redisName -> binder.bind(RedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName))
-                .toInstance(GlobalRedisClient.get(redisName)));        
+        GlobalRedisClient.keys().forEach(redisName -> {
+            final RedisClient client = GlobalRedisClient.get(redisName);
+            binder.bind(RedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName)).toInstance(client);
+            binder.bind(RedisLocker.class).annotatedWith(named(REDIS_LOCK_NAMED_PREFIX + redisName)).toInstance(new RedisLockerImpl(client));
+        });
     }
 
     @Override
@@ -51,7 +57,7 @@ public class BindRedisClientModule implements Module {
 
     @Override
     public void config(final ServletConfig config) throws Throwable {
-        
+
     }
 
 }

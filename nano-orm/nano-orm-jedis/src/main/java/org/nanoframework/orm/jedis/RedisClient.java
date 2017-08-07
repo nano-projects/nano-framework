@@ -18,12 +18,16 @@ package org.nanoframework.orm.jedis;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.nanoframework.orm.jedis.sharded.RedisClientImpl;
 
 import com.alibaba.fastjson.TypeReference;
 import com.google.inject.ImplementedBy;
+
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 /**
  * 针对Jedis池的使用而基础的封装，主要针对Sharding模式进行接口API的定义<br>
@@ -61,6 +65,8 @@ public interface RedisClient {
         /** PUSH列表时的策略，以VALUE为基准 */
         VALUE;
     }
+
+    RedisConfig getConfig();
 
     /**
      * 
@@ -280,7 +286,6 @@ public interface RedisClient {
 
     /**
      * 将字符串值 value 关联到 key, 当且仅当给定 key 不存在时.
-     * 
      * @param key 散列Key
      * @param value 散列值
      * @return 设置成功，返回 true 。设置失败，返回 false。
@@ -295,6 +300,24 @@ public interface RedisClient {
      * @return 设置成功，返回 true。设置失败，返回 false。
      */
     boolean setByNX(String key, Object value);
+
+    /**
+     * 将字符串值 value 关联到 key, 当且仅当给定 key 不存在时.
+     * @param key 散列Key
+     * @param value 散列值
+     * @param timeout 超时时间, 单位: 秒
+     * @return 设置成功，返回 true。设置失败，返回 false。
+     */
+    boolean setByNX(String key, String value, int timeout);
+
+    /**
+     * 将字符串值 value 关联到 key, 当且仅当给定 key 不存在时.
+     * @param key 散列Key
+     * @param value 散列值
+     * @param timeout 超时时间, 单位: 秒
+     * @return 设置成功，返回 true。设置失败，返回 false。
+     */
+    boolean setByNX(String key, Object value, int timeout);
 
     /**
      * 同时设置一个或多个 key-value 对, 当且仅当所有给定 key 都不存在.
@@ -528,6 +551,76 @@ public interface RedisClient {
     List<String> hvals(String key);
 
     <T> List<T> hvals(String key, TypeReference<T> type);
+
+    /**
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @return 结果集
+     */
+    ScanResult<Entry<String, String>> hscan(String key, long cursor);
+
+    /**
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param type FastJSON TypeReference
+     * @return 结果集
+     */
+    <T> ScanResult<Entry<String, T>> hscan(String key, long cursor, TypeReference<T> type);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @return 结果集
+     */
+    ScanResult<Entry<String, String>> hscan(String key, String cursor);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param type FastJSON TypeReference
+     * @return 结果集
+     */
+    <T> ScanResult<Entry<String, T>> hscan(String key, String cursor, TypeReference<T> type);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param params 参数
+     * @return 结果集
+     */
+    ScanResult<Entry<String, String>> hscan(String key, long cursor, ScanParams params);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param params 参数
+     * @return 结果集
+     */
+    ScanResult<Entry<String, String>> hscan(String key, String cursor, ScanParams params);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param params 参数
+     * @param type FastJSON TypeReference
+     * @return 结果集
+     */
+    <T> ScanResult<Entry<String, T>> hscan(String key, long cursor, ScanParams params, TypeReference<T> type);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param params 参数
+     * @param type FastJSON TypeReference
+     * @return 结果集
+     */
+    <T> ScanResult<Entry<String, T>> hscan(String key, String cursor, ScanParams params, TypeReference<T> type);
 
     /**
      * BLPOP/BRPOP 是列表的阻塞式(blocking)弹出原语。<br>

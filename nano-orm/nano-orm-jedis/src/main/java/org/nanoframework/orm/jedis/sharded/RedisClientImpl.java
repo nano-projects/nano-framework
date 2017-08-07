@@ -44,6 +44,8 @@ import redis.clients.jedis.BinaryClient.LIST_POSITION;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 import redis.clients.jedis.ShardedJedis;
 import redis.clients.jedis.ShardedJedisPipeline;
 import redis.clients.jedis.Tuple;
@@ -57,7 +59,7 @@ public class RedisClientImpl extends AbstractRedisClient {
         super(config);
         POOL.appendJedis(config);
     }
-    
+
     @Override
     public List<Map<String, String>> info() {
         ShardedJedis jedis = null;
@@ -69,7 +71,7 @@ public class RedisClientImpl extends AbstractRedisClient {
                 final String info = shard.info();
                 infos.add(info0(info));
             });
-            
+
             return infos;
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
@@ -77,7 +79,7 @@ public class RedisClientImpl extends AbstractRedisClient {
             POOL.close(jedis);
         }
     }
-    
+
     @Override
     public List<Map<String, String>> info(final String section) {
         ShardedJedis jedis = null;
@@ -89,7 +91,7 @@ public class RedisClientImpl extends AbstractRedisClient {
                 final String info = shard.info(section);
                 infos.add(info0(info));
             });
-            
+
             return infos;
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
@@ -97,7 +99,7 @@ public class RedisClientImpl extends AbstractRedisClient {
             POOL.close(jedis);
         }
     }
-    
+
     @Override
     public long del(final String... keys) {
         if (keys.length == 0) {
@@ -319,6 +321,25 @@ public class RedisClientImpl extends AbstractRedisClient {
         try {
             jedis = POOL.getJedis(config.getRedisType());
             return isSuccess(jedis.setnx(key, value));
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
+    public boolean setByNX(final String key, final String value, final int timeout) {
+        Assert.hasText(key);
+        Assert.hasText(value);
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final ShardedJedisPipeline pipeline = jedis.pipelined();
+            final Response<Long> set = pipeline.setnx(key, value);
+            final Response<Long> expire = pipeline.expire(key, timeout);
+            pipeline.sync();
+            return isSuccess(set.get()) && isSuccess(expire.get());
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         } finally {
@@ -583,6 +604,23 @@ public class RedisClientImpl extends AbstractRedisClient {
         try {
             jedis = POOL.getJedis(config.getRedisType());
             return jedis.hvals(key);
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
+    public ScanResult<Entry<String, String>> hscan(String key, String cursor, ScanParams params) {
+        Assert.hasText(key);
+        Assert.hasText(cursor);
+        Assert.notNull(params);
+
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            return jedis.hscan(key, cursor, params);
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         } finally {

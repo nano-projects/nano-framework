@@ -38,9 +38,11 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
 import redis.clients.jedis.BinaryClient.LIST_POSITION;
-import redis.clients.jedis.exceptions.JedisClusterException;
 import redis.clients.jedis.JedisCluster;
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 import redis.clients.jedis.Tuple;
+import redis.clients.jedis.exceptions.JedisClusterException;
 
 /**
  *
@@ -59,12 +61,12 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
         super(config);
         cluster = POOL.appendJedisCluster(config);
     }
-    
+
     @Override
     public List<Map<String, String>> info() {
         throw new JedisClusterException("No way to dispatch this command to Redis Cluster.");
     }
-    
+
     @Override
     public List<Map<String, String>> info(String section) {
         throw new JedisClusterException("No way to dispatch this command to Redis Cluster.");
@@ -212,6 +214,11 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         }
+    }
+
+    @Override
+    public boolean setByNX(final String key, final String value, final int timeout) {
+        return setByNX(key, value) && isSuccess(expire(key, timeout));
     }
 
     @Override
@@ -395,6 +402,18 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
         Assert.hasText(key);
         try {
             return cluster.hvals(key);
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public ScanResult<Entry<String, String>> hscan(final String key, final String cursor, final ScanParams params) {
+        Assert.hasText(key);
+        Assert.hasText(cursor);
+        Assert.notNull(params);
+        try {
+            return cluster.hscan(key, cursor, params);
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         }

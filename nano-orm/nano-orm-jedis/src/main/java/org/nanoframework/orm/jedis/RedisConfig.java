@@ -43,7 +43,9 @@ public class RedisConfig extends BaseEntity {
     public static final String EXTEND_PROPERTIES = "extendProperties";
     public static final String CLUSTER = "cluster";
     public static final String MAX_REDIRECTIONS = "maxRedirections";
-    
+    public static final String LOCK_TIMEOUT = "lockTimeout";
+    public static final String LOCK_HASH = "lockGroup";
+
     private static final long serialVersionUID = -6765559689700998419L;
 
     private String redisType;
@@ -54,36 +56,48 @@ public class RedisConfig extends BaseEntity {
     private Integer timeOut;
     private Boolean testOnBorrow;
     private Integer expireTime;
-    
+
     /**
      * RedisClient扩展.
      * @since 1.3.10
      */
     private String extend;
-    
+
     /**
      * RedisClient扩展属性路径.
      * @since 1.3.10
      */
     private String extendResource;
-    
+
     /**
      * RedisClient扩展属性.
      * @since 1.3.10
      */
     private Properties extendProperties;
-    
+
     /**
      * JedisCluster模式.
      * @since 1.3.12
      */
     private Boolean cluster;
-    
+
     /**
      * 
      * @since 1.3.12
      */
     private Integer maxRedirections;
+
+    /**
+     * 
+     * @since 1.4.9
+     */
+    private Integer lockTimeout;
+
+    /**
+     * 
+     * @since 1.4.9
+     */
+    private String lockGroup;
 
     private RedisConfig() {
     }
@@ -159,41 +173,41 @@ public class RedisConfig extends BaseEntity {
     public String getExtend() {
         return extend;
     }
-    
+
     public void setExtend(final String extend) {
-        if(StringUtils.isNotBlank(extend)) {
+        if (StringUtils.isNotBlank(extend)) {
             try {
                 Class.forName(extend);
             } catch (final ClassNotFoundException e) {
                 throw new NotFoundExtendException(e.getMessage(), e);
             }
         }
-        
+
         this.extend = extend;
     }
-    
+
     public String getExtendResource() {
         return extendResource;
     }
-    
+
     public void setExtendResource(final String extendResource) {
         this.extendResource = extendResource;
-        if(StringUtils.isNotBlank(extendResource)) {
+        if (StringUtils.isNotBlank(extendResource)) {
             Properties extendProperties = PropertiesLoader.PROPERTIES.get(extendResource);
-            if(extendProperties == null) {
+            if (extendProperties == null) {
                 extendProperties = PropertiesLoader.load(extendResource);
             }
-            
-            if(extendProperties != null) {
+
+            if (extendProperties != null) {
                 setExtendProperties(extendProperties);
             }
-         }
+        }
     }
-    
+
     public Properties getExtendProperties() {
         return extendProperties;
     }
-    
+
     public void setExtendProperties(final Properties extendProperties) {
         this.extendProperties = extendProperties;
     }
@@ -213,5 +227,20 @@ public class RedisConfig extends BaseEntity {
     public void setMaxRedirections(final Integer maxRedirections) {
         this.maxRedirections = maxRedirections;
     }
-    
+
+    public Integer getLockTimeout() {
+        return lockTimeout;
+    }
+
+    public void setLockTimeout(final Integer lockTimeout) {
+        this.lockTimeout = lockTimeout;
+    }
+
+    public String getLockGroup() {
+        return lockGroup;
+    }
+
+    public void setLockGroup(final String lockGroup) {
+        this.lockGroup = lockGroup;
+    }
 }
