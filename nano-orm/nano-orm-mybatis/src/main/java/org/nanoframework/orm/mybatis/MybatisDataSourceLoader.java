@@ -18,6 +18,7 @@ package org.nanoframework.orm.mybatis;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
@@ -54,7 +55,7 @@ public class MybatisDataSourceLoader extends DataSourceLoader {
         final String[] typeAliasPackageName = properties.getProperty(MAPPER_PACKAGE_TYPE_ALIAS, "").split(",");
         final DataSourceConfig config = new DataSourceConfig(mapperPackageName, typeAliasPackageName, properties, poolType(properties));
         dsc.add(config);
-        LOGGER.info("创建数据源依赖注入模块, Mapper包路径: " + mapperPackageName + ", 耗时: " + (System.currentTimeMillis() - time) + "ms");
+        LOGGER.info("创建数据源依赖注入模块, Mapper包路径: [ {} ], 耗时: {}ms", StringUtils.join(mapperPackageName, ", "), System.currentTimeMillis() - time);
     }
 
     @Override
