@@ -16,7 +16,8 @@
     limitations under the License.
     
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -80,6 +81,7 @@
     <commons-io-version>2.5</commons-io-version>
     <consul-client-version>0.16.1</consul-client-version>
     <rocketmq-version>4.1.0-incubating</rocketmq-version>
+    <kafka-clients-version>0.11.0.0</kafka-clients-version>
   </properties>
 
   <issueManagement>
@@ -366,6 +368,12 @@
         <artifactId>rocketmq-client</artifactId>
         <version>${rocketmq-version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>org.apache.kafka</groupId>
+        <artifactId>kafka-clients</artifactId>
+        <version>${kafka-clients-version}</version>
+      </dependency>
     </dependencies>
   </dependencyManagement>
 
@@ -402,7 +410,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>

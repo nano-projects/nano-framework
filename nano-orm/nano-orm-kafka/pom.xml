@@ -24,8 +24,8 @@
     <artifactId>nano-orm</artifactId>
     <version>1.4.9-SNAPSHOT</version>
   </parent>
-  <artifactId>nano-orm-rocketmq</artifactId>
-  <name>Nano ORM RocketMQ</name>
+  <artifactId>nano-orm-kafka</artifactId>
+  <name>Nano ORM Kafka</name>
   <url>http://maven.apache.org</url>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,33 +38,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-api</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-core</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.logging.log4j</groupId>
-      <artifactId>log4j-slf4j-impl</artifactId>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.rocketmq</groupId>
-      <artifactId>rocketmq-client</artifactId>
+      <groupId>org.apache.kafka</groupId>
+      <artifactId>kafka-clients</artifactId>
     </dependency>
     <dependency>
       <groupId>org.nanoframework</groupId>

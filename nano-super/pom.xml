@@ -117,6 +117,11 @@
         <artifactId>nano-orm-rocketmq</artifactId>
         <version>${nano.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.nanoframework</groupId>
+        <artifactId>nano-orm-kafka</artifactId>
+        <version>${nano.version}</version>
+      </dependency>
 
       <!-- Nano Extension Modules -->
       <dependency>

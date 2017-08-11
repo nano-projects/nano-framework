@@ -41,6 +41,7 @@
     <module>nano-orm-jedis</module>
     <module>nano-orm-consul</module>
     <module>nano-orm-rocketmq</module>
+    <module>nano-orm-kafka</module>
   </modules>
 
   <dependencyManagement>
