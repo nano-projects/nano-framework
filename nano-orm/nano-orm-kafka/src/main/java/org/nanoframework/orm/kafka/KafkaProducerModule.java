@@ -29,6 +29,7 @@ import org.nanoframework.core.plugins.Module;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Binder;
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 
 /**
@@ -51,11 +52,33 @@ public class KafkaProducerModule implements Module {
 
         if (properties != null) {
             try {
-                binder.bind(new TypeLiteral<Producer<Object, Object>>() {}).toInstance(new KafkaProducer<>(properties));
+                binder.bind(literal()).toProvider(provider(properties));
             } catch (final Throwable e) {
                 LOGGER.error("创建KafkaProducer异常: {}", e.getMessage());
             }
         }
+    }
+
+    private TypeLiteral<Producer<Object, Object>> literal() {
+        return new TypeLiteral<Producer<Object, Object>>() {
+        };
+    }
+
+    private <K, V> Provider<Producer<K, V>> provider(final Properties properties) {
+        return new Provider<Producer<K, V>>() {
+            private Producer<K, V> producer;
+
+            @Override
+            public Producer<K, V> get() {
+                synchronized (this) {
+                    if (producer == null) {
+                        producer = new KafkaProducer<>(properties);
+                    }
+                }
+
+                return producer;
+            }
+        };
     }
 
     @Override
