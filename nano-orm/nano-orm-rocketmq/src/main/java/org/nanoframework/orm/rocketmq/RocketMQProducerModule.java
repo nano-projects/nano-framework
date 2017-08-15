@@ -82,7 +82,7 @@ public class RocketMQProducerModule implements Module {
     private void shutdown() {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             cfgs.values().forEach(cfg -> {
-                final DefaultMQProducer producer = cfg.getProducer();
+                final MQProducer producer = cfg.getProducer();
                 if (producer != null) {
                     try {
                         producer.shutdown();

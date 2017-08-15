@@ -473,24 +473,26 @@ public class SchedulerFactory {
             throw new LoaderException("没有加载任何的属性文件, 无法加载组件.");
         }
 
-        final Set<String> includes = Sets.newLinkedHashSet();
-        final Set<String> exclusions = Sets.newLinkedHashSet();
         PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(BASE_PACKAGE) != null).forEach(item -> {
-            final String basePacakge = item.getProperty(BASE_PACKAGE);
-            ClassScanner.scan(basePacakge);
+            final String[] basePacakges = item.getProperty(BASE_PACKAGE, StringUtils.EMPTY).split(",");
+            for (final String basePackage : basePacakges) {
+                ClassScanner.scan(basePackage);
+            }
         });
 
+        final Set<String> includes = Sets.newLinkedHashSet();
+        final Set<String> exclusions = Sets.newLinkedHashSet();
         PropertiesLoader.PROPERTIES.values().stream().forEach(item -> {
             if (item.containsKey(INCLUDES)) {
-                String[] include = item.getProperty(INCLUDES, ".").split(",");
-                for (String inc : include) {
+                final String[] include = item.getProperty(INCLUDES, ".").split(",");
+                for (final String inc : include) {
                     includes.add(inc);
                 }
             }
 
             if (item.containsKey(EXCLUSIONS)) {
-                String[] exclusion = item.getProperty(EXCLUSIONS, "").split(",");
-                for (String exc : exclusion) {
+                final String[] exclusion = item.getProperty(EXCLUSIONS, StringUtils.EMPTY).split(",");
+                for (final String exc : exclusion) {
                     exclusions.add(exc);
                 }
             }
