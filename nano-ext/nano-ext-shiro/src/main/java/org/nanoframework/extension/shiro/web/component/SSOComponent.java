@@ -64,25 +64,26 @@ public interface SSOComponent {
 
     @RequestMapping(value = "/session/{clientSessionId}", method = RequestMethod.DELETE)
     ResultMap removeSession(@PathVariable("clientSessionId") String clientSessionId);
-    
+
     @RequestMapping(value = "/session/{clientSessionId}/attribute", method = RequestMethod.POST)
     ResultMap syncSessionAttribute(@PathVariable("clientSessionId") String clientSessionId, @RequestParam("attribute") String serialAttribute);
-    
+
     @RequestMapping(value = "/session/{clientSessionId}/max.inactive.internal", method = RequestMethod.POST)
-    ResultMap syncSessionMaxInactiveInternal(@PathVariable("clientSessionid") String clientSessionId, @RequestParam("max.inactive.internal") Integer maxInactiveInternal);
-    
+    ResultMap syncSessionMaxInactiveInternal(@PathVariable("clientSessionid") String clientSessionId,
+            @RequestParam("max.inactive.internal") Integer maxInactiveInternal);
+
     @RequestMapping(value = "/session/bind", method = RequestMethod.GET)
     View bindSession(@RequestParam("service") String service, @RequestParam("sessionId") String clientSessionId);
-    
+
     @RequestMapping("/login")
     View loginFailure(@RequestParam(value = "service", required = false) String service);
-    
+
     @RequestMapping(value = "/remote/login", method = RequestMethod.POST)
     Map<String, Object> login(@RequestParam("token") UsernamePasswordToken token, @RequestParam(value = "service", required = false) String service);
 
     @RequestMapping(value = "/remote/logout", method = RequestMethod.GET)
     ResultMap logout();
-    
+
     @RequestMapping(value = "/remote/logined", method = RequestMethod.GET)
     Map<String, Object> isLogined(@RequestParam(value = "service", required = false) String service);
 }
