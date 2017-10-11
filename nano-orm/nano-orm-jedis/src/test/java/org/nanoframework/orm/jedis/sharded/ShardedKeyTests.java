@@ -16,67 +16,41 @@
 package org.nanoframework.orm.jedis.sharded;
 
 import java.io.IOException;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.nanoframework.commons.loader.LoaderException;
-import org.nanoframework.commons.loader.PropertiesLoader;
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
-import org.nanoframework.orm.jedis.RedisClient;
-import org.nanoframework.orm.jedis.RedisClientPool;
-import org.nanoframework.orm.jedis.cluster.HashTest;
-
-import com.alibaba.fastjson.JSON;
+import org.nanoframework.orm.jedis.cluster.KeyTests;
 
 /**
  *
  * @author yanghe
- * @since 1.3.15
+ * @since 0.0.1
  */
-public class ShardedInfoTest {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HashTest.class);
-
-    protected RedisClient redisClient;
+public class ShardedKeyTests extends KeyTests {
 
     @Before
     public void before() throws LoaderException, IOException {
         if (redisClient == null) {
             try {
-                Properties prop = PropertiesLoader.load("/redis-test.properties");
-                RedisClientPool.POOL.initRedisConfig(prop).createJedis();
-                RedisClientPool.POOL.bindGlobal();
                 redisClient = GlobalRedisClient.get("sharded");
             } catch (final Throwable e) {
                 // ignore
             }
         }
     }
-    
+
     @Test
-    public void infoTest() {
+    @Override
+    public void keysTest() {
         try {
-            LOGGER.debug(JSON.toJSONString(redisClient.info()));
+            redisClient.keys("*");
         } catch (final Throwable e) {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
-            LOGGER.error(e.getMessage());
-        }
-    }
-    
-    @Test
-    public void infoSectionTest() {
-        try {
-            LOGGER.debug(JSON.toJSONString(redisClient.info("memory")));
-        } catch (final Throwable e) {
-            if (e instanceof AssertionError) {
-                throw e;
-            }
-            
+
             LOGGER.error(e.getMessage());
         }
     }

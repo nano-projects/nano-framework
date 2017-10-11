@@ -34,9 +34,9 @@ import com.google.common.collect.Lists;
  * @author yanghe
  * @since 0.0.1
  */
-public class KeyTest extends RedisClientInitialize {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(KeyTest.class);
-    
+public class KeyTests extends RedisClientInitialize {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(KeyTests.class);
+
     @Test
     public void setAndDelKeyTest() {
         try {
@@ -46,41 +46,38 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void setAndDelKeysTest() {
         try {
-            final Map<String, Object> map = MapBuilder.<String, Object>builder()
-                    .put("setAndDelKeysTest-0", "0")
-                    .put("setAndDelKeysTest-1", "1")
-                    .put("setAndDelKeysTest-2", "2")
-                    .build();
-            
+            final Map<String, Object> map = MapBuilder.<String, Object> builder().put("setAndDelKeysTest-0", "0").put("setAndDelKeysTest-1", "1")
+                    .put("setAndDelKeysTest-2", "2").build();
+
             final Map<String, Boolean> response = redisClient.set(map);
-            for(String key : response.keySet()) {
+            for (String key : response.keySet()) {
                 Assert.assertEquals(response.get(key), true);
             }
-            
+
             Assert.assertEquals(redisClient.del(map.keySet().toArray(new String[map.size()])), 3);
             final Map<String, Boolean> response2 = redisClient.set(map);
-            for(String key : response2.keySet()) {
+            for (String key : response2.keySet()) {
                 Assert.assertEquals(response2.get(key), true);
             }
-            
+
             Assert.assertEquals(redisClient.del(Lists.newArrayList(map.keySet().iterator())), 3);
         } catch (final Throwable e) {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void existsTest() {
         try {
@@ -91,11 +88,11 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void expireTest() {
         try {
@@ -114,11 +111,11 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void expireDefaultTest() {
         try {
@@ -134,11 +131,11 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void expireatTest() {
         try {
@@ -155,11 +152,11 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void keysTest() {
         try {
@@ -169,17 +166,17 @@ public class KeyTest extends RedisClientInitialize {
             } catch (final Throwable e) {
                 error = e;
             }
-            
+
             Assert.assertEquals(error.getClass(), UnsupportedAccessException.class);
         } catch (final Throwable e) {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void appendTest() {
         try {
@@ -193,47 +190,50 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void getTest() {
         try {
             Assert.assertEquals(redisClient.set("getTest", Lists.newArrayList("el-0", "el-1", "el-2")), true);
             Assert.assertEquals(redisClient.get("getTest"), "[\"el-0\",\"el-1\",\"el-2\"]");
-            
-            final List<String> values = redisClient.get("getTest", new TypeReference<List<String>>(){ });
+
+            final List<String> values = redisClient.get("getTest", new TypeReference<List<String>>() {
+            });
             Assert.assertEquals(values.size(), 3);
             Assert.assertEquals(values.get(0), "el-0");
             Assert.assertEquals(values.get(1), "el-1");
             Assert.assertEquals(values.get(2), "el-2");
-            
+
             Assert.assertEquals(redisClient.del("getTest"), 1);
         } catch (final Throwable e) {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void getBatchTest() {
         try {
             Assert.assertEquals(redisClient.set("getBatchTest-0", Lists.newArrayList("el-0", "el-1", "el-2")), true);
             Assert.assertEquals(redisClient.set("getBatchTest-1", Lists.newArrayList("el-3", "el-4", "el-5")), true);
             Assert.assertEquals(redisClient.set("getBatchTest-2", Lists.newArrayList("el-6", "el-7", "el-8")), true);
-            
+
             final Map<String, String> keysvalues = redisClient.get("getBatchTest-0", "getBatchTest-1", "getBatchTest-2");
             Assert.assertEquals(keysvalues.size(), 3);
             Assert.assertEquals(keysvalues.get("getBatchTest-0"), "[\"el-0\",\"el-1\",\"el-2\"]");
             Assert.assertEquals(keysvalues.get("getBatchTest-1"), "[\"el-3\",\"el-4\",\"el-5\"]");
             Assert.assertEquals(keysvalues.get("getBatchTest-2"), "[\"el-6\",\"el-7\",\"el-8\"]");
-            
-            final Map<String, List<String>> objKeysValues = redisClient.get(new String[]{"getBatchTest-0", "getBatchTest-1", "getBatchTest-2"}, new TypeReference<List<String>>(){ });
+
+            final Map<String, List<String>> objKeysValues = redisClient.get(new String[] { "getBatchTest-0", "getBatchTest-1", "getBatchTest-2" },
+                    new TypeReference<List<String>>() {
+                    });
             Assert.assertEquals(keysvalues.size(), 3);
             final List<String> values0 = objKeysValues.get("getBatchTest-0");
             Assert.assertEquals(values0.size(), 3);
@@ -250,20 +250,22 @@ public class KeyTest extends RedisClientInitialize {
             Assert.assertEquals(values2.get(0), "el-6");
             Assert.assertEquals(values2.get(1), "el-7");
             Assert.assertEquals(values2.get(2), "el-8");
-            
-            final Map<String, List<String>> listKeysValues = redisClient.get(Lists.newArrayList("getBatchTest-0", "getBatchTest-1", "getBatchTest-3"), new TypeReference<List<String>>(){ });
+
+            final Map<String, List<String>> listKeysValues = redisClient.get(Lists.newArrayList("getBatchTest-0", "getBatchTest-1", "getBatchTest-3"),
+                    new TypeReference<List<String>>() {
+                    });
             Assert.assertEquals(listKeysValues.size(), 3);
-            
+
             Assert.assertEquals(redisClient.del(Lists.newArrayList("getBatchTest-0", "getBatchTest-1", "getBatchTest-2")), 3);
         } catch (final Throwable e) {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void getSetTest() {
         try {
@@ -275,24 +277,26 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void setnxTest() {
         try {
             Assert.assertEquals(redisClient.setByNX("setnxTest", Lists.newArrayList("setByNX-0")), true);
             Assert.assertEquals(redisClient.setByNX("setnxTest", Lists.newArrayList("setByNX-1")), false);
             Assert.assertEquals(redisClient.del("setnxTest"), 1);
-            
-            final Map<String, Boolean> values = redisClient.setByNX(MapBuilder.<String, Object>builder().put("setnxTest-0", "setByNX-0").put("setnxTest-1", "setByNX-1").build());
+
+            final Map<String, Boolean> values = redisClient
+                    .setByNX(MapBuilder.<String, Object> builder().put("setnxTest-0", "setByNX-0").put("setnxTest-1", "setByNX-1").build());
             Assert.assertEquals(values.size(), 2);
             Assert.assertEquals(values.get("setnxTest-0"), true);
             Assert.assertEquals(values.get("setnxTest-1"), true);
-            
-            final Map<String, Boolean> values1 = redisClient.setByNX(MapBuilder.<String, Object>builder().put("setnxTest-1", "setByNX-1").put("setnxTest-2", "setByNX-2").build());
+
+            final Map<String, Boolean> values1 = redisClient
+                    .setByNX(MapBuilder.<String, Object> builder().put("setnxTest-1", "setByNX-1").put("setnxTest-2", "setByNX-2").build());
             Assert.assertEquals(values1.size(), 2);
             Assert.assertEquals(values1.get("setnxTest-1"), false);
             Assert.assertEquals(values1.get("setnxTest-2"), true);
@@ -301,11 +305,11 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void setexTest() {
         try {
@@ -315,26 +319,26 @@ public class KeyTest extends RedisClientInitialize {
             } catch (final InterruptedException e) {
                 // ignore
             }
-            
+
             Assert.assertEquals(redisClient.exists("setexTest"), false);
-            
+
             Assert.assertEquals(redisClient.setByEX("setexTest", Lists.newArrayList("1"), 2), true);
             try {
                 Thread.sleep(3000);
             } catch (final InterruptedException e) {
                 // ignore
             }
-            
+
             Assert.assertEquals(redisClient.exists("setexTest"), false);
         } catch (final Throwable e) {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
     @Test
     public void strLenTest() {
         try {
@@ -345,9 +349,9 @@ public class KeyTest extends RedisClientInitialize {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
         }
     }
-    
+
 }

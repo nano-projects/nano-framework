@@ -375,6 +375,57 @@ public interface RedisClient {
     long strLen(String key);
 
     /**
+     * 将 key 中储存的数字值增一.
+     * 如果 key 不存在，那么 key 的值会先被初始化为 0 ，然后再执行 INCR 操作.
+     * 如果值包含错误的类型，或字符串类型的值不能表示为数字，那么返回一个错误.
+     * 本操作的值限制在 64 位(bit)有符号数字表示之内.
+     * @param key 自增Key
+     * @return 自增后的值
+     */
+    long incr(String key);
+
+    /**
+     * 将 key 所储存的值加上增量 increment .
+     * 如果 key 不存在，那么 key 的值会先被初始化为 0 ，然后再执行 INCRBY 命令.
+     * 如果值包含错误的类型，或字符串类型的值不能表示为数字，那么返回一个错误.
+     * 本操作的值限制在 64 位(bit)有符号数字表示之内.
+     * @param key 增量Key
+     * @param value 增量值
+     * @return 增量后的值
+     */
+    long incrBy(String key, long value);
+
+    /**
+     * 为 key 中所储存的值加上浮点数增量 increment .
+     * 如果 key 不存在，那么 INCRBYFLOAT 会先将 key 的值设为 0 ，再执行加法操作.
+     * @param key 增量key
+     * @param value 增量值
+     * @return 增量后的值
+     */
+    double incrByFloat(String key, double value);
+    
+    /**
+     * 将 key 中储存的数字值减一.
+     * 如果 key 不存在，那么 key 的值会先被初始化为 0 ，然后再执行 DECR 操作.
+     * 如果值包含错误的类型，或字符串类型的值不能表示为数字，那么返回一个错误.
+     * 本操作的值限制在 64 位(bit)有符号数字表示之内.
+     * @param key 自减Key
+     * @return 自减后的值
+     */
+    long decr(String key);
+    
+    /**
+     * 将 key 所储存的值减去减量 decrement .
+     * 如果 key 不存在，那么 key 的值会先被初始化为 0 ，然后再执行 DECRBY 操作.
+     * 如果值包含错误的类型，或字符串类型的值不能表示为数字，那么返回一个错误.
+     * 本操作的值限制在 64 位(bit)有符号数字表示之内.
+     * @param key 自减Key
+     * @param value 自减值
+     * @return 自减后的值
+     */
+    long decrBy(String key, long value);
+
+    /**
      * 删除哈希表 key 中的一个或多个指定域，不存在的域将被忽略。
      * 
      * @param key 哈希表Key

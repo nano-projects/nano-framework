@@ -16,34 +16,28 @@
 package org.nanoframework.orm.jedis.sharded;
 
 import java.io.IOException;
-import java.util.Properties;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.nanoframework.commons.loader.LoaderException;
-import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
-import org.nanoframework.orm.jedis.RedisClientPool;
-import org.nanoframework.orm.jedis.cluster.ListTest;
+import org.nanoframework.orm.jedis.cluster.HashTests;
 
 /**
  *
  * @author yanghe
  * @since 0.0.1
  */
-public class ShardedListTest extends ListTest {
-    
-    @BeforeClass
-    public static void before() throws LoaderException, IOException {
+public class ShardedHashTests extends HashTests {
+
+    @Before
+    public void before() throws LoaderException, IOException {
         if (redisClient == null) {
             try {
-                Properties prop = PropertiesLoader.load("/redis-test.properties");
-                RedisClientPool.POOL.initRedisConfig(prop).createJedis();
-                RedisClientPool.POOL.bindGlobal();
                 redisClient = GlobalRedisClient.get("sharded");
             } catch (final Throwable e) {
                 // ignore
             }
         }
     }
-    
+
 }

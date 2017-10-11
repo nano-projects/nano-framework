@@ -13,29 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.orm.jedis;
+package org.nanoframework.orm.jedis.sharded;
 
 import java.io.IOException;
 
 import org.junit.Before;
 import org.nanoframework.commons.loader.LoaderException;
+import org.nanoframework.orm.jedis.GlobalRedisClient;
+import org.nanoframework.orm.jedis.cluster.ListTests;
 
 /**
  *
  * @author yanghe
- * @since 1.3.16
+ * @since 0.0.1
  */
-public class RedisClientInitialize {
-    protected RedisClient redisClient;
+public class ShardedListTests extends ListTests {
 
     @Before
     public void before() throws LoaderException, IOException {
         if (redisClient == null) {
             try {
-                redisClient = GlobalRedisClient.get("cluster");
+                redisClient = GlobalRedisClient.get("sharded");
             } catch (final Throwable e) {
                 // ignore
             }
         }
     }
+
 }

@@ -402,6 +402,101 @@ public class RedisClientImpl extends AbstractRedisClient {
     }
 
     @Override
+    public long incr(final String key) {
+        Assert.hasText(key);
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Long val = jedis.incr(key);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
+    public long incrBy(final String key, final long value) {
+        Assert.hasText(key);
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Long val = jedis.incrBy(key, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
+    public double incrByFloat(final String key, final double value) {
+        Assert.hasText(key);
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Double val = jedis.incrByFloat(key, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.doubleValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
+    public long decr(final String key) {
+        Assert.hasText(key);
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Long val = jedis.decr(key);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
+    public long decrBy(final String key, final long value) {
+        Assert.hasText(key);
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Long val = jedis.decrBy(key, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
     public long hdel(final String key, final String... fields) {
         Assert.hasText(key);
         Assert.notEmpty(fields);

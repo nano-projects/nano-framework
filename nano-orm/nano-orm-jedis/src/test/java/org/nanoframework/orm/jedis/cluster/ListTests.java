@@ -36,8 +36,8 @@ import com.google.common.collect.Lists;
  * @author yanghe
  * @since 0.0.1
  */
-public class ListTest extends RedisClientInitialize {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListTest.class);
+public class ListTests extends RedisClientInitialize {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ListTests.class);
     
     @Test
     public void listTest() {

@@ -27,8 +27,8 @@ import org.nanoframework.orm.jedis.RedisClientInitialize;
  * @author yanghe
  * @since 0.0.1
  */
-public class SortedSetTest extends RedisClientInitialize {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SortedSetTest.class);
+public class SortedSetTests extends RedisClientInitialize {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SortedSetTests.class);
     
     @Test
     public void sortedTest() {

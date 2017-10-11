@@ -33,8 +33,8 @@ import com.alibaba.fastjson.TypeReference;
  * @author yanghe
  * @since 0.0.1
  */
-public class HashTest extends RedisClientInitialize {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HashTest.class);
+public class HashTests extends RedisClientInitialize {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HashTests.class);
     
     @Test
     public void hdelTest() {

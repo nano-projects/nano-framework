@@ -260,6 +260,81 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
     }
 
     @Override
+    public long incr(final String key) {
+        Assert.hasText(key);
+        try {
+            final Long val = cluster.incr(key);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public long incrBy(final String key, final long value) {
+        Assert.hasText(key);
+        try {
+            final Long val = cluster.incrBy(key, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public double incrByFloat(final String key, final double value) {
+        Assert.hasText(key);
+        try {
+            final Double val = cluster.incrByFloat(key, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.doubleValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public long decr(final String key) {
+        Assert.hasText(key);
+        try {
+            final Long val = cluster.decr(key);
+            if (val == null) {
+                return 0;
+            }
+            
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public long decrBy(final String key, final long value) {
+        Assert.hasText(key);
+        try {
+            final Long val = cluster.decrBy(key, value);
+            if (val == null) {
+                return 0;
+            }
+            
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public long hdel(final String key, final String... fields) {
         Assert.hasText(key);
         Assert.notEmpty(fields);

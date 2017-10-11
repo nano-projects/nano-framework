@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,45 +19,29 @@ import java.io.IOException;
 import java.util.Properties;
 
 import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
-import org.nanoframework.orm.jedis.GlobalRedisClient;
 import org.nanoframework.orm.jedis.RedisClientPool;
-import org.nanoframework.orm.jedis.cluster.KeyTest;
+
+import junit.framework.TestSuite;
 
 /**
  *
  * @author yanghe
- * @since 0.0.1
+ * @since 1.4.10
  */
-public class ShardedKeyTest extends KeyTest {
+@RunWith(Suite.class)
+@SuiteClasses({ ShardedHashTests.class, ShardedInfoTests.class, ShardedKeyTests.class, ShardedListTests.class, ShardedSortedSetTests.class })
+public class RedisTestSuite extends TestSuite {
 
     @BeforeClass
     public static void before() throws LoaderException, IOException {
-        if (redisClient == null) {
-            try {
-                Properties prop = PropertiesLoader.load("/redis-test.properties");
-                RedisClientPool.POOL.initRedisConfig(prop).createJedis();
-                RedisClientPool.POOL.bindGlobal();
-                redisClient = GlobalRedisClient.get("sharded");
-            } catch (final Throwable e) {
-                // ignore
-            }
-        }
+        final Properties prop = PropertiesLoader.load("/redis-test.properties");
+        RedisClientPool.POOL.initRedisConfig(prop).createJedis();
+        RedisClientPool.POOL.bindGlobal();
     }
-    
-    @Test
-    @Override
-    public void keysTest() {
-        try {
-            redisClient.keys("*");
-        } catch (final Throwable e) {
-            if (e instanceof AssertionError) {
-                throw e;
-            }
-            
-            LOGGER.error(e.getMessage());
-        }
-    }
+
 }
