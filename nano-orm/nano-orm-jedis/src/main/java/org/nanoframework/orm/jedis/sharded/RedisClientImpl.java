@@ -707,7 +707,7 @@ public class RedisClientImpl extends AbstractRedisClient {
     }
 
     @Override
-    public ScanResult<Entry<String, String>> hscan(String key, String cursor, ScanParams params) {
+    public ScanResult<Entry<String, String>> hscan(final String key, final String cursor, final ScanParams params) {
         Assert.hasText(key);
         Assert.hasText(cursor);
         Assert.notNull(params);
@@ -716,6 +716,48 @@ public class RedisClientImpl extends AbstractRedisClient {
         try {
             jedis = POOL.getJedis(config.getRedisType());
             return jedis.hscan(key, cursor, params);
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
+    public long hincrBy(final String key, final String field, final long value) {
+        Assert.hasText(key);
+        Assert.hasText(field);
+
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Long val = jedis.hincrBy(key, field, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+
+    @Override
+    public double hincrByFloat(final String key, final String field, final double value) {
+        Assert.hasText(key);
+        Assert.hasText(field);
+
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final Double val = jedis.hincrByFloat(key, field, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.doubleValue();
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         } finally {

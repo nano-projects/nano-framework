@@ -312,7 +312,7 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
             if (val == null) {
                 return 0;
             }
-            
+
             return val.longValue();
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
@@ -327,7 +327,7 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
             if (val == null) {
                 return 0;
             }
-            
+
             return val.longValue();
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
@@ -489,6 +489,38 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
         Assert.notNull(params);
         try {
             return cluster.hscan(key, cursor, params);
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public long hincrBy(final String key, final String field, final long value) {
+        Assert.hasText(key);
+        Assert.hasText(field);
+        try {
+            final Long val = cluster.hincrBy(key, field, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.longValue();
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public double hincrByFloat(final String key, final String field, final double value) {
+        Assert.hasText(key);
+        Assert.hasText(field);
+        try {
+            final Double val = cluster.hincrByFloat(key, field, value);
+            if (val == null) {
+                return 0;
+            }
+
+            return val.doubleValue();
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         }

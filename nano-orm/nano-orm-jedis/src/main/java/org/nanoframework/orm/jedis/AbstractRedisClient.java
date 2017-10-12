@@ -366,12 +366,12 @@ public abstract class AbstractRedisClient implements RedisClient {
     }
 
     @Override
-    public <T> ScanResult<Entry<String, T>> hscan(String key, long cursor, ScanParams params, TypeReference<T> type) {
+    public <T> ScanResult<Entry<String, T>> hscan(final String key, long cursor, final ScanParams params, final TypeReference<T> type) {
         return hscan(key, String.valueOf(cursor), new ScanParams(), type);
     }
 
     @Override
-    public <T> ScanResult<Entry<String, T>> hscan(String key, String cursor, ScanParams params, TypeReference<T> type) {
+    public <T> ScanResult<Entry<String, T>> hscan(final String key, final String cursor, final ScanParams params, final TypeReference<T> type) {
         final ScanResult<Entry<String, String>> result = hscan(key, cursor, params);
         final List<Entry<String, String>> entrys = result.getResult();
         if (CollectionUtils.isEmpty(entrys)) {
@@ -381,6 +381,11 @@ public abstract class AbstractRedisClient implements RedisClient {
         final List<Entry<String, T>> newEntrys = Lists.newArrayList();
         entrys.forEach(entry -> newEntrys.add(new AbstractMap.SimpleEntry<String, T>(entry.getKey(), JSON.parseObject(entry.getValue(), type))));
         return new ScanResult<>(result.getStringCursor(), newEntrys);
+    }
+
+    @Override
+    public long hincr(final String key, String field) {
+        return hincrBy(key, field, 1);
     }
 
     @Override

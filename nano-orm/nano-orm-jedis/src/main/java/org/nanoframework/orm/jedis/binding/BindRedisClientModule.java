@@ -24,7 +24,12 @@ import javax.servlet.ServletConfig;
 import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.spi.Order;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
+import org.nanoframework.orm.jedis.HashRedisClient;
+import org.nanoframework.orm.jedis.KeyValueRedisClient;
+import org.nanoframework.orm.jedis.ListRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
+import org.nanoframework.orm.jedis.SetRedisClient;
+import org.nanoframework.orm.jedis.SortedSetRedisClient;
 import org.nanoframework.orm.jedis.lock.RedisLocker;
 import org.nanoframework.orm.jedis.lock.impl.RedisLockerImpl;
 
@@ -46,6 +51,13 @@ public class BindRedisClientModule implements Module {
         GlobalRedisClient.keys().forEach(redisName -> {
             final RedisClient client = GlobalRedisClient.get(redisName);
             binder.bind(RedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName)).toInstance(client);
+            binder.bind(KeyValueRedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName)).toInstance(client);
+            binder.bind(HashRedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName)).toInstance(client);
+            binder.bind(ListRedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName)).toInstance(client);
+            binder.bind(SetRedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName)).toInstance(client);
+            binder.bind(SortedSetRedisClient.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName)).toInstance(client);
+
+            binder.bind(RedisLocker.class).annotatedWith(named(REDIS_NAMED_PRIFIX + redisName)).toInstance(new RedisLockerImpl(client));
             binder.bind(RedisLocker.class).annotatedWith(named(REDIS_LOCK_NAMED_PREFIX + redisName)).toInstance(new RedisLockerImpl(client));
         });
     }
