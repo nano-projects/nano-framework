@@ -20,6 +20,9 @@ import java.util.Map;
 
 import com.alibaba.fastjson.TypeReference;
 
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
+
 /**
  * Key Value RedisClient.
  * @author yanghe
@@ -297,4 +300,38 @@ public interface KeyValueRedisClient {
      * @return 自减后的值
      */
     long decrBy(String key, long value);
+
+    /**
+     * SCAN 命令是一个基于游标的迭代器（cursor based iterator）： SCAN 命令每次被调用之后， 都会向用户返回一个新的游标,
+     * 用户在下次迭代时需要使用这个新游标作为 SCAN 命令的游标参数， 以此来延续之前的迭代过程.
+     * 当 SCAN 命令的游标参数被设置为 0 时， 服务器将开始一次新的迭代， 而当服务器向用户返回值为 0 的游标时， 表示迭代已结束.
+     * @param cursor 游标
+     * @return Scan结果集
+     */
+    ScanResult<String> scan(final long cursor);
+
+    /**
+     * @see #scan(long)
+     * @param cursor 游标
+     * @param type TypeReference类型
+     * @return Scan结果集
+     */
+    <T> ScanResult<T> scan(final long cursor, TypeReference<T> type);
+
+    /**
+     * @see #scan(long)
+     * @param cursor 游标
+     * @param params 请求参数
+     * @return Scan结果集
+     */
+    ScanResult<String> scan(final long cursor, final ScanParams params);
+
+    /**
+     * @see #scan(long)
+     * @param cursor 游标
+     * @param params 请求参数
+     * @param type TypeReference类型
+     * @return Scan结果集
+     */
+    <T> ScanResult<T> scan(final long cursor, final ScanParams params, TypeReference<T> type);
 }

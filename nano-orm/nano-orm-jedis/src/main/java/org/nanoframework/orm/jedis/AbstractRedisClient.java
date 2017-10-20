@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +58,17 @@ public abstract class AbstractRedisClient implements RedisClient {
 
     public static final String INF0 = "-inf";
     public static final String INF1 = "+inf";
+
+    /**
+     * 起始游标.
+     * @since 1.4.10
+     */
+    public static final String START_CURSOR = "0";
+    /**
+     * 默认Scan参数.
+     * @since 1.4.10
+     */
+    public static final ScanParams DEFAULT_SCAN_PARAMS = new ScanParams();
 
     protected RedisConfig config;
 
@@ -264,6 +276,30 @@ public abstract class AbstractRedisClient implements RedisClient {
     @Override
     public boolean setByEX(final String key, final Object value, final int seconds) {
         return setByEX(key, toJSONString(value), seconds);
+    }
+
+    @Override
+    public ScanResult<String> scan(final long cursor) {
+        return scan(cursor, DEFAULT_SCAN_PARAMS);
+    }
+
+    @Override
+    public <T> ScanResult<T> scan(final long cursor, final TypeReference<T> type) {
+        return scan(cursor, DEFAULT_SCAN_PARAMS, type);
+    }
+
+    @Override
+    public <T> ScanResult<T> scan(final long cursor, final ScanParams params, final TypeReference<T> type) {
+        final ScanResult<String> res = scan(cursor, params);
+        final String nextCursor = res.getStringCursor();
+        final long next = Long.parseLong(nextCursor);
+        if (next == 0) {
+            return new ScanResult<T>(START_CURSOR, Collections.emptyList());
+        }
+
+        final List<String> values = res.getResult();
+        final List<T> newValues = values.stream().map(value -> JSON.parseObject(value, type)).collect(Collectors.toList());
+        return new ScanResult<T>(nextCursor, newValues);
     }
 
     @Override

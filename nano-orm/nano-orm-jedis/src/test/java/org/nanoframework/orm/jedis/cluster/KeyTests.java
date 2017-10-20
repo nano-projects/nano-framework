@@ -28,6 +28,10 @@ import org.nanoframework.orm.jedis.RedisClientInitialize;
 
 import com.alibaba.fastjson.TypeReference;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 /**
  *
@@ -352,6 +356,32 @@ public class KeyTests extends RedisClientInitialize {
 
             LOGGER.error(e.getMessage());
         }
+    }
+
+    @Test
+    public void scanTest() {
+        final String prefix = "scan.test-";
+        final Map<String, Object> map = Maps.newHashMap();
+        for (int idx = 0; idx < 100; idx++) {
+            map.put(prefix + idx, idx);
+        }
+
+        redisClient.set(map);
+
+        final ScanParams params = new ScanParams().match(prefix + '*');
+        long cursor = -1;
+        while (cursor == -1 || cursor > 0) {
+            final ScanResult<String> res = redisClient.scan(cursor == -1 ? 0 : cursor, params);
+            final String nextCursor = res.getStringCursor();
+            cursor = Long.parseLong(nextCursor);
+            final List<String> keys = res.getResult();
+            LOGGER.debug("{}", keys);
+            if (cursor > 0) {
+                Assert.assertTrue(keys.size() > 0);
+            }
+        }
+
+        redisClient.del(map.keySet().toArray(new String[map.size()]));
     }
 
 }

@@ -335,6 +335,15 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
     }
 
     @Override
+    public ScanResult<String> scan(final long cursor, final ScanParams params) {
+        try {
+            return cluster.scan(String.valueOf(cursor), params);
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
+
+    @Override
     public long hdel(final String key, final String... fields) {
         Assert.hasText(key);
         Assert.notEmpty(fields);

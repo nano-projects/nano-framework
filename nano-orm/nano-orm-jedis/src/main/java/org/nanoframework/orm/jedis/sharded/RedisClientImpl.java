@@ -497,6 +497,33 @@ public class RedisClientImpl extends AbstractRedisClient {
     }
 
     @Override
+    public ScanResult<String> scan(final long cursor, final ScanParams params) {
+        ShardedJedis shardedJedis = null;
+        try {
+            shardedJedis = POOL.getJedis(config.getRedisType());
+            final Collection<Jedis> allJedis = shardedJedis.getAllShards();
+            if (allJedis.size() == 1) {
+                final Jedis jedis = allJedis.iterator().next();
+                if (params == null) {
+                    return jedis.scan(String.valueOf(cursor), DEFAULT_SCAN_PARAMS);
+                } else {
+                    return jedis.scan(String.valueOf(cursor), params);
+                }
+            } else {
+                throw new RedisClientException("不支持对多节点Sharded模式进行Scan操作");
+            }
+        } catch (final Throwable e) {
+            if (e instanceof RedisClientException) {
+                throw e;
+            }
+
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(shardedJedis);
+        }
+    }
+
+    @Override
     public long hdel(final String key, final String... fields) {
         Assert.hasText(key);
         Assert.notEmpty(fields);
