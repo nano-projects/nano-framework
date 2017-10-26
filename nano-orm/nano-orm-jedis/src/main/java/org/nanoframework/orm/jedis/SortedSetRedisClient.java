@@ -17,8 +17,12 @@ package org.nanoframework.orm.jedis;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import com.alibaba.fastjson.TypeReference;
+
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 /**
  *
@@ -205,4 +209,39 @@ public interface SortedSetRedisClient {
     double zscore(String key, String member);
 
     <T> double zscore(String key, T member);
+
+    /**
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @return 结果集
+     */
+    ScanResult<Entry<String, Double>> zscan(String key, long cursor);
+
+    /**
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param type FastJSON TypeReference
+     * @return 结果集
+     */
+    <T> ScanResult<Entry<T, Double>> zscan(String key, long cursor, TypeReference<T> type);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param params 参数
+     * @return 结果集
+     */
+    ScanResult<Entry<String, Double>> zscan(String key, long cursor, ScanParams params);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param params 参数
+     * @param type FastJSON TypeReference
+     * @return 结果集
+     */
+    <T> ScanResult<Entry<T, Double>> zscan(String key, long cursor, ScanParams params, TypeReference<T> type);
+
 }

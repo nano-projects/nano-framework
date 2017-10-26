@@ -17,6 +17,7 @@ package org.nanoframework.orm.jedis.sharded;
 
 import static org.nanoframework.orm.jedis.RedisClientPool.POOL;
 
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -2221,4 +2222,27 @@ public class RedisClientImpl extends AbstractRedisClient {
         }
     }
 
+    @Override
+    public ScanResult<Entry<String, Double>> zscan(final String key, final long cursor, final ScanParams params) {
+        Assert.hasText(key);
+        Assert.notNull(params);
+
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            final ScanResult<Tuple> res = jedis.zscan(key, String.valueOf(cursor), params);
+            final List<Tuple> tuples = res.getResult();
+            if (CollectionUtils.isEmpty(tuples)) {
+                return new ScanResult<>(res.getStringCursor(), Collections.emptyList());
+            }
+
+            final List<Entry<String, Double>> newTuples = Lists.newArrayList();
+            tuples.forEach(tuple -> newTuples.add(new AbstractMap.SimpleEntry<>(tuple.getElement(), tuple.getScore())));
+            return new ScanResult<>(res.getStringCursor(), newTuples);
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
 }

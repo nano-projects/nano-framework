@@ -17,6 +17,7 @@ package org.nanoframework.orm.jedis.cluster;
 
 import static org.nanoframework.orm.jedis.RedisClientPool.POOL;
 
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -1485,7 +1486,7 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
     }
 
     @Override
-    public double zscore(String key, String member) {
+    public double zscore(final String key, final String member) {
         Assert.hasText(key);
         Assert.hasText(member);
         try {
@@ -1495,4 +1496,23 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
         }
     }
 
+    @Override
+    public ScanResult<Entry<String, Double>> zscan(final String key, final long cursor, final ScanParams params) {
+        Assert.hasText(key);
+        Assert.notNull(params);
+
+        try {
+            final ScanResult<Tuple> res = cluster.zscan(key, String.valueOf(cursor), params);
+            final List<Tuple> tuples = res.getResult();
+            if (CollectionUtils.isEmpty(tuples)) {
+                return new ScanResult<>(res.getStringCursor(), Collections.emptyList());
+            }
+
+            final List<Entry<String, Double>> newTuples = Lists.newArrayList();
+            tuples.forEach(tuple -> newTuples.add(new AbstractMap.SimpleEntry<>(tuple.getElement(), tuple.getScore())));
+            return new ScanResult<>(res.getStringCursor(), newTuples);
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
+    }
 }

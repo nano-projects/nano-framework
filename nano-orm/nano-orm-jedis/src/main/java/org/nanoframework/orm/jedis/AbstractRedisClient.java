@@ -294,12 +294,12 @@ public abstract class AbstractRedisClient implements RedisClient {
         final String nextCursor = res.getStringCursor();
         final long next = Long.parseLong(nextCursor);
         if (next == 0) {
-            return new ScanResult<T>(START_CURSOR, Collections.emptyList());
+            return new ScanResult<>(START_CURSOR, Collections.emptyList());
         }
 
         final List<String> values = res.getResult();
         final List<T> newValues = values.stream().map(value -> JSON.parseObject(value, type)).collect(Collectors.toList());
-        return new ScanResult<T>(nextCursor, newValues);
+        return new ScanResult<>(nextCursor, newValues);
     }
 
     @Override
@@ -411,11 +411,11 @@ public abstract class AbstractRedisClient implements RedisClient {
         final ScanResult<Entry<String, String>> result = hscan(key, cursor, params);
         final List<Entry<String, String>> entrys = result.getResult();
         if (CollectionUtils.isEmpty(entrys)) {
-            return new ScanResult<>(result.getStringCursor(), Lists.newArrayList());
+            return new ScanResult<>(result.getStringCursor(), Collections.emptyList());
         }
 
         final List<Entry<String, T>> newEntrys = Lists.newArrayList();
-        entrys.forEach(entry -> newEntrys.add(new AbstractMap.SimpleEntry<String, T>(entry.getKey(), JSON.parseObject(entry.getValue(), type))));
+        entrys.forEach(entry -> newEntrys.add(new AbstractMap.SimpleEntry<>(entry.getKey(), JSON.parseObject(entry.getValue(), type))));
         return new ScanResult<>(result.getStringCursor(), newEntrys);
     }
 
@@ -1173,4 +1173,26 @@ public abstract class AbstractRedisClient implements RedisClient {
         return zscore(key, toJSONString(member));
     }
 
+    @Override
+    public ScanResult<Entry<String, Double>> zscan(final String key, final long cursor) {
+        return zscan(key, cursor, DEFAULT_SCAN_PARAMS);
+    }
+
+    @Override
+    public <T> ScanResult<Entry<T, Double>> zscan(final String key, final long cursor, final TypeReference<T> type) {
+        return zscan(key, cursor, DEFAULT_SCAN_PARAMS, type);
+    }
+
+    @Override
+    public <T> ScanResult<Entry<T, Double>> zscan(final String key, final long cursor, final ScanParams params, final TypeReference<T> type) {
+        final ScanResult<Entry<String, Double>> result = zscan(key, cursor, params);
+        final List<Entry<String, Double>> entrys = result.getResult();
+        if (CollectionUtils.isEmpty(entrys)) {
+            return new ScanResult<>(result.getStringCursor(), Collections.emptyList());
+        }
+
+        final List<Entry<T, Double>> newEntrys = Lists.newArrayList();
+        entrys.forEach(entry -> newEntrys.add(new AbstractMap.SimpleEntry<>(JSON.parseObject(entry.getKey(), type), entry.getValue())));
+        return new ScanResult<>(result.getStringCursor(), newEntrys);
+    }
 }
