@@ -15,12 +15,21 @@
  */
 package org.nanoframework.orm.jedis.cluster;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.orm.jedis.RedisClientInitialize;
+
+import com.google.common.collect.Maps;
+
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 /**
  *
@@ -29,27 +38,50 @@ import org.nanoframework.orm.jedis.RedisClientInitialize;
  */
 public class SortedSetTests extends RedisClientInitialize {
     private static final Logger LOGGER = LoggerFactory.getLogger(SortedSetTests.class);
-    
+
     @Test
     public void sortedTest() {
         try {
-            Assert.assertEquals(redisClient.zadd("sortedTest", MapBuilder.<Object, Double>builder()
-                    .put("1", 1D)
-                    .put("2", 2D)
-                    .put("3", 3D)
-                    .build()), 3);
-            
+            Assert.assertEquals(redisClient.zadd("sortedTest", MapBuilder.<Object, Double> builder().put("1", 1D).put("2", 2D).put("3", 3D).build()),
+                    3);
+
             Assert.assertEquals(redisClient.zcard("sortedTest"), 3);
-            
+
             Assert.assertEquals(redisClient.zcount("sortedTest", 2, 3), 2);
-            
+
             Assert.assertEquals(redisClient.del("sortedTest"), 1);
         } catch (final Throwable e) {
             if (e instanceof AssertionError) {
                 throw e;
             }
-            
+
             LOGGER.error(e.getMessage());
+        }
+    }
+
+    @Test
+    public void zscanTest() {
+        final String key = "zscan.test";
+        final String prefix = "zscan.test-";
+        try {
+            final Map<Object, Double> map = Maps.newHashMap();
+            for (int idx = 0; idx < 1000; idx++) {
+                map.put(prefix + idx, Double.valueOf(idx));
+            }
+
+            redisClient.zadd(key, map);
+            final AtomicLong cursor = new AtomicLong(-1);
+            final ScanParams params = new ScanParams().count(10);
+            while (cursor.get() == -1 || cursor.get() > 0) {
+                if (cursor.get() == -1) {
+                    cursor.set(0);
+                }
+
+                final ScanResult<Entry<String, Double>> res = redisClient.zscan(key, cursor.get(), params);
+                cursor.set(Long.valueOf(res.getStringCursor()));
+            }
+        } finally {
+            redisClient.del(key);
         }
     }
 }

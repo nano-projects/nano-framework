@@ -735,15 +735,14 @@ public class RedisClientImpl extends AbstractRedisClient {
     }
 
     @Override
-    public ScanResult<Entry<String, String>> hscan(final String key, final String cursor, final ScanParams params) {
+    public ScanResult<Entry<String, String>> hscan(final String key, final long cursor, final ScanParams params) {
         Assert.hasText(key);
-        Assert.hasText(cursor);
         Assert.notNull(params);
 
         ShardedJedis jedis = null;
         try {
             jedis = POOL.getJedis(config.getRedisType());
-            return jedis.hscan(key, cursor, params);
+            return jedis.hscan(key, String.valueOf(cursor), params);
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         } finally {
@@ -1713,6 +1712,20 @@ public class RedisClientImpl extends AbstractRedisClient {
             }
 
             return 0;
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        } finally {
+            POOL.close(jedis);
+        }
+    }
+    
+    @Override
+    public ScanResult<String> sscan(final String key, final long cursor, final ScanParams params) {
+        Assert.hasText(key);
+        ShardedJedis jedis = null;
+        try {
+            jedis = POOL.getJedis(config.getRedisType());
+            return jedis.sscan(key, String.valueOf(cursor), params);
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         } finally {

@@ -378,36 +378,16 @@ public abstract class AbstractRedisClient implements RedisClient {
 
     @Override
     public ScanResult<Entry<String, String>> hscan(String key, long cursor) {
-        return hscan(key, String.valueOf(cursor));
+        return hscan(key, cursor);
     }
 
     @Override
     public <T> ScanResult<Entry<String, T>> hscan(String key, long cursor, TypeReference<T> type) {
-        return hscan(key, String.valueOf(cursor), type);
-    }
-
-    @Override
-    public ScanResult<Entry<String, String>> hscan(final String key, final String cursor) {
-        return hscan(key, cursor, new ScanParams());
-    }
-
-    @Override
-    public ScanResult<Entry<String, String>> hscan(String key, long cursor, ScanParams params) {
-        return hscan(key, String.valueOf(cursor), params);
-    }
-
-    @Override
-    public <T> ScanResult<Entry<String, T>> hscan(final String key, final String cursor, final TypeReference<T> type) {
-        return hscan(key, cursor, new ScanParams(), type);
+        return hscan(key, cursor, type);
     }
 
     @Override
     public <T> ScanResult<Entry<String, T>> hscan(final String key, long cursor, final ScanParams params, final TypeReference<T> type) {
-        return hscan(key, String.valueOf(cursor), new ScanParams(), type);
-    }
-
-    @Override
-    public <T> ScanResult<Entry<String, T>> hscan(final String key, final String cursor, final ScanParams params, final TypeReference<T> type) {
         final ScanResult<Entry<String, String>> result = hscan(key, cursor, params);
         final List<Entry<String, String>> entrys = result.getResult();
         if (CollectionUtils.isEmpty(entrys)) {
@@ -897,6 +877,29 @@ public abstract class AbstractRedisClient implements RedisClient {
         }
 
         return Collections.emptySet();
+    }
+    
+    @Override
+    public ScanResult<String> sscan(final String key, final long cursor) {
+        return sscan(key, cursor, DEFAULT_SCAN_PARAMS);
+    }
+
+    @Override
+    public <T> ScanResult<T> sscan(final String key, final long cursor, final TypeReference<T> type) {
+        return sscan(key, cursor, DEFAULT_SCAN_PARAMS, type);
+    }
+
+    @Override
+    public <T> ScanResult<T> sscan(final String key, final long cursor, final ScanParams params, final TypeReference<T> type) {
+        final ScanResult<String> result = sscan(key, cursor, params);
+        final List<String> values = result.getResult();
+        if (CollectionUtils.isEmpty(values)) {
+            return new ScanResult<>(result.getStringCursor(), Collections.emptyList());
+        }
+
+        final List<T> newValues = Lists.newArrayList();
+        values.forEach(value -> newValues.add(JSON.parseObject(value, type)));
+        return new ScanResult<>(result.getStringCursor(), newValues);
     }
 
     @Override

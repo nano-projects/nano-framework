@@ -493,12 +493,11 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
     }
 
     @Override
-    public ScanResult<Entry<String, String>> hscan(final String key, final String cursor, final ScanParams params) {
+    public ScanResult<Entry<String, String>> hscan(final String key, final long cursor, final ScanParams params) {
         Assert.hasText(key);
-        Assert.hasText(cursor);
         Assert.notNull(params);
         try {
-            return cluster.hscan(key, cursor, params);
+            return cluster.hscan(key, String.valueOf(cursor), params);
         } catch (final Throwable e) {
             throw new RedisClientException(e.getMessage(), e);
         }
@@ -1102,6 +1101,16 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
     @Override
     public long sunionstore(final String destination, final String... keys) {
         throw new UnsupportedAccessException("In RedisCluster mode, sunionstore operation is not supported");
+    }
+    
+    @Override
+    public ScanResult<String> sscan(final String key, final long cursor, final ScanParams params) {
+        Assert.hasText(key);
+        try {
+            return cluster.sscan(key, String.valueOf(cursor), params);
+        } catch (final Throwable e) {
+            throw new RedisClientException(e.getMessage(), e);
+        }
     }
 
     @Override

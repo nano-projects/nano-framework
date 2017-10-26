@@ -19,8 +19,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import com.alibaba.fastjson.TypeReference;
+
+import redis.clients.jedis.ScanParams;
+import redis.clients.jedis.ScanResult;
 
 /**
  * Set RedisClient
@@ -371,4 +375,37 @@ public interface SetRedisClient {
      */
     long sunionstore(String destination, String... keys);
 
+    /**
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @return 结果集
+     */
+    ScanResult<String> sscan(String key, long cursor);
+
+    /**
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param type FastJSON TypeReference
+     * @return 结果集
+     */
+    <T> ScanResult<T> sscan(String key, long cursor, TypeReference<T> type);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param params 参数
+     * @return 结果集
+     */
+    ScanResult<String> sscan(String key, long cursor, ScanParams params);
+
+    /**
+     * 
+     * @param key 哈希表Key
+     * @param cursor 迭代游标量
+     * @param params 参数
+     * @param type FastJSON TypeReference
+     * @return 结果集
+     */
+    <T> ScanResult<T> sscan(String key, long cursor, ScanParams params, TypeReference<T> type);
 }

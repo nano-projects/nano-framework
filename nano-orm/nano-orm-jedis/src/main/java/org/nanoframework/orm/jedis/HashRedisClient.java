@@ -228,23 +228,6 @@ public interface HashRedisClient {
      * 
      * @param key 哈希表Key
      * @param cursor 迭代游标量
-     * @return 结果集
-     */
-    ScanResult<Entry<String, String>> hscan(String key, String cursor);
-
-    /**
-     * 
-     * @param key 哈希表Key
-     * @param cursor 迭代游标量
-     * @param type FastJSON TypeReference
-     * @return 结果集
-     */
-    <T> ScanResult<Entry<String, T>> hscan(String key, String cursor, TypeReference<T> type);
-
-    /**
-     * 
-     * @param key 哈希表Key
-     * @param cursor 迭代游标量
      * @param params 参数
      * @return 结果集
      */
@@ -255,29 +238,10 @@ public interface HashRedisClient {
      * @param key 哈希表Key
      * @param cursor 迭代游标量
      * @param params 参数
-     * @return 结果集
-     */
-    ScanResult<Entry<String, String>> hscan(String key, String cursor, ScanParams params);
-
-    /**
-     * 
-     * @param key 哈希表Key
-     * @param cursor 迭代游标量
-     * @param params 参数
      * @param type FastJSON TypeReference
      * @return 结果集
      */
     <T> ScanResult<Entry<String, T>> hscan(String key, long cursor, ScanParams params, TypeReference<T> type);
-
-    /**
-     * 
-     * @param key 哈希表Key
-     * @param cursor 迭代游标量
-     * @param params 参数
-     * @param type FastJSON TypeReference
-     * @return 结果集
-     */
-    <T> ScanResult<Entry<String, T>> hscan(String key, String cursor, ScanParams params, TypeReference<T> type);
 
     /**
      * 为哈希表 key 中的域 field 的值加上增加1.

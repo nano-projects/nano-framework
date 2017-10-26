@@ -34,7 +34,8 @@ import junit.framework.TestSuite;
  * @since 1.4.10
  */
 @RunWith(Suite.class)
-@SuiteClasses({ ShardedHashTests.class, ShardedInfoTests.class, ShardedKeyTests.class, ShardedListTests.class, ShardedSortedSetTests.class })
+@SuiteClasses({ ShardedHashTests.class, ShardedInfoTests.class, ShardedKeyTests.class, ShardedListTests.class, ShardedSortedSetTests.class,
+        ShardedSetTests.class })
 public class RedisTestSuite extends TestSuite {
 
     @BeforeClass
