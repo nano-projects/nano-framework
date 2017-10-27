@@ -378,12 +378,12 @@ public abstract class AbstractRedisClient implements RedisClient {
 
     @Override
     public ScanResult<Entry<String, String>> hscan(String key, long cursor) {
-        return hscan(key, cursor);
+        return hscan(key, cursor, DEFAULT_SCAN_PARAMS);
     }
 
     @Override
     public <T> ScanResult<Entry<String, T>> hscan(String key, long cursor, TypeReference<T> type) {
-        return hscan(key, cursor, type);
+        return hscan(key, cursor, DEFAULT_SCAN_PARAMS, type);
     }
 
     @Override
