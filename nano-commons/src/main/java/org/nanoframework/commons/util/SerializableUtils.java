@@ -27,7 +27,12 @@ import org.nanoframework.commons.exception.SerializationException;
  * @since 1.1
  */
 public class SerializableUtils {
-    public static <T> String encode(T object) {
+
+    public static <T> String encodeString(T object) {
+        return ZipUtils.gzip(encode(object));
+    }
+
+    public static <T> byte[] encode(T object) {
         try {
             if (object == null) {
                 return null;
@@ -36,20 +41,24 @@ public class SerializableUtils {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(bos);
             oos.writeObject(object);
-            return ZipUtils.gzip(bos.toByteArray());
+            return bos.toByteArray();
         } catch (Exception e) {
             throw new SerializationException("序列化对象异常: " + e.getMessage(), e);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public static <T> T decode(String objectString) {
-        try {
-            if (StringUtils.isEmpty(objectString)) {
-                return null;
-            }
+    public static <T> T decode(String value) {
+        return decode(ZipUtils.gunzipToByte(value));
+    }
 
-            ByteArrayInputStream bis = new ByteArrayInputStream(ZipUtils.gunzipToByte(objectString));
+    @SuppressWarnings("unchecked")
+    public static <T> T decode(byte[] bytes) {
+        if (bytes == null) {
+            return null;
+        }
+
+        try {
+            ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
             ObjectInputStream ois = new ObjectInputStream(bis);
             return (T) ois.readObject();
         } catch (Exception e) {

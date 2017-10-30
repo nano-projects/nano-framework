@@ -38,19 +38,19 @@ public class Md5Test {
         if (!file.exists()) {
             file.createNewFile();
             file.deleteOnExit();
-            
+
             try (final OutputStream output = new FileOutputStream(file)) {
                 output.write(content.getBytes());
                 output.flush();
             }
         }
-        
+
         final String fileMd5 = MD5Utils.md5(file);
         Assert.assertEquals(encode, fileMd5);
-        
+
         final String md5 = MD5Utils.md5(content);
         Assert.assertEquals(encode, md5);
-        
+
         Assert.assertEquals(MD5Utils.check(content, encode), true);
     }
 }

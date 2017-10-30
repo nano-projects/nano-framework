@@ -88,7 +88,7 @@ public class ShiroClientHttpSession extends ShiroHttpSession {
     public void setAttribute(String s, Object o) {
         super.setAttribute(s, o);
         final String url = this.url + '/' + ATTRIBUTE;
-        final String attribute = SerializableUtils.encode(MapBuilder.<Object, Object> builder().put(s, o).build());
+        final String attribute = SerializableUtils.encodeString(MapBuilder.<Object, Object> builder().put(s, o).build());
         if(!syncSession(url, MapBuilder.<String, String> builder().put(ATTRIBUTE, attribute).build())) {
             LOGGER.warn("UnSync Session Attribute: {}", s);
         }

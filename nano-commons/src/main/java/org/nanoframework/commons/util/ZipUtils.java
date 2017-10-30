@@ -18,327 +18,111 @@ package org.nanoframework.commons.util;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.nanoframework.commons.support.logging.Logger;
-import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.exception.ZipException;
 
 /**
- * 
  * @author yanghe
  * @since 1.0
  */
-@SuppressWarnings("restriction")
-public class ZipUtils {
-
-    private static Logger LOG = LoggerFactory.getLogger(ZipUtils.class);
+public final class ZipUtils {
+    private static final int BUFFER_SIZE = 1024;
 
     private ZipUtils() {
+
     }
 
-    public static String gzip(String primStr) {
-        if (StringUtils.isEmpty(primStr))
-            return primStr;
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        GZIPOutputStream gzip = null;
-
-        try {
-            gzip = new GZIPOutputStream(out);
-            gzip.write(primStr.getBytes());
-
-        } catch (IOException e) {
-            LOG.error("对字符串使用GZIP压缩时异常：" + e.getMessage(), e);
-
-        } finally {
-            if (gzip != null) {
-                try {
-                    gzip.flush();
-                    gzip.close();
-                    gzip = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭GZIP流时异常：" + e.getMessage(), e);
-
-                }
-            }
+    public static String gzip(final String value) {
+        if (StringUtils.isBlank(value)) {
+            return value;
         }
 
-        return BASE64.getInstance().encode(out.toByteArray());
-
+        return gzip(value.getBytes(Charsets.UTF_8));
     }
 
-    public static String gzip(byte[] bytes) {
-        if (bytes == null || bytes.length == 0)
-            return "";
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        GZIPOutputStream gzip = null;
-
-        try {
-            gzip = new GZIPOutputStream(out);
-            gzip.write(bytes);
-
-        } catch (IOException e) {
-            LOG.error("对字符串使用GZIP压缩时异常：" + e.getMessage(), e);
-
-        } finally {
-            if (gzip != null) {
-                try {
-                    gzip.flush();
-                    gzip.close();
-                    gzip = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭GZIP流时异常：" + e.getMessage(), e);
-
-                }
-            }
-        }
-
-        return BASE64.getInstance().encode(out.toByteArray());
-    }
-
-    public static String gunzip(String compressedStr) {
-        if (StringUtils.isEmpty(compressedStr))
+    public static String gzip(final byte[] bytes) {
+        if (bytes == null || bytes.length == 0) {
             return StringUtils.EMPTY;
+        }
 
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayInputStream in = null;
-        GZIPInputStream ginzip = null;
-        byte[] compressed = null;
-        String decompressed = null;
+        try (final ByteArrayOutputStream out = new ByteArrayOutputStream(); final GZIPOutputStream gzip = new GZIPOutputStream(out)) {
+            gzip.write(bytes);
+            gzip.flush();
+            return new String(Base64.getEncoder().encode(out.toByteArray()), Charsets.UTF_8);
+        } catch (final IOException e) {
+            throw new ZipException(e.getMessage(), e);
+        }
+    }
 
-        try {
-            compressed = new sun.misc.BASE64Decoder().decodeBuffer(compressedStr);
-            in = new ByteArrayInputStream(compressed);
-            ginzip = new GZIPInputStream(in);
+    public static String gunzip(final String value) {
+        if (value == null) {
+            return value;
+        }
 
-            byte[] buffer = new byte[1024];
+        return new String(gunzipToByte(value), Charsets.UTF_8);
+    }
+
+    public static byte[] gunzipToByte(final String value) {
+        if (value == null) {
+            return null;
+        }
+
+        final byte[] compressed = Base64.getDecoder().decode(value);
+        try (final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                final GZIPInputStream ginzip = new GZIPInputStream(new ByteArrayInputStream(compressed))) {
+
+            final byte[] buffer = new byte[BUFFER_SIZE];
             int offset = -1;
             while ((offset = ginzip.read(buffer)) != -1) {
                 out.write(buffer, 0, offset);
             }
 
-            decompressed = out.toString();
-
-        } catch (IOException e) {
-            if (e.getMessage() == null || e.getMessage().indexOf("Not in GZIP format") > -1)
-                return compressedStr;
-
-            LOG.error("对字符串使用GZIP解压缩时异常：" + e.getMessage(), e);
-
-        } finally {
-            if (ginzip != null) {
-                try {
-                    ginzip.close();
-                    ginzip = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭GZIP流时异常：" + e.getMessage(), e);
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                    in = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭Input流时异常：" + e.getMessage(), e);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                    out = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭Output流时异常：" + e.getMessage(), e);
-
-                }
-            }
+            return out.toByteArray();
+        } catch (final IOException e) {
+            throw new ZipException(e.getMessage(), e);
         }
-
-        return decompressed;
-
     }
 
-    public static byte[] gunzipToByte(String compressedStr) {
-        if (compressedStr == null)
+    public static final String zip(final String value) {
+        if (value == null) {
             return null;
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ByteArrayInputStream in = null;
-        GZIPInputStream ginzip = null;
-        byte[] compressed = null;
-        byte[] decompressed = null;
-
-        try {
-            compressed = new sun.misc.BASE64Decoder().decodeBuffer(compressedStr);
-            in = new ByteArrayInputStream(compressed);
-            ginzip = new GZIPInputStream(in);
-
-            byte[] buffer = new byte[1024];
-            int offset = -1;
-            while ((offset = ginzip.read(buffer)) != -1) {
-                out.write(buffer, 0, offset);
-            }
-
-            decompressed = out.toByteArray();
-
-        } catch (IOException e) {
-            LOG.error("对字符串使用GZIP解压缩时异常：" + e.getMessage(), e);
-
-        } finally {
-            if (ginzip != null) {
-                try {
-                    ginzip.close();
-                    ginzip = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭GZIP流时异常：" + e.getMessage(), e);
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                    in = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭Input流时异常：" + e.getMessage(), e);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                    out = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭Output流时异常：" + e.getMessage(), e);
-
-                }
-            }
         }
 
-        return decompressed;
-
-    }
-
-    public static final String zip(String str) {
-        if (str == null)
-            return null;
-        byte[] compressed;
-        ByteArrayOutputStream out = null;
-        ZipOutputStream zout = null;
-        String compressedStr = null;
-
-        try {
-            out = new ByteArrayOutputStream();
-            zout = new ZipOutputStream(out);
+        try (final ByteArrayOutputStream out = new ByteArrayOutputStream(); final ZipOutputStream zout = new ZipOutputStream(out)) {
             zout.putNextEntry(new ZipEntry("0"));
-            zout.write(str.getBytes());
+            zout.write(value.getBytes());
             zout.closeEntry();
-            compressed = out.toByteArray();
-            compressedStr = BASE64.getInstance().encodeBuffer(compressed);
-
-        } catch (IOException e) {
-            LOG.error("对字符串使用ZIP压缩时异常：" + e.getMessage(), e);
-            compressed = null;
-
-        } finally {
-            if (zout != null) {
-                try {
-                    zout.flush();
-                    zout.close();
-                    zout = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭ZIP流时异常：" + e.getMessage(), e);
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                    out = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭Output流时异常：" + e.getMessage(), e);
-
-                }
-            }
+            return new String(Base64.getEncoder().encode(out.toByteArray()), Charsets.UTF_8);
+        } catch (final IOException e) {
+            throw new ZipException(e.getMessage(), e);
         }
-
-        return compressedStr;
-
     }
 
-    public static final String unzip(String compressedStr) {
-        if (compressedStr == null) {
+    public static final String unzip(final String value) {
+        if (value == null) {
             return null;
         }
 
-        ByteArrayOutputStream out = null;
-        ByteArrayInputStream in = null;
-        ZipInputStream zin = null;
-        String decompressed = null;
-
-        try {
-            byte[] compressed = new sun.misc.BASE64Decoder().decodeBuffer(compressedStr);
-            out = new ByteArrayOutputStream();
-            in = new ByteArrayInputStream(compressed);
-            zin = new ZipInputStream(in);
+        final byte[] compressed = Base64.getDecoder().decode(value);
+        try (final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                final ZipInputStream zin = new ZipInputStream(new ByteArrayInputStream(compressed))) {
             zin.getNextEntry();
-            byte[] buffer = new byte[1024];
+            final byte[] buffer = new byte[BUFFER_SIZE];
             int offset = -1;
             while ((offset = zin.read(buffer)) != -1) {
                 out.write(buffer, 0, offset);
             }
 
-            decompressed = out.toString();
-
-        } catch (IOException e) {
-            LOG.error("对字符串使用ZIP解压缩时异常：" + e.getMessage(), e);
-            decompressed = null;
-
-        } finally {
-            if (zin != null) {
-                try {
-                    zin.close();
-                    zin = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭ZIP流时异常：" + e.getMessage(), e);
-
-                }
-            }
-            if (in != null) {
-                try {
-                    in.close();
-                    in = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭Input流时异常：" + e.getMessage(), e);
-
-                }
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                    out = null;
-
-                } catch (IOException e) {
-                    LOG.error("关闭Output流时异常：" + e.getMessage(), e);
-
-                }
-            }
+            return out.toString(Charsets.UTF_8.name());
+        } catch (final IOException e) {
+            throw new ZipException(e.getMessage(), e);
         }
-
-        return decompressed;
-
     }
 
 }

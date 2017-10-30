@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.commons.util;
-
-import java.util.Base64;
-
-import org.junit.Assert;
-import org.junit.Test;
+package org.nanoframework.commons.exception;
 
 /**
  *
  * @author yanghe
- * @since 1.3.15
+ * @since 1.4.10
  */
-public class Base64Test {
+public class ZipException extends RuntimeException {
+    private static final long serialVersionUID = -1192361995704899310L;
 
-    @Test
-    public void base64Test() {
-        final String content = "base 64 content";
-        final BASE64 base64 = BASE64.getInstance();
-        final String encode = base64.encode(content.getBytes());
-        final String decode = new String(Base64.getDecoder().decode(encode));
-        Assert.assertEquals(content, decode);
+    /**
+     * @param message 异常消息
+     * @param cause 异常实体
+     */
+    public ZipException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }
