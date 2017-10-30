@@ -31,6 +31,7 @@ public class SPIProvider implements Provider<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(SPIProvider.class);
 
     private final SPIMapper spi;
+    private boolean echo;
 
     public SPIProvider(final SPIMapper spi) {
         this.spi = spi;
@@ -39,8 +40,14 @@ public class SPIProvider implements Provider<Object> {
     @SuppressWarnings("unchecked")
     @Override
     public Object get() {
-        LOGGER.debug("创建SPI实现, 接口定义: {}, 绑定名称: {}, 实现类: {}", spi.getSpiClsName(), spi.getName(), spi.getInstanceClsName());
-        return Globals.get(Injector.class).getInstance(spi.getInstance());
+        try {
+            return Globals.get(Injector.class).getInstance(spi.getInstance());
+        } finally {
+            if (!echo) {
+                LOGGER.debug("创建SPI实现, 接口定义: {}, 绑定名称: {}, 实现类: {}", spi.getSpiClsName(), spi.getName(), spi.getInstanceClsName());
+                echo = true;
+            }
+        }
     }
 
 }

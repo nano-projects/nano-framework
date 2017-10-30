@@ -30,5 +30,6 @@ import org.nanoframework.core.spi.SPI;
 @Lazy
 public interface Module extends com.google.inject.Module {
     List<Module> load() throws Throwable;
+
     void config(ServletConfig config) throws Throwable;
 }
