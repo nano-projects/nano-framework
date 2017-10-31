@@ -15,6 +15,7 @@
  */
 package org.nanoframework.extension.httpclient;
 
+import org.apache.http.HttpEntity;
 import org.nanoframework.commons.entity.BaseEntity;
 
 /**
@@ -25,19 +26,21 @@ import org.nanoframework.commons.entity.BaseEntity;
 public class HttpResponse extends BaseEntity {
     private static final long serialVersionUID = -3709502418094416380L;
 
-    public static final HttpResponse EMPTY = create(0, "", "");
+    public static final HttpResponse EMPTY = create(0, "", "", null);
 
     public final int statusCode;
     public final String reasonPhrase;
     public final String entity;
+    public final HttpEntity origin;
 
-    public HttpResponse(int statusCode, String reasonPhrase, String entity) {
+    public HttpResponse(final int statusCode, final String reasonPhrase, final String entity, final HttpEntity origin) {
         this.statusCode = statusCode;
         this.reasonPhrase = reasonPhrase;
         this.entity = entity;
+        this.origin = origin;
     }
 
-    public static final HttpResponse create(int statusCode, String reasonPhrase, String entity) {
-        return new HttpResponse(statusCode, reasonPhrase, entity);
+    public static final HttpResponse create(final int statusCode, final String reasonPhrase, final String entity, final HttpEntity origin) {
+        return new HttpResponse(statusCode, reasonPhrase, entity, origin);
     }
 }

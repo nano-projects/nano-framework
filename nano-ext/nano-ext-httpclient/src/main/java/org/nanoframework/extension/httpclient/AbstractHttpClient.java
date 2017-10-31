@@ -237,7 +237,6 @@ abstract class AbstractHttpClient {
 
     /**
      * 处理Http请求
-     * 
      * @param request
      * @return
      */
@@ -246,7 +245,7 @@ abstract class AbstractHttpClient {
             HttpEntity entity = response.getEntity();
             if (entity != null) {
                 StatusLine status = response.getStatusLine();
-                return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(), EntityUtils.toString(entity));
+                return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(), EntityUtils.toString(entity, charset), entity);
             }
         }
 
