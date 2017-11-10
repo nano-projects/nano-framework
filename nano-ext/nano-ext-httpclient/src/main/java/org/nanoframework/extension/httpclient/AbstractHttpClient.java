@@ -16,11 +16,20 @@
 package org.nanoframework.extension.httpclient;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.nanoframework.extension.httpclient.Http.CHARSET;
+import static org.nanoframework.extension.httpclient.Http.DEFAULT_CHARSET;
+import static org.nanoframework.extension.httpclient.Http.DEFAULT_MAX_PER_ROUTE;
+import static org.nanoframework.extension.httpclient.Http.DEFAULT_MAX_TOTAL;
+import static org.nanoframework.extension.httpclient.Http.DEFAULT_TIME_TO_LIVE;
+import static org.nanoframework.extension.httpclient.Http.DEFAULT_TIME_UNIT;
+import static org.nanoframework.extension.httpclient.Http.MAX_PER_ROUTE;
+import static org.nanoframework.extension.httpclient.Http.MAX_TOTAL;
+import static org.nanoframework.extension.httpclient.Http.TIME_TO_LIVE;
+import static org.nanoframework.extension.httpclient.Http.TIME_UNIT;
 
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -44,69 +53,45 @@ import org.apache.http.util.EntityUtils;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ReflectUtils;
 
+import com.google.common.collect.Lists;
+
 /**
  *
  * @author yanghe
  * @since 1.3.7
  */
-abstract class AbstractHttpClient {
-    public static final String TIME_TO_LIVE = "context.httpclient.time.to.live";
-    public static final String TIME_UNIT = "context.httpclient.timeunit";
-    public static final String MAX_TOTAL = "context.httpclient.max.total";
-    public static final String MAX_PER_ROUTE = "context.httpclient.default.max.per.route";
-    public static final String CHARSET = "context.httpclient.charset";
-
-    /** 超时时间. */
-    protected static final String DEFAULT_TIME_TO_LIVE = "30000";
-    /** 超时时间单位. */
-    protected static final String DEFAULT_TIME_UNIT = "MILLISECONDS";
-    /** 最大连接数 */
-    protected static final String DEFAULT_MAX_TOTAL = "1024";
-    /** 最大并发连接数. */
-    protected static final String DEFAULT_MAX_PER_ROUTE = "512";
-    /** 字符集. */
-    protected static final String DEFAULT_CHARSET = "UTF-8";
-
-    protected static CloseableHttpClient HTTP_CLIENT;
-
-    protected long timeToLive;
-    protected TimeUnit tunit;
-    protected int maxTotal;
-    protected int maxPerRoute;
-    protected Charset charset;
+public abstract class AbstractHttpClient implements HttpClient {
+    private final Http conf;
+    private CloseableHttpClient client;
 
     public AbstractHttpClient() {
-        this(false);
+        this(Long.parseLong(System.getProperty(TIME_TO_LIVE, DEFAULT_TIME_TO_LIVE)));
     }
 
-    public AbstractHttpClient(boolean force) {
-        if (HTTP_CLIENT == null || force) {
-            this.timeToLive = Long.parseLong(System.getProperty(TIME_TO_LIVE, DEFAULT_TIME_TO_LIVE));
-            this.tunit = TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT));
-            this.maxTotal = Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL));
-            this.maxPerRoute = Integer.parseInt(System.getProperty(MAX_PER_ROUTE, DEFAULT_MAX_PER_ROUTE));
-            this.charset = Charset.forName(System.getProperty(CHARSET, DEFAULT_CHARSET));
-            initHttpClientPool(timeToLive, tunit, maxTotal, maxPerRoute);
-        }
+    public AbstractHttpClient(final long timeToLive) {
+        this(timeToLive, Charset.forName(System.getProperty(CHARSET, DEFAULT_CHARSET)));
     }
 
-    public AbstractHttpClient(final boolean force, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute,
-            final Charset charset) {
-        if (HTTP_CLIENT == null || force) {
-            this.timeToLive = timeToLive;
-            this.tunit = tunit;
-            this.maxTotal = maxTotal;
-            this.maxPerRoute = maxPerRoute;
-            this.charset = charset;
-            initHttpClientPool(timeToLive, tunit, maxTotal, maxPerRoute);
-        }
+    public AbstractHttpClient(final long timeToLive, final Charset charset) {
+        this(timeToLive, TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT)),
+                Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL)),
+                Integer.parseInt(System.getProperty(MAX_PER_ROUTE, DEFAULT_MAX_PER_ROUTE)), charset);
     }
 
-    protected void initHttpClientPool(long timeToLive, TimeUnit tunit, int maxTotal, int maxPerRoute) {
-        final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(timeToLive, tunit);
-        manager.setMaxTotal(maxTotal);
-        manager.setDefaultMaxPerRoute(maxPerRoute);
-        HTTP_CLIENT = HttpClients.custom().setConnectionManager(manager).build();
+    public AbstractHttpClient(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
+        this(new Http(timeToLive, tunit, maxTotal, maxPerRoute, charset));
+    }
+
+    public AbstractHttpClient(final Http conf) {
+        this.conf = conf;
+        initHttpClientPool();
+    }
+
+    protected void initHttpClientPool() {
+        final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(this.conf.timeToLive, this.conf.tunit);
+        manager.setMaxTotal(this.conf.maxTotal);
+        manager.setDefaultMaxPerRoute(this.conf.maxPerRoute);
+        client = HttpClients.custom().setConnectionManager(manager).build();
     }
 
     protected HttpRequestBase createBase(final Class<? extends HttpRequestBase> cls, final String url, final Map<String, String> params) {
@@ -150,7 +135,7 @@ abstract class AbstractHttpClient {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             final List<NameValuePair> pairs = covertParams2NVPS(params);
-            entityBase.setEntity(new UrlEncodedFormEntity(pairs, charset));
+            entityBase.setEntity(new UrlEncodedFormEntity(pairs, this.conf.charset));
             return entityBase;
         } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
@@ -218,34 +203,30 @@ abstract class AbstractHttpClient {
             }
 
             final List<NameValuePair> pairs = covertParams2NVPS(params);
-            entityBase.setEntity(new UrlEncodedFormEntity(pairs, charset));
+            entityBase.setEntity(new UrlEncodedFormEntity(pairs, this.conf.charset));
             return entityBase;
         } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
 
-    protected List<NameValuePair> covertParams2NVPS(Map<String, String> params) {
+    protected List<NameValuePair> covertParams2NVPS(final Map<String, String> params) {
         if (CollectionUtils.isEmpty(params)) {
             return Collections.emptyList();
         }
 
-        List<NameValuePair> pairs = new ArrayList<>();
+        final List<NameValuePair> pairs = Lists.newArrayList();
         params.forEach((key, value) -> pairs.add(new BasicNameValuePair(key, value)));
         return pairs;
     }
 
-    /**
-     * 处理Http请求
-     * @param request
-     * @return
-     */
-    protected HttpResponse getResult(HttpRequestBase request) throws IOException {
-        try (CloseableHttpResponse response = HTTP_CLIENT.execute(request)) {
-            HttpEntity entity = response.getEntity();
+    @Override
+    public HttpResponse execute(final HttpRequestBase request) throws IOException {
+        try (CloseableHttpResponse response = client.execute(request)) {
+            final HttpEntity entity = response.getEntity();
             if (entity != null) {
                 StatusLine status = response.getStatusLine();
-                return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(), EntityUtils.toString(entity, charset), entity);
+                return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(), EntityUtils.toString(entity, this.conf.charset));
             }
         }
 

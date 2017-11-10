@@ -45,196 +45,203 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
         super();
     }
 
-    public HttpClientImpl(final boolean force) {
-        super(force);
+    public HttpClientImpl(final long timeToLive) {
+        super(timeToLive);
     }
 
-    public HttpClientImpl(final boolean force, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute,
-            final Charset charset) {
-        super(force, timeToLive, tunit, maxTotal, maxPerRoute, charset);
+    public HttpClientImpl(final long timeToLive, final Charset charset) {
+        super(timeToLive, charset);
+    }
+
+    public HttpClientImpl(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
+        super(timeToLive, tunit, maxTotal, maxPerRoute, charset);
+    }
+
+    public HttpClientImpl(final Http conf) {
+        super(conf);
     }
 
     @Override
     public HttpResponse get(final String url) throws IOException {
-        return getResult(new HttpGet(url));
+        return execute(new HttpGet(url));
     }
 
     @Override
     public HttpResponse get(final String url, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpGet.class, url, params));
+        return execute(createBase(HttpGet.class, url, params));
     }
 
     @Override
     public HttpResponse get(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpGet.class, url, headers, params));
+        return execute(createBase(HttpGet.class, url, headers, params));
     }
 
     @Override
     public HttpResponse post(final String url) throws IOException {
-        return getResult(new HttpPost(url));
+        return execute(new HttpPost(url));
     }
 
     @Override
     public HttpResponse post(final String url, final Map<String, String> params) throws IOException {
-        return getResult(createEntityBase(HttpPost.class, url, params));
+        return execute(createEntityBase(HttpPost.class, url, params));
     }
 
     @Override
     public HttpResponse post(final String url, final String json) throws IOException {
-        return getResult(createEntityBase(HttpPost.class, url, json));
+        return execute(createEntityBase(HttpPost.class, url, json));
     }
 
     @Override
     public HttpResponse post(final String url, final String stream, final ContentType contentType) throws IOException {
-        return getResult(createEntityBase(HttpPost.class, url, stream, contentType));
+        return execute(createEntityBase(HttpPost.class, url, stream, contentType));
     }
 
     @Override
     public HttpResponse post(final String url, final Map<String, String> headers, final String json) throws IOException {
-        return getResult(createEntityBase(HttpPost.class, url, headers, json));
+        return execute(createEntityBase(HttpPost.class, url, headers, json));
     }
 
     @Override
     public HttpResponse post(final String url, final Map<String, String> headers, final String stream, final ContentType contentType)
             throws IOException {
-        return getResult(createEntityBase(HttpPost.class, url, headers, stream, contentType));
+        return execute(createEntityBase(HttpPost.class, url, headers, stream, contentType));
     }
 
     @Override
     public HttpResponse post(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return getResult(createEntityBase(HttpPost.class, url, headers, params));
+        return execute(createEntityBase(HttpPost.class, url, headers, params));
     }
 
     @Override
     public HttpResponse put(final String url) throws IOException {
-        return getResult(new HttpPut(url));
+        return execute(new HttpPut(url));
     }
 
     @Override
     public HttpResponse put(final String url, final Map<String, String> params) throws IOException {
-        return getResult(createEntityBase(HttpPut.class, url, params));
+        return execute(createEntityBase(HttpPut.class, url, params));
     }
 
     @Override
     public HttpResponse put(final String url, final String json) throws IOException {
-        return getResult(createEntityBase(HttpPut.class, url, json));
+        return execute(createEntityBase(HttpPut.class, url, json));
     }
 
     @Override
     public HttpResponse put(final String url, final String stream, final ContentType contentType) throws IOException {
-        return getResult(createEntityBase(HttpPut.class, url, stream, contentType));
+        return execute(createEntityBase(HttpPut.class, url, stream, contentType));
     }
 
     @Override
     public HttpResponse put(final String url, final Map<String, String> headers, final String stream, final ContentType contentType)
             throws IOException {
-        return getResult(createEntityBase(HttpPut.class, url, headers, stream, contentType));
+        return execute(createEntityBase(HttpPut.class, url, headers, stream, contentType));
     }
 
     @Override
     public HttpResponse put(final String url, final Map<String, String> headers, final String json) throws IOException {
-        return getResult(createEntityBase(HttpPut.class, url, headers, json));
+        return execute(createEntityBase(HttpPut.class, url, headers, json));
     }
 
     @Override
     public HttpResponse put(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return getResult(createEntityBase(HttpPut.class, url, headers, params));
+        return execute(createEntityBase(HttpPut.class, url, headers, params));
     }
 
     @Override
     public HttpResponse delete(final String url) throws IOException {
-        return getResult(new HttpDelete(url));
+        return execute(new HttpDelete(url));
     }
 
     @Override
     public HttpResponse delete(final String url, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpDelete.class, url, params));
+        return execute(createBase(HttpDelete.class, url, params));
     }
 
     @Override
     public HttpResponse delete(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpDelete.class, url, headers, params));
+        return execute(createBase(HttpDelete.class, url, headers, params));
     }
 
     @Override
     public HttpResponse patch(final String url) throws IOException {
-        return getResult(new HttpPatch(url));
+        return execute(new HttpPatch(url));
     }
 
     @Override
     public HttpResponse patch(final String url, final Map<String, String> params) throws IOException {
-        return getResult(createEntityBase(HttpPatch.class, url, params));
+        return execute(createEntityBase(HttpPatch.class, url, params));
     }
 
     @Override
     public HttpResponse patch(final String url, final String json) throws IOException {
-        return getResult(createEntityBase(HttpPatch.class, url, json));
+        return execute(createEntityBase(HttpPatch.class, url, json));
     }
 
     @Override
     public HttpResponse patch(final String url, final String stream, final ContentType contentType) throws IOException {
-        return getResult(createEntityBase(HttpPatch.class, url, stream, contentType));
+        return execute(createEntityBase(HttpPatch.class, url, stream, contentType));
     }
 
     @Override
     public HttpResponse patch(final String url, final Map<String, String> headers, final String json) throws IOException {
-        return getResult(createEntityBase(HttpPatch.class, url, headers, json));
+        return execute(createEntityBase(HttpPatch.class, url, headers, json));
     }
 
     @Override
     public HttpResponse patch(final String url, final Map<String, String> headers, final String stream, final ContentType contentType)
             throws IOException {
-        return getResult(createEntityBase(HttpPatch.class, url, headers, stream, contentType));
+        return execute(createEntityBase(HttpPatch.class, url, headers, stream, contentType));
     }
 
     @Override
     public HttpResponse patch(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return getResult(createEntityBase(HttpPatch.class, url, headers, params));
+        return execute(createEntityBase(HttpPatch.class, url, headers, params));
     }
 
     @Override
     public HttpResponse head(final String url) throws IOException {
-        return getResult(new HttpHead(url));
+        return execute(new HttpHead(url));
     }
 
     @Override
     public HttpResponse head(final String url, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpHead.class, url, params));
+        return execute(createBase(HttpHead.class, url, params));
     }
 
     @Override
     public HttpResponse head(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpHead.class, url, headers, params));
+        return execute(createBase(HttpHead.class, url, headers, params));
     }
 
     @Override
     public HttpResponse options(final String url) throws IOException {
-        return getResult(new HttpOptions(url));
+        return execute(new HttpOptions(url));
     }
 
     @Override
     public HttpResponse options(final String url, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpOptions.class, url, params));
+        return execute(createBase(HttpOptions.class, url, params));
     }
 
     @Override
     public HttpResponse options(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpOptions.class, url, headers, params));
+        return execute(createBase(HttpOptions.class, url, headers, params));
     }
 
     @Override
     public HttpResponse trace(final String url) throws IOException {
-        return getResult(new HttpTrace(url));
+        return execute(new HttpTrace(url));
     }
 
     @Override
     public HttpResponse trace(final String url, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpTrace.class, url, params));
+        return execute(createBase(HttpTrace.class, url, params));
     }
 
     @Override
     public HttpResponse trace(final String url, final Map<String, String> headers, final Map<String, String> params) throws IOException {
-        return getResult(createBase(HttpTrace.class, url, headers, params));
+        return execute(createBase(HttpTrace.class, url, headers, params));
     }
 
     @Override

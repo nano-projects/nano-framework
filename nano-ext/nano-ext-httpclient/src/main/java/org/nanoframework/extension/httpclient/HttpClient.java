@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Map;
 
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 
@@ -418,4 +419,11 @@ public interface HttpClient {
 
     HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, String stream, ContentType contentType)
             throws IOException;
+
+    /**
+     * 处理Http请求.
+     * @param request 请求
+     * @return 响应
+     */
+    HttpResponse execute(final HttpRequestBase request) throws IOException;
 }

@@ -37,4 +37,11 @@ public class HttpClientTest {
         HttpResponse response = httpClient.execute(RequestMethod.GET, "https://www.baidu.com");
         Assert.assertEquals(response.statusCode, HttpStatus.SC_OK);
     }
+
+    @Test
+    public void generalHttpTest() throws IOException {
+        final HttpClient c1 = new Http().get();
+        final HttpClient c2 = new Http().get();
+        Assert.assertTrue(c1 == c2);
+    }
 }

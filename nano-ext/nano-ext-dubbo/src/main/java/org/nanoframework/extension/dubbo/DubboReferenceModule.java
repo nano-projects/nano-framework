@@ -38,15 +38,15 @@ public class DubboReferenceModule implements Module {
     public List<Module> load() throws Throwable {
         return Lists.newArrayList(this);
     }
-    
+
     @Override
     public void config(final ServletConfig config) throws Throwable {
-        
+
     }
 
     @Override
     public void configure(final Binder binder) {
         binder.bindInterceptor(Matchers.any(), Matchers.annotatedWith(Reference.class), new DubboReferenceInterceptor());
     }
-    
+
 }

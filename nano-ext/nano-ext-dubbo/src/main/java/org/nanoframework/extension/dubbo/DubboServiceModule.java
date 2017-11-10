@@ -47,15 +47,15 @@ import com.google.inject.Injector;
 @Level(1)
 public class DubboServiceModule implements Module {
     private static final Logger LOGGER = LoggerFactory.getLogger(DubboServiceModule.class);
-    
+
     @Override
     public List<Module> load() throws Throwable {
         return Lists.newArrayList(this);
     }
-    
+
     @Override
     public void config(final ServletConfig config) throws Throwable {
-        
+
     }
 
     @Override
@@ -63,16 +63,15 @@ public class DubboServiceModule implements Module {
         scanDubboService();
         bindDubboService();
     }
-    
+
     protected void scanDubboService() {
         PropertiesLoader.PROPERTIES.values().stream()
-        .filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.DUBBO_SERVICE_BASE_PACKAGE)))
-        .forEach(item -> {
-            final String[] packageNames = item.getProperty(ApplicationContext.DUBBO_SERVICE_BASE_PACKAGE).split(",");
-            Arrays.asList(packageNames).forEach(packageName -> ClassScanner.scan(packageName));
-        });
+                .filter(item -> StringUtils.isNotBlank(item.getProperty(ApplicationContext.DUBBO_SERVICE_BASE_PACKAGE))).forEach(item -> {
+                    final String[] packageNames = item.getProperty(ApplicationContext.DUBBO_SERVICE_BASE_PACKAGE).split(",");
+                    Arrays.asList(packageNames).forEach(packageName -> ClassScanner.scan(packageName));
+                });
     }
-    
+
     protected void bindDubboService() {
         final List<ServiceConfig<Object>> serviceConfigs = Lists.newArrayList();
         final Injector injector = Globals.get(Injector.class);
@@ -81,13 +80,13 @@ public class DubboServiceModule implements Module {
                 LOGGER.warn("Ignore interface API of {}", cls.getName());
                 return;
             }
-            
+
             final Class<?>[] itfs = cls.getInterfaces();
             if (ArrayUtils.isEmpty(itfs)) {
                 LOGGER.warn("Ignore no interface implement API of {}", cls.getName());
                 return;
             }
-            
+
             final Service service = cls.getAnnotation(Service.class);
             final Object instance = injector.getInstance(cls);
             for (Class<?> itf : itfs) {
@@ -97,8 +96,8 @@ public class DubboServiceModule implements Module {
                 serviceConfigs.add(serviceConfig);
             }
         });
-        
+
         serviceConfigs.forEach(conf -> conf.export());
     }
-    
+
 }
