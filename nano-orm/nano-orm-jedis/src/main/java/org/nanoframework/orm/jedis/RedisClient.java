@@ -19,6 +19,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.nanoframework.orm.jedis.commands.HashRedisClient;
+import org.nanoframework.orm.jedis.commands.KeyValueRedisClient;
+import org.nanoframework.orm.jedis.commands.ListRedisClient;
+import org.nanoframework.orm.jedis.commands.SetRedisClient;
+import org.nanoframework.orm.jedis.commands.SortedSetRedisClient;
 import org.nanoframework.orm.jedis.sharded.RedisClientImpl;
 
 import com.google.inject.ImplementedBy;

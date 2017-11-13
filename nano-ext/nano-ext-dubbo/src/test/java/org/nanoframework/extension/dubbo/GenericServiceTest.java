@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +16,12 @@
 package org.nanoframework.extension.dubbo;
 
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.nanoframework.commons.support.logging.Logger;
@@ -34,10 +34,10 @@ import com.google.inject.Guice;
 /**
  *
  * @author yanghe
- * @since 1.4.1
+ * @since 1.4.10
  */
-public class DubboServiceExportTest {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(DubboServiceExportTest.class);
+public class GenericServiceTest {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(GenericServiceTest.class);
 
     @BeforeClass
     public static void init() {
@@ -71,9 +71,10 @@ public class DubboServiceExportTest {
     }
 
     @Test
-    public void exportServiceTest() throws Throwable {
-        final HelloWorldProxy helloWorldService = Guice.createInjector(new DubboReferenceModule()).getInstance(HelloWorldProxy.class);
-        Assert.assertEquals("Proxy: Hello, me", helloWorldService.say("me"));
-        Assert.assertEquals("Proxy: Hello 2, you", helloWorldService.say2("you"));
+    public void genericTest() {
+        final GenericServiceProxy generic = Guice.createInjector(new DubboReferenceModule()).getInstance(GenericServiceProxy.class);
+        LOGGER.info("{}", generic.get(Integer.class));
+        LOGGER.info("{}", generic.get(String.class));
+        LOGGER.info("{}", generic.get(Map.class));
     }
 }

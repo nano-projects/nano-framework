@@ -28,35 +28,35 @@ import com.google.inject.Inject;
  */
 public class HelloWorldProxy implements HelloWorldService, HelloWorld2Service {
     private static final String SERVER = "localhost:20880";
-    
+
     private HelloWorldService helloWorldService;
     private HelloWorld2Service helloWorld2Service;
-    
+
     @Inject
     @Reference(check = false, url = "dubbo://" + SERVER + "/org.nanoframework.extension.dubbo.service.HelloWorldService")
     public HelloWorldService getHelloWorldService() {
         return helloWorldService;
     }
-    
+
     public void setHelloWorldService(HelloWorldService helloWorldService) {
         this.helloWorldService = helloWorldService;
     }
-    
+
     @Inject
     @Reference(check = false, url = "dubbo://" + SERVER + "/org.nanoframework.extension.dubbo.service.HelloWorld2Service")
     public HelloWorld2Service getHelloWorld2Service() {
         return helloWorld2Service;
     }
-    
+
     public void setHelloWorld2Service(HelloWorld2Service helloWorld2Service) {
         this.helloWorld2Service = helloWorld2Service;
     }
-    
+
     @Override
     public String say(final String who) {
         return "Proxy: " + helloWorldService.say(who);
     }
-    
+
     @Override
     public String say2(final String who) {
         return "Proxy: " + helloWorld2Service.say2(who);

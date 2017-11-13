@@ -24,12 +24,12 @@ import javax.servlet.ServletConfig;
 import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.spi.Order;
 import org.nanoframework.orm.jedis.GlobalRedisClient;
-import org.nanoframework.orm.jedis.HashRedisClient;
-import org.nanoframework.orm.jedis.KeyValueRedisClient;
-import org.nanoframework.orm.jedis.ListRedisClient;
 import org.nanoframework.orm.jedis.RedisClient;
-import org.nanoframework.orm.jedis.SetRedisClient;
-import org.nanoframework.orm.jedis.SortedSetRedisClient;
+import org.nanoframework.orm.jedis.commands.HashRedisClient;
+import org.nanoframework.orm.jedis.commands.KeyValueRedisClient;
+import org.nanoframework.orm.jedis.commands.ListRedisClient;
+import org.nanoframework.orm.jedis.commands.SetRedisClient;
+import org.nanoframework.orm.jedis.commands.SortedSetRedisClient;
 import org.nanoframework.orm.jedis.lock.RedisLocker;
 import org.nanoframework.orm.jedis.lock.impl.RedisLockerImpl;
 
