@@ -14,4 +14,7 @@ webRoot/
 *.pid
 .checkstyle
 .fbIncludeFilterFile
+.fbExcludeFilterFile
 coverage-local.sh
+.idea
+*.iml
