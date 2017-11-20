@@ -24,12 +24,16 @@ import org.apache.http.entity.ContentType;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 
 import com.google.inject.ImplementedBy;
+import org.nanoframework.core.spi.Lazy;
+import org.nanoframework.core.spi.SPI;
 
 /**
  *
  * @author yanghe
  * @since 1.3.3
  */
+@SPI
+@Lazy
 @ImplementedBy(HttpClientImpl.class)
 public interface HttpClient {
     /**

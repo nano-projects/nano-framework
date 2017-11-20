@@ -1102,7 +1102,7 @@ public class RedisClusterClientImpl extends AbstractRedisClient implements Redis
     public long sunionstore(final String destination, final String... keys) {
         throw new UnsupportedAccessException("In RedisCluster mode, sunionstore operation is not supported");
     }
-    
+
     @Override
     public ScanResult<String> sscan(final String key, final long cursor, final ScanParams params) {
         Assert.hasText(key);

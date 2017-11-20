@@ -15,26 +15,7 @@
  */
 package org.nanoframework.extension.httpclient;
 
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.nanoframework.extension.httpclient.Http.CHARSET;
-import static org.nanoframework.extension.httpclient.Http.DEFAULT_CHARSET;
-import static org.nanoframework.extension.httpclient.Http.DEFAULT_MAX_PER_ROUTE;
-import static org.nanoframework.extension.httpclient.Http.DEFAULT_MAX_TOTAL;
-import static org.nanoframework.extension.httpclient.Http.DEFAULT_TIME_TO_LIVE;
-import static org.nanoframework.extension.httpclient.Http.DEFAULT_TIME_UNIT;
-import static org.nanoframework.extension.httpclient.Http.MAX_PER_ROUTE;
-import static org.nanoframework.extension.httpclient.Http.MAX_TOTAL;
-import static org.nanoframework.extension.httpclient.Http.TIME_TO_LIVE;
-import static org.nanoframework.extension.httpclient.Http.TIME_UNIT;
-
-import java.io.IOException;
-import java.net.URI;
-import java.nio.charset.Charset;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.google.common.collect.Lists;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
@@ -53,10 +34,18 @@ import org.apache.http.util.EntityUtils;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ReflectUtils;
 
-import com.google.common.collect.Lists;
+import java.io.IOException;
+import java.net.URI;
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.nanoframework.extension.httpclient.Http.*;
 
 /**
- *
  * @author yanghe
  * @since 1.3.7
  */
@@ -110,7 +99,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     protected HttpRequestBase createBase(final Class<? extends HttpRequestBase> cls, final String url, final Map<String, String> headers,
-            Map<String, String> params) {
+                                         Map<String, String> params) {
         final URIBuilder builder = new URIBuilder();
         builder.setPath(url);
 
@@ -131,7 +120,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
-            final Map<String, String> params) {
+                                                              final Map<String, String> params) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             final List<NameValuePair> pairs = covertParams2NVPS(params);
@@ -143,7 +132,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
-            final String json) {
+                                                              final String json) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             entityBase.setEntity(new StringEntity(json, APPLICATION_JSON));
@@ -154,7 +143,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
-            final String stream, ContentType contentType) {
+                                                              final String stream, ContentType contentType) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             entityBase.setEntity(new StringEntity(stream, contentType));
@@ -165,7 +154,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
-            final Map<String, String> headers, final String json) {
+                                                              final Map<String, String> headers, final String json) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {
@@ -180,7 +169,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
-            final Map<String, String> headers, final String stream, final ContentType contentType) {
+                                                              final Map<String, String> headers, final String stream, final ContentType contentType) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {
@@ -195,7 +184,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
-            final Map<String, String> headers, final Map<String, String> params) {
+                                                              final Map<String, String> headers, final Map<String, String> params) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             if (!CollectionUtils.isEmpty(headers)) {

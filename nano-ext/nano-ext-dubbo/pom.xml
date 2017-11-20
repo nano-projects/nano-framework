@@ -29,6 +29,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <cs.dir>${project.parent.parent.basedir}</cs.dir>
+    <dubbo.version>2.5.7</dubbo.version>
   </properties>
   <dependencies>
     <dependency>
@@ -64,7 +65,7 @@
     <dependency>
       <groupId>com.alibaba</groupId>
       <artifactId>dubbo</artifactId>
-      <version>3.0.0</version>
+      <version>${dubbo.version}</version>
       <exclusions>
         <exclusion>
           <groupId>org.springframework</groupId>
@@ -76,43 +77,7 @@
         </exclusion>
         <exclusion>
           <groupId>org.springframework</groupId>
-          <artifactId>spring-core</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-aop</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
-          <artifactId>spring-expression</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.springframework</groupId>
           <artifactId>spring-web</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpclient</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.httpcomponents</groupId>
-          <artifactId>httpcore</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.curator</groupId>
-          <artifactId>curator-framework</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>org.apache.curator</groupId>
-          <artifactId>curator-client</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-codec</groupId>
-          <artifactId>commons-codec</artifactId>
-        </exclusion>
-        <exclusion>
-          <groupId>commons-pool</groupId>
-          <artifactId>commons-pool</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
@@ -127,7 +92,6 @@
       <artifactId>javax.servlet-api</artifactId>
       <scope>provided</scope>
     </dependency>
-
     <dependency>
       <groupId>org.apache.zookeeper</groupId>
       <artifactId>zookeeper</artifactId>

@@ -47,7 +47,7 @@ public class Http {
     /** 字符集. */
     public static final String DEFAULT_CHARSET = "UTF-8";
 
-    private static final ConcurrentMap<String, HttpClient> clients = Maps.newConcurrentMap();
+    private static final ConcurrentMap<String, HttpClient> CLIENTS = Maps.newConcurrentMap();
 
     public final long timeToLive;
     public final TimeUnit tunit;
@@ -79,11 +79,11 @@ public class Http {
 
     public HttpClient get() {
         final String key = toString();
-        if (clients.containsKey(key)) {
-            return clients.get(key);
+        if (CLIENTS.containsKey(key)) {
+            return CLIENTS.get(key);
         } else {
             final HttpClient client = new HttpClientImpl(this);
-            clients.put(key, client);
+            CLIENTS.put(key, client);
             return client;
         }
     }
