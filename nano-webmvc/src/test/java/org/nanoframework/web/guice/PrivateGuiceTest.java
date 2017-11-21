@@ -15,77 +15,75 @@
  */
 package org.nanoframework.web.guice;
 
+import com.google.inject.Guice;
+import com.google.inject.ImplementedBy;
+import com.google.inject.Injector;
+import com.google.inject.PrivateModule;
+import com.google.inject.matcher.Matchers;
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.junit.Test;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.junit.Test;
-
-import com.google.inject.Guice;
-import com.google.inject.ImplementedBy;
-import com.google.inject.Injector;
-import com.google.inject.PrivateModule;
-import com.google.inject.matcher.Matchers;
-
 /**
- * 
  * @author yanghe
  * @date 2015年8月19日 上午9:23:37
  */
 public class PrivateGuiceTest {
 
-	@Test
-	public void test0() {
-		Injector injector = Guice.createInjector(new PrivateTestModule());
-		TestPrivate test = injector.getInstance(TestPrivateInterceptor.class);
-		test.invoke();
-		
-	}
-	
-	@ImplementedBy(TestPrivateInterceptor.class)
-	public interface TestPrivate {
-		public void invoke();
-	}
-	
-	public static class TestPrivateInterceptor implements TestPrivate {
-		@TestAnno
-		@Override
-		public void invoke() {
-			System.out.println("test it");
-		}
-	}
-	
-	public class PrivateTestModule extends PrivateModule {
+    @Test
+    public void test0() {
+        Injector injector = Guice.createInjector(new PrivateTestModule());
+        TestPrivate test = injector.getInstance(TestPrivateInterceptor.class);
+        test.invoke();
 
-		@Override
-		protected void configure() {
-			TestInterceptor interceptor = new TestInterceptor();
-			requestInjection(interceptor);
-			bindInterceptor(Matchers.any(), Matchers.annotatedWith(TestAnno.class), interceptor);
-			
-		}
-		
-	}
-	
-	public class TestInterceptor implements MethodInterceptor {
+    }
 
-		@Override
-		public Object invoke(MethodInvocation invocation) throws Throwable {
-			System.out.println("Run it");
-			return invocation.proceed();
-		}
-		
-	}
-	
-	@Target(ElementType.METHOD)
-	@Retention(RetentionPolicy.RUNTIME)
-	@Documented
-	public @interface TestAnno {
-		String value() default "";
-	}
-	
+    @ImplementedBy(TestPrivateInterceptor.class)
+    public interface TestPrivate {
+        public void invoke();
+    }
+
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    @Documented
+    public @interface TestAnno {
+        String value() default "";
+    }
+
+    public static class TestPrivateInterceptor implements TestPrivate {
+        @TestAnno
+        @Override
+        public void invoke() {
+            System.out.println("test it");
+        }
+    }
+
+    public class PrivateTestModule extends PrivateModule {
+
+        @Override
+        protected void configure() {
+            TestInterceptor interceptor = new TestInterceptor();
+            requestInjection(interceptor);
+            bindInterceptor(Matchers.any(), Matchers.annotatedWith(TestAnno.class), interceptor);
+
+        }
+
+    }
+
+    public class TestInterceptor implements MethodInterceptor {
+
+        @Override
+        public Object invoke(MethodInvocation invocation) throws Throwable {
+            System.out.println("Run it");
+            return invocation.proceed();
+        }
+
+    }
+
 }

@@ -17,11 +17,13 @@ package org.nanoframework.extension.httpclient.inject;
 
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.Maps;
+import com.google.inject.Injector;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.entity.BaseEntity;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.MD5Utils;
 import org.nanoframework.commons.util.ReflectUtils;
+import org.nanoframework.core.globals.Globals;
 import org.nanoframework.core.spi.SPIException;
 import org.nanoframework.core.spi.SPILoader;
 import org.nanoframework.core.spi.SPIMapper;
@@ -133,6 +135,7 @@ public class HttpConfigure extends BaseEntity {
         if (CLIENTS.containsKey(key)) {
             return CLIENTS.get(key);
         } else {
+            final Injector injector = Globals.get(Injector.class);
             final List<SPIMapper> spis = SPILoader.spis().get(HttpClient.class);
             if (!CollectionUtils.isEmpty(spis)) {
                 for (final SPIMapper spi : spis) {
@@ -140,6 +143,10 @@ public class HttpConfigure extends BaseEntity {
                         final Class<?> instance = spi.getInstance();
                         if (HttpClient.class.isAssignableFrom(instance)) {
                             final HttpClient client = (HttpClient) ReflectUtils.newInstance(spi.getInstance(), this);
+                            if (injector != null) {
+                                injector.injectMembers(client);
+                            }
+
                             CLIENTS.put(key, client);
                             return client;
                         } else {

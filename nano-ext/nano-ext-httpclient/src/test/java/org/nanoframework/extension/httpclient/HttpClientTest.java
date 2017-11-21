@@ -16,17 +16,12 @@
 package org.nanoframework.extension.httpclient;
 
 import com.google.inject.Guice;
-import com.google.inject.Injector;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
-import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
-import org.nanoframework.core.globals.Globals;
-import org.nanoframework.core.plugins.defaults.module.SPIModule;
+import org.nanoframework.core.plugins.defaults.module.FieldInjectModule;
 import org.nanoframework.extension.httpclient.inject.HttpConfigure;
-import org.nanoframework.extension.httpclient.inject.HttpModule;
-import org.nanoframework.extension.httpclient.test.TestHttpClientImpl;
 
 import java.io.IOException;
 
@@ -51,23 +46,10 @@ public class HttpClientTest {
     }
 
     @Test
-    public void injectHttpClientTest() {
-        final HttpClientProxy proxy = Guice.createInjector(new HttpModule()).getInstance(HttpClientProxy.class);
-        final HttpClient client = proxy.getClient();
+    public void fieldInjectTest() {
+        final HttpClientProxy proxy = Guice.createInjector(new FieldInjectModule()).getInstance(HttpClientProxy.class);
+        final HttpClient client = proxy.getFieldInject();
         Assert.assertNotNull(client);
         Assert.assertTrue(client instanceof HttpClientImpl);
-        Assert.assertEquals(((HttpClientImpl) client).conf().getCharset(), Charsets.GBK);
-    }
-
-    @Test
-    public void spiHttpClientTest() {
-        Globals.set(Injector.class, Guice.createInjector(new SPIModule()));
-        final HttpClientProxy proxy = Guice.createInjector(new HttpModule()).getInstance(HttpClientProxy.class);
-        final HttpClient client = proxy.getClient();
-        final HttpClient testClient = proxy.getTestClient();
-
-        Assert.assertNotNull(client);
-        Assert.assertNotNull(testClient);
-        Assert.assertTrue(testClient instanceof TestHttpClientImpl);
     }
 }

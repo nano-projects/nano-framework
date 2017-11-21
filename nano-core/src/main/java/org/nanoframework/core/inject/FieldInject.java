@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.httpclient;
+package org.nanoframework.core.inject;
 
-import com.google.inject.Inject;
-import org.nanoframework.core.inject.FieldInject;
-import org.nanoframework.extension.httpclient.inject.HttpClientInjector;
-import org.nanoframework.extension.httpclient.inject.HttpConfig;
+import com.google.inject.MembersInjector;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author yanghe
  * @since 1.4.10
  */
-public class HttpClientProxy {
-    private HttpClient client;
-    private HttpClient testClient;
-
-    @FieldInject(HttpClientInjector.class)
-    @HttpConfig
-    private HttpClient fieldInject;
-
-    public HttpClient getFieldInject() {
-        return fieldInject;
-    }
+@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD})
+public @interface FieldInject {
+    /**
+     * @return 自定义Field依赖注入实现
+     */
+    Class<? extends MembersInjector> value();
 }

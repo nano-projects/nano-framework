@@ -15,54 +15,31 @@
  */
 package org.nanoframework.extension.dubbo;
 
-import java.util.Map;
-
+import com.alibaba.dubbo.config.annotation.Reference;
+import org.nanoframework.core.inject.FieldInject;
+import org.nanoframework.extension.dubbo.inject.DubboReferenceInjector;
 import org.nanoframework.extension.dubbo.service.GenericService;
 
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.google.inject.Inject;
+import java.util.Map;
 
 /**
- *
  * @author yanghe
  * @since 1.4.10
  */
 public class GenericServiceProxy {
     private static final String SERVER = "localhost:20880";
 
-    private GenericService<Integer> intService;
-    private GenericService<String> stringService;
-    private GenericService<Map<String, String>> mapService;
-
-    @Inject
+    @FieldInject(DubboReferenceInjector.class)
     @Reference(check = false, group = "generic.integer", url = "dubbo://" + SERVER + "/org.nanoframework.extension.dubbo.service.GenericService")
-    public GenericService<Integer> getIntService() {
-        return intService;
-    }
+    private GenericService<Integer> intService;
 
-    public void setIntService(final GenericService<Integer> intService) {
-        this.intService = intService;
-    }
-
-    @Inject
+    @FieldInject(DubboReferenceInjector.class)
     @Reference(check = false, group = "generic.string", url = "dubbo://" + SERVER + "/org.nanoframework.extension.dubbo.service.GenericService")
-    public GenericService<String> getStringService() {
-        return stringService;
-    }
+    private GenericService<String> stringService;
 
-    public void setStringService(final GenericService<String> stringService) {
-        this.stringService = stringService;
-    }
-
-    @Inject
+    @FieldInject(DubboReferenceInjector.class)
     @Reference(check = false, group = "generic.map", url = "dubbo://" + SERVER + "/org.nanoframework.extension.dubbo.service.GenericService")
-    public GenericService<Map<String, String>> getMapService() {
-        return mapService;
-    }
-
-    public void setMapService(final GenericService<Map<String, String>> mapService) {
-        this.mapService = mapService;
-    }
+    private GenericService<Map<String, String>> mapService;
 
     public Object get(final Class<?> type) {
         switch (type.getSimpleName()) {

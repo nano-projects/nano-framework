@@ -26,7 +26,10 @@ import java.lang.reflect.Method;
 /**
  * @author yanghe
  * @since 1.4.1
+ * @deprecated 已废除，建议使用注解的方式替代getter/setter的方式
+ * @see org.nanoframework.extension.dubbo.inject.DubboReferenceInjector
  */
+@Deprecated
 public class DubboReferenceInterceptor extends AbstractMethodInjectInterceptor {
 
     @Override

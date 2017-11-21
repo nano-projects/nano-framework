@@ -30,6 +30,7 @@ import org.nanoframework.core.component.Components;
 import org.nanoframework.core.plugins.PluginLoader;
 
 import com.google.inject.Guice;
+import org.nanoframework.core.plugins.defaults.module.FieldInjectModule;
 
 /**
  *
@@ -72,7 +73,7 @@ public class GenericServiceTest {
 
     @Test
     public void genericTest() {
-        final GenericServiceProxy generic = Guice.createInjector(new DubboReferenceModule()).getInstance(GenericServiceProxy.class);
+        final GenericServiceProxy generic = Guice.createInjector(new FieldInjectModule(), new DubboReferenceModule()).getInstance(GenericServiceProxy.class);
         LOGGER.info("{}", generic.get(Integer.class));
         LOGGER.info("{}", generic.get(String.class));
         LOGGER.info("{}", generic.get(Map.class));
