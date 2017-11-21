@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,18 @@
  * limitations under the License.
  */
 package org.nanoframework.extension.httpclient;
+
+import static org.apache.http.entity.ContentType.APPLICATION_JSON;
+import static org.nanoframework.extension.httpclient.HttpConfigure.CHARSET;
+import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_CHARSET;
+import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_MAX_PER_ROUTE;
+import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_MAX_TOTAL;
+import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_TIME_TO_LIVE;
+import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_TIME_UNIT;
+import static org.nanoframework.extension.httpclient.HttpConfigure.MAX_PER_ROUTE;
+import static org.nanoframework.extension.httpclient.HttpConfigure.MAX_TOTAL;
+import static org.nanoframework.extension.httpclient.HttpConfigure.TIME_TO_LIVE;
+import static org.nanoframework.extension.httpclient.HttpConfigure.TIME_UNIT;
 
 import com.google.common.collect.Lists;
 import org.apache.http.HttpEntity;
@@ -42,52 +54,87 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.nanoframework.extension.httpclient.Http.*;
-
 /**
  * @author yanghe
  * @since 1.3.7
  */
 public abstract class AbstractHttpClient implements HttpClient {
-    private final Http conf;
+    private final HttpConfigure conf;
     private CloseableHttpClient client;
 
+    /**
+     * Default Constructor.
+     */
     public AbstractHttpClient() {
         this(Long.parseLong(System.getProperty(TIME_TO_LIVE, DEFAULT_TIME_TO_LIVE)));
     }
 
+    /**
+     * @param timeToLive 超时时间
+     */
     public AbstractHttpClient(final long timeToLive) {
         this(timeToLive, Charset.forName(System.getProperty(CHARSET, DEFAULT_CHARSET)));
     }
 
+    /**
+     * @param timeToLive 超时时间
+     * @param charset    字符集
+     */
     public AbstractHttpClient(final long timeToLive, final Charset charset) {
         this(timeToLive, TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT)),
                 Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL)),
                 Integer.parseInt(System.getProperty(MAX_PER_ROUTE, DEFAULT_MAX_PER_ROUTE)), charset);
     }
 
+    /**
+     * @param timeToLive  超时时间
+     * @param tunit       超时时间单位
+     * @param maxTotal    最大连接数
+     * @param maxPerRoute 最大并发连接数
+     * @param charset     字符集
+     */
     public AbstractHttpClient(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
-        this(new Http(timeToLive, tunit, maxTotal, maxPerRoute, charset));
+        this(new HttpConfigure(timeToLive, tunit, maxTotal, maxPerRoute, charset));
     }
 
-    public AbstractHttpClient(final Http conf) {
+    /**
+     * @param conf HttpClient配置
+     */
+    public AbstractHttpClient(final HttpConfigure conf) {
         this.conf = conf;
         initHttpClientPool();
     }
 
+    /**
+     * 初始化HttpClient连接池.
+     */
     protected void initHttpClientPool() {
-        final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(this.conf.timeToLive, this.conf.tunit);
-        manager.setMaxTotal(this.conf.maxTotal);
-        manager.setDefaultMaxPerRoute(this.conf.maxPerRoute);
+        final PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager(this.conf.getTimeToLive(), this.conf.getTunit());
+        manager.setMaxTotal(this.conf.getMaxTotal());
+        manager.setDefaultMaxPerRoute(this.conf.getMaxPerRoute());
         client = HttpClients.custom().setConnectionManager(manager).build();
     }
 
+    /**
+     * @return HttpConfigure
+     */
+    protected HttpConfigure conf() {
+        return (HttpConfigure) conf.clone();
+    }
+
+    /**
+     * 根据请求信息创建HttpRequestBase.
+     *
+     * @param cls    类型Class
+     * @param url    URL
+     * @param params 参数列表
+     * @return HttpRequestBase
+     */
     protected HttpRequestBase createBase(final Class<? extends HttpRequestBase> cls, final String url, final Map<String, String> params) {
         final URIBuilder builder = new URIBuilder();
         builder.setPath(url);
 
-        final List<NameValuePair> pairs = covertParams2NVPS(params);
+        final List<NameValuePair> pairs = covertParams2Nvps(params);
         builder.setParameters(pairs);
 
         try {
@@ -98,12 +145,21 @@ public abstract class AbstractHttpClient implements HttpClient {
         }
     }
 
+    /**
+     * 根据请求信息创建HttpRequestBase.
+     *
+     * @param cls     类型Class
+     * @param url     URL
+     * @param headers Http请求头信息列表
+     * @param params  参数列表
+     * @return HttpRequestBase
+     */
     protected HttpRequestBase createBase(final Class<? extends HttpRequestBase> cls, final String url, final Map<String, String> headers,
-                                         Map<String, String> params) {
+                                         final Map<String, String> params) {
         final URIBuilder builder = new URIBuilder();
         builder.setPath(url);
 
-        final List<NameValuePair> pairs = covertParams2NVPS(params);
+        final List<NameValuePair> pairs = covertParams2Nvps(params);
         builder.setParameters(pairs);
 
         try {
@@ -119,18 +175,34 @@ public abstract class AbstractHttpClient implements HttpClient {
         }
     }
 
+    /**
+     * 根据请求信息创建HttpEntityEnclosingRequestBase.
+     *
+     * @param cls    类型Class
+     * @param url    URL
+     * @param params 参数列表
+     * @return HttpEntityEnclosingRequestBase
+     */
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
                                                               final Map<String, String> params) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
-            final List<NameValuePair> pairs = covertParams2NVPS(params);
-            entityBase.setEntity(new UrlEncodedFormEntity(pairs, this.conf.charset));
+            final List<NameValuePair> pairs = covertParams2Nvps(params);
+            entityBase.setEntity(new UrlEncodedFormEntity(pairs, this.conf.getCharset()));
             return entityBase;
         } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
 
+    /**
+     * 根据请求信息创建HttpEntityEnclosingRequestBase.
+     *
+     * @param cls  类型Class
+     * @param url  URL
+     * @param json JSON请求报文
+     * @return HttpEntityEnclosingRequestBase
+     */
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
                                                               final String json) {
         try {
@@ -142,8 +214,17 @@ public abstract class AbstractHttpClient implements HttpClient {
         }
     }
 
+    /**
+     * 根据请求信息创建HttpEntityEnclosingRequestBase.
+     *
+     * @param cls         类型Class
+     * @param url         URL
+     * @param stream      流式报文
+     * @param contentType 报文类型
+     * @return HttpEntityEnclosingRequestBase
+     */
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
-                                                              final String stream, ContentType contentType) {
+                                                              final String stream, final ContentType contentType) {
         try {
             final HttpEntityEnclosingRequestBase entityBase = ReflectUtils.newInstance(cls, url);
             entityBase.setEntity(new StringEntity(stream, contentType));
@@ -153,6 +234,15 @@ public abstract class AbstractHttpClient implements HttpClient {
         }
     }
 
+    /**
+     * 根据请求信息创建HttpEntityEnclosingRequestBase.
+     *
+     * @param cls     类型Class
+     * @param url     URL
+     * @param headers Http请求头信息
+     * @param json    JSON请求报文
+     * @return HttpEntityEnclosingRequestBase
+     */
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
                                                               final Map<String, String> headers, final String json) {
         try {
@@ -168,6 +258,16 @@ public abstract class AbstractHttpClient implements HttpClient {
         }
     }
 
+    /**
+     * 根据请求信息创建HttpEntityEnclosingRequestBase.
+     *
+     * @param cls         类型Class
+     * @param url         URL
+     * @param headers     Http请求头信息
+     * @param stream      流式报文
+     * @param contentType 报文类型
+     * @return HttpEntityEnclosingRequestBase
+     */
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
                                                               final Map<String, String> headers, final String stream, final ContentType contentType) {
         try {
@@ -183,6 +283,15 @@ public abstract class AbstractHttpClient implements HttpClient {
         }
     }
 
+    /**
+     * 根据请求信息创建HttpEntityEnclosingRequestBase.
+     *
+     * @param cls     类型Class
+     * @param url     URL
+     * @param headers Http请求头信息
+     * @param params  请求参数列表
+     * @return HttpEntityEnclosingRequestBase
+     */
     protected HttpEntityEnclosingRequestBase createEntityBase(final Class<? extends HttpEntityEnclosingRequestBase> cls, final String url,
                                                               final Map<String, String> headers, final Map<String, String> params) {
         try {
@@ -191,15 +300,21 @@ public abstract class AbstractHttpClient implements HttpClient {
                 headers.forEach((key, value) -> entityBase.addHeader(key, value));
             }
 
-            final List<NameValuePair> pairs = covertParams2NVPS(params);
-            entityBase.setEntity(new UrlEncodedFormEntity(pairs, this.conf.charset));
+            final List<NameValuePair> pairs = covertParams2Nvps(params);
+            entityBase.setEntity(new UrlEncodedFormEntity(pairs, this.conf.getCharset()));
             return entityBase;
         } catch (final Throwable e) {
             throw new HttpClientInvokeException(e.getMessage(), e);
         }
     }
 
-    protected List<NameValuePair> covertParams2NVPS(final Map<String, String> params) {
+    /**
+     * 构建HttpClient请求参数列表.
+     *
+     * @param params 参数列表
+     * @return NameValuePair集合
+     */
+    protected List<NameValuePair> covertParams2Nvps(final Map<String, String> params) {
         if (CollectionUtils.isEmpty(params)) {
             return Collections.emptyList();
         }
@@ -215,7 +330,7 @@ public abstract class AbstractHttpClient implements HttpClient {
             final HttpEntity entity = response.getEntity();
             if (entity != null) {
                 StatusLine status = response.getStatusLine();
-                return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(), EntityUtils.toString(entity, this.conf.charset));
+                return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(), EntityUtils.toString(entity, this.conf.getCharset()));
             }
         }
 

@@ -15,61 +15,95 @@
  */
 package org.nanoframework.extension.httpclient;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.annotation.JSONField;
+import com.google.common.collect.Maps;
+import org.nanoframework.commons.entity.BaseEntity;
+import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.MD5Utils;
+
 import java.nio.charset.Charset;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
-import org.nanoframework.commons.util.MD5Utils;
-
-import com.alibaba.fastjson.JSON;
-import com.google.common.collect.Maps;
-
 /**
- *
  * @author yanghe
  * @since 1.4.10
  */
-public class Http {
+public class HttpConfigure extends BaseEntity {
+    /** */
     public static final String TIME_TO_LIVE = "context.httpclient.time.to.live";
+    /** */
     public static final String TIME_UNIT = "context.httpclient.timeunit";
+    /** */
     public static final String MAX_TOTAL = "context.httpclient.max.total";
+    /** */
     public static final String MAX_PER_ROUTE = "context.httpclient.default.max.per.route";
+    /** */
     public static final String CHARSET = "context.httpclient.charset";
 
-    /** 超时时间. */
+    /**
+     * 超时时间.
+     */
     public static final String DEFAULT_TIME_TO_LIVE = "5000";
-    /** 超时时间单位. */
+    /**
+     * 超时时间单位.
+     */
     public static final String DEFAULT_TIME_UNIT = "MILLISECONDS";
-    /** 最大连接数 */
+    /**
+     * 最大连接数.
+     */
     public static final String DEFAULT_MAX_TOTAL = "1024";
-    /** 最大并发连接数. */
+    /**
+     * 最大并发连接数.
+     */
     public static final String DEFAULT_MAX_PER_ROUTE = "512";
-    /** 字符集. */
+    /**
+     * 字符集.
+     */
     public static final String DEFAULT_CHARSET = "UTF-8";
 
     private static final ConcurrentMap<String, HttpClient> CLIENTS = Maps.newConcurrentMap();
 
-    public final long timeToLive;
-    public final TimeUnit tunit;
-    public final int maxTotal;
-    public final int maxPerRoute;
-    public final Charset charset;
+    private final long timeToLive;
+    private final TimeUnit tunit;
+    private final int maxTotal;
+    private final int maxPerRoute;
+    @JSONField()
+    private final Charset charset;
 
-    public Http() {
+    /**
+     * Default Constructor.
+     */
+    public HttpConfigure() {
         this(Long.parseLong(System.getProperty(TIME_TO_LIVE, DEFAULT_TIME_TO_LIVE)));
     }
 
-    public Http(final long timeToLive) {
+    /**
+     * @param timeToLive 超时时间
+     */
+    public HttpConfigure(final long timeToLive) {
         this(timeToLive, Charset.forName(System.getProperty(CHARSET, DEFAULT_CHARSET)));
     }
 
-    public Http(final long timeToLive, final Charset charset) {
+    /**
+     * @param timeToLive 超时时间
+     * @param charset    字符集
+     */
+    public HttpConfigure(final long timeToLive, final Charset charset) {
         this(timeToLive, TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT)),
                 Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL)),
                 Integer.parseInt(System.getProperty(MAX_PER_ROUTE, DEFAULT_MAX_PER_ROUTE)), charset);
     }
 
-    public Http(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
+    /**
+     * @param timeToLive  超时时间
+     * @param tunit       超时时间单位
+     * @param maxTotal    最大连接数
+     * @param maxPerRoute 最大并发连接数
+     * @param charset     字符集
+     */
+    public HttpConfigure(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
         this.timeToLive = timeToLive;
         this.tunit = tunit;
         this.maxTotal = maxTotal;
@@ -77,6 +111,9 @@ public class Http {
         this.charset = charset;
     }
 
+    /**
+     * @return HttpClient
+     */
     public HttpClient get() {
         final String key = toString();
         if (CLIENTS.containsKey(key)) {
@@ -86,6 +123,41 @@ public class Http {
             CLIENTS.put(key, client);
             return client;
         }
+    }
+
+    /**
+     * @return 超时时间
+     */
+    public long getTimeToLive() {
+        return timeToLive;
+    }
+
+    /**
+     * @return 超时时间单位
+     */
+    public TimeUnit getTunit() {
+        return tunit;
+    }
+
+    /**
+     * @return 最大连接数
+     */
+    public int getMaxTotal() {
+        return maxTotal;
+    }
+
+    /**
+     * @return 最大并发连接数
+     */
+    public int getMaxPerRoute() {
+        return maxPerRoute;
+    }
+
+    /**
+     * @return 字符集
+     */
+    public Charset getCharset() {
+        return charset;
     }
 
     @Override

@@ -13,30 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.dubbo;
+package org.nanoframework.extension.httpclient;
 
-import com.alibaba.dubbo.config.ReferenceConfig;
-import com.alibaba.dubbo.config.annotation.Reference;
-import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
 import org.aopalliance.intercept.MethodInvocation;
 import org.nanoframework.core.inject.AbstractMethodInjectInterceptor;
 
 import java.lang.reflect.Method;
+import java.nio.charset.Charset;
 
 /**
  * @author yanghe
- * @since 1.4.1
+ * @since 1.4.10
  */
-public class DubboReferenceInterceptor extends AbstractMethodInjectInterceptor {
+public class HttpClientInterceptor extends AbstractMethodInjectInterceptor {
 
     @Override
-    protected void inject(final MethodInvocation invocation, final Method method, final Class<?> returnType) throws Throwable {
-        final Reference reference = method.getAnnotation(Reference.class);
-        final ReferenceConfig<?> refer = new ReferenceConfig<>(reference);
-        refer.setCheck(reference.check());
-        refer.setInterface(returnType);
-        final Object newInstance = ReferenceConfigCache.getCache().get(refer);
-        setInstance(invocation.getThis(), method, returnType, newInstance);
+    protected void inject(final MethodInvocation invocation, final Method method, final Class<?> returnType)
+            throws Throwable {
+        final HttpConfig http = method.getAnnotation(HttpConfig.class);
+        final HttpConfigure conf = new HttpConfigure(http.timeToLive(), http.tunit(), http.maxTotal(),
+                http.maxPerRoute(), Charset.forName(http.charset()));
+        final HttpClient client = conf.get();
+        setInstance(invocation.getThis(), method, returnType, client);
     }
-
 }

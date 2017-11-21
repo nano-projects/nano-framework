@@ -20,6 +20,7 @@ import java.io.IOException;
 import org.apache.http.HttpStatus;
 import org.junit.Assert;
 import org.junit.Test;
+import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 
 import com.google.inject.Guice;
@@ -40,8 +41,19 @@ public class HttpClientTest {
 
     @Test
     public void generalHttpTest() throws IOException {
-        final HttpClient c1 = new Http().get();
-        final HttpClient c2 = new Http().get();
+        final HttpClient c1 = new HttpConfigure().get();
+        final HttpClient c2 = new HttpConfigure().get();
         Assert.assertTrue(c1 == c2);
     }
+
+    @Test
+    public void injectHttpClientTest() {
+        final HttpClientProxy proxy = Guice.createInjector(new HttpModule()).getInstance(HttpClientProxy.class);
+        final HttpClient client = proxy.getClient();
+        Assert.assertNotNull(client);
+        Assert.assertTrue(client instanceof HttpClientImpl);
+        Assert.assertEquals(((HttpClientImpl) client).conf().getCharset(), Charsets.GBK);
+    }
+
+
 }

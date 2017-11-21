@@ -41,23 +41,43 @@ import com.google.inject.Singleton;
  */
 @Singleton
 public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
+    /**
+     * Default constructor.
+     */
     public HttpClientImpl() {
         super();
     }
 
+    /**
+     * @param timeToLive 超时时间
+     */
     public HttpClientImpl(final long timeToLive) {
         super(timeToLive);
     }
 
+    /**
+     * @param timeToLive 超时时间
+     * @param charset 字符集
+     */
     public HttpClientImpl(final long timeToLive, final Charset charset) {
         super(timeToLive, charset);
     }
 
+    /**
+     * @param timeToLive  超时时间
+     * @param tunit       超时时间单位
+     * @param maxTotal    最大连接数
+     * @param maxPerRoute 最大并发连接数
+     * @param charset     字符集
+     */
     public HttpClientImpl(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
         super(timeToLive, tunit, maxTotal, maxPerRoute, charset);
     }
 
-    public HttpClientImpl(final Http conf) {
+    /**
+     * @param conf HttpClient配置
+     */
+    public HttpClientImpl(final HttpConfigure conf) {
         super(conf);
     }
 
