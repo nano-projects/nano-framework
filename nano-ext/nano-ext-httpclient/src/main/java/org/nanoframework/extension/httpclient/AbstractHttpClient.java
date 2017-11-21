@@ -16,16 +16,16 @@
 package org.nanoframework.extension.httpclient;
 
 import static org.apache.http.entity.ContentType.APPLICATION_JSON;
-import static org.nanoframework.extension.httpclient.HttpConfigure.CHARSET;
-import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_CHARSET;
-import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_MAX_PER_ROUTE;
-import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_MAX_TOTAL;
-import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_TIME_TO_LIVE;
-import static org.nanoframework.extension.httpclient.HttpConfigure.DEFAULT_TIME_UNIT;
-import static org.nanoframework.extension.httpclient.HttpConfigure.MAX_PER_ROUTE;
-import static org.nanoframework.extension.httpclient.HttpConfigure.MAX_TOTAL;
-import static org.nanoframework.extension.httpclient.HttpConfigure.TIME_TO_LIVE;
-import static org.nanoframework.extension.httpclient.HttpConfigure.TIME_UNIT;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.CHARSET;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.DEFAULT_CHARSET;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.DEFAULT_MAX_PER_ROUTE;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.DEFAULT_MAX_TOTAL;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.DEFAULT_TIME_TO_LIVE;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.DEFAULT_TIME_UNIT;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.MAX_PER_ROUTE;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.MAX_TOTAL;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.TIME_TO_LIVE;
+import static org.nanoframework.extension.httpclient.inject.HttpConfigure.TIME_UNIT;
 
 import com.google.common.collect.Lists;
 import org.apache.http.HttpEntity;
@@ -45,6 +45,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ReflectUtils;
+import org.nanoframework.extension.httpclient.inject.HttpConfigure;
 
 import java.io.IOException;
 import java.net.URI;
@@ -81,20 +82,21 @@ public abstract class AbstractHttpClient implements HttpClient {
      * @param charset    字符集
      */
     public AbstractHttpClient(final long timeToLive, final Charset charset) {
-        this(timeToLive, TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT)),
+        this(HttpConfigure.DEFAULT_SPI_NAME, timeToLive, TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT)),
                 Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL)),
                 Integer.parseInt(System.getProperty(MAX_PER_ROUTE, DEFAULT_MAX_PER_ROUTE)), charset);
     }
 
     /**
+     * @param spi         SPI名称
      * @param timeToLive  超时时间
      * @param tunit       超时时间单位
      * @param maxTotal    最大连接数
      * @param maxPerRoute 最大并发连接数
      * @param charset     字符集
      */
-    public AbstractHttpClient(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
-        this(new HttpConfigure(timeToLive, tunit, maxTotal, maxPerRoute, charset));
+    public AbstractHttpClient(final String spi, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
+        this(new HttpConfigure(spi, timeToLive, tunit, maxTotal, maxPerRoute, charset));
     }
 
     /**

@@ -15,11 +15,7 @@
  */
 package org.nanoframework.extension.httpclient;
 
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
+import com.google.inject.Singleton;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -31,11 +27,14 @@ import org.apache.http.client.methods.HttpTrace;
 import org.apache.http.entity.ContentType;
 import org.nanoframework.commons.exception.UnsupportedAccessException;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
+import org.nanoframework.extension.httpclient.inject.HttpConfigure;
 
-import com.google.inject.Singleton;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
- *
  * @author yanghe
  * @since 1.3.3
  */
@@ -57,21 +56,22 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
 
     /**
      * @param timeToLive 超时时间
-     * @param charset 字符集
+     * @param charset    字符集
      */
     public HttpClientImpl(final long timeToLive, final Charset charset) {
         super(timeToLive, charset);
     }
 
     /**
+     * @param spi         SPI名称
      * @param timeToLive  超时时间
      * @param tunit       超时时间单位
      * @param maxTotal    最大连接数
      * @param maxPerRoute 最大并发连接数
      * @param charset     字符集
      */
-    public HttpClientImpl(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
-        super(timeToLive, tunit, maxTotal, maxPerRoute, charset);
+    public HttpClientImpl(final String spi, final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
+        super(spi, timeToLive, tunit, maxTotal, maxPerRoute, charset);
     }
 
     /**
@@ -328,7 +328,7 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
 
     @Override
     public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers,
-            final Map<String, String> params) throws IOException {
+                                final Map<String, String> params) throws IOException {
         switch (requestMethod) {
             case GET:
                 return get(url, headers, params);
@@ -383,7 +383,7 @@ public class HttpClientImpl extends AbstractHttpClient implements HttpClient {
 
     @Override
     public HttpResponse execute(final RequestMethod requestMethod, final String url, final Map<String, String> headers, final String stream,
-            final ContentType contentType) throws IOException {
+                                final ContentType contentType) throws IOException {
         switch (requestMethod) {
             case POST:
                 return post(url, headers, stream, contentType);

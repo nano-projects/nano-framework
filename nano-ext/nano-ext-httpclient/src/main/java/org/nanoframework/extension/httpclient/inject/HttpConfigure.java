@@ -13,16 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.httpclient;
+package org.nanoframework.extension.httpclient.inject;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.collect.Maps;
+import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.entity.BaseEntity;
-import org.nanoframework.commons.support.logging.LoggerFactory;
+import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.MD5Utils;
+import org.nanoframework.commons.util.ReflectUtils;
+import org.nanoframework.core.spi.SPIException;
+import org.nanoframework.core.spi.SPILoader;
+import org.nanoframework.core.spi.SPIMapper;
+import org.nanoframework.extension.httpclient.HttpClient;
 
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
+import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +49,10 @@ public class HttpConfigure extends BaseEntity {
     /** */
     public static final String CHARSET = "context.httpclient.charset";
 
+    /**
+     * 默认HttpClient实现.
+     */
+    public static final String DEFAULT_SPI_NAME = "default";
     /**
      * 超时时间.
      */
@@ -65,11 +76,11 @@ public class HttpConfigure extends BaseEntity {
 
     private static final ConcurrentMap<String, HttpClient> CLIENTS = Maps.newConcurrentMap();
 
+    private final String spi;
     private final long timeToLive;
     private final TimeUnit tunit;
     private final int maxTotal;
     private final int maxPerRoute;
-    @JSONField()
     private final Charset charset;
 
     /**
@@ -91,19 +102,22 @@ public class HttpConfigure extends BaseEntity {
      * @param charset    字符集
      */
     public HttpConfigure(final long timeToLive, final Charset charset) {
-        this(timeToLive, TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT)),
+        this(DEFAULT_SPI_NAME, timeToLive, TimeUnit.valueOf(System.getProperty(TIME_UNIT, DEFAULT_TIME_UNIT)),
                 Integer.parseInt(System.getProperty(MAX_TOTAL, DEFAULT_MAX_TOTAL)),
                 Integer.parseInt(System.getProperty(MAX_PER_ROUTE, DEFAULT_MAX_PER_ROUTE)), charset);
     }
 
     /**
+     * @param spi         SPI名称
      * @param timeToLive  超时时间
      * @param tunit       超时时间单位
      * @param maxTotal    最大连接数
      * @param maxPerRoute 最大并发连接数
      * @param charset     字符集
      */
-    public HttpConfigure(final long timeToLive, final TimeUnit tunit, final int maxTotal, final int maxPerRoute, final Charset charset) {
+    public HttpConfigure(final String spi, final long timeToLive, final TimeUnit tunit, final int maxTotal,
+                         final int maxPerRoute, final Charset charset) {
+        this.spi = spi;
         this.timeToLive = timeToLive;
         this.tunit = tunit;
         this.maxTotal = maxTotal;
@@ -119,9 +133,23 @@ public class HttpConfigure extends BaseEntity {
         if (CLIENTS.containsKey(key)) {
             return CLIENTS.get(key);
         } else {
-            final HttpClient client = new HttpClientImpl(this);
-            CLIENTS.put(key, client);
-            return client;
+            final List<SPIMapper> spis = SPILoader.spis().get(HttpClient.class);
+            if (!CollectionUtils.isEmpty(spis)) {
+                for (final SPIMapper spi : spis) {
+                    if (StringUtils.equals(spi.getName(), this.spi)) {
+                        final Class<?> instance = spi.getInstance();
+                        if (HttpClient.class.isAssignableFrom(instance)) {
+                            final HttpClient client = (HttpClient) ReflectUtils.newInstance(spi.getInstance(), this);
+                            CLIENTS.put(key, client);
+                            return client;
+                        } else {
+                            throw new SPIException(MessageFormat.format("无效的SPI定义: HttpClient is not assignable from {0}", spi.getInstanceClsName()));
+                        }
+                    }
+                }
+            }
+
+            throw new SPIException("无效的SPI定义");
         }
     }
 

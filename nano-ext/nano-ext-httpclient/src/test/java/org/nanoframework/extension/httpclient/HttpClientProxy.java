@@ -16,13 +16,7 @@
 package org.nanoframework.extension.httpclient;
 
 import com.google.inject.Inject;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.entity.ContentType;
-import org.nanoframework.core.component.stereotype.bind.RequestMethod;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Map;
+import org.nanoframework.extension.httpclient.inject.HttpConfig;
 
 /**
  *
@@ -31,6 +25,7 @@ import java.util.Map;
  */
 public class HttpClientProxy {
     private HttpClient client;
+    private HttpClient testClient;
 
     @Inject
     @HttpConfig(charset = "GBK")
@@ -40,5 +35,15 @@ public class HttpClientProxy {
 
     public void setClient(final HttpClient client) {
         this.client = client;
+    }
+
+    @Inject
+    @HttpConfig(spi = "test")
+    public HttpClient getTestClient() {
+        return testClient;
+    }
+
+    public void setTestClient(final HttpClient testClient) {
+        this.testClient = testClient;
     }
 }

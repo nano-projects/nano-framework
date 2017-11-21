@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.httpclient;
+package org.nanoframework.extension.httpclient.inject;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -30,18 +30,35 @@ import java.util.concurrent.TimeUnit;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.FIELD, ElementType.METHOD})
 public @interface HttpConfig {
-    /** 超时时间. */
+    /**
+     * 默认HttpClient实现.
+     */
+    String DEFAULT_SPI_NAME = "default";
+    /**
+     * 超时时间.
+     */
     long DEFAULT_TIME_TO_LIVE = 5000;
-    /** 最大连接数. */
+    /**
+     * 最大连接数.
+     */
     int DEFAULT_MAX_TOTAL = 1024;
-    /** 最大并发连接数. */
+    /**
+     * 最大并发连接数.
+     */
     int DEFAULT_MAX_PER_ROUTE = 512;
-    /** 字符集. */
+    /**
+     * 字符集.
+     */
     String DEFAULT_CHARSET = "UTF-8";
 
     /**
+     * @return 默认HttpClient实现
+     */
+    String spi() default DEFAULT_SPI_NAME;
+
+    /**
      * @return 超时时间
-     * */
+     */
     long timeToLive() default DEFAULT_TIME_TO_LIVE;
 
     /**

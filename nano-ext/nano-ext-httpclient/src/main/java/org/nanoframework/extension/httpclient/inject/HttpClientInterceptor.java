@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.extension.httpclient;
+package org.nanoframework.extension.httpclient.inject;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.nanoframework.core.inject.AbstractMethodInjectInterceptor;
+import org.nanoframework.extension.httpclient.HttpClient;
 
 import java.lang.reflect.Method;
 import java.nio.charset.Charset;
@@ -31,7 +32,7 @@ public class HttpClientInterceptor extends AbstractMethodInjectInterceptor {
     protected void inject(final MethodInvocation invocation, final Method method, final Class<?> returnType)
             throws Throwable {
         final HttpConfig http = method.getAnnotation(HttpConfig.class);
-        final HttpConfigure conf = new HttpConfigure(http.timeToLive(), http.tunit(), http.maxTotal(),
+        final HttpConfigure conf = new HttpConfigure(http.spi(), http.timeToLive(), http.tunit(), http.maxTotal(),
                 http.maxPerRoute(), Charset.forName(http.charset()));
         final HttpClient client = conf.get();
         setInstance(invocation.getThis(), method, returnType, client);
