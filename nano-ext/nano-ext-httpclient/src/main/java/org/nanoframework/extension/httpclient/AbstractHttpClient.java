@@ -327,7 +327,7 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse execute(final HttpRequestBase request) {
+    public HttpResponse process(final HttpRequestBase request) throws HttpClientException {
         final long send = System.currentTimeMillis();
         try (CloseableHttpResponse response = client.execute(request)) {
             final StatusLine status = response.getStatusLine();

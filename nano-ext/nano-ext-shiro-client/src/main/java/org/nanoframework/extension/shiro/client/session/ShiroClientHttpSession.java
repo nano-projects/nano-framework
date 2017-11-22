@@ -116,7 +116,7 @@ public class ShiroClientHttpSession extends ShiroHttpSession {
     }
 
     protected boolean syncSession0(final String url, final Map<String, String> params) throws IOException {
-        HttpResponse response = httpClient.execute(requestMethod, url, params);
+        HttpResponse response = httpClient.process(requestMethod, url, params);
         if(response.statusCode == HttpStatusCode.SC_OK) {
             ResultMap resultMap = ResultMap.create(JSON.parseObject(response.entity, RESULTMAP_TYPE));
             if(resultMap.getStatus() == HttpStatusCode.SC_OK) {

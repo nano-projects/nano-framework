@@ -15,20 +15,18 @@
  */
 package org.nanoframework.extension.httpclient;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Map;
-
+import com.google.inject.ImplementedBy;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
-
-import com.google.inject.ImplementedBy;
 import org.nanoframework.core.spi.Lazy;
 import org.nanoframework.core.spi.SPI;
+import org.nanoframework.extension.httpclient.exception.HttpClientException;
+
+import java.net.URISyntaxException;
+import java.util.Map;
 
 /**
- *
  * @author yanghe
  * @since 1.3.3
  */
@@ -38,396 +36,452 @@ import org.nanoframework.core.spi.SPI;
 public interface HttpClient {
     /**
      * Http 'GET' request.
-     * 
+     *
      * @param url request url
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse get(String url) throws IOException;
+    HttpResponse get(String url) throws HttpClientException;
 
     /**
      * Http 'GET' request.
-     * 
-     * @param url request url
+     *
+     * @param url    request url
      * @param params request parameter map
      * @return HttpResponse
-     * @throws URISyntaxException if URI Syntax errors occur
-     * @throws IOException if I/O errors occur
+     * @throws URISyntaxException  if URI Syntax errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse get(String url, Map<String, String> params) throws URISyntaxException, IOException;
+    HttpResponse get(String url, Map<String, String> params) throws URISyntaxException, HttpClientException;
 
     /**
      * Http 'GET' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request headers map
+     * @param params  request parameter map
+     * @return HttpResponse
+     * @throws URISyntaxException  if URI Syntax errors occur
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse get(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, HttpClientException;
+
+    /**
+     * Http 'POST' request.
+     *
+     * @param url request url
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse post(String url) throws HttpClientException;
+
+    /**
+     * Http 'POST' request.
+     *
+     * @param url    request url
      * @param params request parameter map
      * @return HttpResponse
-     * @throws URISyntaxException if URI Syntax errors occur
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse get(String url, Map<String, String> headers, Map<String, String> params) throws URISyntaxException, IOException;
+    HttpResponse post(String url, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'POST' request.
-     * 
-     * @param url request url
-     * @return HttpResponse
-     * @throws IOException if I/O errors occur
-     */
-    HttpResponse post(String url) throws IOException;
-
-    /**
-     * Http 'POST' request.
-     * 
-     * @param url request url
-     * @param params request parameter map
-     * @return HttpResponse
-     * @throws IOException if I/O errors occur
-     */
-    HttpResponse post(String url, Map<String, String> params) throws IOException;
-
-    /**
-     * Http 'POST' request.
-     * 
-     * @param url request url
+     *
+     * @param url  request url
      * @param json request json string
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse post(String url, String json) throws IOException;
+    HttpResponse post(String url, String json) throws HttpClientException;
 
     /**
      * Http 'POST' request.
-     * 
-     * @param url request url
-     * @param stream stream string
+     *
+     * @param url         request url
+     * @param stream      stream string
      * @param contentType httpclient ContentType
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse post(String url, String stream, ContentType contentType) throws IOException;
+    HttpResponse post(String url, String stream, ContentType contentType) throws HttpClientException;
 
     /**
      * Http 'POST' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request headers map
-     * @param json json string
+     * @param json    json string
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse post(String url, Map<String, String> headers, String json) throws IOException;
+    HttpResponse post(String url, Map<String, String> headers, String json) throws HttpClientException;
 
     /**
      * Http 'POST' request.
-     * 
-     * @param url request url
-     * @param headers request hreaders map
-     * @param stream stream string
+     *
+     * @param url         request url
+     * @param headers     request hreaders map
+     * @param stream      stream string
      * @param contentType httpclient ContentType
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse post(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
+    HttpResponse post(String url, Map<String, String> headers, String stream, ContentType contentType) throws HttpClientException;
 
     /**
      * Http 'POST' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request hreaders map
+     * @param params  request parameter map
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse post(String url, Map<String, String> headers, Map<String, String> params) throws HttpClientException;
+
+    /**
+     * Http 'PUT' request.
+     *
+     * @param url request url
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse put(String url) throws HttpClientException;
+
+    /**
+     * Http 'PUT' request.
+     *
+     * @param url    request url
      * @param params request parameter map
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse post(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    HttpResponse put(String url, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'PUT' request.
-     * 
-     * @param url request url
-     * @return HttpResponse
-     * @throws IOException if I/O errors occur
-     */
-    HttpResponse put(String url) throws IOException;
-
-    /**
-     * Http 'PUT' request.
-     * 
-     * @param url request url
-     * @param params request parameter map
-     * @return HttpResponse
-     * @throws IOException if I/O errors occur
-     */
-    HttpResponse put(String url, Map<String, String> params) throws IOException;
-
-    /**
-     * Http 'PUT' request.
-     * 
-     * @param url request url
+     *
+     * @param url  request url
      * @param json request json string
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse put(String url, String json) throws IOException;
+    HttpResponse put(String url, String json) throws HttpClientException;
 
     /**
      * Http 'PUT' request.
-     * 
-     * @param url the url
-     * @param stream the stream
+     *
+     * @param url         the url
+     * @param stream      the stream
      * @param contentType the contentType
      * @return HttpResponse
-     * @throws IOException
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse put(String url, String stream, ContentType contentType) throws IOException;
+    HttpResponse put(String url, String stream, ContentType contentType) throws HttpClientException;
 
     /**
      * Http 'PUT' request.
-     * 
-     * @param url the url
-     * @param stream the stream
+     *
+     * @param url         the url
+     * @param headers     请求头
+     * @param stream      the stream
      * @param contentType the contentType
      * @return HttpResponse
-     * @throws IOException
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse put(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
+    HttpResponse put(String url, Map<String, String> headers, String stream, ContentType contentType) throws HttpClientException;
 
     /**
      * Http 'PUT' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request headers map
-     * @param json json string
+     * @param json    json string
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse put(String url, Map<String, String> headers, String json) throws IOException;
+    HttpResponse put(String url, Map<String, String> headers, String json) throws HttpClientException;
 
     /**
      * Http 'PUT' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request hreaders map
-     * @param params request parameter map
+     * @param params  request parameter map
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse put(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    HttpResponse put(String url, Map<String, String> headers, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'DELETE' request.
-     * 
+     *
      * @param url request url
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse delete(String url) throws IOException;
+    HttpResponse delete(String url) throws HttpClientException;
 
     /**
      * Http 'DELETE' request.
-     * 
-     * @param url request url
+     *
+     * @param url    request url
      * @param params request params map
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse delete(String url, Map<String, String> params) throws IOException;
+    HttpResponse delete(String url, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'DELETE' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request headers map
-     * @param params the params
+     * @param params  the params
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse delete(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    HttpResponse delete(String url, Map<String, String> headers, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'PATCH' request.
-     * 
+     *
      * @param url request url
      * @return HttpResponse
-     * @throws IOException IOException if I/O errors occur
+     * @throws HttpClientException IOException Http请求异常
      */
-    HttpResponse patch(String url) throws IOException;
+    HttpResponse patch(String url) throws HttpClientException;
 
     /**
      * Http 'PATCH' request.
-     * 
-     * @param url request url
+     *
+     * @param url    request url
      * @param params request parameter map
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse patch(String url, Map<String, String> params) throws IOException;
+    HttpResponse patch(String url, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'PATCH' request.
-     * 
-     * @param url request url
+     *
+     * @param url  request url
      * @param json request json string
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse patch(String url, String json) throws IOException;
+    HttpResponse patch(String url, String json) throws HttpClientException;
 
     /**
      * Http 'PATCH' request.
-     * 
-     * @param url request url
-     * @param stream stream string
+     *
+     * @param url         request url
+     * @param stream      stream string
      * @param contentType httpclient ContentType
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse patch(String url, String stream, ContentType contentType) throws IOException;
+    HttpResponse patch(String url, String stream, ContentType contentType) throws HttpClientException;
 
     /**
      * Http 'PATCH' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request headers map
-     * @param json json string
+     * @param json    json string
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse patch(String url, Map<String, String> headers, String json) throws IOException;
+    HttpResponse patch(String url, Map<String, String> headers, String json) throws HttpClientException;
 
     /**
      * Http 'PATCH' request.
-     * 
-     * @param url request url
-     * @param headers request hreaders map
-     * @param stream stream string
+     *
+     * @param url         request url
+     * @param headers     request hreaders map
+     * @param stream      stream string
      * @param contentType httpclient ContentType
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse patch(String url, Map<String, String> headers, String stream, ContentType contentType) throws IOException;
+    HttpResponse patch(String url, Map<String, String> headers, String stream, ContentType contentType) throws HttpClientException;
 
     /**
      * Http 'PATCH' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request hreaders map
-     * @param params request parameter map
+     * @param params  request parameter map
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse patch(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    HttpResponse patch(String url, Map<String, String> headers, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'HEAD' request.
-     * 
+     *
      * @param url request url
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse head(String url) throws IOException;
+    HttpResponse head(String url) throws HttpClientException;
 
     /**
      * Http 'HEAD' request.
-     * 
-     * @param url request url
+     *
+     * @param url    request url
      * @param params request params map
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse head(String url, Map<String, String> params) throws IOException;
+    HttpResponse head(String url, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'HEAD' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request headers map
-     * @param params the params
+     * @param params  the params
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse head(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    HttpResponse head(String url, Map<String, String> headers, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'OPTIONS' request.
-     * 
+     *
      * @param url request url
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse options(String url) throws IOException;
+    HttpResponse options(String url) throws HttpClientException;
 
     /**
      * Http 'OPTIONS' request.
-     * 
-     * @param url request url
+     *
+     * @param url    request url
      * @param params request params map
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse options(String url, Map<String, String> params) throws IOException;
+    HttpResponse options(String url, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'OPTIONS' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request headers map
-     * @param params the params
+     * @param params  the params
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse options(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    HttpResponse options(String url, Map<String, String> headers, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'TRACE' request.
-     * 
+     *
      * @param url request url
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse trace(String url) throws IOException;
+    HttpResponse trace(String url) throws HttpClientException;
 
     /**
      * Http 'TRACE' request.
-     * 
-     * @param url request url
+     *
+     * @param url    request url
      * @param params request params map
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse trace(String url, Map<String, String> params) throws IOException;
+    HttpResponse trace(String url, Map<String, String> params) throws HttpClientException;
 
     /**
      * Http 'TRACE' request.
-     * 
-     * @param url request url
+     *
+     * @param url     request url
      * @param headers request headers map
-     * @param params the params
+     * @param params  the params
      * @return HttpResponse
-     * @throws IOException if I/O errors occur
+     * @throws HttpClientException Http请求异常
      */
-    HttpResponse trace(String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    HttpResponse trace(String url, Map<String, String> headers, Map<String, String> params) throws HttpClientException;
 
-    HttpResponse execute(RequestMethod requestMethod, String url) throws IOException;
+    /**
+     * @param requestMethod 请求类型
+     * @param url           URL
+     * @return HttpResonse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse process(RequestMethod requestMethod, String url) throws HttpClientException;
 
-    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> params) throws IOException;
+    /**
+     * @param requestMethod 请求类型
+     * @param url           URL
+     * @param params        参数列表
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse process(RequestMethod requestMethod, String url, Map<String, String> params) throws HttpClientException;
 
-    HttpResponse execute(RequestMethod requestMethod, String url, String json) throws IOException;
+    /**
+     * @param requestMethod 请求类型
+     * @param url           URL
+     * @param json          JSON格式流式报文
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse process(RequestMethod requestMethod, String url, String json) throws HttpClientException;
 
-    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, Map<String, String> params) throws IOException;
+    /**
+     * @param requestMethod 请求类型
+     * @param url           URL
+     * @param headers       请求头列表
+     * @param params        参数列表
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse process(RequestMethod requestMethod, String url, Map<String, String> headers, Map<String, String> params) throws HttpClientException;
 
-    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, String json) throws IOException;
+    /**
+     * @param requestMethod 请求类型
+     * @param url           URL
+     * @param headers       请求头列表
+     * @param json          JSON格式流式报文
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse process(RequestMethod requestMethod, String url, Map<String, String> headers, String json) throws HttpClientException;
 
-    HttpResponse execute(RequestMethod requestMethod, String url, String stream, ContentType contentType) throws IOException;
+    /**
+     * @param requestMethod 请求类型
+     * @param url           URL
+     * @param stream        流式报文
+     * @param contentType   报文类型
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse process(RequestMethod requestMethod, String url, String stream, ContentType contentType) throws HttpClientException;
 
-    HttpResponse execute(RequestMethod requestMethod, String url, Map<String, String> headers, String stream, ContentType contentType)
-            throws IOException;
+    /**
+     * @param requestMethod 请求类型
+     * @param url           URL
+     * @param headers       请求头列表
+     * @param stream        流式报文
+     * @param contentType   报文类型
+     * @return HttpResponse
+     * @throws HttpClientException Http请求异常
+     */
+    HttpResponse process(RequestMethod requestMethod, String url, Map<String, String> headers, String stream, ContentType contentType)
+            throws HttpClientException;
 
     /**
      * 处理Http请求.
+     *
      * @param request 请求
      * @return 响应
+     * @throws HttpClientException Http调用异常
      */
-    HttpResponse execute(HttpRequestBase request);
+    HttpResponse process(HttpRequestBase request) throws HttpClientException;
 }

@@ -34,7 +34,7 @@ public class HttpClientTest {
     @Test
     public void httpGetTest() throws IOException {
         HttpClient httpClient = Guice.createInjector().getInstance(HttpClient.class);
-        HttpResponse response = httpClient.execute(RequestMethod.GET, "https://www.baidu.com");
+        HttpResponse response = httpClient.process(RequestMethod.GET, "https://www.baidu.com");
         Assert.assertEquals(response.statusCode, HttpStatus.SC_OK);
     }
 
