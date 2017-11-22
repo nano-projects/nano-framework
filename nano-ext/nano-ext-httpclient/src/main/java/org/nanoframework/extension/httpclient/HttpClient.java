@@ -429,5 +429,5 @@ public interface HttpClient {
      * @param request 请求
      * @return 响应
      */
-    HttpResponse execute(final HttpRequestBase request) throws IOException;
+    HttpResponse execute(HttpRequestBase request);
 }

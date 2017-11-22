@@ -45,9 +45,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.nanoframework.commons.util.CollectionUtils;
 import org.nanoframework.commons.util.ReflectUtils;
+import org.nanoframework.extension.httpclient.exception.HttpClientException;
 import org.nanoframework.extension.httpclient.inject.HttpConfigure;
 
-import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.Collections;
@@ -327,15 +327,22 @@ public abstract class AbstractHttpClient implements HttpClient {
     }
 
     @Override
-    public HttpResponse execute(final HttpRequestBase request) throws IOException {
+    public HttpResponse execute(final HttpRequestBase request) {
+        final long send = System.currentTimeMillis();
         try (CloseableHttpResponse response = client.execute(request)) {
+            final StatusLine status = response.getStatusLine();
             final HttpEntity entity = response.getEntity();
+            final String entityStr;
             if (entity != null) {
-                StatusLine status = response.getStatusLine();
-                return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(), EntityUtils.toString(entity, this.conf.getCharset()));
+                entityStr = EntityUtils.toString(entity, this.conf.getCharset());
+            } else {
+                entityStr = null;
             }
-        }
 
-        return HttpResponse.EMPTY;
+            return HttpResponse.create(status.getStatusCode(), status.getReasonPhrase(),
+                    entityStr, send, System.currentTimeMillis());
+        } catch (final Throwable e) {
+            throw new HttpClientException(e.getMessage(), e, send, System.currentTimeMillis());
+        }
     }
 }
