@@ -15,18 +15,14 @@
  */
 package org.nanoframework.extension.shiro.client.web.component.impl;
 
-import java.io.IOException;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.google.inject.Inject;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.StringUtils;
 import org.nanoframework.extension.httpclient.HttpClient;
 import org.nanoframework.extension.httpclient.HttpResponse;
+import org.nanoframework.extension.httpclient.exception.HttpClientException;
 import org.nanoframework.extension.shiro.client.configuration.ConfigurationKeys;
 import org.nanoframework.extension.shiro.client.web.component.AuthenticationComponent;
 import org.nanoframework.web.server.cookie.Cookies;
@@ -34,10 +30,11 @@ import org.nanoframework.web.server.filter.HttpRequestFilter.HttpContext;
 import org.nanoframework.web.server.http.status.HttpStatus;
 import org.nanoframework.web.server.http.status.ResultMap;
 
-import com.google.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.util.Map;
 
 /**
- *
  * @author yanghe
  * @since 1.3.7
  */
@@ -46,7 +43,7 @@ public class AuthenticationComponentImpl implements AuthenticationComponent {
     private static final String PRINCIPALS_SESSION_KEY = "org.apache.shiro.subject.support.DefaultSubjectContext_PRINCIPALS_SESSION_KEY";
     @Inject
     private HttpClient httpClient;
-    
+
     @Override
     public Map<String, Object> findUserInfo() {
         try {
@@ -67,31 +64,31 @@ public class AuthenticationComponentImpl implements AuthenticationComponent {
             final String sessionURL = sessionURL();
             final HttpResponse response = httpClient.delete(sessionURL);
             return ResultMap.create(response.statusCode, response.reasonPhrase, response.entity);
-        } catch (IOException e) {
+        } catch (final HttpClientException e) {
             LOGGER.error("Logout error: {}", e.getMessage());
             return ResultMap.create("Logout error: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        
+
     }
-    
+
     protected String sessionURL() {
         final HttpServletRequest request = HttpContext.get(HttpServletRequest.class);
         final String shiroSessionURL = (String) request.getAttribute(ConfigurationKeys.SHIRO_SESSION_URL.getName());
         return shiroSessionURL + (shiroSessionURL.endsWith("/") ? "" : '/') + localSessionId(request);
     }
-    
+
     protected String localSessionId(final HttpServletRequest request) {
         final String sessionIdName = (String) request.getAttribute(ConfigurationKeys.SESSION_ID_NAME.getName());
         final String sessionId = Cookies.get(request, sessionIdName);
-        if(StringUtils.isNotBlank(sessionId)) {
+        if (StringUtils.isNotBlank(sessionId)) {
             return sessionId;
         }
-        
+
         final HttpSession session = request.getSession();
-        if(session != null) {
+        if (session != null) {
             return session.getId();
         }
-        
+
         throw new NullPointerException("Not found session id.");
     }
 
