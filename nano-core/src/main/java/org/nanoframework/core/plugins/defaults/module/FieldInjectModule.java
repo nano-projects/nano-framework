@@ -28,6 +28,7 @@ import org.nanoframework.core.spi.Order;
 
 import javax.servlet.ServletConfig;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -52,14 +53,26 @@ public class FieldInjectModule implements Module {
         binder.bindListener(Matchers.any(), new TypeListener() {
             @Override
             public <I> void hear(final TypeLiteral<I> type, final TypeEncounter<I> encounter) {
-                final Field[] fields = type.getRawType().getDeclaredFields();
-                for (final Field field : fields) {
-                    if (field.isAnnotationPresent(FieldInject.class)) {
-                        final FieldInject inject = field.getAnnotation(FieldInject.class);
-                        encounter.register(ReflectUtils.newInstance(inject.value(), field));
-                    }
-                }
+                final List<Field> fields = fields(Lists.newArrayList(), type.getRawType());
+                fields.stream().filter(field -> field.isAnnotationPresent(FieldInject.class)).forEach(field -> {
+                    final FieldInject inject = field.getAnnotation(FieldInject.class);
+                    encounter.register(ReflectUtils.newInstance(inject.value(), field));
+                });
             }
         });
+    }
+
+    /**
+     * @param fields 当前类及继承类中所有的属性
+     * @param cls    监听类
+     * @return 监听类中的所有属性Field
+     */
+    protected List<Field> fields(final List<Field> fields, final Class<?> cls) {
+        fields.addAll(Arrays.asList(cls.getDeclaredFields()));
+        if (cls.getSuperclass() == null) {
+            return fields;
+        }
+
+        return fields(fields, cls.getSuperclass());
     }
 }

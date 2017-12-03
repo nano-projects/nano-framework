@@ -15,14 +15,7 @@
  */
 package org.nanoframework.commons.loader;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Map;
-import java.util.Properties;
-
+import com.google.common.collect.Maps;
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.io.ClassPathResource;
 import org.nanoframework.commons.io.Resource;
@@ -31,27 +24,43 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Charsets;
 import org.nanoframework.commons.util.ResourceUtils;
 
-import com.google.common.collect.Maps;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * 属性文件操作公有类，负责对属性文件进行读写操作.
+ *
  * @author yanghe
  * @since 1.0
  */
-public class PropertiesLoader {
-    /** 属性文件集合/ */
+public final class PropertiesLoader {
+    /**
+     * 属性文件集合/
+     */
     public static final Map<String, Properties> PROPERTIES = Maps.newHashMap();
-    /** 属性配置列表根. */
+    /**
+     * 属性配置列表根.
+     */
     public static final String CONTEXT = "context";
 
     private static Logger LOGGER = LoggerFactory.getLogger(PropertiesLoader.class);
 
+    private PropertiesLoader() {
+
+    }
+
     /**
      * 根据路径加载属性文件.
+     *
      * @param path 属性文件路径
      * @return Properties
      */
-    public static final Properties load(final String path) {
+    public static Properties load(final String path) {
         try {
             InputStream input = null;
             try {
@@ -69,17 +78,18 @@ public class PropertiesLoader {
             }
 
             return properties;
-        } catch (IOException e) {
+        } catch (final IOException e) {
             throw new LoaderException("加载属性文件异常: " + e.getMessage(), e);
         }
     }
 
     /**
      * 通过输入流加载属性文件.
+     *
      * @param input 文件输入流
      * @return 返回加载后的Properties
      */
-    public static final Properties load(final InputStream input) {
+    public static Properties load(final InputStream input) {
         if (input == null) {
             throw new LoaderException("输入流为空");
         }
@@ -95,12 +105,13 @@ public class PropertiesLoader {
 
     /**
      * 通过文件加载属性文件.
+     *
      * @param file 输入文件
      * @return 返回加载后的Properties
      * @throws LoaderException Loader异常
-     * @throws IOException IO异常
+     * @throws IOException     IO异常
      */
-    private static final Properties load(final File file) throws LoaderException, IOException {
+    private static Properties load(final File file) throws LoaderException, IOException {
         if (file == null) {
             throw new LoaderException("文件对象为空");
         }
@@ -112,14 +123,16 @@ public class PropertiesLoader {
 
     /**
      * 加载属性文件.
+     *
      * @param contextPath 文件相对路径
-     * @param stream context属性流
+     * @param stream      context属性流
      * @param loadContext 是否加载context
      * @throws LoaderException 加载异常
-     * @throws IOException IO异常
+     * @throws IOException     IO异常
+     * @deprecated 废除此方法调用
      */
     @Deprecated
-    public static final void load(final String contextPath, final InputStream stream, final boolean loadContext) throws LoaderException, IOException {
+    public static void load(final String contextPath, final InputStream stream, final boolean loadContext) throws LoaderException, IOException {
         final Properties prop = load(stream);
         prop.forEach((key, value) -> System.setProperty((String) key, (String) value));
         PROPERTIES.put(contextPath, prop);
@@ -144,12 +157,13 @@ public class PropertiesLoader {
 
     /**
      * 加载属性文件.
+     *
      * @param contextPath 文件相对路径
      * @param loadContext 是否加载context
      * @throws LoaderException 加载异常
-     * @throws IOException IO异常
+     * @throws IOException     IO异常
      */
-    public static final void load(final String contextPath, final boolean loadContext) throws LoaderException, IOException {
+    public static void load(final String contextPath, final boolean loadContext) throws LoaderException, IOException {
         final Properties prop = load(contextPath);
         prop.forEach((key, value) -> System.setProperty((String) key, (String) value));
         PROPERTIES.put(contextPath, prop);
