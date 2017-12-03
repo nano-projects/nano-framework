@@ -69,10 +69,11 @@ public class FieldInjectModule implements Module {
      */
     protected List<Field> fields(final List<Field> fields, final Class<?> cls) {
         fields.addAll(Arrays.asList(cls.getDeclaredFields()));
-        if (cls.getSuperclass() == null) {
+        final Class<?> superCls = cls.getSuperclass();
+        if (superCls == null) {
             return fields;
         }
 
-        return fields(fields, cls.getSuperclass());
+        return fields(fields, superCls);
     }
 }
