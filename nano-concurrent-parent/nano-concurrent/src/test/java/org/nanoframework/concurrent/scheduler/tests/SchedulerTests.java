@@ -26,7 +26,7 @@ import org.nanoframework.concurrent.scheduler.SchedulerFactory;
  * @author yanghe
  * @since 1.3.15
  */
-public class SchedulerTest extends PluginLoaderInit {
+public class SchedulerTests extends PluginLoaderInit {
 
     @Test
     public void schedulerTest() throws InterruptedException {

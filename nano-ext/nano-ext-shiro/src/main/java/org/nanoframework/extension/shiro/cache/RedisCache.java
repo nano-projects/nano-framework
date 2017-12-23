@@ -83,7 +83,7 @@ public class RedisCache<K, V> implements Cache<K, V> {
     public V put(final K key, final V value) throws CacheException {
         initRedisClient();
         final RedisClient client = sessions.values().iterator().next();
-        client.hset(cacheName, SerializableUtils.encodeString(key), SerializableUtils.encode(value));
+        client.hset(cacheName, SerializableUtils.encodeString(key), SerializableUtils.encodeString(value));
         return value;
     }
 

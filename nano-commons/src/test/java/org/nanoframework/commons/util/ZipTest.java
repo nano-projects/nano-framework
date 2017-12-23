@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 the original author or authors.
+ * Copyright 2015-2016 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,20 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.concurrent.scheduler;
+package org.nanoframework.commons.util;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.junit.Test;
 
 /**
  * @author yanghe
- * @since 1.4.9
+ * @since 1.4.11
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({
-        org.nanoframework.concurrent.scheduler.tests.SchedulerTests.class,
-        org.nanoframework.concurrent.scheduler.longwait.SchedulerTests.class
-})
-public class SchedulerSuite {
+public class ZipTest {
 
+    @Test
+    public void decodeTest() {
+        final String value = "1234567890";
+        final String gzip = ZipUtils.gzip(value);
+        final String val1 = ZipUtils.gunzip(gzip);
+
+        org.junit.Assert.assertEquals(val1, value);
+
+        final String zip = ZipUtils.zip(value);
+        final String val2 = ZipUtils.unzip(zip);
+
+        org.junit.Assert.assertEquals(val2, value);
+    }
 }

@@ -17,14 +17,17 @@ package org.nanoframework.concurrent.scheduler.longwait;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.nanoframework.commons.support.logging.Logger;
+import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.concurrent.scheduler.SchedulerFactory;
+import org.nanoframework.concurrent.scheduler.tests.*;
 
 /**
- *
  * @author yanghe
  * @since 1.3.15
  */
-public class SchedulerTest extends PluginLoaderInit {
+public class SchedulerTests extends PluginLoaderInit {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerTests.class);
 
     @Test
     public void schedulerTest() throws InterruptedException {

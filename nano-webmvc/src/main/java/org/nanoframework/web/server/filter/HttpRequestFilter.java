@@ -40,6 +40,7 @@ import org.nanoframework.web.server.mvc.support.RedirectModel;
 import com.alibaba.fastjson.JSON;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+
 /**
  * Http请求拦截器 <br>
  * 此拦截器为NanoFramework框架的请求主入口 <br>
@@ -50,85 +51,82 @@ import com.google.common.collect.Maps;
  * @since 1.0 
  */
 public class HttpRequestFilter extends AbstractFilter {
-	private Logger logger = LoggerFactory.getLogger(HttpRequestFilter.class);
-	
-	@Override
-	protected boolean invoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		URLContext urlContext = create((HttpServletRequest) request);
-		String method = ((HttpServletRequest) request).getMethod();
-		RequestMapper mapper = Routes.route().lookup(urlContext.getNoRootContext(), RequestMethod.valueOf(method));
-		
-		Writer out = null;
-		if(mapper != null) {
-			try {
-				if(!validRequestMethod(response, out, mapper, method)) {
-					return false;
-				}
-				
-				Model model = new RedirectModel();
-				HttpContext.set(ImmutableMap.<Class<?>, Object> builder()
-				        .put(HttpServletRequest.class, request)
-		                .put(HttpServletResponse.class, response)
-		                .put(Model.class, model)
-		                .put(URLContext.class, urlContext)
-		                .build());
-				
-				Object ret = Components.invoke(mapper, urlContext.getParameter(), request, response, model, urlContext);
-				process(request, response, out, urlContext, ret, model);
-			} catch(ComponentInvokeException | BindRequestParamException | IOException | ServletException e) {
-				logger.error(e.getMessage(), e);
-				response.setContentType(ContentType.APPLICATION_JSON);
-				if(out == null) {
-				    out = response.getWriter();
-				}
-				
-				out.write(JSON.toJSONString(error(e)));
-			} finally {
-				if(out != null) {
-					out.flush();
-					out.close();
-				}
-				
-				HttpContext.clear();
-			}
-			
-			return false;
-		} 
-		
-		return true;
-	}
-	
-	/**
-	 *
-	 * @author yanghe
-	 * @since 1.3.5
-	 */
-	public static class HttpContext {
-	    private static ThreadLocal<Map<Class<?>, Object>> CONTEXT = new ThreadLocal<>();
-	    protected static void set(Map<Class<?>, Object> context) {
-	        clear();
-	        CONTEXT.set(Maps.newLinkedHashMap(context));
-	    }
-	    
-	    protected static void clear() {
-	        Map<Class<?>, Object> ctx;
-	        if((ctx = CONTEXT.get()) != null) {
+    private Logger logger = LoggerFactory.getLogger(HttpRequestFilter.class);
+
+    @Override
+    protected boolean invoke(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        URLContext urlContext = create((HttpServletRequest) request);
+        String method = ((HttpServletRequest) request).getMethod();
+        RequestMapper mapper = Routes.route().lookup(urlContext.getNoRootContext(), RequestMethod.valueOf(method));
+
+        Writer out = null;
+        if (mapper != null) {
+            try {
+                if (!validRequestMethod(response, out, mapper, method)) {
+                    return false;
+                }
+
+                Model model = new RedirectModel();
+                HttpContext.set(ImmutableMap.<Class<?>, Object> builder().put(HttpServletRequest.class, request)
+                        .put(HttpServletResponse.class, response).put(Model.class, model).put(URLContext.class, urlContext).build());
+
+                Object ret = Components.invoke(mapper, urlContext.getParameter(), request, response, model, urlContext);
+                process(request, response, out, urlContext, ret, model);
+            } catch (ComponentInvokeException | BindRequestParamException | IOException | ServletException e) {
+                logger.error(e.getMessage(), e);
+                response.setContentType(ContentType.APPLICATION_JSON);
+                if (out == null) {
+                    out = response.getWriter();
+                }
+
+                out.write(JSON.toJSONString(error(e)));
+            } finally {
+                if (out != null) {
+                    out.flush();
+                    out.close();
+                }
+
+                HttpContext.clear();
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *
+     * @author yanghe
+     * @since 1.3.5
+     */
+    public static class HttpContext {
+        private static ThreadLocal<Map<Class<?>, Object>> CONTEXT = new ThreadLocal<>();
+
+        protected static void set(Map<Class<?>, Object> context) {
+            clear();
+            CONTEXT.set(Maps.newLinkedHashMap(context));
+        }
+
+        protected static void clear() {
+            Map<Class<?>, Object> ctx;
+            if ((ctx = CONTEXT.get()) != null) {
                 ctx.clear();
                 CONTEXT.remove();
             }
-	    }
-	    
-	    @SuppressWarnings("unchecked")
+        }
+
+        @SuppressWarnings("unchecked")
         public static <T> T get(Class<T> type) {
-	        Assert.notNull(type, "类型不能为空");
-	        
-	        Map<Class<?>, Object> context = CONTEXT.get();
-	        if(context != null) {
-	            return (T) context.get(type);
-	        }
-	        
-	        throw new NullPointerException("未设置Class: " + type.getName());
-	    }
-	}
-	
+            Assert.notNull(type, "类型不能为空");
+
+            Map<Class<?>, Object> context = CONTEXT.get();
+            if (context != null) {
+                return (T) context.get(type);
+            }
+
+            throw new NullPointerException("未设置Class: " + type.getName());
+        }
+    }
+
 }

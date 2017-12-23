@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 the original author or authors.
+ * Copyright 2015-2017 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,6 @@
  */
 package org.nanoframework.concurrent.scheduler.longwait;
 
-import java.util.Enumeration;
-import java.util.Map;
-
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
-
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.nanoframework.commons.loader.PropertiesLoader;
@@ -30,6 +24,11 @@ import org.nanoframework.commons.util.MapBuilder;
 import org.nanoframework.concurrent.scheduler.SchedulerFactory;
 import org.nanoframework.core.component.Components;
 import org.nanoframework.core.plugins.PluginLoader;
+
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import java.util.Enumeration;
+import java.util.Map;
 
 /**
  *
@@ -73,5 +72,4 @@ public abstract class PluginLoaderInit {
         PropertiesLoader.PROPERTIES.clear();
         System.getProperties().keySet().iterator().forEachRemaining(key -> System.setProperty((String) key, ""));
     }
-
 }
