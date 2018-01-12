@@ -37,8 +37,8 @@
     <cs.dir>${project.basedir}</cs.dir>
     <nano.version>1.4.11-SNAPSHOT</nano.version>
 
-    <maven-checkstyle-plugin.version>2.15</maven-checkstyle-plugin.version>
-    <checkstyle.version>6.7</checkstyle.version>
+    <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+    <checkstyle.version>6.18</checkstyle.version>
   </properties>
 
   <dependencyManagement>
