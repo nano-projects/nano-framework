@@ -50,6 +50,7 @@
     <module>nano-ext-httpclient</module>
     <module>nano-ext-shiro-client</module>
     <module>nano-ext-dubbo</module>
+    <module>nano-ext-elastic-job-lite</module>
   </modules>
 
   <dependencyManagement>

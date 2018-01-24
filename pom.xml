@@ -543,6 +543,8 @@
               <less>JAVADOC_STYLE</less>
               <ts>JAVADOC_STYLE</ts>
               <sql>JAVADOC_STYLE</sql>
+              <sh>SCRIPT_STYLE</sh>
+              <bat>SCRIPT_STYLE</bat>
             </mapping>
             <excludes>
               <exclude>**/bin/**</exclude>
