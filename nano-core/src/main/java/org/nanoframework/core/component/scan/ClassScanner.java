@@ -57,6 +57,27 @@ public class ClassScanner {
         return Collections.emptySet();
     }
 
+    /**
+     * 返回目标类中带有参数中的注解的类
+     * @param targetClasses 目标类
+     * @param annotationClass 注解类
+     * @return 过滤后的类
+     */
+    public static Set<Class<?>> filter(final Set<Class<?>> targetClasses, final Class<? extends Annotation> annotationClass) {
+        if (targetClasses == null) {
+            return Collections.emptySet();
+        }
+
+        if (targetClasses.size() > 0) {
+            final Set<Class<?>> annClasses = Sets.newLinkedHashSet();
+            targetClasses.stream().filter(clz -> clz.isAnnotationPresent(annotationClass)).forEach(clz -> annClasses.add(clz));
+            return annClasses;
+
+        }
+
+        return Collections.emptySet();
+    }
+
     public static void scan(String packageName) {
         if (StringUtils.isEmpty(packageName)) {
             LOGGER.warn("没有设置packageName, 跳过扫描");

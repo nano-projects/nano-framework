@@ -132,6 +132,23 @@ public class SPILoader {
         return Collections.emptySet();
     }
 
+    public static String spiClassName(final Class<?> spiCls, final String name) {
+        if (!LOADED.get()) {
+            loading();
+        }
+
+        final List<SPIMapper> spiMappers = SPI_MAPPERS.get(spiCls);
+        if (!CollectionUtils.isEmpty(spiMappers)) {
+            for (SPIMapper spiMapper : spiMappers) {
+                if (name.equals(spiMapper.getName())) {
+                    return spiMapper.getSpiClsName();
+                }
+            }
+        }
+
+        return null;
+    }
+
     protected Enumeration<URL> getResources() throws IOException {
         final ClassLoader loader = SPILoader.class.getClassLoader();
         if (loader != null) {

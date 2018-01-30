@@ -121,4 +121,18 @@ public final class ApplicationContext {
     /** WebSocket服务扫描属性 */
     public static final String WEBSOCKET_BASE_PACKAGE = "context.websocket-scan.base-package";
 
+    /**
+     * JOB Configure to context.properties.
+     *
+     * @since 1.4.11
+     */
+    public static final String CONTEXT_JOB = "context.elastic-job";
+
+    /**
+     * JOB扫描属性
+     *
+     * @since 1.4.11
+     */
+    public static final String JOB_BASE_PACKAGE = "context.elastic-job-scan.base-package";
+
 }
