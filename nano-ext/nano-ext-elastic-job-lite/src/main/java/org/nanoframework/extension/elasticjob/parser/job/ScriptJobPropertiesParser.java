@@ -29,7 +29,15 @@ import org.nanoframework.extension.elasticjob.parser.job.common.AbstractJobPrope
  * @author wangtong
  * @since 1.4.11
  */
-public class ScriptJobPropertiesParser extends AbstractJobPropertiesParser {
+public final class ScriptJobPropertiesParser extends AbstractJobPropertiesParser {
+    private static final ScriptJobPropertiesParser INSTANCE = new ScriptJobPropertiesParser();
+
+    private ScriptJobPropertiesParser() {
+    }
+
+    public static ScriptJobPropertiesParser getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected JobTypeConfiguration getJobTypeConfiguration(final JobCoreConfiguration jobCoreConfiguration, final Class<?> clz) throws Exception {

@@ -15,7 +15,13 @@
  */
 package org.nanoframework.extension.elasticjob.tests;
 
+import com.google.inject.Injector;
+import org.junit.Assert;
 import org.junit.Test;
+import org.nanoframework.core.globals.Globals;
+import org.nanoframework.extension.elasticjob.tests.job.TestDataflowJob;
+import org.nanoframework.extension.elasticjob.tests.job.TestScriptJob;
+import org.nanoframework.extension.elasticjob.tests.job.TestSimpleJob;
 
 /**
  * @author wangtong
@@ -25,6 +31,17 @@ public class JobTests extends PluginLoaderInit {
 
     @Test
     public void jobTest() throws InterruptedException {
+        Thread.sleep(1500);
 
+        final Injector injector = Globals.get(Injector.class);
+
+        TestSimpleJob testSimpleJob = injector.getInstance(TestSimpleJob.class);
+        Assert.assertTrue(testSimpleJob.completed);
+
+        TestDataflowJob testDataflowJob = injector.getInstance(TestDataflowJob.class);
+        Assert.assertTrue(testDataflowJob.completed);
+
+        TestScriptJob testScriptJob = injector.getInstance(TestScriptJob.class);
+        Assert.assertTrue(testScriptJob.completed);
     }
 }

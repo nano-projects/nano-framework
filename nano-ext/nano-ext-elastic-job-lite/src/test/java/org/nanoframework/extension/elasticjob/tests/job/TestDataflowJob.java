@@ -32,7 +32,7 @@ import java.util.List;
 @ElasticJob("1")
 public class TestDataflowJob extends AbstractDataflowJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestDataflowJob.class);
-    private static volatile boolean completed;
+    public static volatile boolean completed;
 
     @Override
     public List fetchData(ShardingContext shardingContext) {

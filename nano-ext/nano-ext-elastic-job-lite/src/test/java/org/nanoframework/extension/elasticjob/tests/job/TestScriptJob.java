@@ -30,9 +30,11 @@ import java.nio.file.attribute.PosixFilePermissions;
  */
 @ElasticJob("3")
 public class TestScriptJob extends AbstractScriptJob {
+    public static volatile boolean completed;
 
     @Override
     public String execute() throws IOException {
+        completed = true;
         if (System.getProperties().getProperty("os.name").contains("Windows")) {
             return Paths.get(TestScriptJob.class.getResource("/script/demo.bat").getPath().substring(1)).toString();
         }

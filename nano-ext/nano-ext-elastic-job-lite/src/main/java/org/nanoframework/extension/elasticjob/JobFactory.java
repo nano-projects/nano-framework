@@ -16,6 +16,7 @@
 package org.nanoframework.extension.elasticjob;
 
 import static org.nanoframework.core.context.ApplicationContext.JOB_BASE_PACKAGE;
+import static org.nanoframework.commons.util.StringUtils.EMPTY;
 import static org.nanoframework.extension.elasticjob.parser.job.common.JobPropertiesKey.CONF;
 import static org.nanoframework.extension.elasticjob.parser.job.common.JobPropertiesKey.REG_ROOT;
 
@@ -24,8 +25,9 @@ import com.dangdang.ddframe.job.lite.api.JobScheduler;
 import com.dangdang.ddframe.job.lite.api.listener.ElasticJobListener;
 import com.dangdang.ddframe.job.lite.config.LiteJobConfiguration;
 import com.dangdang.ddframe.job.reg.base.CoordinatorRegistryCenter;
+import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.loader.LoaderException;
 import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
@@ -44,7 +46,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Job工厂
@@ -61,14 +62,10 @@ public class JobFactory {
     private final Set<String> confRootSet = Sets.newLinkedHashSet();
     private final Set<String> regRootSet = Sets.newLinkedHashSet();
 
-    private final Map<Class<?>, CoordinatorRegistryCenter> regCenterMap = new ConcurrentHashMap<>();
-    private final Map<Class<?>, LiteJobConfiguration> litJobMap = new ConcurrentHashMap<>();
-    private final Map<Class<?>, JobEventConfiguration> jobEventMap = new ConcurrentHashMap<>();
-    private final Map<Class<?>, ElasticJobListener[]> listenerMap = new ConcurrentHashMap<>();
-
-    private final SimpleJobPropertiesParser simpleParser = new SimpleJobPropertiesParser();
-    private final DataflowJobPropertiesParser dataflowParser = new DataflowJobPropertiesParser();
-    private final ScriptJobPropertiesParser scriptParser = new ScriptJobPropertiesParser();
+    private final Map<Class<?>, CoordinatorRegistryCenter> regCenterMap = Maps.newConcurrentMap();
+    private final Map<Class<?>, LiteJobConfiguration> litJobMap = Maps.newConcurrentMap();
+    private final Map<Class<?>, JobEventConfiguration> jobEventMap = Maps.newConcurrentMap();
+    private final Map<Class<?>, ElasticJobListener[]> listenerMap = Maps.newConcurrentMap();
 
     private JobFactory() {
     }
@@ -83,13 +80,13 @@ public class JobFactory {
         }
         for (final Properties propertie : jobs) {
             if (propertie.containsKey(JobPropertiesKey.ROOT)) {
-                final String[] confRoot = propertie.getProperty(JobPropertiesKey.ROOT, StringUtils.EMPTY).split(",");
+                final String[] confRoot = propertie.getProperty(JobPropertiesKey.ROOT, EMPTY).split(",");
                 for (final String root : confRoot) {
                     confRootSet.add(root);
                 }
             }
             if (propertie.containsKey(ZookeeperPropertiesKey.ROOT)) {
-                final String[] regRoot = propertie.getProperty(ZookeeperPropertiesKey.ROOT, StringUtils.EMPTY).split(",");
+                final String[] regRoot = propertie.getProperty(ZookeeperPropertiesKey.ROOT, EMPTY).split(",");
                 for (final String root : regRoot) {
                     regRootSet.add(root);
                 }
@@ -110,7 +107,7 @@ public class JobFactory {
             throw new LoaderException("ejob.reg.root or ejob.conf.root properties cannot be found");
         }
         PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.get(JOB_BASE_PACKAGE) != null).forEach(item -> {
-            final String[] basePacakges = item.getProperty(JOB_BASE_PACKAGE, StringUtils.EMPTY).split(",");
+            final String[] basePacakges = item.getProperty(JOB_BASE_PACKAGE, EMPTY).split(",");
             for (final String basePackage : basePacakges) {
                 ClassScanner.scan(basePackage);
             }
@@ -131,13 +128,13 @@ public class JobFactory {
                     if (!regRootSet.contains(regRoot)) {
                         throw new LoaderException("No corresponding regRoot configuration: [ " + clz.getSimpleName() + " ]");
                     }
-                    regCenterMap.put(clz, ZookeeperPropertiesParser.buildZookeeperRegistryCenter(properties, regRoot));
+                    regCenterMap.put(clz, ZookeeperPropertiesParser.getInstance().buildZookeeperRegistryCenter(properties, regRoot));
                     if (AbstractSimpleJob.class.isAssignableFrom(clz)) {
-                        parserToMap(simpleParser, clz, confRoot);
+                        parserToMap(SimpleJobPropertiesParser.getInstance(), clz, confRoot);
                     } else if (AbstractDataflowJob.class.isAssignableFrom(clz)) {
-                        parserToMap(dataflowParser, clz, confRoot);
+                        parserToMap(DataflowJobPropertiesParser.getInstance(), clz, confRoot);
                     } else {
-                        parserToMap(scriptParser, clz, confRoot);
+                        parserToMap(ScriptJobPropertiesParser.getInstance(), clz, confRoot);
                     }
                 } else {
                     throw new JobException("[ " + clz.getSimpleName() + " ] must extends: [ " + AbstractSimpleJob.class.getSimpleName() + " || "
@@ -163,7 +160,7 @@ public class JobFactory {
 
     private String getJobConfRoot(final ElasticJob job, final Class<?> clz) {
         final String value = job.value();
-        if (StringUtils.isBlank(value)) {
+        if (Strings.isNullOrEmpty(value)) {
             final String simpleName = clz.getSimpleName();
             final char c = simpleName.charAt(0);
             if (Character.isLowerCase(c)) {

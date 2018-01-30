@@ -30,9 +30,11 @@ import java.util.Date;
 @ElasticJob
 public class TestSimpleJob extends AbstractSimpleJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(TestSimpleJob.class);
+    public static volatile boolean completed;
 
     @Override
     public void execute(ShardingContext shardingContext) {
         LOGGER.info("作业类型：simple 运行时间：{} 分片信息：{}", new Date(), shardingContext.toString());
+        completed = true;
     }
 }

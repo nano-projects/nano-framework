@@ -26,7 +26,15 @@ import org.nanoframework.extension.elasticjob.parser.job.common.AbstractJobPrope
  * @author wangtong
  * @since 1.4.11
  */
-public class DataflowJobPropertiesParser extends AbstractJobPropertiesParser {
+public final class DataflowJobPropertiesParser extends AbstractJobPropertiesParser {
+    private static final DataflowJobPropertiesParser INSTANCE = new DataflowJobPropertiesParser();
+
+    private DataflowJobPropertiesParser() {
+    }
+
+    public static DataflowJobPropertiesParser getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected JobTypeConfiguration getJobTypeConfiguration(final JobCoreConfiguration jobCoreConfiguration, final Class<?> clz) {

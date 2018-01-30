@@ -20,12 +20,12 @@ import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperConfiguration;
 import com.dangdang.ddframe.job.reg.zookeeper.ZookeeperRegistryCenter;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
+import com.google.common.collect.Maps;
 import org.nanoframework.extension.elasticjob.exception.JobException;
 
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static org.nanoframework.extension.elasticjob.parser.reg.ZookeeperPropertiesKey.BASE_SLEEP_TIME_MILLISECOND;
 import static org.nanoframework.extension.elasticjob.parser.reg.ZookeeperPropertiesKey.CONNECTION_TIMEOUT_MILLISECONDS;
@@ -44,31 +44,44 @@ import static org.nanoframework.extension.elasticjob.parser.reg.ZookeeperPropert
  * @since 1.4.11
  */
 public final class ZookeeperPropertiesParser {
-    private static Map<String, CoordinatorRegistryCenter> zkRegCenterMap = new ConcurrentHashMap<>();
+    private static final ZookeeperPropertiesParser INSTANCE = new ZookeeperPropertiesParser();
 
-    public static CoordinatorRegistryCenter buildZookeeperRegistryCenter(final Properties properties, final String regRoot) {
-        final CoordinatorRegistryCenter registryCenter = zkRegCenterMap.get(regRoot);
+    private final Map<String, CoordinatorRegistryCenter> zkRegCenterMap = Maps.newConcurrentMap();
+
+    private ZookeeperPropertiesParser() {
+    }
+
+    public static ZookeeperPropertiesParser getInstance() {
+        return INSTANCE;
+    }
+
+    public CoordinatorRegistryCenter buildZookeeperRegistryCenter(final Properties properties, final String regRoot) {
+        CoordinatorRegistryCenter registryCenter = zkRegCenterMap.get(regRoot);
         if (registryCenter == null) {
-            final String serverList = properties.getProperty(REG + regRoot + '.' + SERVER_LISTS);
-            final String namespace = properties.getProperty(REG + regRoot + '.' + NAMESPACE);
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(serverList), "serverList can not be empty.");
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(namespace), "namespace can not be empty.");
-            ZookeeperConfiguration zkConfig = new ZookeeperConfiguration(serverList, namespace);
-            addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + BASE_SLEEP_TIME_MILLISECOND, "1000")), BASE_SLEEP_TIME_MILLISECOND, zkConfig);
-            addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + MAX_SLEEP_TIME_MILLISECONDS, "3000")), MAX_SLEEP_TIME_MILLISECONDS, zkConfig);
-            addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + MAX_RETRIES, "3")), MAX_RETRIES, zkConfig);
-            addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + SESSION_TIMEOUT_MILLISECONDS, "0")), SESSION_TIMEOUT_MILLISECONDS, zkConfig);
-            addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + CONNECTION_TIMEOUT_MILLISECONDS, "0")), CONNECTION_TIMEOUT_MILLISECONDS, zkConfig);
-            addPropertyValueIfNotEmpty(properties.getProperty(REG + regRoot + '.' + DIGEST), DIGEST, zkConfig);
-            CoordinatorRegistryCenter result = new ZookeeperRegistryCenter(zkConfig);
-            result.init();
-            zkRegCenterMap.put(regRoot, result);
-            return result;
+            synchronized (this) {
+                registryCenter = zkRegCenterMap.get(regRoot);
+                if (registryCenter == null) {
+                    final String serverList = properties.getProperty(REG + regRoot + '.' + SERVER_LISTS);
+                    final String namespace = properties.getProperty(REG + regRoot + '.' + NAMESPACE);
+                    Preconditions.checkArgument(!Strings.isNullOrEmpty(serverList), "serverList can not be empty.");
+                    Preconditions.checkArgument(!Strings.isNullOrEmpty(namespace), "namespace can not be empty.");
+                    ZookeeperConfiguration zkConfig = new ZookeeperConfiguration(serverList, namespace);
+                    addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + BASE_SLEEP_TIME_MILLISECOND, "1000")), BASE_SLEEP_TIME_MILLISECOND, zkConfig);
+                    addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + MAX_SLEEP_TIME_MILLISECONDS, "3000")), MAX_SLEEP_TIME_MILLISECONDS, zkConfig);
+                    addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + MAX_RETRIES, "3")), MAX_RETRIES, zkConfig);
+                    addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + SESSION_TIMEOUT_MILLISECONDS, "0")), SESSION_TIMEOUT_MILLISECONDS, zkConfig);
+                    addPropertyValueIfNotEmpty(Integer.valueOf(properties.getProperty(REG + regRoot + '.' + CONNECTION_TIMEOUT_MILLISECONDS, "0")), CONNECTION_TIMEOUT_MILLISECONDS, zkConfig);
+                    addPropertyValueIfNotEmpty(properties.getProperty(REG + regRoot + '.' + DIGEST), DIGEST, zkConfig);
+                    registryCenter = new ZookeeperRegistryCenter(zkConfig);
+                    registryCenter.init();
+                    zkRegCenterMap.put(regRoot, registryCenter);
+                }
+            }
         }
         return registryCenter;
     }
 
-    private static void addPropertyValueIfNotEmpty(final Object propertyValue, final String attributeName, final ZookeeperConfiguration configuration) {
+    private void addPropertyValueIfNotEmpty(final Object propertyValue, final String attributeName, final ZookeeperConfiguration configuration) {
         if (propertyValue != null) {
             try {
                 final Class<? extends ZookeeperConfiguration> clz = configuration.getClass();
