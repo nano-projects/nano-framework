@@ -15,22 +15,21 @@
  */
 package org.nanoframework.extension.httpclient;
 
-import com.google.inject.ImplementedBy;
+import java.net.URISyntaxException;
+import java.util.Map;
+
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.ContentType;
 import org.nanoframework.core.component.stereotype.bind.RequestMethod;
 import org.nanoframework.core.spi.Lazy;
-import org.nanoframework.core.spi.SPI;
 import org.nanoframework.extension.httpclient.exception.HttpClientException;
 
-import java.net.URISyntaxException;
-import java.util.Map;
+import com.google.inject.ImplementedBy;
 
 /**
  * @author yanghe
  * @since 1.3.3
  */
-@SPI
 @Lazy
 @ImplementedBy(HttpClientImpl.class)
 public interface HttpClient {

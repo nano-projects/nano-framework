@@ -172,21 +172,11 @@ public class SPILoader {
 
         if (file.exists()) {
             final File[] spiFiles = file.listFiles(f -> {
-                try {
-                    if (f.isDirectory()) {
-                        return false;
-                    }
-
-                    if (isSPIClass(f.getName())) {
-                        return true;
-                    }
-
-                    LOGGER.warn("非SPI文件定义: {}", f.getName());
-                    return false;
-                } catch (final ClassNotFoundException e) {
-                    LOGGER.warn("未找到SPI文件定义: {}", f.getName());
+                if (f.isDirectory()) {
                     return false;
                 }
+
+                return true;
             });
 
             if (ArrayUtils.isNotEmpty(spiFiles)) {
@@ -208,30 +198,13 @@ public class SPILoader {
             if (StringUtils.startsWith(fileName, SPI_DIR) && !entry.isDirectory()) {
                 final String[] fileNameSection = fileName.split("/");
                 final String spiFileName = fileNameSection[fileNameSection.length - 1];
-                try {
-                    if (isSPIClass(spiFileName)) {
-                        if (!streams.containsKey(spiFileName)) {
-                            streams.put(spiFileName, Lists.newArrayList(jarFile.getInputStream(entry)));
-                        } else {
-                            streams.get(spiFileName).add(jarFile.getInputStream(entry));
-                        }
-                    } else {
-                        LOGGER.warn("非SPI文件定义: {}", spiFileName);
-                    }
-                } catch (final ClassNotFoundException e) {
-                    LOGGER.warn("未找到SPI文件定义: {}", spiFileName);
+                if (!streams.containsKey(spiFileName)) {
+                    streams.put(spiFileName, Lists.newArrayList(jarFile.getInputStream(entry)));
+                } else {
+                    streams.get(spiFileName).add(jarFile.getInputStream(entry));
                 }
             }
         }
-    }
-
-    private boolean isSPIClass(final String name) throws ClassNotFoundException {
-        final Class<?> cls = Class.forName(name);
-        if (cls.isAnnotationPresent(SPI.class)) {
-            return true;
-        }
-
-        return false;
     }
 
     protected void getSPIMapper(final List<File> spiFiles, final Map<Class<?>, List<SPIMapper>> spiMappers) {

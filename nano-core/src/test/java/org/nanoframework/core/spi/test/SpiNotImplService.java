@@ -15,14 +15,11 @@
  */
 package org.nanoframework.core.spi.test;
 
-import org.nanoframework.core.spi.SPI;
-
 /**
  *
  * @author yanghe
  * @since 1.4.8
  */
-@SPI
 public interface SpiNotImplService {
 
     String echo();

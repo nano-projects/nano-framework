@@ -20,13 +20,11 @@ import java.util.List;
 import javax.servlet.ServletConfig;
 
 import org.nanoframework.core.spi.Lazy;
-import org.nanoframework.core.spi.SPI;
 
 /**
  * @author yanghe
  * @since 1.1
  */
-@SPI
 @Lazy
 public interface Module extends com.google.inject.Module {
     List<Module> load() throws Throwable;

@@ -18,13 +18,11 @@ package org.nanoframework.core.plugins;
 import javax.servlet.ServletConfig;
 
 import org.nanoframework.core.spi.Lazy;
-import org.nanoframework.core.spi.SPI;
 
 /**
  * @author yanghe
  * @since 1.1
  */
-@SPI
 @Lazy
 public interface Plugin {
     boolean load() throws Throwable;

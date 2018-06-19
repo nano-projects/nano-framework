@@ -26,7 +26,6 @@ import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
 import org.nanoframework.core.plugins.Module;
 import org.nanoframework.core.spi.Lazy;
-import org.nanoframework.core.spi.SPI;
 import org.nanoframework.orm.jdbc.DataSourceException;
 
 import com.google.common.collect.Lists;
@@ -36,7 +35,6 @@ import com.google.common.collect.Maps;
  * @author yanghe
  * @since 1.2
  */
-@SPI
 @Lazy
 public abstract class DataSourceLoader {
     public static final String JDBC_ENVIRONMENT_ID = "JDBC.environment.id";

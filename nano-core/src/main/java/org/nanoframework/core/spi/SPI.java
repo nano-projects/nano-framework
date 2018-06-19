@@ -25,7 +25,9 @@ import java.lang.annotation.Target;
  *
  * @author yanghe
  * @since 1.4.8
+ * @deprecated
  */
+@Deprecated
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ ElementType.TYPE })

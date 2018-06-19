@@ -16,14 +16,12 @@
 package org.nanoframework.core.spi.test;
 
 import org.nanoframework.core.spi.Lazy;
-import org.nanoframework.core.spi.SPI;
 
 /**
  *
  * @author yanghe
  * @since 1.4.8
  */
-@SPI
 @Lazy
 public interface SpiLazyService {
 
